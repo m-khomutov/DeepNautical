@@ -1,0 +1,59 @@
+/* 
+ * File:   c_socket.cpp
+ * Author: mkh
+ * 
+ * Created on 25 января 2023 г., 10:34
+ */
+
+#include "flvprotocol.h"
+#include <unistd.h>
+#include <cstring>
+
+namespace
+{
+const char status[] = "HTTP/1.1 200 OK\r\nAccess-Control-Allow-Origin: *\r\nContent-Type: video/x-flv\r\n\r\n";
+const size_t status_len = strlen(status);
+const uint8_t header[13] = { 'F', 'L', 'V', 0x01, 0x01, 0x00, 0x00, 0x00, 0x09, 0x00, 0x00, 0x0, 0x00 };
+
+void copy3bytes( uint32_t from, uint8_t *to )
+{
+    union
+    {
+        uint32_t value;
+        uint8_t buf[sizeof(uint32_t)];
+    } u;
+    u.value = htobe32( from );   
+    memcpy( to, u.buf + 1, 3 );
+}
+}  // namespace
+
+flvprotocol::flvprotocol( int b_sock )
+: baseprotocol( b_sock )
+{
+}
+
+flvprotocol::~flvprotocol()
+{
+}
+
+void flvprotocol::on_data( const uint8_t * data, int size )
+{
+    for( int i(0); i <size; ++i ) fprintf(stderr, "%c", char(data[i]));
+    ::write( fd_, status, status_len );
+    ::write( fd_, header, sizeof(header) );
+}
+
+void flvprotocol::send_frame( const uint8_t * data, int size, float duration )
+{
+    copy3bytes( size + 1, tag_header_ + 1 );
+    copy3bytes( timestamp_, tag_header_ + 4 );
+    tag_header_[7] = (timestamp_ >> 24) & 0xff;
+    
+    timestamp_ += uint32_t(duration);
+
+    uint32_t tagsize = htobe32( size + 12 );
+    
+    ::write( fd_, tag_header_, sizeof(tag_header_) );
+    ::write( fd_, data, size );
+    ::write( fd_, &tagsize, sizeof(tagsize) );
+}
