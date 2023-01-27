@@ -34,6 +34,8 @@ public:
     void update();
 
 private:
+    struct del { void operator ()(GtkAllocation *p) { g_free(p); } };
+    
     decframe frame_;
     std::unique_ptr< basedecoder > decoder_;
     receiver receiver_;
@@ -43,6 +45,7 @@ private:
     GtkWidget *window_;
     GtkWidget *layout_; 
     GtkWidget *image_ = nullptr;
+    std::unique_ptr< GtkAllocation, del > allocation_;
 };
 
 #endif /* VIEWER_H */

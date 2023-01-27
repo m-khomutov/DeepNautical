@@ -39,14 +39,6 @@ GdkPixbuf *create_pixbuf(const gchar * filename)
    return rc;
 }
 
-struct del { void operator ()(GtkAllocation *p) { g_free(p); } };
-utils::geometry get_geometry( GtkWidget *w )
-{
-    std::unique_ptr< GtkAllocation, del > alloc( g_new(GtkAllocation, 1) );
-    gtk_widget_get_allocation( w, alloc.get() );
-    return utils::geometry( alloc->width, alloc->height );
-}
-
 }  // namespace
 
 viewer::viewer( char const *url, int width, int height )
@@ -56,6 +48,7 @@ viewer::viewer( char const *url, int width, int height )
 , rec_thread_( &receiver_ )
 , window_( gtk_window_new( GTK_WINDOW_TOPLEVEL ) )
 , layout_( gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 ) )
+, allocation_( g_new(GtkAllocation, 1) )
 {
     gtk_window_set_title( GTK_WINDOW(window_), "ПО управления" );
     gtk_window_set_default_size( GTK_WINDOW(window_), width, height );
@@ -105,10 +98,14 @@ void viewer::update()
                                                   frame_.window.height,
                                                   frame_.window.width * frame_.channels,
                                                   nullptr, nullptr );
-	utils::geometry g( get_geometry( window_ ) );
-        if( g.width != frame_.window.width || g.height != frame_.window.height )
+
+        gtk_widget_get_allocation( window_, allocation_.get() );
+        if( allocation_->width != frame_.window.width || allocation_->height != frame_.window.height )
         {
-            GdkPixbuf *pbs = gdk_pixbuf_scale_simple( pb, g.width, g.height, GDK_INTERP_BILINEAR );
+            GdkPixbuf *pbs = gdk_pixbuf_scale_simple( pb,
+                                                      allocation_->width,
+                                                      allocation_->height,
+                                                      GDK_INTERP_BILINEAR );
             image_ = gtk_image_new_from_pixbuf( pbs );
             g_object_unref( pbs );
         }
