@@ -9,6 +9,7 @@
 #define PROGRAM_H
 
 #include "shader.h"
+#include "uniformblock.h"
 #include <vector>
 #include <memory>
 #include <map>
@@ -32,14 +33,14 @@ public:
 
     GLuint attribute_index( const std::string& name ) const;
     GLuint uniform_index( const std::string& name ) const;
-    //UniformBlock * uniformBlock( const std::string& name );
+    uniformblock &uniform_block( std::string const& name );
     
 private:
     GLuint id_;
     std::vector< std::shared_ptr< shader > > shaders_;
     std::map< std::string, std::pair< GLint/*index*/, GLint/*type*/ > > attributes_;
-    std::map< std::string, std::pair< GLint/*index*/, GLint/*type*/ > > uniforms_;
-    //std::map< std::string, std::shared_ptr< UniformBlock > > uniform_blocks_;
+    std::map< std::string, GLint/*index*/ > uniforms_;
+    std::map< std::string, std::shared_ptr< uniformblock > > uniform_blocks_;
 
 private:
     void f_check();

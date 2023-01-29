@@ -13,6 +13,7 @@
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <string>
 
 
@@ -40,16 +41,17 @@ public:
 
 private:
     static constexpr GLuint numVAOs = 1;
-    static constexpr GLuint numVBOs = 1;
-    static constexpr GLuint numEBOs = 1;
+    static constexpr GLuint numVBOs = 2;
+    //static constexpr GLuint numEBOs = 1;
 
     std::unique_ptr< program > program_;
     
     GLuint vao_[ numVAOs ];
     GLuint vbo_[ numVBOs ];
-    GLuint ebo_[ numEBOs ];
+    //GLuint ebo_[ numEBOs ];
 
     figureset figureset_;
+    glm::mat4 rotation_ { glm::rotate(glm::mat4(1.0f), glm::radians( 0.0f ), glm::vec3(0.0f,0.0f,1.0f) ) };
     
 private:
     static void GLAPIENTRY debugCb( GLenum src,

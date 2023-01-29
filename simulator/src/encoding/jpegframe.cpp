@@ -61,7 +61,7 @@ jpegframe::jpegframe( int width, int height, int quality )
     jpeg_set_defaults( &cinfo_ );
     jpeg_set_quality( &cinfo_, quality, TRUE );
     cinfo_.dest =
-	    (jpeg_destination_mgr *)( *cinfo_.mem->alloc_small)( (j_common_ptr)&cinfo_,
+            (jpeg_destination_mgr *)( *cinfo_.mem->alloc_small)( (j_common_ptr)&cinfo_,
                                       JPOOL_PERMANENT,
                                       sizeof(mem_destination_mgr_t) );
     mem_destination_ptr_t dest = mem_destination_ptr_t( cinfo_.dest );
@@ -121,9 +121,9 @@ void jpegframe::f_encode()
     uint8_t * data = rgb_buffer_.data();
     {
         std::lock_guard< std::mutex > lk( mutex_ );
-        while( cinfo_.next_scanline < cinfo_.image_height )
+        for( int y(cinfo_.image_height - 1); y >= 0; --y )
         {
-            row_ptr[0] = &data[cinfo_.next_scanline * stride];
+            row_ptr[0] = &data[y * stride];
             jpeg_write_scanlines( &cinfo_, row_ptr, 1 );
         }
         jpeg_finish_compress( &cinfo_ );

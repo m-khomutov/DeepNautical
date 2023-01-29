@@ -16,6 +16,21 @@ program_error::program_error( const std::string &what )
 {
 }
 
+namespace
+{
+bool block_variable( GLuint id, GLuint idx, std::pair< std::string, GLint > *rc )
+{
+    GLenum const properties[] = { GL_NAME_LENGTH, GL_TYPE, GL_LOCATION, GL_BLOCK_INDEX };
+    GLint results[4];
+    glGetProgramResourceiv( id, GL_UNIFORM, idx, 4, properties, 4, nullptr, results );
+    std::string name( results[0] + 1, ' ' );
+    glGetProgramResourceName( id, GL_UNIFORM, idx, results[0] + 1, nullptr, name.data() );
+    
+    *rc = std::make_pair( name, results[2] );
+    return results[3] != -1; 
+}
+}  // namespace
+
 program::program( const std::string & shader_dir )
 : id_( glCreateProgram() )
 {
@@ -89,15 +104,15 @@ GLuint program::uniform_index( const std::string &name ) const
     auto attr = uniforms_.find( name );
     if( attr == uniforms_.end() )
         throw program_error( std::string("uniform '" + name + "' not found") );
-    return (*attr).second.first;
+    return (*attr).second;
 }
 
-/*UniformBlock *program::uniformBlock(const std::string &name) {
-    auto blk = m_uniform_blocks.find( name );
-    if( blk == m_uniform_blocks.end() )
-        throw ProgramException( std::string("uniform block'" + name + "' not found") );
-    return (*blk).second.get();
-}*/
+uniformblock &program::uniform_block( std::string const &name ) {
+    auto blk = uniform_blocks_.find( name );
+    if( blk == uniform_blocks_.end() )
+        throw program_error( std::string("uniform block '" + name + "' not found") );
+    return *(*blk).second;
+}
 
 void program::f_check() {
     int glErr = glGetError();
@@ -142,33 +157,52 @@ void program::f_get_uniforms() {
     glGetProgramInterfaceiv( id_, GL_UNIFORM, GL_ACTIVE_RESOURCES, &num );
     GLenum properties[] = { GL_NAME_LENGTH, GL_TYPE, GL_LOCATION, GL_BLOCK_INDEX };
     for( int i(0); i < num; ++i ) {
-        GLint results[4];
-        glGetProgramResourceiv( id_, GL_UNIFORM, i, 4, properties, 4, nullptr, results );
-        std::string name( results[0] + 1, ' ' );
-        glGetProgramResourceName( id_, GL_UNIFORM, i, results[0] + 1, nullptr, name.data() );
-        if( results[3] == -1 ) {
-            uniforms_.emplace( std::string(name.data()), std::make_pair( results[2], results[1] ) );
+        std::pair< std::string, GLint > rc;
+        if( !block_variable( id_, i, &rc ) )
+        {
+            uniforms_.emplace( rc.first, rc.second );
         }
-        else
-            std::cerr << "Blocked uniform: " << name << std::endl;
     }
     std::cerr << "uniforms: \n";
     for( auto a : uniforms_ )
-        std::cerr << "\t'" << a.first << "': index=" << a.second.first << " type=" << a.second.second << std::endl;
+        std::cerr << "\t'" << a.first << "': index=" << a.second << std::endl;
 }
 
 void program::f_get_uniform_blocks() {
     GLint num;
     glGetProgramInterfaceiv( id_, GL_UNIFORM_BLOCK, GL_ACTIVE_RESOURCES, &num );
-    GLenum props[] = { GL_NAME_LENGTH };
+    GLenum props[] = { GL_NAME_LENGTH, GL_NUM_ACTIVE_VARIABLES };
     for( int i(0); i < num; ++i ) {
         GLint results[2];
-        glGetProgramResourceiv( id_, GL_UNIFORM_BLOCK, i, 1, props, 1, nullptr, results );
-        std::string name( results[0] + 1, ' ' );
+        glGetProgramResourceiv( id_, GL_UNIFORM_BLOCK, i, 2, props, 2, nullptr, results );
+        std::string name( results[0] + 1, 0 );
         glGetProgramResourceName( id_, GL_UNIFORM_BLOCK, i, results[0] + 1, nullptr, name.data() );
-        //uniform_blocks_.emplace( std::string(name.data()), new UniformBlock( m_ID, name.data() ) );
+        while( name.back() == 0 )
+        {
+            name.pop_back();
+        }
+        uniform_blocks_.emplace( name, new uniformblock( id_, name.data() ) );
+        if( results[1] )
+        {
+            const GLenum var_props[1] = { GL_ACTIVE_VARIABLES };
+            std::vector< GLint > vars( results[1] );
+            glGetProgramResourceiv( id_, GL_UNIFORM_BLOCK, i, 1, var_props, results[1], nullptr, vars.data() );
+            for( int v(0); v < results[1]; ++v )
+            {
+                std::pair< std::string, GLint > rc;
+                if( block_variable( id_, vars[v], &rc ) )
+                {
+                    uniform_blocks_[name]->emplace_variable( rc.first, rc.second );
+                }
+            }
+        }
     }
-    //std::cerr << "Uniform blocks: \n";
-    //for( auto a : uniform_blocks_ )
-    //    std::cerr << "\t'" << a.first << "'" << std::endl;
+    std::cerr << "Uniform blocks: \n";
+    for( auto a : uniform_blocks_ )
+    {
+        std::cerr << "\t'" << a.first << "' {" << std::endl;
+        for( auto var : *a.second )
+	    std::cerr << "\t    " << var.name() << std::endl;
+	std::cerr << "\t}\n";
+    }
 }

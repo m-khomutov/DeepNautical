@@ -154,24 +154,31 @@ void scene::f_initialize( const std::string & shader_dir )
     program_.reset( new program( shader_dir ) );
     
     glGenVertexArrays( numVAOs, vao_ );
+    glBindVertexArray( vao_[0] );
     glGenBuffers( numVBOs, vbo_ );
-    glGenBuffers( numEBOs, ebo_ );
-    for( GLint i(0); i < numVAOs; ++i )
+    //glGenBuffers( numEBOs, ebo_ );
+    for( GLint i(0); i < numVBOs; ++i )
     {
-        glBindVertexArray( vao_[i] );
         glBindBuffer( GL_ARRAY_BUFFER, vbo_[i] );
-        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ebo_[i] );
-        figureset_.set_vao( 0 );
+        //glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ebo_[i] );
+        figureset_.set_vbo( i );
         glBindBuffer( GL_ARRAY_BUFFER, 0 );
-        glBindVertexArray( 0 );
     }
+
+    program_->uniform_block("Circle" )["InnerColor"] = glm::vec4(1.0f, 1.0f, 0.75f, 1.0f);
+    program_->uniform_block("Circle" )["OuterColor"] = glm::vec4(0.2f, 0.3f, 0.3f,  1.0f);
+    program_->uniform_block("Circle" )["InnerRadius"] = 0.25f;
+    program_->uniform_block("Circle" )["OuterRadius"] = 0.45f;
+    program_->uniform_block("Circle").copy();
+    glBindVertexArray( 0 );
 }
 
 void scene::f_draw( double currentTime )
 {
-    GLfloat green = ((std::sin(currentTime) / 2) + 0.5);
-    set_attribute( 0, "vertexColor", glm::vec4( 0.0f, green, 0.0f, 1.0f ) );
-    set_attribute( 0, "offset", 0.1f );
+    //GLfloat green = ((std::sin(currentTime) / 2) + 0.5);
+    //set_attribute( 0, "vertexColor", glm::vec4( 0.0f, green, 0.0f, 1.0f ) );
+    //set_attribute( 0, "offset", 0.1f );
+    //set_attribute( 0, "RotationMatrix", rotation_ );
     glDrawArrays( GL_TRIANGLES, 0, 3 );
 }
 
