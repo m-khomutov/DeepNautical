@@ -24,34 +24,34 @@ public:
 
 class scene {
 public:
-    explicit scene( const std::string &shader_dir );
+    scene( std::string const &shader_dir, std::string const &texture_dir );
     scene(const scene& orig) = delete;
     scene & operator =( const scene & rhs ) = delete;
     ~scene();
 
     void display( GLuint width, GLuint height, double currentTime );
     
-    void set_attribute( GLuint vao, const GLchar * name, float value );
-    void set_attribute( GLuint vao, const GLchar * name, GLuint value );
-    void set_attribute( GLuint vao, const GLchar * name, glm::vec3 );
-    void set_attribute( GLuint vao, const GLchar * name, glm::vec4 );
-    void set_attribute( GLuint vao, const GLchar * name, glm::mat3 );
-    void set_attribute( GLuint vao, const GLchar * name, glm::mat4 );
-    void set_subroutine( GLuint vao, const GLchar * uniform_name, const GLchar * subroutine_name, GLenum shader_type );
+    void set_attribute( const GLchar * name, float value );
+    void set_attribute( const GLchar * name, GLuint value );
+    void set_attribute( const GLchar * name, glm::vec3 );
+    void set_attribute( const GLchar * name, glm::vec4 );
+    void set_attribute( const GLchar * name, glm::mat3 );
+    void set_attribute( const GLchar * name, glm::mat4 );
+    void set_subroutine( const GLchar * uniform_name, const GLchar * subroutine_name, GLenum shader_type );
 
 private:
     static constexpr GLuint numVAOs = 1;
-    static constexpr GLuint numVBOs = 2;
-    //static constexpr GLuint numEBOs = 1;
+    static constexpr GLuint numVBOs = 1;
+    static constexpr GLuint numEBOs = 1;
 
     std::unique_ptr< program > program_;
     
     GLuint vao_[ numVAOs ];
     GLuint vbo_[ numVBOs ];
-    //GLuint ebo_[ numEBOs ];
+    GLuint ebo_[ numEBOs ];
 
     figureset figureset_;
-    glm::mat4 rotation_ { glm::rotate(glm::mat4(1.0f), glm::radians( 0.0f ), glm::vec3(0.0f,0.0f,1.0f) ) };
+    glm::mat4 rotation_ { glm::rotate(glm::mat4(1.0f), glm::radians( 10.0f ), glm::vec3(0.0f,0.0f,1.0f) ) };
     
 private:
     static void GLAPIENTRY debugCb( GLenum src,
@@ -62,7 +62,7 @@ private:
                                     const GLchar * msg,
                                     const void * p );
 
-    void f_initialize( const std::string & shader_dir );
+    void f_initialize( std::string const &shader_dir, std::string const &texture_dir );
     void f_draw( double currentTime );
     void f_debug_info();
     void f_debug_error( GLenum src, GLenum type, GLuint id, GLenum severity, std::string msg ) const;

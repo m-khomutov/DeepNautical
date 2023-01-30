@@ -8,9 +8,15 @@
 #ifndef FIGURESET_H
 #define FIGURESET_H
 
+#include "texture.h"
+
 #include <GL/glew.h>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
+#include <memory>
+
+class program;
+class scene;
 
 class figureset {
 public:
@@ -19,19 +25,18 @@ public:
     figureset &operator =( const figureset &rhs ) = delete;
     ~figureset();
     
-    void set_vbo( GLuint vbo );
+    void initialize( program &prog, std::string const &texture_dir );
+    void draw( scene &sc, double currentTime );
     
 private:
-    glm::vec3 position_[3] = {
-            glm::vec3( -0.8f,  -0.8f, 0.0f ),
-            glm::vec3(  0.8f,  -0.8f, 0.0f ),
-            glm::vec3(  0.0f,   0.8f, 0.0f ),
+    GLfloat position_[20] = {    // текстурные координаты
+            0.5f,  0.5f, 0.0f,   1.0f, 0.0f,
+            0.5f, -0.5f, 0.0f,   1.0f, 1.0f,
+           -0.5f, -0.5f, 0.0f,   0.0f, 1.0f,
+           -0.5f,  0.5f, 0.0f,   0.0f, 0.0f,
     };
-    glm::vec3 color_[3] = {
-            glm::vec3( 1.0f, 0.0f, 0.0f ),
-            glm::vec3( 0.0f, 1.0f, 0.0f ),
-            glm::vec3( 0.0f, 0.0f, 1.0f ),
-    };
+    GLuint indices_[6] = { 0, 1, 3, 1, 2, 3 };
+    std::unique_ptr< texture > texture_;    
 };
 
 #endif /* FIGURESET_H */

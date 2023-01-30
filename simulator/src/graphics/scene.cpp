@@ -43,7 +43,7 @@ scene::debugCb( GLenum src,
     reinterpret_cast< const scene * >(p)->f_debug_error( src, type, id, severity, std::string(msg, sz) );
 }
 
-scene::scene( const std::string &shader_dir )
+scene::scene( std::string const &shader_dir, std::string const &texture_dir )
 {
     glEnable( GL_DEBUG_OUTPUT );
     glEnable( GL_DEPTH_TEST );
@@ -52,7 +52,7 @@ scene::scene( const std::string &shader_dir )
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
     f_debug_info();
-    f_initialize( shader_dir );
+    f_initialize( shader_dir, texture_dir );
 }
 
 scene::~scene()
@@ -70,7 +70,7 @@ void scene::display( GLuint width, GLuint height, double currentTime )
     glBindVertexArray( 0 );
 }
 
-void scene::set_attribute( GLuint vao, const GLchar *name, float value )
+void scene::set_attribute( const GLchar *name, float value )
 {
     try {
         glProgramUniform1f ( *program_, program_->uniform_index( name ), value );
@@ -82,7 +82,7 @@ void scene::set_attribute( GLuint vao, const GLchar *name, float value )
     }
 }
 
-void scene::set_attribute( GLuint vao, const GLchar *name, GLuint value ) {
+void scene::set_attribute( const GLchar *name, GLuint value ) {
     try {
         glProgramUniform1i ( *program_, program_->uniform_index( name ), value );
     }
@@ -93,7 +93,7 @@ void scene::set_attribute( GLuint vao, const GLchar *name, GLuint value ) {
     }
 }
 
-void scene::set_attribute( GLuint vao, const GLchar *name, glm::vec3 value ) {
+void scene::set_attribute( const GLchar *name, glm::vec3 value ) {
     try {
         glProgramUniform3f( *program_, program_->uniform_index( name ), value.x, value.y, value.z );
     }
@@ -104,7 +104,7 @@ void scene::set_attribute( GLuint vao, const GLchar *name, glm::vec3 value ) {
     }
 }
 
-void scene::set_attribute( GLuint vao, const GLchar *name, glm::vec4 value ) {
+void scene::set_attribute( const GLchar *name, glm::vec4 value ) {
     try {
         glProgramUniform4f( *program_, program_->uniform_index( name ), value.x, value.y, value.z, value.w );
     }
@@ -116,7 +116,7 @@ void scene::set_attribute( GLuint vao, const GLchar *name, glm::vec4 value ) {
     }
 }
 
-void scene::set_attribute( GLuint vao, const GLchar *name, glm::mat3 value ) {
+void scene::set_attribute( const GLchar *name, glm::mat3 value ) {
     try {
         glUniformMatrix3fv( program_->uniform_index( name ), 1, GL_FALSE, glm::value_ptr( value ) );
     }
@@ -127,7 +127,7 @@ void scene::set_attribute( GLuint vao, const GLchar *name, glm::mat3 value ) {
     }
 }
 
-void scene::set_attribute( GLuint vao, const GLchar *name, glm::mat4 value ) {
+void scene::set_attribute( const GLchar *name, glm::mat4 value ) {
     try {
         glUniformMatrix4fv( program_->uniform_index( name ), 1, GL_FALSE, glm::value_ptr( value ) );
     }
@@ -138,7 +138,7 @@ void scene::set_attribute( GLuint vao, const GLchar *name, glm::mat4 value ) {
     }
 }
 
-void scene::set_subroutine( GLuint vao, const GLchar *uniform_name, const GLchar * subroutine_name, GLenum shader_type ) {
+void scene::set_subroutine( const GLchar *uniform_name, const GLchar * subroutine_name, GLenum shader_type ) {
     int num;
     glGetProgramStageiv( *program_, shader_type, GL_ACTIVE_SUBROUTINES, &num );
     if( num > 0 ) {
@@ -149,37 +149,24 @@ void scene::set_subroutine( GLuint vao, const GLchar *uniform_name, const GLchar
     }
 }
 
-void scene::f_initialize( const std::string & shader_dir )
+void scene::f_initialize( std::string const&shader_dir, std::string const &texture_dir )
 {
     program_.reset( new program( shader_dir ) );
     
     glGenVertexArrays( numVAOs, vao_ );
     glBindVertexArray( vao_[0] );
+    glGenBuffers( numEBOs, ebo_ );
     glGenBuffers( numVBOs, vbo_ );
-    //glGenBuffers( numEBOs, ebo_ );
-    for( GLint i(0); i < numVBOs; ++i )
-    {
-        glBindBuffer( GL_ARRAY_BUFFER, vbo_[i] );
-        //glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ebo_[i] );
-        figureset_.set_vbo( i );
-        glBindBuffer( GL_ARRAY_BUFFER, 0 );
-    }
-
-    program_->uniform_block("Circle" )["InnerColor"] = glm::vec4(1.0f, 1.0f, 0.75f, 1.0f);
-    program_->uniform_block("Circle" )["OuterColor"] = glm::vec4(0.2f, 0.3f, 0.3f,  1.0f);
-    program_->uniform_block("Circle" )["InnerRadius"] = 0.25f;
-    program_->uniform_block("Circle" )["OuterRadius"] = 0.45f;
-    program_->uniform_block("Circle").copy();
+    glBindBuffer( GL_ARRAY_BUFFER, vbo_[0] );
+    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ebo_[0] );
+    figureset_.initialize( *program_, texture_dir );
+    glBindBuffer( GL_ARRAY_BUFFER, 0 );
     glBindVertexArray( 0 );
 }
 
 void scene::f_draw( double currentTime )
 {
-    //GLfloat green = ((std::sin(currentTime) / 2) + 0.5);
-    //set_attribute( 0, "vertexColor", glm::vec4( 0.0f, green, 0.0f, 1.0f ) );
-    //set_attribute( 0, "offset", 0.1f );
-    //set_attribute( 0, "RotationMatrix", rotation_ );
-    glDrawArrays( GL_TRIANGLES, 0, 3 );
+    figureset_.draw( *this, currentTime );
 }
 
 void scene::f_debug_info()

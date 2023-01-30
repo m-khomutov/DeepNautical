@@ -57,10 +57,10 @@ screen::~screen()
 {
 }
 
-void screen::run( const char *shader_dir )
+void screen::run( const char *shader_dir, const char *texture_dir )
 {
     GLint w, h;
-    scene sc( shader_dir );
+    scene sc( shader_dir, texture_dir );
     while( !glfwWindowShouldClose( window_.get() ) )
     {
         glfwGetFramebufferSize( window_.get(), &w, &h );

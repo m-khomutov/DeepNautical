@@ -86,10 +86,10 @@ void viewer::update()
     if( decoder_->load( &frame_ ) )
     {
 
-	if( image_ )
+        if( image_ )
         {
-	    gtk_widget_destroy( GTK_WIDGET(image_) );
-	}
+            gtk_widget_destroy( GTK_WIDGET(image_) );
+        }
         GdkPixbuf* pb = gdk_pixbuf_new_from_data( frame_.pixels.data(),
                                                   GDK_COLORSPACE_RGB,
                                                   FALSE,//has_alpha - 4-th byte

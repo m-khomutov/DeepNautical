@@ -19,9 +19,9 @@ service::~service()
 {
 }
 
-void service::run( const char *shader_dir )
+void service::run( const char *shader_dir, const char *texture_dir )
 {
-    screen_.run( shader_dir );
+    screen_.run( shader_dir, texture_dir );
 }
 
 void service::stop()

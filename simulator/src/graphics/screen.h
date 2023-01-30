@@ -26,7 +26,7 @@ public:
     screen &operator =(const screen &rhs) = delete;
     ~screen();
 
-    void run( const char *shader_dir );
+    void run( const char *shader_dir, const char *texture_dir );
     void stop();
 
 private:

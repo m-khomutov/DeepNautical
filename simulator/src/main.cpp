@@ -29,9 +29,10 @@ void signal_handler( int )
 
 void show_options_and_exit( const char *prog, int rc )
 {
-    std::cerr << "Запуск: " << prog <<  "[-h] [-s] [-p] [-g] [-q] [-d]\n\nimitator\n\n";
+    std::cerr << "Запуск: " << prog <<  "[-h] [-s] [-t] [-p] [-g] [-q] [-d]\n\nimitator\n\n";
     std::cerr << "обязательные аргументы:\n";
     std::cerr << "\t-s\tкаталог с шейдерами\n"; 
+    std::cerr << "\t-t\tкаталог с текстурами\n"; 
     std::cerr << "Опциональные аргументы:\n";
     std::cerr << "\t-p\tпорт прослушки (def. 2232)\n"; 
     std::cerr << "\t-g\tразмеры окна (def. 800x600)\n";
@@ -45,17 +46,21 @@ void show_options_and_exit( const char *prog, int rc )
 int main(int argc, char** argv)
 {
     const char * shader_dir = nullptr;
+    const char * texture_dir = nullptr;
     uint16_t b_port { 2232 };
     utils::geometry w_geom;
     int quality = 80;
     int duration = 40;
     int c;
-    while ((c = getopt (argc, argv, "g:d:p:q:s:h")) != -1)
+    while ((c = getopt (argc, argv, "g:d:p:q:s:t:h")) != -1)
     {
         switch (c)
         {
         case 's':
               shader_dir = optarg;
+              break;
+        case 't':
+              texture_dir = optarg;
               break;
         case 'p':
               b_port = ::strtol( optarg, nullptr, 10 );
@@ -75,7 +80,7 @@ int main(int argc, char** argv)
             show_options_and_exit( argv[0], EXIT_SUCCESS );
         }
     }
-    if( ! shader_dir )
+    if( !(shader_dir && texture_dir) )
     {
         show_options_and_exit( argv[0], EXIT_FAILURE );
     }
@@ -92,7 +97,7 @@ int main(int argc, char** argv)
                                          w_geom.height,
                                          quality,
                                          duration ) );
-        main_service->run( shader_dir );
+        main_service->run( shader_dir, texture_dir );
     	return (EXIT_SUCCESS);
     }
     catch( const std::runtime_error &err )

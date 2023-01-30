@@ -20,7 +20,7 @@ public:
     service &operator =( const service& orig ) = delete;
     ~service();
 
-    void run( const char *shader_dir );
+    void run( const char *shader_dir, const char *texture_dir );
     void stop();
 
 private:

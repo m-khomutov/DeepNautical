@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 add_executable(cometsimulator
 	src/encoding/baseframe.cpp
 	src/encoding/jpegframe.cpp
+	src/graphics/texture.cpp
 	src/graphics/figureset.cpp
 	src/graphics/uniformblock.cpp
 	src/graphics/shader.cpp
@@ -20,4 +21,4 @@ add_executable(cometsimulator
         src/main.cpp
         )
 
-target_link_libraries(cometsimulator GL glfw GLEW jpeg pthread)
+target_link_libraries(cometsimulator GL glfw GLEW SOIL jpeg pthread)
