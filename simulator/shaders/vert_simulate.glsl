@@ -5,9 +5,10 @@ layout (location=1) in vec2 texcoord;
 
 out vec2 TexCoord;
 
-uniform float offset;
+uniform vec3 Offset;
+uniform mat4 RotationMatrix;
 
 void main() {
     TexCoord = texcoord;
-    gl_Position = vec4(position.x + offset, position.y, position.z, 1.0);
+    gl_Position = RotationMatrix * vec4(position + Offset, 1.0);
 }

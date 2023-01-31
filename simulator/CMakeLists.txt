@@ -7,6 +7,8 @@ add_executable(cometsimulator
 	../share/utils.cpp
 	src/encoding/baseframe.cpp
 	src/encoding/jpegframe.cpp
+	src/graphics/figures/figure.cpp
+	src/graphics/figures/antisubmarinefrigate.cpp
 	src/graphics/texture.cpp
 	src/graphics/figureset.cpp
 	src/graphics/uniformblock.cpp

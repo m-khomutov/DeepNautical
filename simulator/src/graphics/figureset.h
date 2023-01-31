@@ -8,12 +8,8 @@
 #ifndef FIGURESET_H
 #define FIGURESET_H
 
-#include "texture.h"
-
-#include <GL/glew.h>
-#include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
-#include <memory>
+#include "figures/figure.h"
+#include <vector>
 
 class program;
 class scene;
@@ -29,16 +25,7 @@ public:
     void draw( scene &sc, double currentTime );
     
 private:
-    GLfloat position_[20] = {    // текстурные координаты
-            0.5f,  0.5f, 0.0f,   1.0f, 0.0f,
-            0.5f, -0.5f, 0.0f,   1.0f, 1.0f,
-           -0.5f, -0.5f, 0.0f,   0.0f, 1.0f,
-           -0.5f,  0.5f, 0.0f,   0.0f, 0.0f,
-    };
-    GLuint indices_[6] = { 0, 1, 3, 1, 2, 3 };
-    std::unique_ptr< texture > texture_;    
-    float offset_ { 0.0f };
-    float offset_inc_ { -0.001f };
+    std::vector< std::shared_ptr< figure > > figures_;
 };
 
 #endif /* FIGURESET_H */
