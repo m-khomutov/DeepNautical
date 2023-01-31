@@ -25,7 +25,7 @@ public:
     figureset &operator =( const figureset &rhs ) = delete;
     ~figureset();
     
-    void initialize( program &prog, std::string const &texture_dir );
+    void initialize( program &prog );
     void draw( scene &sc, double currentTime );
     
 private:
@@ -37,6 +37,8 @@ private:
     };
     GLuint indices_[6] = { 0, 1, 3, 1, 2, 3 };
     std::unique_ptr< texture > texture_;    
+    float offset_ { 0.0f };
+    float offset_inc_ { -0.001f };
 };
 
 #endif /* FIGURESET_H */

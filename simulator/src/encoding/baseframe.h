@@ -8,11 +8,13 @@
 #ifndef BASEFRAME_H
 #define BASEFRAME_H
 
+#include "../../../share/utils.h"
+
 class baseprotocol;
 
 class baseframe {
 public:
-    baseframe( int width, int height );
+    baseframe();
     baseframe( const baseframe& orig ) = delete;
     baseframe &operator =( const baseframe& orig ) = delete;
     virtual ~baseframe();
@@ -22,16 +24,15 @@ public:
 
     int width() const
     {
-        return width_;
+        return geometry_.width;
     }
     int height() const
     {
-        return height_;
+        return geometry_.height;
     }
     
 protected:
-    int width_;
-    int height_;
+    utils::geometry geometry_;
 
 private:
     virtual void f_store( int width, int height ) = 0;

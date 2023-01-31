@@ -7,9 +7,8 @@
 
 #include "baseframe.h"
 
-baseframe::baseframe( int width, int height )
-: width_( width )
-, height_( height )
+baseframe::baseframe()
+: geometry_( utils::config()["window"] )
 {
 }
 

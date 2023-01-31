@@ -21,7 +21,7 @@ public:
 
 class program {
 public:
-    explicit program( const std::string & shader_dir );
+    explicit program();
     program(const program& orig) = delete;
     program &operator =( const program & rhs ) = delete;
     ~program();

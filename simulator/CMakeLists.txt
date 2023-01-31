@@ -4,6 +4,7 @@ project(cometsimulator)
 set(CMAKE_CXX_STANDARD 17)
 
 add_executable(cometsimulator
+	../share/utils.cpp
 	src/encoding/baseframe.cpp
 	src/encoding/jpegframe.cpp
 	src/graphics/texture.cpp

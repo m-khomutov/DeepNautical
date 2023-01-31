@@ -8,8 +8,10 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "figureset.h"
+#include "../../../share/utils.h"
 #include "program.h"
 #include "scene.h"
+#include <iostream> 
 
 figureset::figureset()
 {
@@ -19,9 +21,11 @@ figureset::~figureset()
 {
 }
 
-void figureset::initialize( program &prog, std::string const &texture_dir )
+void figureset::initialize( program &prog )
 {
-    texture_.reset( new texture( (texture_dir + "/military-anti-submarine-frigate-warship-vessel-silhouette.png").c_str() ) );
+    texture_.reset( new texture( (std::string(utils::config()["textures"]) + 
+                                  "/military-anti-submarine-frigate-warship-vessel-silhouette.png"
+                                 ).c_str() ) );
 
     prog.uniform_block("Circle" )["InnerColor"] = glm::vec4(1.0f, 1.0f, 0.75f, 1.0f);
     prog.uniform_block("Circle" )["OuterColor"] = glm::vec4(0.2f, 0.3f, 0.3f,  1.0f);
@@ -43,4 +47,10 @@ void figureset::draw( scene &sc, double currentTime )
     texture_->activate();
     glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
     sc.set_attribute( "Texture", GLuint(0) );
+    sc.set_attribute( "offset", offset_ );
+    if( offset_ < -1.0 || offset_ > 1.0 )
+    {
+	offset_inc_ *= -1;
+    }
+    offset_ += offset_inc_;
 }

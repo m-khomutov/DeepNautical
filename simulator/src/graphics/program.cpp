@@ -6,6 +6,7 @@
  */
 
 #include "program.h"
+#include "../../../share/utils.h"
 #include <dirent.h> 
 #include <string.h> 
 #include <iostream>
@@ -31,29 +32,30 @@ bool block_variable( GLuint id, GLuint idx, std::pair< std::string, GLint > *rc 
 }
 }  // namespace
 
-program::program( const std::string & shader_dir )
+program::program()
 : id_( glCreateProgram() )
 {
     try
     {
         DIR *dir;
         struct dirent *entry;
+	std::string s_dir = utils::config()["shaders"];
 
-    	if( !(dir = opendir( shader_dir.c_str() ) ) )
-            throw program_error( shader_dir + std::string(" error: ") + std::string(strerror( errno ) ) );
+    	if( !(dir = opendir( s_dir.c_str() ) ) )
+            throw program_error( s_dir + std::string(" error: ") + std::string(strerror( errno ) ) );
 
         while( (entry = readdir(dir))  )
         {
             if( entry->d_type == DT_REG && strstr( entry->d_name, ".glsl" ) )
             {
-                f_emplace_shader( shader_dir + "/" + entry->d_name );
+                f_emplace_shader( s_dir + "/" + entry->d_name );
             }
         }
         closedir( dir );
     }
     catch( const std::runtime_error & err )
     {
-    	glDeleteProgram( id_ );
+        glDeleteProgram( id_ );
         throw;
     }
     f_link();

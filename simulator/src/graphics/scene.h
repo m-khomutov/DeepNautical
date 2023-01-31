@@ -24,7 +24,7 @@ public:
 
 class scene {
 public:
-    scene( std::string const &shader_dir, std::string const &texture_dir );
+    scene();
     scene(const scene& orig) = delete;
     scene & operator =( const scene & rhs ) = delete;
     ~scene();
@@ -62,7 +62,7 @@ private:
                                     const GLchar * msg,
                                     const void * p );
 
-    void f_initialize( std::string const &shader_dir, std::string const &texture_dir );
+    void f_initialize();
     void f_draw( double currentTime );
     void f_debug_info();
     void f_debug_error( GLenum src, GLenum type, GLuint id, GLenum severity, std::string msg ) const;

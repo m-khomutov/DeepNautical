@@ -7,10 +7,10 @@
 
 #include "service.h"
 
-service::service( uint16_t b_port, int width, int height, int quality, int duration )
-: frame_( new jpegframe( width, height, quality ) )
+service::service()
+: frame_( new jpegframe )
 , screen_( frame_.get() )
-, poll_( b_port, duration, frame_.get() )
+, poll_( utils::config()["port"], utils::config()["duration"], frame_.get() )
 , poll_thread_( &poll_ )
 {
 }
@@ -19,9 +19,9 @@ service::~service()
 {
 }
 
-void service::run( const char *shader_dir, const char *texture_dir )
+void service::run()
 {
-    screen_.run( shader_dir, texture_dir );
+    screen_.run();
 }
 
 void service::stop()

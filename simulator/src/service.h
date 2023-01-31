@@ -15,12 +15,12 @@
 
 class service {
 public:
-    service( uint16_t b_port, int width, int height, int quality, int duration );
-    service( const service& orig ) = delete;
-    service &operator =( const service& orig ) = delete;
+    service();
+    service( service const &orig ) = delete;
+    service &operator =( service const &orig ) = delete;
     ~service();
 
-    void run( const char *shader_dir, const char *texture_dir );
+    void run();
     void stop();
 
 private:

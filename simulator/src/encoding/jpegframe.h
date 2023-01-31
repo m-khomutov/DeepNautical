@@ -24,7 +24,7 @@ extern "C"
 
 class jpegframe: public baseframe {
 public:
-    jpegframe( int width, int height, int quality );
+    jpegframe();
     jpegframe( const jpegframe& orig ) = delete;
     jpegframe &operator =( const jpegframe &rhs ) = delete;
     ~jpegframe();

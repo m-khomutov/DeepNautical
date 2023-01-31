@@ -43,7 +43,7 @@ scene::debugCb( GLenum src,
     reinterpret_cast< const scene * >(p)->f_debug_error( src, type, id, severity, std::string(msg, sz) );
 }
 
-scene::scene( std::string const &shader_dir, std::string const &texture_dir )
+scene::scene()
 {
     glEnable( GL_DEBUG_OUTPUT );
     glEnable( GL_DEPTH_TEST );
@@ -52,7 +52,7 @@ scene::scene( std::string const &shader_dir, std::string const &texture_dir )
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
     f_debug_info();
-    f_initialize( shader_dir, texture_dir );
+    f_initialize();
 }
 
 scene::~scene()
@@ -149,9 +149,9 @@ void scene::set_subroutine( const GLchar *uniform_name, const GLchar * subroutin
     }
 }
 
-void scene::f_initialize( std::string const&shader_dir, std::string const &texture_dir )
+void scene::f_initialize()
 {
-    program_.reset( new program( shader_dir ) );
+    program_.reset( new program );
     
     glGenVertexArrays( numVAOs, vao_ );
     glBindVertexArray( vao_[0] );
@@ -159,7 +159,7 @@ void scene::f_initialize( std::string const&shader_dir, std::string const &textu
     glGenBuffers( numVBOs, vbo_ );
     glBindBuffer( GL_ARRAY_BUFFER, vbo_[0] );
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ebo_[0] );
-    figureset_.initialize( *program_, texture_dir );
+    figureset_.initialize( *program_ );
     glBindBuffer( GL_ARRAY_BUFFER, 0 );
     glBindVertexArray( 0 );
 }

@@ -48,18 +48,17 @@ METHODDEF(void) term_destination(j_compress_ptr cinfo)
 
 }  // namespace
 
-jpegframe::jpegframe( int width, int height, int quality )
-: baseframe( width, height )
+jpegframe::jpegframe()
 {
     cinfo_.err = jpeg_std_error( &jerr_ );  // errors get written to stderr 
     jpeg_create_compress( &cinfo_ );
 
-    cinfo_.image_width = width;
-    cinfo_.image_height = height;
+    cinfo_.image_width = geometry_.width;
+    cinfo_.image_height = geometry_.height;
     cinfo_.input_components = 3;
     cinfo_.in_color_space = JCS_RGB;
     jpeg_set_defaults( &cinfo_ );
-    jpeg_set_quality( &cinfo_, quality, TRUE );
+    jpeg_set_quality( &cinfo_, utils::config()["quality"], TRUE );
     cinfo_.dest =
             (jpeg_destination_mgr *)( *cinfo_.mem->alloc_small)( (j_common_ptr)&cinfo_,
                                       JPOOL_PERMANENT,
