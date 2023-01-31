@@ -24,7 +24,7 @@ public:
 
 class viewer {
 public:
-    viewer( char const *url, int width, int height );
+    viewer();
     viewer(const viewer& orig) = delete;
     viewer &operator =(const viewer& orig) = delete;
     ~viewer();

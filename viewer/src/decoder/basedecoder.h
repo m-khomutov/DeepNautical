@@ -32,7 +32,7 @@ struct decframe
     int channels { 3 };
     uint32_t timestamp { 0xff };
 
-    decframe( int w, int h ) : window( w, h ) {};
+    decframe( utils::geometry const &win ) : window( win ) {};
 };
 
 class basedecoder {

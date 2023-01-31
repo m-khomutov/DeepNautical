@@ -46,10 +46,11 @@ void flvprotocol::on_data( const uint8_t * data, int size )
 void flvprotocol::send_frame( const uint8_t * data, int size, float duration )
 {
     copy3bytes( size + 1, tag_header_ + 1 );
-    copy3bytes( timestamp_, tag_header_ + 4 );
-    tag_header_[7] = (timestamp_ >> 24) & 0xff;
+    //copy3bytes( timestamp_, tag_header_ + 4 );
+    //tag_header_[7] = (timestamp_ >> 24) & 0xff;
+    memcpy( tag_header_ + 4, &timestamp_, sizeof(timestamp_) );
     
-    timestamp_ += uint32_t(duration);
+    timestamp_ += duration;
 
     uint32_t tagsize = htobe32( size + 12 );
     

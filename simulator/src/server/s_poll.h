@@ -25,7 +25,7 @@ public:
 
 class s_poll {
 public:
-    s_poll( uint16_t b_port, int duration, baseframe *frame );
+    explicit s_poll( baseframe *frame );
     s_poll(const s_poll& orig) = delete;
     s_poll &operator =(const s_poll& orig) = delete;
     ~s_poll();

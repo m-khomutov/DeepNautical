@@ -10,7 +10,7 @@
 service::service()
 : frame_( new jpegframe )
 , screen_( frame_.get() )
-, poll_( utils::config()["port"], utils::config()["duration"], frame_.get() )
+, poll_( frame_.get() )
 , poll_thread_( &poll_ )
 {
 }

@@ -19,11 +19,11 @@ s_poll_error::s_poll_error( const std::string &what )
 }
 
 
-s_poll::s_poll( uint16_t b_port, int duration, baseframe *frame )
-: p_socket_( b_port )
+s_poll::s_poll( baseframe *frame )
+: p_socket_( utils::config()["port"] )
 , fd_( epoll_create( 1 ) )
 , frame_( frame )
-, frame_duration_( duration )
+, frame_duration_( utils::config()["duration"] )
 {
     try
     {
@@ -114,7 +114,7 @@ void s_poll::f_send_frame( time_point_t * last_ts )
     time_point_t ts = std::chrono::high_resolution_clock::now();
     std::chrono::duration< float, std::milli > d( ts - *last_ts );
 
-    if( std::chrono::duration_cast< std::chrono::milliseconds >(d) > frame_duration_ )
+    if( std::chrono::duration_cast< std::chrono::milliseconds >(d) >= frame_duration_ )
     {
         for( auto p : connections_ )
         {

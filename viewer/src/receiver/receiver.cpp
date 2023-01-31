@@ -7,9 +7,42 @@
 
 #include "receiver.h"
 #include "../decoder/basedecoder.h"
+#include "../../../share/utils.h"
 #include <unistd.h>
 #include <regex>
+#include <iostream>
 
+namespace
+{
+class timedelay
+{
+public:
+    timedelay() = default;
+    explicit timedelay( uint64_t delta )
+    {
+        duration_delta_ = float(delta);
+    }
+    timedelay( timedelay const &orig ) = delete;
+    timedelay &operator =( timedelay const &orig ) = delete;
+     
+    operator float() const
+    {
+        timespec ts;
+        clock_gettime( CLOCK_REALTIME, &ts );
+        if( ! ts_.tv_sec )
+        {
+            ts_ = ts;
+        }
+        float d = float(ts.tv_sec - ts_.tv_sec) * 1000000000 + float(ts.tv_nsec - ts_.tv_nsec) - duration_delta_; 
+        ts_ = ts;
+        return d >0.0f ? d / 1000 : 0.0f;
+     }
+private:
+    static inline timespec ts_ { 0, 0 }; 
+    static inline float duration_delta_ { 0 };
+};
+
+}  // namespace
 
 receiver_error::receiver_error( const std::string &what )
 : std::runtime_error( what )
@@ -56,7 +89,8 @@ flv_tag::flv_tag( uint8_t const *data )
 {
     type_ = tag_type( data[0] );
     data_size_ = from3bytes( &data[1] );
-    timestamp_ = (data[7] << 24) | (from3bytes( &data[4] ));
+    //timestamp_ = (data[7] << 24) | (from3bytes( &data[4] ));
+    ::memcpy( &timestamp_, &data[4], sizeof(timestamp_) );
     stream_id_ = from3bytes( &data[8] );
     frame_type_ = (data[11] >> 4) & 0x0f;
     codec_id_ = codec_id( (data[11]) & 0x0f );
@@ -68,11 +102,12 @@ bool flv_tag::valid() const
 }
 
 
-receiver::receiver( std::string const &url, basedecoder *decoder )
+receiver::receiver( basedecoder *decoder )
 : decoder_( decoder )
 {
     try
     {
+	std::string url = utils::config()["url"];
         std::regex r("^([a-z]+)://([0-9\\.\\S]+):([0-9]+)/(.*)$"); // proto://host:port/context
         std::smatch cm;
 
@@ -182,6 +217,10 @@ size_t receiver::f_receive_tag( uint8_t const *data, size_t size )
     {
         throw receiver_error( "tag invalid" );
     }
+    if( verify_ )
+    {
+        timedelay( (tag.timestamp() - timestamp_) * 1000000 );
+    }
     timestamp_ = tag.timestamp();
     receiver::action = &receiver::f_receive_body;
     
@@ -197,6 +236,10 @@ size_t receiver::f_receive_body( uint8_t const *data, size_t size )
 
 size_t receiver::f_receive_size( uint8_t const *data, size_t size )
 {
+    if( verify_ )
+    {
+        fprintf( stderr, "%f mks\n", float(timedelay()) );
+    }
     receiver::action = &receiver::f_receive_tag;
     return flv_tag::size;
 }

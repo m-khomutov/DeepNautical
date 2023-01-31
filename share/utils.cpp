@@ -41,32 +41,16 @@ utils::config::variant::operator utils::geometry() const
 }
 
 
-namespace
-{
-    std::string options( char const *prog ) 
-    {
-        return std::string("Запуск: ") + prog + "[-h] [-s] [-t] [-p] [-g] [-q] [-d]\n\nimitator\n\n" +
-               "обязательные аргументы:\n" +
-               "\t-s\tкаталог с шейдерами\n" + 
-               "\t-t\tкаталог с текстурами\n" + 
-               "Опциональные аргументы:\n" +
-               "\t-p\tпорт прослушки (def. 2232)\n" + 
-               "\t-g\tразмеры окна (def. 800x600)\n" +
-               "\t-q\tкачество сжатия % (def. 80)\n" +
-               "\t-d\tдлительность кадра мс (def. 40)\n" +
-               "\t-h\tshow this help message and exit\n";	
-    };
-}
-
 utils::config::config( int argc, char * argv[] )
 {
     config::fields_["port"] = 2232;
     config::fields_["window"] = utils::geometry();
     config::fields_["quality"] = 80;
     config::fields_["duration"] = 40;
+    config::fields_["verify"] = false;
     
     int c;
-    while ((c = getopt (argc, argv, "g:d:p:q:s:t:h")) != -1)
+    while ((c = getopt (argc, argv, "g:d:p:q:s:t:u:vh")) != -1)
     {
         switch (c)
         {
@@ -88,14 +72,17 @@ utils::config::config( int argc, char * argv[] )
         case 'd':
               config::fields_["duration"] = ::strtol( optarg, nullptr, 10 );
               break;
-        case '?':
+        case 'u':
+              config::fields_["url"] = optarg;
+              break;
+        case 'v':
+              config::fields_["verify"] = true;
+	      break;
         case 'h':
         default:
-            throw std::runtime_error( options( argv[0] ) );
+            throw std::runtime_error( "Вывод опций программы" );
         }
     }
-    operator[]("shaders");
-    operator[]("textures");
 }
 
 utils::config::variant &utils::config::operator [](char const *key) const

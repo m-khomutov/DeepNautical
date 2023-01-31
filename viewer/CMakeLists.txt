@@ -21,6 +21,7 @@ pkg_check_modules(GTK REQUIRED gtk+-3.0)
 
 include_directories(${GTK_INCLUDE_DIRS})
 add_executable(cometviewer
+	../share/utils.cpp
 	src/decoder/basedecoder.cpp
 	src/decoder/jpegdecoder.cpp
 	src/receiver/c_socket.cpp

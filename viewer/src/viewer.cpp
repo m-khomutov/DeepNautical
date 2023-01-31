@@ -7,6 +7,7 @@
 
 #include "viewer.h"
 #include "decoder/jpegdecoder.h"
+#include "../../share/utils.h"
 #include <iostream>
 
 
@@ -41,17 +42,18 @@ GdkPixbuf *create_pixbuf(const gchar * filename)
 
 }  // namespace
 
-viewer::viewer( char const *url, int width, int height )
-: frame_( width, height )
+viewer::viewer()
+: frame_(  utils::config()["window"] )
 , decoder_( new jpegdecoder )
-, receiver_( url, decoder_.get() )
+, receiver_( decoder_.get() )
 , rec_thread_( &receiver_ )
 , window_( gtk_window_new( GTK_WINDOW_TOPLEVEL ) )
 , layout_( gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 ) )
 , allocation_( g_new(GtkAllocation, 1) )
 {
+    utils::geometry window = utils::config()["window"];
     gtk_window_set_title( GTK_WINDOW(window_), "ПО управления" );
-    gtk_window_set_default_size( GTK_WINDOW(window_), width, height );
+    gtk_window_set_default_size( GTK_WINDOW(window_), window.width, window.height );
     gtk_window_set_position( GTK_WINDOW(window_), GTK_WIN_POS_CENTER );
 
     //GdkPixbuf *icon = create_pixbuf( "/home/mkh/Изображения/awesomeface.png" );  

@@ -48,11 +48,13 @@ int main(int argc, char** argv)
     try
     {
         utils::config( argc, argv );
+        utils::config()["shaders"];
+        utils::config()["textures"];
     }
     catch( const std::runtime_error &e )
     {
         std::cerr << e.what() <<std::endl;
-        return EXIT_FAILURE;
+	show_options_and_exit( argv[0], EXIT_FAILURE );
     }
 
     signal( SIGHUP,  signal_handler );

@@ -29,11 +29,12 @@ void signal_handler( int )
 
 void show_options_and_exit( const char *prog, int rc )
 {
-    std::cerr << "Запуск: " << prog <<  "[-h] [-u] [-g]\n\nimitator\n\n";
+    std::cerr << "Запуск: " << prog <<  "[-h] [-u] [-g] [-v]\n\nviewer\n\n";
     std::cerr << "обязательные аргументы:\n";
     std::cerr << "\t-u\turl симулятора\n"; 
     std::cerr << "Опциональные аргументы:\n";
     std::cerr << "\t-g\tразмеры окна (def. 800x600)\n";
+    std::cerr << "\t-v\tвывод оценки задержки (def. false)\n";
     std::cerr << "\t-h\tshow this help message and exit\n";
     ::exit( rc );   
 }
@@ -41,27 +42,14 @@ void show_options_and_exit( const char *prog, int rc )
 
 int main(int argc, char** argv)
 {
-    const char * url = nullptr;
-    utils::geometry w_geom;
-    int c;
-    while ((c = getopt (argc, argv, "g:u:h")) != -1)
+    try
     {
-        switch (c)
-        {
-        case 'u':
-              url = optarg;
-              break;
-        case 'g':
-              w_geom = utils::geometry( optarg );
-              break;
-        case '?':
-        case 'h':
-        default:
-            show_options_and_exit( argv[0], EXIT_SUCCESS );
-        }
+        utils::config( argc, argv );
+        utils::config()["url"];
     }
-    if( ! url )
+    catch( const std::runtime_error &e )
     {
+        std::cerr << e.what() <<std::endl;
         show_options_and_exit( argv[0], EXIT_FAILURE );
     }
 
@@ -74,7 +62,7 @@ int main(int argc, char** argv)
     {
         gtk_init( &argc, &argv );
 
-        main_viewer.reset( new viewer( url, w_geom.width, w_geom.height ) );
+        main_viewer.reset( new viewer );
         main_viewer->run();
     	return (EXIT_SUCCESS);
     }

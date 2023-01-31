@@ -9,6 +9,7 @@
 #define RECEIVER_H
 
 #include "c_socket.h"
+#include "../../../share/utils.h"
 #include <atomic>
 #include <memory>
 #include <string>
@@ -50,7 +51,7 @@ public:
     {
         return data_size_;
     }
-    uint32_t timestamp() const 
+    float timestamp() const 
     {
         return timestamp_;
     }
@@ -61,7 +62,7 @@ private:
     
     tag_type type_ { tag_type::video };
     uint32_t data_size_ { 0 };
-    uint32_t timestamp_ { 0 };
+    float timestamp_ { 0.0f };
     uint32_t stream_id_ { 0 };
     uint8_t frame_type_ { 1 };
     uint8_t codec_id_ { codec_id::jpeg };
@@ -71,7 +72,7 @@ class basedecoder;
 
 class receiver {
 public:
-    explicit receiver( std::string const &url, basedecoder *decoder );
+    explicit receiver( basedecoder *decoder );
     receiver(const receiver& orig) = delete;
     receiver &operator =(const receiver& orig) = delete;
     ~receiver();
@@ -85,7 +86,8 @@ private:
     std::unique_ptr< c_socket > connection_;
     std::string address_;
     size_t (receiver::*action)(uint8_t const *, size_t);
-    uint32_t timestamp_ { 0 };
+    float timestamp_ { 0.0f };
+    bool verify_ { bool(utils::config()["verify"]) };
 
 private:
     void f_start_connection();

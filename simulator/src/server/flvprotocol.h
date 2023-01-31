@@ -23,7 +23,7 @@ public:
     
 private:
     uint8_t tag_header_[12] { 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x11 };
-    uint32_t timestamp_ { 0 };
+    float timestamp_ { 0.0f };
 };
 
 #endif /* FLVPROTOCOL_H */
