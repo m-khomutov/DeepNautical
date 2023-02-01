@@ -5,13 +5,8 @@
  * Created on 24 января 2023 г., 14:52
  */
 
-#include <glm/gtc/type_ptr.hpp>
-
 #include "figureset.h"
-#include "program.h"
-#include "scene.h"
-#include "figures/antisubmarinefrigate.h"
-#include <iostream> 
+#include <glm/gtc/type_ptr.hpp>
 
 figureset::figureset()
 {
@@ -19,21 +14,43 @@ figureset::figureset()
 
 figureset::~figureset()
 {
+    glDeleteVertexArrays( vao_.size(), vao_.data() );
+    glDeleteBuffers( vbo_.size(), vbo_.data() );
+    glDeleteBuffers( ebo_.size(), ebo_.data() );
 }
 
-void figureset::initialize( program &prog )
+void figureset::emplace( figure *fig )
 {
-    figures_.emplace_back( new antisubmarinefrigate );
-    for( auto f : figures_ )
-    {
-	f->initialize( prog );
+    figures_.emplace_back( fig );
+}
+
+void figureset::initialize()
+{
+    vao_.resize( figures_.size() );
+    vbo_.resize( figures_.size() );
+    ebo_.resize( figures_.size() );
+    
+
+    glGenVertexArrays( vao_.size(), vao_.data() );
+    glGenBuffers( vbo_.size(), vbo_.data() );
+    glGenBuffers( ebo_.size(), ebo_.data() );
+    
+    for( GLint i(0); i < figures_.size(); ++i ) {
+        glBindVertexArray( vao_[i] );
+        glBindBuffer( GL_ARRAY_BUFFER, vbo_[i] );
+        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ebo_[i] );
+        figures_[i]->initialize();
+        glBindBuffer( GL_ARRAY_BUFFER, 0 );
+        glBindVertexArray( 0 );
     }
 }
 
-void figureset::draw( scene &sc, double currentTime )
+void figureset::draw( double currentTime )
 {
-    for( auto f : figures_ )
+    for( GLint i(0); i < figures_.size(); ++i )
     {
-	f->draw( sc, currentTime );
+        glBindVertexArray( vao_[i] );
+        figures_[i]->draw( currentTime );
+        glBindVertexArray( 0 );
     }
 }
