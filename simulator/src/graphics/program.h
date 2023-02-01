@@ -21,7 +21,7 @@ public:
 
 class program {
 public:
-    explicit program();
+    explicit program( char const *filter );
     program(const program& orig) = delete;
     program &operator =( const program & rhs ) = delete;
     ~program();

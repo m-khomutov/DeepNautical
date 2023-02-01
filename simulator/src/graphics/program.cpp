@@ -33,7 +33,7 @@ bool block_variable( GLuint id, GLuint idx, std::pair< std::string, GLint > *rc 
 }
 }  // namespace
 
-program::program()
+program::program( char const *filter )
 : id_( glCreateProgram() )
 {
     try
@@ -47,7 +47,7 @@ program::program()
 
         while( (entry = readdir(dir))  )
         {
-            if( entry->d_type == DT_REG && strstr( entry->d_name, ".glsl" ) )
+            if( entry->d_type == DT_REG && strstr( entry->d_name, filter ) )
             {
                 f_emplace_shader( s_dir + "/" + entry->d_name );
             }

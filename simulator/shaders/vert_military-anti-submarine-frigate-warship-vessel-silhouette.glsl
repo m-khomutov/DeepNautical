@@ -6,9 +6,9 @@ layout (location=1) in vec2 texcoord;
 out vec2 TexCoord;
 
 uniform vec3 Offset;
-uniform mat4 RotationMatrix;
+uniform mat4 Model;
 
 void main() {
     TexCoord = texcoord;
-    gl_Position = RotationMatrix * vec4(position + Offset, 1.0);
+    gl_Position = Model * vec4(position + Offset, 1.0);
 }

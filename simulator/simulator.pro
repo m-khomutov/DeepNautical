@@ -28,6 +28,8 @@ SOURCES += \
     src/encoding/jpegframe.cpp \
     src/graphics/figures/antisubmarinefrigate.cpp \
     src/graphics/figures/figure.cpp \
+    src/graphics/figures/sol.cpp \
+    src/graphics/figures/water.cpp \
     src/graphics/figureset.cpp \
     src/graphics/program.cpp \
     src/graphics/scene.cpp \
@@ -35,11 +37,11 @@ SOURCES += \
     src/graphics/shader.cpp \
     src/graphics/texture.cpp \
     src/graphics/uniformblock.cpp \
+    src/main.cpp \
     src/server/baseprotocol.cpp \
     src/server/flvprotocol.cpp \
     src/server/s_poll.cpp \
     src/server/s_socket.cpp \
-    src/main.cpp \
     src/service.cpp \
     ../share/utils.cpp
 
@@ -48,6 +50,8 @@ HEADERS += \
     src/encoding/jpegframe.h \
     src/graphics/figures/antisubmarinefrigate.h \
     src/graphics/figures/figure.h \
+    src/graphics/figures/sol.h \
+    src/graphics/figures/water.h \
     src/graphics/figureset.h \
     src/graphics/program.h \
     src/graphics/scene.h \

@@ -12,6 +12,7 @@
 
 namespace
 {
+char const shader_name[] = "military-anti-submarine-frigate-warship-vessel-silhouette.glsl";
 char const texture_name[] = "/military-anti-submarine-frigate-warship-vessel-silhouette.png";
 }
 
@@ -23,16 +24,15 @@ antisubmarinefrigate::~antisubmarinefrigate()
 {
 }
 
-void antisubmarinefrigate::initialize( program &prog )
+char const *antisubmarinefrigate::f_shader_name() const
+{
+    return shader_name; 
+}
+
+void antisubmarinefrigate::f_initialize()
 {
     texture_.reset( new texture( (std::string(utils::config()["textures"]) + texture_name).c_str() ) );
-
-    prog.uniform_block("Circle" )["InnerColor"] = glm::vec4(1.0f, 1.0f, 0.75f, 1.0f);
-    prog.uniform_block("Circle" )["OuterColor"] = glm::vec4(0.2f, 0.3f, 0.3f,  1.0f);
-    prog.uniform_block("Circle" )["InnerRadius"] = 0.25f;
-    prog.uniform_block("Circle" )["OuterRadius"] = 0.45f;
-    prog.uniform_block("Circle").copy();
-
+    
     glBufferData( GL_ARRAY_BUFFER, sizeof(position_), position_, GL_STATIC_DRAW );
     glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices_), indices_, GL_STATIC_DRAW); 
     glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0 );
@@ -41,19 +41,18 @@ void antisubmarinefrigate::initialize( program &prog )
     glEnableVertexAttribArray( 1 );   
 }
 
-void antisubmarinefrigate::draw( scene &sc, double currentTime )
+void antisubmarinefrigate::f_draw( double currentTime )
 {
-    texture_->activate();
-    glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
-    sc.set_attribute( "RotationMatrix", rotation_ );
-    sc.set_attribute( "Texture", GLuint(0) );
-    sc.set_attribute( "Offset", offset_ );
+    set_attribute( "Model", model_ );
+    set_attribute( "Texture", GLuint(0) );
+    set_attribute( "Offset", offset_ );
+    set_attribute( "Waterline", waterline_ );
     if( scene_position_ < -1.0 || scene_position_ > 1.0 )
     {
         offset_.x = 0.0f;
         direction_ *= -1;
         angle_ = angle_ == 0.0f ? 180.0f : 0.0f;
-        rotation_ = glm::mat4( glm::translate(
+        model_ = glm::mat4( glm::translate(
                                    glm::rotate( glm::mat4(1.0f),
                                                 glm::radians( angle_ ),
                                                 glm::vec3( 0.0f, 1.0f, 0.0f ) ),
@@ -61,4 +60,6 @@ void antisubmarinefrigate::draw( scene &sc, double currentTime )
     }
     scene_position_ += speed_ * direction_;
     offset_.x -= speed_;
+    
+    glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
 }

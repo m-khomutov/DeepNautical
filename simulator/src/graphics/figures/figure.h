@@ -9,13 +9,11 @@
 #define FIGURE_H
 
 #include "../texture.h"
+#include "../program.h"
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <memory>
-
-class program;
-class scene;
 
 class figure {
 public:
@@ -24,21 +22,32 @@ public:
     figure &operator=(const figure& orig) = delete;
     virtual ~figure();
 
-    virtual void initialize( program &prog ) = 0;
-    virtual void draw( scene &sc, double currentTime ) = 0;
+    void initialize();
+    void draw( double currentTime );
 
 protected:   
+    std::unique_ptr< program > program_;
     std::unique_ptr< texture > texture_;    
-    glm::mat4 rotation_ { glm::rotate(glm::mat4(1.0f), glm::radians( 0.0f ), glm::vec3(1.0f, 0.0f, 0.0f) ) };
+    glm::mat4 model_ { glm::rotate(glm::mat4(1.0f), glm::radians( 0.0f ), glm::vec3(1.0f, 0.0f, 0.0f) ) };
     float angle_ = 0.0f;
     float scene_position_ { 0.0f };
     float speed_ { 0.001f };
     float direction_ { -1.0f };
     glm::vec3 offset_ { 0.0f, 0.0f, 0.0f };
 
-private:
+protected:
+    void set_attribute( const GLchar * name, float value );
+    void set_attribute( const GLchar * name, GLuint value );
+    void set_attribute( const GLchar * name, glm::vec3 );
+    void set_attribute( const GLchar * name, glm::vec4 );
+    void set_attribute( const GLchar * name, glm::mat3 );
+    void set_attribute( const GLchar * name, glm::mat4 );
+    void set_subroutine( const GLchar * uniform_name, const GLchar * subroutine_name, GLenum shader_type );
 
+private:
+    virtual char const *f_shader_name() const = 0;
+    virtual void f_initialize() = 0;
+    virtual void f_draw( double currentTime ) = 0;
 };
 
 #endif /* FIGURE_H */
-

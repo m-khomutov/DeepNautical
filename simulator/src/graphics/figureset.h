@@ -21,10 +21,17 @@ public:
     figureset &operator =( const figureset &rhs ) = delete;
     ~figureset();
     
-    void initialize( program &prog );
-    void draw( scene &sc, double currentTime );
+    void emplace( figure *fig );
+    
+    void initialize();
+    void draw( double currentTime );
     
 private:
+    std::vector< GLuint > vao_;
+    std::vector< GLuint > vbo_;
+    std::vector< GLuint > ebo_;
+
+ 
     std::vector< std::shared_ptr< figure > > figures_;
 };
 
