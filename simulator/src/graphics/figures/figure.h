@@ -23,8 +23,8 @@ public:
     figure &operator=(const figure& orig) = delete;
     virtual ~figure();
 
-    virtual void initialize() = 0;
-    virtual void draw( double currentTime ) = 0;
+    void initialize();
+    void draw( double currentTime );
 
 protected:   
     std::unique_ptr< program > program_;
@@ -44,6 +44,11 @@ protected:
     void set_attribute( const GLchar * name, glm::mat3 );
     void set_attribute( const GLchar * name, glm::mat4 );
     void set_subroutine( const GLchar * uniform_name, const GLchar * subroutine_name, GLenum shader_type );
+
+private:
+    virtual char const *f_shader_name() const = 0;
+    virtual void f_initialize() = 0;
+    virtual void f_draw( double currentTime ) = 0;
 };
 
 #endif /* FIGURE_H */

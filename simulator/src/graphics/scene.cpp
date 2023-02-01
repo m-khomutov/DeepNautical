@@ -7,6 +7,7 @@
 
 #include "scene.h"
 #include "figures/sol.h"
+#include "figures/water.h"
 #include "figures/antisubmarinefrigate.h"
 #include <iostream>
 
@@ -55,6 +56,7 @@ scene::scene()
     f_debug_info();
     
     figureset_.emplace( new sol );
+    figureset_.emplace( new water );
     figureset_.emplace( new antisubmarinefrigate );
     figureset_.initialize();
 }
@@ -65,7 +67,7 @@ scene::~scene()
 
 void scene::display( GLuint width, GLuint height, double currentTime )
 {
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0);
+    glClearColor( 0.392f, 0.706f, 0.983f, 1.0f );
     glClear( GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     figureset_.draw( currentTime );
 }

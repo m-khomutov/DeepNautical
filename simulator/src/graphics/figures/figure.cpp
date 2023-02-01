@@ -16,6 +16,22 @@ figure::~figure()
 {
 }
 
+void figure::initialize()
+{
+    program_.reset( new program( f_shader_name() ) );
+    f_initialize();    
+}
+
+void figure::draw( double currentTime )
+{
+    glUseProgram( *program_ );
+    if( texture_ )
+    {
+        texture_->activate();
+    }
+    f_draw( currentTime );    
+}
+
 void figure::set_attribute( const GLchar *name, float value )
 {
     try {

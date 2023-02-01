@@ -24,9 +24,13 @@ antisubmarinefrigate::~antisubmarinefrigate()
 {
 }
 
-void antisubmarinefrigate::initialize()
+char const *antisubmarinefrigate::f_shader_name() const
 {
-    program_.reset(new program( shader_name ) );
+    return shader_name; 
+}
+
+void antisubmarinefrigate::f_initialize()
+{
     texture_.reset( new texture( (std::string(utils::config()["textures"]) + texture_name).c_str() ) );
     
     glBufferData( GL_ARRAY_BUFFER, sizeof(position_), position_, GL_STATIC_DRAW );
@@ -37,15 +41,12 @@ void antisubmarinefrigate::initialize()
     glEnableVertexAttribArray( 1 );   
 }
 
-void antisubmarinefrigate::draw( double currentTime )
+void antisubmarinefrigate::f_draw( double currentTime )
 {
-    glUseProgram( *program_ );
-    texture_->activate();
     set_attribute( "Model", model_ );
     set_attribute( "Texture", GLuint(0) );
     set_attribute( "Offset", offset_ );
-    set_attribute( "Background", glm::vec4(0.2f, 0.3f, 0.3f,  1.0f) );
-    glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
+    set_attribute( "Waterline", waterline_ );
     if( scene_position_ < -1.0 || scene_position_ > 1.0 )
     {
         offset_.x = 0.0f;
@@ -59,4 +60,6 @@ void antisubmarinefrigate::draw( double currentTime )
     }
     scene_position_ += speed_ * direction_;
     offset_.x -= speed_;
+    
+    glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
 }
