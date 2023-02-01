@@ -9,6 +9,7 @@
 #define TEXTURE_H
 
 #include <GL/glew.h>
+//#include <qopengl.h>
 #include <stdexcept>
 
 class texture_error: public std::runtime_error {

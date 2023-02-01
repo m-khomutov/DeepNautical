@@ -5,6 +5,7 @@
  * Created on 24 января 2023 г., 10:55
  */
 
+#include <GL/glew.h>
 #include "program.h"
 #include "../../../share/utils.h"
 #include <dirent.h> 
@@ -25,7 +26,7 @@ bool block_variable( GLuint id, GLuint idx, std::pair< std::string, GLint > *rc 
     GLint results[4];
     glGetProgramResourceiv( id, GL_UNIFORM, idx, 4, properties, 4, nullptr, results );
     std::string name( results[0] + 1, ' ' );
-    glGetProgramResourceName( id, GL_UNIFORM, idx, results[0] + 1, nullptr, name.data() );
+    glGetProgramResourceName( id, GL_UNIFORM, idx, results[0] + 1, nullptr, const_cast<char*>(name.data()) );
     
     *rc = std::make_pair( name, results[2] );
     return results[3] != -1; 
@@ -146,7 +147,7 @@ void program::f_get_attributes() {
         GLint results[3];
         glGetProgramResourceiv( id_, GL_PROGRAM_INPUT, i, 3, properties, 3, nullptr, results );
         std::string name( results[0] + 1, ' ' );
-        glGetProgramResourceName( id_, GL_PROGRAM_INPUT, i, results[0] + 1, nullptr, name.data() );
+        glGetProgramResourceName( id_, GL_PROGRAM_INPUT, i, results[0] + 1, nullptr, const_cast<char*>(name.data()) );
         attributes_.emplace( std::string(name.data()), std::make_pair( results[2], results[1] ) );
     }
     std::cerr << "attributes: \n";
@@ -178,7 +179,7 @@ void program::f_get_uniform_blocks() {
         GLint results[2];
         glGetProgramResourceiv( id_, GL_UNIFORM_BLOCK, i, 2, props, 2, nullptr, results );
         std::string name( results[0] + 1, 0 );
-        glGetProgramResourceName( id_, GL_UNIFORM_BLOCK, i, results[0] + 1, nullptr, name.data() );
+        glGetProgramResourceName( id_, GL_UNIFORM_BLOCK, i, results[0] + 1, nullptr, const_cast<char*>(name.data()) );
         while( name.back() == 0 )
         {
             name.pop_back();

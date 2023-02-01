@@ -25,7 +25,7 @@ public:
 
 private:
     std::unique_ptr< baseframe > frame_;
-    screen screen_;
+    std::unique_ptr< screen > screen_;
     s_poll poll_;
     utils::scoped_thread< s_poll > poll_thread_;
 };

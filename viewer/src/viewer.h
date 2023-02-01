@@ -8,10 +8,12 @@
 #ifndef VIEWER_H
 #define VIEWER_H
 
+#include <QWidget>
+#include <QImage>
 #include "receiver/receiver.h"
 #include "decoder/basedecoder.h"
 #include "../../share/utils.h"
-#include <gtk/gtk.h>
+//#include <gtk/gtk.h>
 #include <stdexcept>
 
 class basedecoder;
@@ -22,7 +24,7 @@ public:
     viewer_error( const std::string & what );
 };
 
-class viewer {
+class viewer: public QWidget {
 public:
     viewer();
     viewer(const viewer& orig) = delete;
@@ -31,21 +33,18 @@ public:
 
     void run();
     void stop();
-    void update();
 
 private:
-    struct del { void operator ()(GtkAllocation *p) { g_free(p); } };
+    void paintEvent(QPaintEvent*);
+    void timerEvent(QTimerEvent*);
     
     decframe frame_;
     std::unique_ptr< basedecoder > decoder_;
     receiver receiver_;
     utils::scoped_thread< receiver > rec_thread_;
-    gint update_tag_ { 0 }; 
+    int update_tag_ { -1 };
 
-    GtkWidget *window_;
-    GtkWidget *layout_; 
-    GtkWidget *image_ = nullptr;
-    std::unique_ptr< GtkAllocation, del > allocation_;
+    QImage img_;
 };
 
 #endif /* VIEWER_H */

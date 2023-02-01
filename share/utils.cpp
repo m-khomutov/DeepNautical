@@ -9,6 +9,8 @@
 #include <getopt.h>
 #include <iostream>
 
+utils::config::fields_t utils::config::fields_ = utils::config::fields_t();
+
 utils::config::variant::variant( int v )
 : ivalue_( v )
 {

@@ -5,6 +5,8 @@
  * Created on 23 января 2023 г., 18:31
  */
 
+#include <QApplication>
+
 #include "service.h"
 #include "../../share/utils.h"
 
@@ -64,9 +66,23 @@ int main(int argc, char** argv)
 
     try
     {
+        QSurfaceFormat format;
+        format.setDepthBufferSize(24);
+        format.setStencilBufferSize(8);
+        format.setVersion(3,3);
+        format.setProfile(QSurfaceFormat::CoreProfile);
+        QSurfaceFormat::setDefaultFormat(format);
+
+        QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL, true);
+        QApplication a(argc, argv);
+        QApplication::setAttribute(Qt::AA_ForceRasterWidgets, false);
+
         main_service.reset( new service );
         main_service->run();
-    	return (EXIT_SUCCESS);
+
+        int ret = a.exec();
+        main_service->stop();
+        return ret;
     }
     catch( const std::runtime_error &err )
     {

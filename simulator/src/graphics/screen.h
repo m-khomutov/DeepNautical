@@ -8,10 +8,11 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
-#include "shader.h"
+#include "scene.h"
 #include "../encoding/jpegframe.h"
-#include <GLFW/glfw3.h>
+//#include <GLFW/glfw3.h>
 #include <memory>
+#include <QOpenGLWidget>
 
 
 class screen_error: public std::runtime_error {
@@ -19,7 +20,7 @@ public:
     screen_error(const std::string & what);
 };
 
-class screen {
+class screen: public QOpenGLWidget {
 public:
     explicit screen( baseframe *frame );
     screen(const screen& orig) = delete;
@@ -30,11 +31,17 @@ public:
     void stop();
 
 private:
-    struct del { void operator()(GLFWwindow * w) { glfwDestroyWindow( w ); glfwTerminate(); } };
-    std::unique_ptr< GLFWwindow, del > window_;
+//    struct del { void operator()(GLFWwindow * w) { glfwDestroyWindow( w ); glfwTerminate(); } };
+//    std::unique_ptr< GLFWwindow, del > window_;
     baseframe *frame_;
+    std::unique_ptr<scene> sc_;
+    int update_id_ = { -1 };
 
-private:
+    void timerEvent(QTimerEvent*);
+    void initializeGL() override;
+    void paintGL() override;
+    void resizeGL(int w, int h) override;
+
     static void error_cb( int error, const GLchar * description );
 };
 

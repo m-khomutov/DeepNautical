@@ -9,7 +9,7 @@
 
 service::service()
 : frame_( new jpegframe )
-, screen_( frame_.get() )
+, screen_(new screen(frame_.get()))
 , poll_( frame_.get() )
 , poll_thread_( &poll_ )
 {
@@ -21,10 +21,12 @@ service::~service()
 
 void service::run()
 {
-    screen_.run();
+//    screen_.reset(new screen(frame_.get()) );
+    screen_->run();
 }
 
 void service::stop()
 {
-    screen_.stop();
+    screen_->stop();
+//    screen_.reset(nullptr);
 }

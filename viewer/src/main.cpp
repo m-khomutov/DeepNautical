@@ -5,6 +5,9 @@
  * Created on 25 января 2023 г., 17:24
  */
 
+#include <QtCore>
+#include <QApplication>
+
 #include "viewer.h"
 #include "../../share/utils.h"
 
@@ -60,11 +63,15 @@ int main(int argc, char** argv)
 
     try
     {
-        gtk_init( &argc, &argv );
+        QApplication a(argc, argv );
+        //gtk_init( &argc, &argv );
 
         main_viewer.reset( new viewer );
         main_viewer->run();
-    	return (EXIT_SUCCESS);
+
+        int ret = a.exec();
+        main_viewer->stop();
+        return ret;
     }
     catch( const std::runtime_error &err )
     {

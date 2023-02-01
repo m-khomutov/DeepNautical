@@ -4,7 +4,7 @@
  * 
  * Created on 31 января 2023 г., 14:45
  */
-
+#include <GL/glew.h>
 #include "antisubmarinefrigate.h"
 #include "../../../../share/utils.h"
 #include "../program.h"

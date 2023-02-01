@@ -10,9 +10,8 @@
 
 #include "program.h"
 #include "figureset.h"
-
-#include <GL/glew.h>
 #include <glm/glm.hpp>
+#include <qopengl.h>
 #include <string>
 
 
