@@ -6,7 +6,6 @@
  */
 
 #include "sol.h"
-#include "../program.h"
 #include <glm/gtx/transform.hpp>
 
 namespace
@@ -51,7 +50,6 @@ void sol::f_initialize()
 void sol::f_draw( double currentTime )
 {
     glUseProgram( *program_ );
-    set_attribute( "Model", model_ );
     set_attribute( "Offset", offset_ );
  
     glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );

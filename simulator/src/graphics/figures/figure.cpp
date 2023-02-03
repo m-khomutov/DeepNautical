@@ -7,9 +7,12 @@
 
 #include "figure.h"
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
 
 figure::figure()
 {
+    utils::geometry win { utils::config()["window"] };
+    projection_ = glm::perspective( glm::radians( 26.5f ), (GLfloat)win.width / (GLfloat)win.height, 0.1f, 100.0f );
 }
 
 figure::~figure()
@@ -25,6 +28,9 @@ void figure::initialize()
 void figure::draw( double currentTime )
 {
     glUseProgram( *program_ );
+    set_attribute( "Model", model_ );
+    set_attribute( "View", view_ );
+    set_attribute( "Projection", projection_ );
     if( texture_ )
     {
         texture_->activate();

@@ -6,9 +6,6 @@
  */
 
 #include "antisubmarinefrigate.h"
-#include "../../../../share/utils.h"
-#include "../program.h"
-#include "../scene.h"
 
 namespace
 {
@@ -43,7 +40,6 @@ void antisubmarinefrigate::f_initialize()
 
 void antisubmarinefrigate::f_draw( double currentTime )
 {
-    set_attribute( "Model", model_ );
     set_attribute( "Texture", GLuint(0) );
     set_attribute( "Offset", offset_ );
     set_attribute( "Waterline", waterline_ );

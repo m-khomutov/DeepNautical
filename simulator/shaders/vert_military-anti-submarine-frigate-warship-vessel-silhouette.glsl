@@ -7,8 +7,10 @@ out vec2 TexCoord;
 
 uniform vec3 Offset;
 uniform mat4 Model;
+uniform mat4 View;
+uniform mat4 Projection;
 
 void main() {
     TexCoord = texcoord;
-    gl_Position = Model * vec4(position + Offset, 1.0);
+    gl_Position = Projection * View * Model * vec4(position + Offset, 1.0);
 }

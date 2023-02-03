@@ -6,8 +6,6 @@
  */
 
 #include "water.h"
-#include "../program.h"
-#include "../../../../share/utils.h"
 
 namespace
 {
@@ -42,8 +40,7 @@ void water::f_initialize()
 
 void water::f_draw( double currentTime )
 {
-    set_attribute( "Model", model_ );
     set_attribute( "Offset", offset_ );
-    
+
     glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
 }
