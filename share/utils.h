@@ -93,7 +93,7 @@ public:
     variant &operator [](char const *key) const;
     
 private:
-    inline static fields_t fields_ = fields_t();
+    static fields_t fields_;
 };
 
 }  // namespace utils

@@ -17,12 +17,14 @@ add_executable(cometsimulator
 	src/graphics/shader.cpp
 	src/graphics/program.cpp
 	src/graphics/scene.cpp
-	src/graphics/screen.cpp
+	src/graphics/screens/basescreen.cpp
+	src/graphics/screens/glfwscreen.cpp
 	src/server/s_socket.cpp
 	src/server/baseprotocol.cpp
 	src/server/flvprotocol.cpp
 	src/server/s_poll.cpp
-        src/service.cpp
+        src/service/baseservice.cpp
+        src/service/glfwservice.cpp
         src/main.cpp
         )
 

@@ -5,20 +5,15 @@
  * Created on 24 января 2023 г., 9:19
  */
 
-#include "screen.h"
-#include "scene.h"
+#include "glfwscreen.h"
+#include "../scene.h"
 #include <iostream>
 
-screen_error::screen_error( const std::string &what )
-: std::runtime_error( what )
-{
-}
 
-
-screen::screen( baseframe *frame )
+glfwscreen::glfwscreen( baseframe *frame )
 : frame_( frame )
 {
-    glfwSetErrorCallback( screen::error_cb );
+    glfwSetErrorCallback( glfwscreen::error_cb );
     
     if(!glfwInit())
         throw screen_error("glfw init error");
@@ -53,11 +48,11 @@ screen::screen( baseframe *frame )
     glfwSwapInterval(1);
 }
 
-screen::~screen()
+glfwscreen::~glfwscreen()
 {
 }
 
-void screen::run()
+void glfwscreen::run()
 {
     GLint w, h;
     scene sc;
@@ -71,12 +66,12 @@ void screen::run()
     }
 }
 
-void screen::stop()
+void glfwscreen::stop()
 {
     glfwSetWindowShouldClose( window_.get(), GL_TRUE );
 }
 
-void screen::error_cb( int error, const GLchar * description )
+void glfwscreen::error_cb( int error, const GLchar * description )
 {
     throw screen_error( std::string(description) );
 }

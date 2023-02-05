@@ -5,8 +5,11 @@
  * Created on 23 января 2023 г., 18:31
  */
 
-#include "service.h"
+#include "service/baseservice.h"
 #include "../../share/utils.h"
+#ifdef QT_CORE_LIB
+# include <QApplication>
+#endif
 
 #include <stdlib.h>
 #include <signal.h>
@@ -20,11 +23,11 @@
 
 namespace
 {
-std::unique_ptr< service > main_service;
+std::unique_ptr< baseservice > main_service;
 
-void signal_handler( int )
+void signal_handler( int s )
 {
-    main_service->stop();
+    main_service->onsignal( s );
 }
 
 void show_options_and_exit( const char *prog, int rc )
@@ -54,23 +57,27 @@ int main(int argc, char** argv)
     catch( const std::runtime_error &e )
     {
         std::cerr << e.what() <<std::endl;
-	show_options_and_exit( argv[0], EXIT_FAILURE );
+        show_options_and_exit( argv[0], EXIT_FAILURE );
     }
 
     signal( SIGHUP,  signal_handler );
     signal( SIGTERM, signal_handler );
     signal( SIGSEGV, signal_handler);
     signal( SIGINT,  signal_handler);
-
+    
+#ifdef QT_CORE_LIB
+    QApplication a(argc, argv);
+#endif
     try
     {
-        main_service.reset( new service );
+        main_service.reset( baseservice::make( argc, argv ) );
         main_service->run();
-    	return (EXIT_SUCCESS);
+
+        return main_service->stop();
     }
     catch( const std::runtime_error &err )
     {
-        std::cerr << "error: " << err.what() << "\n";
+        std::cerr << "1. error: " << err.what() << "\n";
     }
     catch( ...)
     {
@@ -88,5 +95,6 @@ int main(int argc, char** argv)
         }
     }
 
+    main_service.reset();
     return (EXIT_FAILURE);
 }

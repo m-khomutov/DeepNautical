@@ -24,10 +24,10 @@ bool block_variable( GLuint id, GLuint idx, std::pair< std::string, GLint > *rc 
     GLenum const properties[] = { GL_NAME_LENGTH, GL_TYPE, GL_LOCATION, GL_BLOCK_INDEX };
     GLint results[4];
     glGetProgramResourceiv( id, GL_UNIFORM, idx, 4, properties, 4, nullptr, results );
-    std::string name( results[0] + 1, ' ' );
+    std::vector< char > name( results[0] + 1, ' ' );
     glGetProgramResourceName( id, GL_UNIFORM, idx, results[0] + 1, nullptr, name.data() );
     
-    *rc = std::make_pair( name, results[2] );
+    *rc = std::make_pair( std::string(name.data(), name.size()), results[2] );
     return results[3] != -1; 
 }
 }  // namespace
@@ -145,7 +145,7 @@ void program::f_get_attributes() {
     for( int i(0); i < num; ++i ) {
         GLint results[3];
         glGetProgramResourceiv( id_, GL_PROGRAM_INPUT, i, 3, properties, 3, nullptr, results );
-        std::string name( results[0] + 1, ' ' );
+        std::vector< char > name( results[0] + 1, ' ' );
         glGetProgramResourceName( id_, GL_PROGRAM_INPUT, i, results[0] + 1, nullptr, name.data() );
         attributes_.emplace( std::string(name.data()), std::make_pair( results[2], results[1] ) );
     }
@@ -177,12 +177,13 @@ void program::f_get_uniform_blocks() {
     for( int i(0); i < num; ++i ) {
         GLint results[2];
         glGetProgramResourceiv( id_, GL_UNIFORM_BLOCK, i, 2, props, 2, nullptr, results );
-        std::string name( results[0] + 1, 0 );
-        glGetProgramResourceName( id_, GL_UNIFORM_BLOCK, i, results[0] + 1, nullptr, name.data() );
-        while( name.back() == 0 )
+        std::vector< char > v( results[0] + 1, ' ' );
+        glGetProgramResourceName( id_, GL_UNIFORM_BLOCK, i, results[0] + 1, nullptr, v.data() );
+        while( v.back() == 0 || v.back() == ' ' )
         {
-            name.pop_back();
+            v.pop_back();
         }
+	std::string name(v.data(), v.size());
         uniform_blocks_.emplace( name, new uniformblock( id_, name.data() ) );
         if( results[1] )
         {
