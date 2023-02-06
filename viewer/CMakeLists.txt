@@ -26,7 +26,8 @@ add_executable(cometviewer
 	src/decoder/jpegdecoder.cpp
 	src/receiver/c_socket.cpp
 	src/receiver/receiver.cpp
-        src/viewer.cpp
+        src/viewer/baseviewer.cpp
+        src/viewer/gviewer.cpp
         src/main.cpp
         )
 

@@ -38,9 +38,11 @@ public:
         return d >0.0f ? d / 1000 : 0.0f;
      }
 private:
-    static inline timespec ts_ { 0, 0 }; 
-    static inline float duration_delta_ { 0 };
+    static timespec ts_; 
+    static float duration_delta_;
 };
+timespec timedelay::ts_ = { 0, 0 };
+float timedelay::duration_delta_ = { 0 };
 
 }  // namespace
 

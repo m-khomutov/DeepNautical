@@ -5,11 +5,14 @@
  * Created on 25 января 2023 г., 17:24
  */
 
-#include "viewer.h"
+#include "viewer/baseviewer.h"
 #include "../../share/utils.h"
 
 #include <getopt.h>
 #include <signal.h>
+#ifdef QT_CORE_LIB
+# include <QApplication>
+#endif
 
 #include <iostream>
 #include <memory>
@@ -20,11 +23,11 @@
 
 namespace
 {
-std::unique_ptr< viewer > main_viewer;
+std::unique_ptr< baseviewer > main_viewer;
 
-void signal_handler( int )
+void signal_handler( int s )
 {
-    main_viewer->stop();
+    main_viewer->onsignal( s );
 }
 
 void show_options_and_exit( const char *prog, int rc )
@@ -58,13 +61,14 @@ int main(int argc, char** argv)
     signal( SIGSEGV, signal_handler);
     signal( SIGINT,  signal_handler);
 
+#ifdef QT_CORE_LIB
+    QApplication a(argc, argv);
+#endif
     try
     {
-        gtk_init( &argc, &argv );
-
-        main_viewer.reset( new viewer );
+        main_viewer.reset( baseviewer::make( argc, argv ) );
         main_viewer->run();
-    	return (EXIT_SUCCESS);
+        return main_viewer->stop();
     }
     catch( const std::runtime_error &err )
     {
