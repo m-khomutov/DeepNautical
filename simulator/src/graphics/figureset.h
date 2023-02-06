@@ -31,8 +31,8 @@ private:
     std::vector< GLuint > vbo_;
     std::vector< GLuint > ebo_;
 
- 
-    std::vector< std::shared_ptr< figure > > figures_;
+    using figure_t =  std::vector< std::shared_ptr< figure > >;
+    figure_t figures_;
 };
 
 #endif /* FIGURESET_H */

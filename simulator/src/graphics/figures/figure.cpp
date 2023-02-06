@@ -44,7 +44,7 @@ void figure::set_attribute( const GLchar *name, float value )
         glProgramUniform1f ( *program_, program_->uniform_index( name ), value );
     }
     catch( const std::exception & e ) {
-        GLuint idx = glGetUniformLocation( *program_, name );
+        GLint idx = glGetUniformLocation( *program_, name );
         if( idx != -1 )
             glProgramUniform1f ( *program_, idx, value );
     }
@@ -55,7 +55,7 @@ void figure::set_attribute( const GLchar *name, GLuint value ) {
         glProgramUniform1i ( *program_, program_->uniform_index( name ), value );
     }
     catch( const std::exception & e ) {
-        GLuint idx = glGetUniformLocation( *program_, name );
+        GLint idx = glGetUniformLocation( *program_, name );
         if( idx != -1 )
             glProgramUniform1i ( *program_, idx, value );
     }
@@ -66,7 +66,7 @@ void figure::set_attribute( const GLchar *name, glm::vec3 value ) {
         glProgramUniform3f( *program_, program_->uniform_index( name ), value.x, value.y, value.z );
     }
     catch( const std::exception & e ) {
-        GLuint idx = glGetUniformLocation( *program_, name );
+        GLint idx = glGetUniformLocation( *program_, name );
         if( idx != -1 )
             glProgramUniform3f( *program_, idx, value.x, value.y, value.z );
     }
@@ -77,7 +77,7 @@ void figure::set_attribute( const GLchar *name, glm::vec4 value ) {
         glProgramUniform4f( *program_, program_->uniform_index( name ), value.x, value.y, value.z, value.w );
     }
     catch( const std::exception & e ) {
-        GLuint idx = glGetUniformLocation( *program_, name );
+        GLint idx = glGetUniformLocation( *program_, name );
         if( idx != -1 ) {
             glProgramUniform4f( *program_, idx, value.x, value.y, value.z, value.w );
         }
@@ -89,7 +89,7 @@ void figure::set_attribute( const GLchar *name, glm::mat3 value ) {
         glUniformMatrix3fv( program_->uniform_index( name ), 1, GL_FALSE, glm::value_ptr( value ) );
     }
     catch( const std::exception & e ) {
-        GLuint idx = glGetUniformLocation( *program_, name );
+        GLint idx = glGetUniformLocation( *program_, name );
         if( idx != -1 )
             glUniformMatrix3fv( idx, 1, GL_FALSE, glm::value_ptr( value ) );
     }
@@ -100,7 +100,7 @@ void figure::set_attribute( const GLchar *name, glm::mat4 value ) {
         glUniformMatrix4fv( program_->uniform_index( name ), 1, GL_FALSE, glm::value_ptr( value ) );
     }
     catch( const std::exception & e ) {
-        GLuint idx = glGetUniformLocation( *program_, name );
+        GLint idx = glGetUniformLocation( *program_, name );
         if( idx != -1 )
             glUniformMatrix4fv( idx, 1, GL_FALSE, glm::value_ptr( value ) );
     }

@@ -13,12 +13,12 @@
 #include "glfwservice.h"
 #endif
 
-baseservice *baseservice::make( int argc, char *argv[] )
+baseservice *baseservice::make()
 {
 #ifdef QT_CORE_LIB
-    return new qservice( argc, argv );
+    return new qservice;
 #else
-    return new glfwservice();
+    return new glfwservice;
 #endif
 }
 

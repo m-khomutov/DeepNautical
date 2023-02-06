@@ -14,9 +14,12 @@ figureset::figureset()
 
 figureset::~figureset()
 {
-    glDeleteVertexArrays( vao_.size(), vao_.data() );
-    glDeleteBuffers( vbo_.size(), vbo_.data() );
-    glDeleteBuffers( ebo_.size(), ebo_.data() );
+    if( ! figures_.empty() )
+    {
+        glDeleteVertexArrays( vao_.size(), vao_.data() );
+        glDeleteBuffers( vbo_.size(), vbo_.data() );
+        glDeleteBuffers( ebo_.size(), ebo_.data() );
+    }
 }
 
 void figureset::emplace( figure *fig )
@@ -26,6 +29,10 @@ void figureset::emplace( figure *fig )
 
 void figureset::initialize()
 {
+    if( figures_.empty() )
+    {
+	return;
+    }
     vao_.resize( figures_.size() );
     vbo_.resize( figures_.size() );
     ebo_.resize( figures_.size() );
@@ -35,7 +42,7 @@ void figureset::initialize()
     glGenBuffers( vbo_.size(), vbo_.data() );
     glGenBuffers( ebo_.size(), ebo_.data() );
     
-    for( GLint i(0); i < figures_.size(); ++i ) {
+    for( figure_t::size_type i(0); i < figures_.size(); ++i ) {
         glBindVertexArray( vao_[i] );
         glBindBuffer( GL_ARRAY_BUFFER, vbo_[i] );
         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ebo_[i] );
@@ -47,7 +54,7 @@ void figureset::initialize()
 
 void figureset::draw( double currentTime )
 {
-    for( GLint i(0); i < figures_.size(); ++i )
+    for( figure_t::size_type i(0); i < figures_.size(); ++i )
     {
         glBindVertexArray( vao_[i] );
         figures_[i]->draw( currentTime );

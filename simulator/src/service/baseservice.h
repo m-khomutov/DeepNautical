@@ -16,7 +16,7 @@
 
 class baseservice {
 public:
-    static baseservice *make( int argc, char *argv[] );
+    static baseservice *make();
     
     baseservice(const baseservice& orig) = delete;
     baseservice &operator =(const baseservice& orig) = delete;

@@ -13,7 +13,7 @@
 #include <QOpenGLWidget>
 #include <memory>
 
-class qscreen: public basescreen, QOpenGLWidget {
+class qscreen: public basescreen, public QOpenGLWidget {
 public:
     explicit qscreen( baseframe *frame );
     qscreen(const qscreen& orig) = delete;
@@ -38,4 +38,3 @@ private:
 };
 
 #endif /* QSCREEN_H */
-

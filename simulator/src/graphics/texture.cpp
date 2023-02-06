@@ -35,6 +35,7 @@ texture::texture( char const *filename )
 
 texture::~texture()
 {
+    glDeleteTextures( 1, &id_ );
 }
 
 void texture::activate() const

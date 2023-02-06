@@ -157,7 +157,6 @@ void program::f_get_attributes() {
 void program::f_get_uniforms() {
     GLint num;
     glGetProgramInterfaceiv( id_, GL_UNIFORM, GL_ACTIVE_RESOURCES, &num );
-    GLenum properties[] = { GL_NAME_LENGTH, GL_TYPE, GL_LOCATION, GL_BLOCK_INDEX };
     for( int i(0); i < num; ++i ) {
         std::pair< std::string, GLint > rc;
         if( !block_variable( id_, i, &rc ) )

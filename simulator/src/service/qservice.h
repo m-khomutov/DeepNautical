@@ -13,7 +13,7 @@
 
 class qservice: public baseservice {
 public:
-    qservice( int argc, char *argv[] );
+    qservice();
     qservice(const qservice& orig) = delete;
     qservice operator =(const qservice& orig) = delete;
     ~qservice() = default;

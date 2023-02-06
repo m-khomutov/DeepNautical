@@ -44,13 +44,13 @@ void uniformblock::copy()
     glBindBuffer( GL_UNIFORM_BUFFER, ubo_ );
     
     const GLchar *names[variables_.size()];
-    for( GLuint i(0); i < variables_.size(); ++i )
+    for( std::vector< variable >::size_type i(0); i < variables_.size(); ++i )
         names[i] = variables_[i].name().c_str();
     GLuint indices[variables_.size()];
     glGetUniformIndices( program_id_, variables_.size(), names, indices );
     GLint offset[variables_.size()];
     glGetActiveUniformsiv( program_id_, variables_.size(), indices, GL_UNIFORM_OFFSET, offset );
-    for( GLuint i(0); i < variables_.size(); ++i )
+    for( std::vector< variable >::size_type i(0); i < variables_.size(); ++i )
         ::memcpy( buffer_.data() + offset[i], variables_[i], variables_[i].size() );
     glBufferData( GL_UNIFORM_BUFFER, buffer_.size(), buffer_.data(), GL_DYNAMIC_DRAW );
     glBindBufferBase( GL_UNIFORM_BUFFER, 0, ubo_ );
@@ -58,7 +58,7 @@ void uniformblock::copy()
 
 uniformblock::variable &uniformblock::operator []( GLchar const *name )
 {
-    for( int i(0); i < variables_.size(); ++i )
+    for( std::vector< variable >::size_type i(0); i < variables_.size(); ++i )
     {
         if( variables_[i].name() == name_ + "." + name )
             return variables_[i];

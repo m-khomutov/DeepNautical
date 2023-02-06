@@ -7,12 +7,12 @@
 
 #include "qscreen.h"
 #include <QDateTime>
-#include <QApplication>
 
 qscreen::qscreen( baseframe* frame )
 : QOpenGLWidget(nullptr)
 , frame_( frame )
 {
+    resize( frame_->width(), frame_->height() );
 }
 
 qscreen::~qscreen()
@@ -54,7 +54,7 @@ void qscreen::initializeGL()
 void qscreen::paintGL()
 {
     sc_->display( width(), height(), QDateTime::currentMSecsSinceEpoch());
-    frame_->store( width(), height());
+    frame_->store( width(), height() );
 }
 
 void qscreen::resizeGL(int w, int h)
@@ -64,5 +64,6 @@ void qscreen::resizeGL(int w, int h)
 
 void qscreen::error_cb( int error, const GLchar * description )
 {
+    Q_UNUSED( error );
     throw screen_error( std::string(description) );
 }

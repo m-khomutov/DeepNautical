@@ -79,7 +79,7 @@ void jpegframe::f_store( int width, int height )
     GLsizei channels { 3 };
     GLsizei stride = channels * width;
     //stride += (stride % 4) ? (4 - stride % 4) : 0;
-    GLsizei sz = stride * height;
+    std::vector< uint8_t >::size_type sz = stride * height;
  
     if( sz != rgb_buffer_.size() )
     {
@@ -88,10 +88,11 @@ void jpegframe::f_store( int width, int height )
     	cinfo_.image_width = width;
     	cinfo_.image_height = height;
     	cinfo_.input_components = 3;
-    	cinfo_.dct_method = JDCT_FASTEST;
+        cinfo_.dct_method = JDCT_FASTEST;
     }
+    int q; glGetIntegerv( GL_READ_BUFFER, &q );
     glPixelStorei( GL_PACK_ALIGNMENT, 1 );
-    glReadBuffer( GL_FRONT );
+    //glReadBuffer( GL_FRONT);//COLOR_ATTACHMENT0 );
     glReadPixels( 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, rgb_buffer_.data() );
     
     f_encode();

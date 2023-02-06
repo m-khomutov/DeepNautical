@@ -88,7 +88,7 @@ public:
     
 private:
     GLuint program_id_;
-    GLuint id_;
+    GLint id_;
     std::string name_;
     std::vector< variable > variables_;
     std::vector< GLubyte > buffer_;

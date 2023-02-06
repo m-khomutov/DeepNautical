@@ -66,11 +66,12 @@ int main(int argc, char** argv)
     signal( SIGINT,  signal_handler);
     
 #ifdef QT_CORE_LIB
+    QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL, true);
     QApplication a(argc, argv);
 #endif
     try
     {
-        main_service.reset( baseservice::make( argc, argv ) );
+        main_service.reset( baseservice::make() );
         main_service->run();
 
         return main_service->stop();
