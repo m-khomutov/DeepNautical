@@ -27,6 +27,10 @@ std::unique_ptr< baseservice > main_service;
 
 void signal_handler( int s )
 {
+    if( ! main_service )
+    {
+        ::exit(0);
+    }
     main_service->onsignal( s );
 }
 
@@ -71,7 +75,7 @@ int main(int argc, char** argv)
 #endif
     try
     {
-        main_service.reset( baseservice::make() );
+        main_service = baseservice::make();
         main_service->run();
 
         return main_service->stop();

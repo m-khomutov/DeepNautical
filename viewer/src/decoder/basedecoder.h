@@ -25,16 +25,6 @@ public:
     basedecoder_nodata();
 };
 
-struct decframe
-{
-    std::vector< uint8_t > pixels;
-    utils::geometry window;
-    int channels { 3 };
-    uint32_t timestamp { 0xff };
-
-    decframe( utils::geometry const &win ) : window( win ) {};
-};
-
 class basedecoder {
 public:
     basedecoder();
@@ -42,17 +32,16 @@ public:
     basedecoder &operator =(const basedecoder& orig) = delete;
     virtual ~basedecoder();
 
-    bool load( decframe *image );
+    bool load( utils::image *img );
     void store( uint8_t const *frame, size_t size, uint32_t timestamp );
     
 protected:
     uint32_t timestamp_ { 0 };
     
 private:
-    virtual void f_load( decframe *image ) = 0;
+    virtual void f_load( utils::image *img ) = 0;
     virtual void f_store( uint8_t const *frame, size_t size, uint32_t timestamp ) = 0;
 
 };
 
 #endif /* BASEDECODER_H */
-

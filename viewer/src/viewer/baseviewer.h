@@ -22,7 +22,7 @@ public:
 
 class baseviewer {
 public:
-    static baseviewer *make( int argc, char *argv[] );
+    static std::unique_ptr< baseviewer > make( int argc, char *argv[] );
 
     baseviewer();
     baseviewer(const baseviewer& orig) = delete;
@@ -35,7 +35,7 @@ public:
     int stop();
 
 protected:
-    decframe frame_;
+    utils::image frame_;
     std::unique_ptr< basedecoder > decoder_;
     receiver receiver_;
     utils::scoped_thread< receiver > rec_thread_;

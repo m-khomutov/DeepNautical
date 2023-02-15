@@ -12,6 +12,8 @@
 
 class sol: public figure {
 public:
+    static bool environment_valid();
+
     sol();
     sol(sol const& orig) = delete;
     sol &operator =(sol const& orig) = delete;

@@ -8,6 +8,7 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
+#include "../../../../share/utils.h"
 #include <GL/glew.h>
 #include <stdexcept>
 
@@ -19,9 +20,12 @@ public:
 class texture {
 public:
     explicit texture( char const *filename );
+    explicit texture( utils::image &img );
     texture(const texture& orig) = delete;
     texture &operator =(const texture& orig) = delete;
     ~texture();
+    
+    texture &operator =( utils::image &img );
     
     void activate() const;
 
@@ -30,4 +34,3 @@ private:
 };
 
 #endif /* TEXTURE_H */
-

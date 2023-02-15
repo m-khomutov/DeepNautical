@@ -10,7 +10,6 @@
 #include "../../../share/utils.h"
 #include <unistd.h>
 #include <regex>
-#include <iostream>
 
 namespace
 {
@@ -109,7 +108,7 @@ receiver::receiver( basedecoder *decoder )
 {
     try
     {
-	std::string url = utils::config()["url"];
+        std::string url = utils::config()["url"];
         std::regex r("^([a-z]+)://([0-9\\.\\S]+):([0-9]+)/(.*)$"); // proto://host:port/context
         std::smatch cm;
 
@@ -117,8 +116,8 @@ receiver::receiver( basedecoder *decoder )
         {
             throw receiver_error( std::string("invalid url ") + url );
         }
-        address_ = cm[2].str() + ":" + cm[3].str();
-        connection_.reset( new c_socket( cm[2].str(), std::stoi(cm[3].str()) ) );
+        server_host_ = cm[2].str();
+        server_port_ = std::stoi( cm[3].str() );
     }
     catch (const std::regex_error &e)
     {
@@ -139,7 +138,7 @@ void receiver::run()
     size_t expected = flv_tag::size, received = 0;
     while( running_.load() )
     {
-        size_t rc = connection_->receive( buffer.data() + received, expected - received );
+        size_t rc = connection_->receive( buffer.data() + received, expected );
         if( rc > 0 )
         {
             expected -= rc;
@@ -147,7 +146,16 @@ void receiver::run()
         }
         if( expected == 0 )
         {
-            expected = (this->*action)( buffer.data(), received );
+            try
+            {
+                expected = (this->*action)( buffer.data(), received );
+            }
+            catch( const std::runtime_error &e )
+            {
+                f_start_connection();
+                receiver::action = &receiver::f_receive_tag;
+                expected = flv_tag::size;
+            }
             if( buffer.size() < expected )
             {
                 buffer.resize( expected );    
@@ -165,11 +173,12 @@ void receiver::stop()
 
 void receiver::f_start_connection()
 {
+    connection_.reset( new c_socket( server_host_, server_port_ ) );
     std::string request = "GET / HTTP/1.1\r\n"
                           "User-Agent: Viewer/0.0.1 (agat-aquarius)\r\n"
                           "Accept: */*\r\n"
                           "Accept-Encoding: identity\r\n"
-                          "Host: " + address_ + "\r\n"
+                          "Host: " + server_host_ + ":" + std::to_string(server_port_) + "\r\n"
                           "Connection: Keep-Alive\r\n\r\n";
     connection_->send( (uint8_t const *)request.data(), request.size() );   
 

@@ -28,11 +28,11 @@ basedecoder::~basedecoder()
 }
 
 
-bool basedecoder::load( decframe *image )
+bool basedecoder::load( utils::image *img )
 {
     try
     {
-        f_load( image );
+        f_load( img );
     }
     catch( basedecoder_error const & e )
     {

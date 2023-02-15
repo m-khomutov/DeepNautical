@@ -29,6 +29,7 @@ SOURCES += \
     src/encoding/jpegframe.cpp \
     src/graphics/figures/sol.cpp \
     src/graphics/figures/water.cpp \
+    src/graphics/figures/horizon.cpp \
     src/graphics/figures/antisubmarinefrigate.cpp \
     src/graphics/figures/figure.cpp \
     src/graphics/figureset.cpp \
@@ -37,7 +38,8 @@ SOURCES += \
     src/graphics/screens/basescreen.cpp \
     src/graphics/screens/qscreen.cpp \
     src/graphics/shader.cpp \
-    src/graphics/texture.cpp \
+    src/graphics/texture/texture.cpp \
+    src/graphics/texture/avi.cpp \
     src/graphics/uniformblock.cpp \
     src/server/baseprotocol.cpp \
     src/server/flvprotocol.cpp \
@@ -53,6 +55,7 @@ HEADERS += \
     src/encoding/jpegframe.h \
     src/graphics/figures/sol.h \
     src/graphics/figures/water.h \
+    src/graphics/figures/horizon.h \
     src/graphics/figures/antisubmarinefrigate.h \
     src/graphics/figures/figure.h \
     src/graphics/figureset.h \
@@ -61,7 +64,8 @@ HEADERS += \
     src/graphics/screens/basescreen.h \
     src/graphics/screens/qscreen.h \
     src/graphics/shader.h \
-    src/graphics/texture.h \
+    src/graphics/texture/texture.h \
+    src/graphics/texture/avi.h \
     src/graphics/uniformblock.h \
     src/server/baseprotocol.h \
     src/server/flvprotocol.h \

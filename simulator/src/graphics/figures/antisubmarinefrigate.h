@@ -12,6 +12,8 @@
 
 class antisubmarinefrigate: public figure {
 public:
+    static bool environment_valid();
+
     antisubmarinefrigate();
     antisubmarinefrigate(const antisubmarinefrigate& orig) = delete;
     antisubmarinefrigate &operator=(const antisubmarinefrigate& orig) = delete;
@@ -31,6 +33,7 @@ private:
     char const *f_shader_name() const override;
     void f_initialize() override;
     void f_draw( double currentTime ) override;
+    void f_set_model();
 };
 
 #endif /* ANTISUBMARINEFRIGATE_H */

@@ -8,10 +8,12 @@ add_executable(cometsimulator
 	src/encoding/baseframe.cpp
 	src/encoding/jpegframe.cpp
 	src/graphics/figures/figure.cpp
+	src/graphics/figures/horizon.cpp
 	src/graphics/figures/water.cpp
 	src/graphics/figures/sol.cpp
 	src/graphics/figures/antisubmarinefrigate.cpp
-	src/graphics/texture.cpp
+	src/graphics/texture/texture.cpp
+	src/graphics/texture/avi.cpp
 	src/graphics/figureset.cpp
 	src/graphics/uniformblock.cpp
 	src/graphics/shader.cpp

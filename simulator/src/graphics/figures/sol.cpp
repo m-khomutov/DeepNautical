@@ -12,6 +12,11 @@ namespace
 {
 char const shader_name[] = "sol.glsl";
 }
+bool sol::environment_valid()
+{
+    return utils::file_exists( (std::string(utils::config()["shaders"]) + "vert_" + shader_name).c_str() ) &&
+           utils::file_exists( (std::string(utils::config()["shaders"]) + "frag_" + shader_name).c_str() );
+}
 
 sol::sol()
 {

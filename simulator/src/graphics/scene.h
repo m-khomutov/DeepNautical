@@ -41,6 +41,10 @@ private:
 
     void f_debug_info();
     void f_debug_error( GLenum src, GLenum type, GLuint id, GLenum severity, std::string msg ) const;
+    void f_add_sol();
+    void f_add_water();
+    void f_add_horizon();
+    void f_add_antisubmarinefrigate();
 };
 
 #endif /* SCENE_H */

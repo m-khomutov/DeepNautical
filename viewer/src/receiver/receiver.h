@@ -84,7 +84,8 @@ private:
     basedecoder *decoder_;
     std::atomic< bool > running_ { true };
     std::unique_ptr< c_socket > connection_;
-    std::string address_;
+    std::string server_host_;
+    uint16_t server_port_;
     size_t (receiver::*action)(uint8_t const *, size_t);
     float timestamp_ { 0.0f };
     bool verify_ { bool(utils::config()["verify"]) };
@@ -97,4 +98,3 @@ private:
 };
 
 #endif /* RECEIVER_H */
-

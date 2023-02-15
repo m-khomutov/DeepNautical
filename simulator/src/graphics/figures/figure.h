@@ -8,7 +8,7 @@
 #ifndef FIGURE_H
 #define FIGURE_H
 
-#include "../texture.h"
+#include "../texture/texture.h"
 #include "../program.h"
 #include "../../../../share/utils.h"
 #include <GL/glew.h>
@@ -31,7 +31,9 @@ protected:
     std::unique_ptr< program > program_;
     std::unique_ptr< texture > texture_;    
     glm::mat4 model_ { glm::rotate( glm::mat4(1.0f), glm::radians( 0.0f ), glm::vec3(1.0f, 0.0f, 0.0f) ) };
-    glm::mat4 view_ { glm::translate( glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f) ) };
+    glm::mat4 view_ { glm::lookAt( glm::vec3(0.0f, 0.0f, 3.0f),
+                                   glm::vec3(0.0f, 0.0f, 0.0f),
+                                   glm::vec3(0.0f, 1.0f, 0.0f) ) };
     glm::mat4 projection_;
     float angle_ = 0.0f;
     float scene_position_ { 0.0f };

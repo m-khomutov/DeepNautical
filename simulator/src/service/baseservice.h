@@ -16,7 +16,7 @@
 
 class baseservice {
 public:
-    static baseservice *make();
+    static std::unique_ptr< baseservice > make();
     
     baseservice(const baseservice& orig) = delete;
     baseservice &operator =(const baseservice& orig) = delete;

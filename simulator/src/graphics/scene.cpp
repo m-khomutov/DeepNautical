@@ -8,6 +8,7 @@
 #include "scene.h"
 #include "figures/sol.h"
 #include "figures/water.h"
+#include "figures/horizon.h"
 #include "figures/antisubmarinefrigate.h"
 #include <iostream>
 
@@ -49,15 +50,17 @@ scene::scene()
 {
     glEnable( GL_DEBUG_OUTPUT );
     glEnable( GL_DEPTH_TEST );
+    glDepthFunc( GL_ALWAYS );
     glDebugMessageCallback( scene::debugCb, this );
     glDebugMessageControl( GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE );
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
     f_debug_info();
     
-    figureset_.emplace( new sol );
-    figureset_.emplace( new water );
-    figureset_.emplace( new antisubmarinefrigate );
+    f_add_sol();
+    f_add_water();
+    //f_add_horizon();
+    f_add_antisubmarinefrigate();
     figureset_.initialize();
 }
 
@@ -96,4 +99,72 @@ void scene::f_debug_error( GLenum src,
                            std::string msg ) const
 {
     std::cerr << src << ":" << type <<"[" << severity2str(severity) <<"](" <<id <<") :" << msg << std::endl;
+}
+
+void scene::f_add_sol()
+{
+    if( ! sol::environment_valid() )
+    {
+        std::cerr << "sol environment is invalid\n";
+        return;
+    }
+    try
+    {
+        figureset_.emplace( new sol );
+    }
+    catch( const std::runtime_error &err )
+    {
+        std::cerr << "sol error: " <<err.what() <<std::endl;
+    }
+}
+
+void scene::f_add_water()
+{
+    if( ! water::environment_valid() )
+    {
+        std::cerr << "water environment is invalid\n";
+        return;
+    }
+    try
+    {
+        figureset_.emplace( new water );
+    }
+    catch( const std::runtime_error &err )
+    {
+        std::cerr << "water error: " <<err.what() <<std::endl;
+    }
+}
+
+void scene::f_add_horizon()
+{
+    if( ! horizon::environment_valid() )
+    {
+        std::cerr << "horizon environment is invalid\n";
+        return;
+    }
+    try
+    {
+        figureset_.emplace( new horizon );
+    }
+    catch( const std::runtime_error &err )
+    {
+        std::cerr << "horizon error: " <<err.what() <<std::endl;
+    }
+}
+
+void scene::f_add_antisubmarinefrigate()
+{
+    if( ! antisubmarinefrigate::environment_valid() )
+    {
+        std::cerr << "antisubmarinefrigate environment is invalid\n";
+        return;
+    }
+    try
+    {
+        figureset_.emplace( new antisubmarinefrigate );
+    }
+    catch( const std::runtime_error &err )
+    {
+        std::cerr << " antisubmarinefrigate error: " <<err.what() <<std::endl;
+    }
 }

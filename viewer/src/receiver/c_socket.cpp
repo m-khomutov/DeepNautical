@@ -47,7 +47,7 @@ c_socket::c_socket( std::string const &addr, uint16_t port )
             int nok;
             if( getsockopt( fd_, SOL_SOCKET, SO_ERROR, (void*)(&nok), &slen ) < 0 || nok )
             {
-                throw c_socket_error( "SO_ERROR" );
+                throw c_socket_error( "check connection" );
             }
         }
     }

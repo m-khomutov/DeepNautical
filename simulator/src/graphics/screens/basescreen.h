@@ -19,8 +19,6 @@ public:
 
 class basescreen {
 public:
-    static basescreen *screen( baseframe* frame );
-
     basescreen();
     basescreen(const basescreen& orig) = delete;
     basescreen &operator =(const basescreen& orig) = delete;

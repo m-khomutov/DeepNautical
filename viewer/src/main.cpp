@@ -66,7 +66,7 @@ int main(int argc, char** argv)
 #endif
     try
     {
-        main_viewer.reset( baseviewer::make( argc, argv ) );
+        main_viewer = baseviewer::make( argc, argv );
         main_viewer->run();
         return main_viewer->stop();
     }

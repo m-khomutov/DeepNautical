@@ -13,12 +13,12 @@
 #include "glfwservice.h"
 #endif
 
-baseservice *baseservice::make()
+std::unique_ptr< baseservice > baseservice::make()
 {
 #ifdef QT_CORE_LIB
-    return new qservice;
+    return std::unique_ptr< baseservice >(new qservice);
 #else
-    return new glfwservice;
+    return std::unique_ptr< baseservice >(new glfwservice);
 #endif
 }
 

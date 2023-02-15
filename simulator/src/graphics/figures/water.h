@@ -12,6 +12,8 @@
 
 class water: public figure {
 public:
+    static bool environment_valid();
+
     water();
     water( water const &orig ) = delete;
     water &operator =( water const &orig ) = delete;

@@ -8,10 +8,20 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <cstddef>
+#include <cstdio>
+#include <cstdint>
+extern "C"
+{
+ #include <jpeglib.h>
+ #include <jerror.h>
+}
 #include <cstdlib>
+#include <iostream>
 #include <string>
 #include <map>
 #include <thread>
+#include <vector>
 
 namespace utils
 {
@@ -46,8 +56,8 @@ class scoped_thread
 {
  public:
      explicit scoped_thread( T *obj )
-     : object_(obj)
-     , t_([this](){ object_->run(); } )
+     : object_( obj )
+     , t_( [this](){ try { object_->run(); } catch ( const std::exception &e ) { std::cerr << e.what() <<std::endl; } } )
      {
      }
      scoped_thread( scoped_thread const &orig ) = delete;
@@ -55,7 +65,10 @@ class scoped_thread
      ~scoped_thread()
      {
          object_->stop();
-         t_.join();
+         if( t_.joinable() )
+         {
+             t_.join();
+         }
      }
 
 private:
@@ -74,7 +87,7 @@ public:
     class variant
     {
     public:
-	variant() = default;
+        variant() = default;
         variant( int v );
         variant( char const *v );
         variant( geometry const &v );
@@ -86,7 +99,7 @@ public:
     private:
         int ivalue_;
         std::string svalue_;
-	geometry gvalue_;
+        geometry gvalue_;
     };
     using fields_t = std::map< std::string, variant >;
     
@@ -96,7 +109,37 @@ private:
     static fields_t fields_;
 };
 
+struct image
+{
+    std::vector< uint8_t > pixels;
+    utils::geometry window;
+    int channels { 3 };
+    uint32_t timestamp { 0xff };
+
+    image() = default;
+    image( utils::geometry const &win ) : window( win ) {};
+};
+
+class jpeg_codec {
+public:
+    class error: public std::runtime_error {
+    public:
+        error(const std::string & what);
+    };
+    
+    jpeg_codec();
+    jpeg_codec(const jpeg_codec& orig) = delete;
+    jpeg_codec &operator =(const jpeg_codec& orig) = delete;
+    ~jpeg_codec();
+    
+    bool decode( uint8_t const *data, size_t size, image *img );
+
+private:
+    jpeg_decompress_struct cinfo_;
+    jpeg_error_mgr jerr_;
+};
+
+bool file_exists( char const *filename );
 }  // namespace utils
 
 #endif /* UTILS_H */
-
