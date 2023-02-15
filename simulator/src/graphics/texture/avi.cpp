@@ -198,13 +198,28 @@ avi::avi( char const *filename )
     if( !ifile_ ) {
         throw avi_error( std::string("failed to open ") + filename );
     }
+    fseek( ifile_.get(), 0, SEEK_END ); 
+    size_t filesize = ftell( ifile_.get() );
+    fseek( ifile_.get(), 0, SEEK_SET ); 
+
     while( ! feof( ifile_.get() ) )
     {
-        std::unique_ptr< atom > a( atom::make( ifile_.get(), &frames_ ) );
-        strh *hdr;
-        if( a->fourcc() == atom::strh && (hdr = dynamic_cast< strh* >(a.get())) )
+        try
         {
-            frame_duration_ = 1000.0d / hdr->scale;
+            std::unique_ptr< atom > a( atom::make( ifile_.get(), &frames_ ) );
+            strh *hdr;
+            if( a->fourcc() == atom::strh && (hdr = dynamic_cast< strh* >(a.get())) )
+            {
+                frame_duration_ = 1000.0d / hdr->scale;
+            }
+        }
+        catch( const std::runtime_error &e)
+        {
+            std::cerr <<e.what() <<std::endl;
+        }
+	if( ftell( ifile_.get() ) >= filesize )
+        {
+           break;
         }
     }
     if( frames_.empty() )

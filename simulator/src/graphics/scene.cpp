@@ -57,9 +57,9 @@ scene::scene()
 
     f_debug_info();
     
-    f_add_sol();
-    f_add_water();
-    //f_add_horizon();
+    //f_add_sol();
+    //f_add_water();
+    f_add_horizon();
     f_add_antisubmarinefrigate();
     figureset_.initialize();
 }
