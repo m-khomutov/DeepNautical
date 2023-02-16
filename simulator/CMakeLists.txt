@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
-project(cometsimulator)
+project(simulator)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(cometsimulator
+add_executable(simulator
 	../share/utils.cpp
 	src/encoding/baseframe.cpp
 	src/encoding/jpegframe.cpp
@@ -30,4 +30,4 @@ add_executable(cometsimulator
         src/main.cpp
         )
 
-target_link_libraries(cometsimulator GL glfw GLEW SOIL jpeg pthread)
+target_link_libraries(simulator GL glfw GLEW SOIL jpeg pthread)

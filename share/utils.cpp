@@ -11,6 +11,7 @@
 #include <sys/stat.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 utils::config::fields_t utils::config::fields_ = utils::config::fields_t();
 
@@ -30,6 +31,11 @@ utils::config::variant::variant( utils::geometry const &v )
 {
 }
 
+utils::config::variant::variant( utils::graphicsdim v )
+: dimvalue_( v )
+{
+}
+
 utils::config::variant::operator int() const
 {
     return ivalue_;
@@ -45,6 +51,11 @@ utils::config::variant::operator utils::geometry() const
     return gvalue_;
 }
 
+utils::config::variant::operator utils::graphicsdim() const
+{
+    return dimvalue_;
+}
+
 
 utils::config::config( int argc, char * argv[] )
 {
@@ -53,9 +64,10 @@ utils::config::config( int argc, char * argv[] )
     config::fields_["quality"] = 80;
     config::fields_["duration"] = 40;
     config::fields_["verify"] = false;
+    config::fields_["graphicsdim"] = graphicsdim::dim3D;
     
     int c;
-    while ((c = getopt (argc, argv, "g:d:p:q:s:t:u:vh")) != -1)
+    while ((c = getopt (argc, argv, "g:d:p:q:s:t:u:vw:h")) != -1)
     {
         switch (c)
         {
@@ -69,6 +81,12 @@ utils::config::config( int argc, char * argv[] )
               config::fields_["port"] = ::strtol( optarg, nullptr, 10 );
               break;
         case 'g':
+              if( !strcmp( optarg, "2D" ) )
+              {
+                  config::fields_["graphicsdim"] = graphicsdim::dim2D;
+              }
+              break;
+        case 'w':
               config::fields_["window"] = utils::geometry( optarg );
               break;
         case 'q':

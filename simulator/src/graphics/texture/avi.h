@@ -69,13 +69,13 @@ public:
     
     class avih: public atom {
     public:
-        explicit avih( FILE *f );
+        avih( FILE *f, frame_t *frames );
 
         uint32_t framerate_mcs; // frame display rate (or 0)
         uint32_t transferrate; // max. transfer rate
         uint32_t padding; // pad to multiples of this size
         uint32_t flags; // the ever-present flags
-        uint32_t frames; // # frames in file
+        uint32_t frame_count; // # frames in file
         uint32_t initial_frames;
         uint32_t streams;
         uint32_t suggested_bufsize;

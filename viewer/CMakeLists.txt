@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(cometviewer)
+project(viewer)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -20,7 +20,7 @@ pkg_check_modules(GTK REQUIRED gtk+-3.0)
 #endif ()
 
 include_directories(${GTK_INCLUDE_DIRS})
-add_executable(cometviewer
+add_executable(viewer
 	../share/utils.cpp
 	src/decoder/basedecoder.cpp
 	src/decoder/jpegdecoder.cpp
@@ -31,4 +31,4 @@ add_executable(cometviewer
         src/main.cpp
         )
 
-target_link_libraries(cometviewer jpeg pthread ${GTK_LIBRARIES})
+target_link_libraries(viewer jpeg pthread ${GTK_LIBRARIES})

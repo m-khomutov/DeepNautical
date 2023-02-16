@@ -85,7 +85,7 @@ std::unique_ptr< avi::atom > avi::atom::make( FILE *f, frame_t *frames )
     case atom::type::lst:
         return std::unique_ptr< atom >( new avi::list( atom::type(t), f, frames ) );
     case atom::avih:
-        return std::unique_ptr< avi::atom >( new avi::avih( f ) );
+        return std::unique_ptr< avi::atom >( new avi::avih( f, frames ) );
     case atom::strh:
         return std::unique_ptr< avi::atom >( new avi::strh( f ) );
     case atom::strf:
@@ -101,7 +101,7 @@ std::string avi::atom::to_str() const
     return atom2str(fourcc_);
 }
 
-avi::avih::avih( FILE *f )
+avi::avih::avih( FILE *f, frame_t *frames )
 : atom( atom::type::avih )
 {
     size_ = intfromfile( f );
@@ -109,13 +109,15 @@ avi::avih::avih( FILE *f )
     transferrate = intfromfile( f );
     padding = intfromfile( f );
     flags = intfromfile( f );
-    frames = intfromfile( f );
+    frame_count = intfromfile( f );
     initial_frames = intfromfile( f );
     streams = intfromfile( f );
     suggested_bufsize = intfromfile( f );
     width = intfromfile( f );
     height = intfromfile( f );
     fseek( f, 4 * sizeof( uint32_t ), SEEK_CUR );
+    frames->resize( 0 );
+    frames->reserve( frame_count + 10 );
 }
 
 

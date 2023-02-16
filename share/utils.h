@@ -76,6 +76,8 @@ private:
     std::thread t_;
 };
 
+enum class graphicsdim { dim2D, dim3D };
+
 class config
 {
 public:
@@ -91,15 +93,18 @@ public:
         variant( int v );
         variant( char const *v );
         variant( geometry const &v );
+        variant( graphicsdim v );
 
         operator int() const;
         operator std::string() const;
         operator geometry() const;
+        operator graphicsdim() const;
 
     private:
         int ivalue_;
         std::string svalue_;
         geometry gvalue_;
+        graphicsdim dimvalue_;
     };
     using fields_t = std::map< std::string, variant >;
     

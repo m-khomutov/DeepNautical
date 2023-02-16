@@ -32,13 +32,13 @@ void signal_handler( int s )
 
 void show_options_and_exit( const char *prog, int rc )
 {
-    std::cerr << "Запуск: " << prog <<  "[-h] [-u] [-g] [-v]\n\nviewer\n\n";
+    std::cerr << "Запуск: " << prog <<  "[-h] [-u] [-w] [-v]\n\nпрограмма просмотра\n\n";
     std::cerr << "обязательные аргументы:\n";
-    std::cerr << "\t-u\turl симулятора\n"; 
+    std::cerr << "\t-u\turl эмулятора\n"; 
     std::cerr << "Опциональные аргументы:\n";
-    std::cerr << "\t-g\tразмеры окна (def. 800x600)\n";
+    std::cerr << "\t-w\tразмеры окна (def. 800x600)\n";
     std::cerr << "\t-v\tвывод оценки задержки (def. false)\n";
-    std::cerr << "\t-h\tshow this help message and exit\n";
+    std::cerr << "\t-h\tвывод параметров запуска\n";
     ::exit( rc );   
 }
 }  // namespace

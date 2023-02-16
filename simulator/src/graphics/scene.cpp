@@ -57,10 +57,16 @@ scene::scene()
 
     f_debug_info();
     
-    //f_add_sol();
-    //f_add_water();
-    f_add_horizon();
-    f_add_antisubmarinefrigate();
+    if( utils::config()["graphicsdim"] == utils::graphicsdim::dim2D )
+    {
+        f_add_sol();
+        f_add_water();
+        f_add_antisubmarinefrigate();
+    }
+    else
+    {
+        f_add_horizon();
+    }
     figureset_.initialize();
 }
 
