@@ -29,7 +29,7 @@
 * Файл запуска программы просмотра  
   >build/viewer/viewer  
 
-**Запуск**
+**Запуск (пример)**
   
 * Эмулятор  
  `simulator -s ../../../simulator/shaders/ -d 40 -w 800x600 -t ../../../simulator/textures`  
