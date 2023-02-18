@@ -15,8 +15,8 @@ char const texture_name[] = "/56118_Peaceful_ocean_background_HD_BG.avi";
 
 bool horizon::environment_valid()
 {
-    return utils::file_exists( (std::string(utils::config()["shaders"]) + "vert_" + shader_name).c_str() ) &&
-           utils::file_exists( (std::string(utils::config()["shaders"]) + "frag_" + shader_name).c_str() ) &&
+    return utils::file_exists( (std::string(utils::config()["shaders"]) + "/vert_" + shader_name).c_str() ) &&
+           utils::file_exists( (std::string(utils::config()["shaders"]) + "/frag_" + shader_name).c_str() ) &&
            utils::file_exists( (std::string(utils::config()["textures"]) + texture_name).c_str() );
 }
 

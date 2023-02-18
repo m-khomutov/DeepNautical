@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <fstream>
 
 utils::config::fields_t utils::config::fields_ = utils::config::fields_t();
 
@@ -20,7 +21,7 @@ utils::config::variant::variant( int v )
 {
 }
 
-utils::config::variant::variant( char const *v )
+utils::config::variant::variant( std::string v )
 : svalue_( v )
 {
 }
@@ -57,6 +58,57 @@ utils::config::variant::operator utils::graphicsdim() const
 }
 
 
+namespace
+{
+    template< typename T >
+    T str2conf( char const *line )
+    {
+        return std::string( line );
+    }
+    template<>
+    std::string str2conf< std::string >( char const *line )
+    {
+        char const *from = strchr( line, '"' );
+        if( from )
+        {
+            char const *to = strchr( from + 1, '"' );
+            if( to )
+            {
+                return std::string( from + 1, to - (from + 1) );
+            }
+        }
+        return std::string();
+    }
+    template<>
+    int str2conf< int >( char const *line )
+    {
+        return ::strtol( line, nullptr, 10 );
+    }
+    template<>
+    utils::graphicsdim str2conf< utils::graphicsdim >( char const *line )
+    {
+        if( strstr( line, "2D" ) == line )
+        {
+            return utils::graphicsdim::dim2D;
+        }
+        return utils::graphicsdim::dim3D;
+    }
+    template<>
+    utils::geometry str2conf< utils::geometry >( char const *line )
+    {
+        return utils::geometry( line );
+    }
+    template<>
+    bool str2conf< bool >( char const *line )
+    {
+        if( strstr( line, "True" ) == line || strstr( line, "true" ) == line )
+        {
+            return true;
+        }
+        return false;
+    }
+}  // namespace
+
 utils::config::config( int argc, char * argv[] )
 {
     config::fields_["port"] = 2232;
@@ -67,39 +119,42 @@ utils::config::config( int argc, char * argv[] )
     config::fields_["graphicsdim"] = graphicsdim::dim3D;
     
     int c;
-    while ((c = getopt (argc, argv, "g:d:p:q:s:t:u:vw:h")) != -1)
+    while ((c = getopt (argc, argv, "g:d:p:q:s:t:u:vw:c:o:h")) != -1)
     {
         switch (c)
         {
         case 's':
-              config::fields_["shaders"] = optarg;
+              config::fields_["shaders"] = str2conf< std::string >( optarg );
               break;
         case 't':
-              config::fields_["textures"] = optarg;
+              config::fields_["textures"] = str2conf< std::string >( optarg );
+              break;
+        case 'o':
+              config::fields_["objs"] = str2conf< std::string >( optarg );
               break;
         case 'p':
-              config::fields_["port"] = ::strtol( optarg, nullptr, 10 );
+              config::fields_["port"] = str2conf< int >( optarg );
               break;
         case 'g':
-              if( !strcmp( optarg, "2D" ) )
-              {
-                  config::fields_["graphicsdim"] = graphicsdim::dim2D;
-              }
+              config::fields_["graphicsdim"] = str2conf< graphicsdim >( optarg );
               break;
         case 'w':
-              config::fields_["window"] = utils::geometry( optarg );
+              config::fields_["window"] = str2conf< utils::geometry >( optarg );
               break;
         case 'q':
-              config::fields_["quality"] = ::strtol( optarg, nullptr, 10 );
+              config::fields_["quality"] = str2conf< int >( optarg );
               break;
         case 'd':
-              config::fields_["duration"] = ::strtol( optarg, nullptr, 10 );
+              config::fields_["duration"] = str2conf< int >( optarg );
               break;
         case 'u':
-              config::fields_["url"] = optarg;
+              config::fields_["url"] = str2conf< std::string >( optarg );
               break;
         case 'v':
               config::fields_["verify"] = true;
+              break;
+        case 'c':
+              f_read_file( optarg );
               break;
         case 'h':
         default:
@@ -116,6 +171,64 @@ utils::config::variant &utils::config::operator [](char const *key) const
         return it->second;
     }
     throw std::runtime_error(std::string("config has no key ") + std::string(key) );
+}
+
+void utils::config::f_read_file( char const *fname )
+{
+    std::ifstream ifile( fname );
+    if( !ifile.is_open() )
+    {
+        std::cerr<< fname << " error: " << strerror(errno) << std::endl;
+    }
+    std::string line;
+    while( std::getline( ifile, line ) )
+    {
+        if( line.size() < 3 || line[0] == '#' )
+        {
+            continue;
+        }
+        std::string::size_type pos;
+        if( (pos = line.find( "shaders=" )) != std::string::npos )
+        {
+            config::fields_["shaders"] = str2conf< std::string >( line.c_str() );
+        }
+        else if( (pos = line.find( "textures=" )) != std::string::npos )
+        {
+            config::fields_["textures"] = str2conf< std::string >( line.c_str() );
+        }
+        else if( (pos = line.find( "port=" )) != std::string::npos )
+        {
+            config::fields_["port"] = str2conf< int >( line.substr( pos + 5 ).c_str() );
+        }
+        else if( (pos = line.find( "graphicsdim=" )) != std::string::npos )
+        {
+            config::fields_["graphicsdim"] = str2conf< graphicsdim >( line.substr( pos + 12 ).c_str() );
+        }
+        else if( (pos = line.find( "window=" )) != std::string::npos )
+        {
+            config::fields_["window"] = str2conf< utils::geometry >( line.substr( pos + 7 ).c_str() );
+        }
+        else if( (pos = line.find( "quality=" )) != std::string::npos )
+        {
+            config::fields_["quality"] = str2conf< int >( line.substr( pos + 8 ).c_str() );
+        }
+        else if( (pos = line.find( "duration=" )) != std::string::npos )
+        {
+            config::fields_["duration"] = str2conf< int >( line.substr( pos + 9 ).c_str() );
+        }
+        else if( (pos = line.find( "url=" )) != std::string::npos )
+        {
+            config::fields_["url"] = str2conf< std::string >( line.c_str() );
+        }
+        else if( (pos = line.find( "verify=" )) != std::string::npos )
+        {
+            config::fields_["verify"] = str2conf< bool >( line.substr( pos +7 ).c_str() );
+        }
+        else if( (pos = line.find( "objs=" )) != std::string::npos )
+        {
+            config::fields_["objs"] = str2conf< std::string >( line.c_str() );
+        }
+    }
 }
 
 

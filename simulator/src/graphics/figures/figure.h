@@ -17,6 +17,24 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <memory>
 
+class objreader {
+public:
+    using face_t = glm::vec< 3, glm::ivec3 >;
+    
+    objreader( char const *filename );
+    objreader(const objreader &orig) = delete;
+    objreader operator =(const objreader &orig) = delete;
+    ~objreader() = default;
+
+    void load_position( std::vector< GLfloat > *pos );
+    
+private:
+    std::vector< glm::vec3 > vertices_;
+    std::vector< glm::vec2 > textures_;
+    std::vector< glm::vec3 > normals_;
+    std::vector< face_t > faces_;
+};
+
 class figure {
 public:
     figure();
@@ -49,6 +67,7 @@ protected:
     void set_attribute( const GLchar * name, glm::mat3 );
     void set_attribute( const GLchar * name, glm::mat4 );
     void set_subroutine( const GLchar * uniform_name, const GLchar * subroutine_name, GLenum shader_type );
+    void set_layout( char const *name, GLuint size, GLuint step, GLuint off );
 
 private:
     virtual char const *f_shader_name() const = 0;

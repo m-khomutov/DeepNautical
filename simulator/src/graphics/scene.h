@@ -45,6 +45,7 @@ private:
     void f_add_water();
     void f_add_horizon();
     void f_add_antisubmarinefrigate();
+    void f_add_vessel();
 };
 
 #endif /* SCENE_H */

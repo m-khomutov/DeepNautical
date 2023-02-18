@@ -10,6 +10,7 @@
 #include "figures/water.h"
 #include "figures/horizon.h"
 #include "figures/antisubmarinefrigate.h"
+#include "figures/vessel.h"
 #include <iostream>
 
 namespace {
@@ -66,6 +67,7 @@ scene::scene()
     else
     {
         f_add_horizon();
+        //f_add_vessel();
     }
     figureset_.initialize();
 }
@@ -172,5 +174,22 @@ void scene::f_add_antisubmarinefrigate()
     catch( const std::runtime_error &err )
     {
         std::cerr << " antisubmarinefrigate error: " <<err.what() <<std::endl;
+    }
+}
+
+void scene::f_add_vessel()
+{
+    if( ! vessel::environment_valid() )
+    {
+        std::cerr << "vessel environment is invalid\n";
+        return;
+    }
+    try
+    {
+        figureset_.emplace( new vessel );
+    }
+    catch( const std::runtime_error &err )
+    {
+        std::cerr << "vessel error: " <<err.what() <<std::endl;
     }
 }

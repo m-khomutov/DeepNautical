@@ -91,7 +91,7 @@ public:
     public:
         variant() = default;
         variant( int v );
-        variant( char const *v );
+        variant( std::string v );
         variant( geometry const &v );
         variant( graphicsdim v );
 
@@ -112,6 +112,9 @@ public:
     
 private:
     static fields_t fields_;
+
+private:
+    void f_read_file( char const *name );
 };
 
 struct image

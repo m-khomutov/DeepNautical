@@ -31,6 +31,7 @@ SOURCES += \
     src/graphics/figures/water.cpp \
     src/graphics/figures/horizon.cpp \
     src/graphics/figures/antisubmarinefrigate.cpp \
+    src/graphics/figures/vessel.cpp \
     src/graphics/figures/figure.cpp \
     src/graphics/figureset.cpp \
     src/graphics/program.cpp \
@@ -57,6 +58,7 @@ HEADERS += \
     src/graphics/figures/water.h \
     src/graphics/figures/horizon.h \
     src/graphics/figures/antisubmarinefrigate.h \
+    src/graphics/figures/vessel.h \
     src/graphics/figures/figure.h \
     src/graphics/figureset.h \
     src/graphics/program.h \

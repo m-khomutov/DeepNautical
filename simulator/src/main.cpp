@@ -36,7 +36,7 @@ void signal_handler( int s )
 
 void show_options_and_exit( const char *prog, int rc )
 {
-    std::cerr << "Запуск: " << prog <<  "[-h] [-s] [-t] [-p] [-g] [-q] [-d] [-w]\n\nэмулятор устройства\n\n";
+    std::cerr << "Запуск: " << prog <<  "[-h] [-s] [-t] [-p] [-g] [-q] [-d] [-w] [-o] [-c]\n\nэмулятор устройства\n\n";
     std::cerr << "обязательные аргументы:\n";
     std::cerr << "\t-s\tкаталог с шейдерами\n"; 
     std::cerr << "\t-t\tкаталог с текстурами\n"; 
@@ -46,6 +46,8 @@ void show_options_and_exit( const char *prog, int rc )
     std::cerr << "\t-w\tразмеры окна (def. 800x600)\n";
     std::cerr << "\t-q\tкачество сжатия % (def. 80)\n";
     std::cerr << "\t-d\tдлительность кадра мс (def. 40)\n";
+    std::cerr << "\t-c\tфайл конфигурации\n";
+    std::cerr << "\t-o\tкаталог с объектами blender\n"; 
     std::cerr << "\t-h\tвывод параметров запуска\n";
     ::exit( rc );   
 }
@@ -76,6 +78,8 @@ int main(int argc, char** argv)
 #endif
     try
     {
+        std::setlocale( LC_NUMERIC,"C" );
+
         main_service = baseservice::make();
         main_service->run();
 
