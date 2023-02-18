@@ -1,6 +1,6 @@
 # Файл конфигурации эмулятора вида на море
  
-shaders="/opt/agat-a/shaders"   # каталог шкйдеров
+shaders="/opt/agat-a/shaders"   # каталог шейдеров
 textures="/opt/agat-a/textures" # каталог текстур 
 objs="/opt/agat-a/objs"         # каталог объектов, выгруженных из blender-a в формате OBJ
 port=2232                       # порт приема запросов на трансляцию стрима

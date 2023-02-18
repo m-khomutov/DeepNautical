@@ -77,7 +77,7 @@ namespace
                 return std::string( from + 1, to - (from + 1) );
             }
         }
-        return std::string();
+        return std::string(line);
     }
     template<>
     int str2conf< int >( char const *line )
