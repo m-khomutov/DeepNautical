@@ -85,15 +85,15 @@ $ viewer -h
   
 Каждый параметр занимает строку файла.  
 Строки, начинающиеся с символа # игнорируются (являются комментариями).  
-Формат строки: ключ=значение, без пробелов.  
+Формат строки: ключ=значение, без пробелов, строки в двойных кавычках.  
   
 Пример файла:  
 ```
 # Файл конфигурации эмулятора вида на море
 
-shaders=/opt/agat-a/shaders
-textures=/opt/agat-a/textures
-objs=/opt/agat-a/objs
+shaders="/opt/agat-a/shaders"
+textures="/opt/agat-a/textures"
+objs="/opt/agat-a/objs"
 port=2232
 graphicsdim=3D
 window=800x600
