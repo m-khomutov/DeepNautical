@@ -22,7 +22,13 @@ bool vessel::environment_valid()
 
 vessel::vessel()
 {
-    objreader((std::string(utils::config()["objs"]) + obj_name).c_str()).load_position( &position_ );
+    speed_ = glm::vec3( 0.00035f, -0.00015f, 0.0f );
+    offset_ = initial_offset; 
+    
+    objreader reader( (std::string(utils::config()["objs"]) + obj_name).c_str() );
+    reader.load_position( &position_ );
+    facecount_ = reader.facecount();
+    
     f_set_model();
 }
 
@@ -46,20 +52,31 @@ void vessel::f_initialize()
 void vessel::f_draw( double currentTime )
 {
     f_set_model();
-    GLuint count = position_.size() / 3;
-    glDrawArrays( GL_TRIANGLES, 0, count );
+    glDrawArrays( GL_TRIANGLES, 0, facecount_ * 3 );
 }
 
 void vessel::f_set_model()
 {
-    GLfloat y = 0.0f;
-    glm::vec3 factor = glm::vec3( 1.0f );
+    if( angle_ < -maxlurch || angle_ > maxlurch )
+    {
+        lurch_ *= -1;
+    }
     model_ = glm::mat4( glm::scale(
                             glm::translate(
                                 glm::rotate( glm::mat4(1.0f),
                                              glm::radians( angle_ ),
-                                             glm::vec3( 0.0f, 0.0f, 0.0f ) ),
-                                glm::vec3( 0.0f, 0.0f, 0.0f ) ),
-                            factor ) );
-    model_ = glm::mat4(1.0f);
+                                             glm::vec3( 1.0f, 0.0f, 0.0f ) ),
+                                offset_ ),
+                            factor_ ) );
+    if( offset_.x < 1.4f )
+    {
+        offset_ += speed_;
+        factor_ += factor_offset;
+    }
+    else
+    {
+        offset_ = initial_offset; 
+        factor_ = initial_factor;
+    }
+    angle_ += lurch_;
 }

@@ -67,7 +67,7 @@ scene::scene()
     else
     {
         f_add_horizon();
-        //f_add_vessel();
+        f_add_vessel();
     }
     figureset_.initialize();
 }

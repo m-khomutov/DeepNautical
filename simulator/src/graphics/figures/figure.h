@@ -27,10 +27,14 @@ public:
     ~objreader() = default;
 
     void load_position( std::vector< GLfloat > *pos );
+    size_t facecount() const
+    {
+        return faces_.size();
+    }
     
 private:
     std::vector< glm::vec3 > vertices_;
-    std::vector< glm::vec2 > textures_;
+    std::vector< glm::vec2 > texels_;
     std::vector< glm::vec3 > normals_;
     std::vector< face_t > faces_;
 };
@@ -55,7 +59,7 @@ protected:
     glm::mat4 projection_;
     float angle_ = 0.0f;
     float scene_position_ { 0.0f };
-    float speed_ { 0.001f };
+    glm::vec3 speed_ { 0.001f, 0.0f, 0.0f };
     float direction_ { -1.0f };
     glm::vec3 offset_ { 0.0f, 0.0f, 0.0f };
 

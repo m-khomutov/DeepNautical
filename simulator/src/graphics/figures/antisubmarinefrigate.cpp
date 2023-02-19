@@ -22,7 +22,7 @@ bool antisubmarinefrigate::environment_valid()
 
 antisubmarinefrigate::antisubmarinefrigate()
 {
-    speed_ = 0.005f;
+    speed_.x = 0.005f;
     f_set_model();
 }
 
@@ -57,8 +57,8 @@ void antisubmarinefrigate::f_draw( double currentTime )
         angle_ = angle_ == 0.0f ? 180.0f : 0.0f;
         f_set_model();
     }
-    scene_position_ += speed_ * direction_;
-    offset_.x -= speed_;
+    scene_position_ += speed_.x * direction_;
+    offset_.x -= speed_.x;
     
     glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
 }

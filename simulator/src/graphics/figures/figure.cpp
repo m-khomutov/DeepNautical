@@ -24,7 +24,7 @@ namespace
         {
             for( GLuint i(1); i < v.size(); ++i )
             { 
-                (*rc)[i - 1] = std::stod(v[i]);
+                (*rc)[i - 1] = std::stof(v[i]);
             }
             return true;
         }
@@ -67,7 +67,7 @@ objreader::objreader( const char* filename )
             case 't':
                 if( str2vec( line, &v2 ) )
                 {
-                    textures_.push_back( v2 );
+                    texels_.push_back( v2 );
                 }
                 break;
             case 'n':
@@ -95,14 +95,14 @@ void objreader::load_position( std::vector< GLfloat > *pos )
     {
         for( int i(0); i < 3; ++i )
         {
-            pos->push_back( vertices_[f[i].x - 1].x );
-            pos->push_back( vertices_[f[i].x - 1].y );
-            pos->push_back( vertices_[f[i].x - 1].z );
-            pos->push_back( textures_[f[i].y - 1].x );
-            pos->push_back( textures_[f[i].y - 1].y );
-            pos->push_back( normals_[f[i].z - 1].x );
-            pos->push_back( normals_[f[i].z - 1].y );
-            pos->push_back( normals_[f[i].z - 1].z );
+            pos->push_back( vertices_[f[i].x - 1][0] );
+            pos->push_back( vertices_[f[i].x - 1][1] );
+            pos->push_back( vertices_[f[i].x - 1][2] );
+            pos->push_back( texels_[f[i].y - 1][0] );
+            pos->push_back( texels_[f[i].y - 1][1] );
+            pos->push_back( normals_[f[i].z - 1][0] );
+            pos->push_back( normals_[f[i].z - 1][1] );
+            pos->push_back( normals_[f[i].z - 1][2] );
         }
     }
 }
