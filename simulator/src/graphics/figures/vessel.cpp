@@ -52,12 +52,13 @@ void vessel::f_initialize()
 void vessel::f_draw( double currentTime )
 {
     f_set_model();
+    set_attribute( "NormalMatrix", glm::transpose( glm::inverse( glm::mat3(view_ * model_) ) ) );
     glDrawArrays( GL_TRIANGLES, 0, facecount_ * 3 );
 }
 
 void vessel::f_set_model()
 {
-    if( angle_ < -maxlurch || angle_ > maxlurch )
+    if( angle_ < 0.0f || angle_ > maxlurch )
     {
         lurch_ *= -1;
     }

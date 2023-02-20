@@ -14,21 +14,18 @@ out VS_OUT {
 uniform mat4 Model;
 uniform mat4 View;
 uniform mat4 Projection;
+uniform mat3 NormalMatrix;
 
 void main() {
     // vertex in world coords
     vec3 World = (View * Model * vec4(position, 1.0)).xyz;
     // normal in world coords
-    mat4 nm = transpose(inverse(View * Model));
-    vs_out.N = (nm * vec4(normal, 1.0)).xyz;
-
+    vs_out.N = normalize(NormalMatrix * normal);
     // diffuse 
     vec3 lightPos = vec3(0.0, 0.8, -10.0);
-    vs_out.L = lightPos - World;
-
+    vs_out.L = normalize(lightPos - World);
     // specular 
-    vs_out.V = -World;
-
+    vs_out.V = normalize(-World);
     //texels
     vs_out.tc = texcoord;
 

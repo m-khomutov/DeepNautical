@@ -20,7 +20,7 @@ public:
     ~vessel();
 
 private:
-    static constexpr GLfloat maxlurch = 3.0f;
+    static constexpr GLfloat maxlurch = 6.0f;
     static constexpr GLfloat factor_offset = 0.00005f;
     static constexpr glm::vec3 initial_factor = glm::vec3( 0.05f, 0.05f, 0.05f );
     static constexpr glm::vec3 initial_offset = glm::vec3( -1.1f, 0.21f, 0.0f ); 
