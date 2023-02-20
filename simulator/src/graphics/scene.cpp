@@ -60,14 +60,14 @@ scene::scene()
     
     if( utils::config()["graphicsdim"] == utils::graphicsdim::dim2D )
     {
-        f_add_sol();
-        f_add_water();
-        f_add_antisubmarinefrigate();
+        f_add_figure< sol >();
+        f_add_figure< water >();
+        f_add_figure< antisubmarinefrigate >();
     }
     else
     {
-        f_add_horizon();
-        f_add_vessel();
+        f_add_figure< horizon >();
+        f_add_figure< vessel >();
     }
     figureset_.initialize();
 }
@@ -109,87 +109,20 @@ void scene::f_debug_error( GLenum src,
     std::cerr << src << ":" << type <<"[" << severity2str(severity) <<"](" <<id <<") :" << msg << std::endl;
 }
 
-void scene::f_add_sol()
+template< typename Figure >
+void scene::f_add_figure()
 {
-    if( ! sol::environment_valid() )
+    if( ! Figure::environment_valid() )
     {
-        std::cerr << "sol environment is invalid\n";
+        std::cerr << __PRETTY_FUNCTION__ << " environment is invalid\n";
         return;
     }
     try
     {
-        figureset_.emplace( new sol );
+        figureset_.emplace( new Figure );
     }
     catch( const std::runtime_error &err )
     {
-        std::cerr << "sol error: " <<err.what() <<std::endl;
-    }
-}
-
-void scene::f_add_water()
-{
-    if( ! water::environment_valid() )
-    {
-        std::cerr << "water environment is invalid\n";
-        return;
-    }
-    try
-    {
-        figureset_.emplace( new water );
-    }
-    catch( const std::runtime_error &err )
-    {
-        std::cerr << "water error: " <<err.what() <<std::endl;
-    }
-}
-
-void scene::f_add_horizon()
-{
-    if( ! horizon::environment_valid() )
-    {
-        std::cerr << "horizon environment is invalid\n";
-        return;
-    }
-    try
-    {
-        figureset_.emplace( new horizon );
-    }
-    catch( const std::runtime_error &err )
-    {
-        std::cerr << "horizon error: " <<err.what() <<std::endl;
-    }
-}
-
-void scene::f_add_antisubmarinefrigate()
-{
-    if( ! antisubmarinefrigate::environment_valid() )
-    {
-        std::cerr << "antisubmarinefrigate environment is invalid\n";
-        return;
-    }
-    try
-    {
-        figureset_.emplace( new antisubmarinefrigate );
-    }
-    catch( const std::runtime_error &err )
-    {
-        std::cerr << " antisubmarinefrigate error: " <<err.what() <<std::endl;
-    }
-}
-
-void scene::f_add_vessel()
-{
-    if( ! vessel::environment_valid() )
-    {
-        std::cerr << "vessel environment is invalid\n";
-        return;
-    }
-    try
-    {
-        figureset_.emplace( new vessel );
-    }
-    catch( const std::runtime_error &err )
-    {
-        std::cerr << "vessel error: " <<err.what() <<std::endl;
+        std::cerr << __PRETTY_FUNCTION__ << " error: " <<err.what() <<std::endl;
     }
 }
