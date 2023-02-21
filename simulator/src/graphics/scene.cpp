@@ -51,7 +51,9 @@ scene::scene()
 {
     glEnable( GL_DEBUG_OUTPUT );
     glEnable( GL_DEPTH_TEST );
-    glDepthFunc( GL_LESS );
+    glDepthMask( GL_TRUE );
+    glDepthFunc( GL_LEQUAL );
+    glDepthRange( 0.0f, 1.0f );
     glDebugMessageCallback( scene::debugCb, this );
     glDebugMessageControl( GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE );
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
@@ -79,6 +81,7 @@ scene::~scene()
 void scene::display( GLuint width, GLuint height, double currentTime )
 {
     glClearColor( 0.392f, 0.706f, 0.983f, 1.0f );
+    glClearDepth(1.0f);
     glClear( GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     figureset_.draw( currentTime );
 }

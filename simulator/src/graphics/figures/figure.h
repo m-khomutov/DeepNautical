@@ -17,9 +17,36 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <memory>
 
+class mtlreader {
+ public:
+    struct material {
+        std::string name;
+
+        GLfloat Ns;
+        glm::vec3 Ka;
+        glm::vec3 Kd;
+        glm::vec3 Ks;
+        glm::vec3 Ke;
+        GLfloat Ni;
+        GLfloat d;
+        GLuint illum;
+    };
+    using material_t = std::map< std::string, material >;
+    
+    mtlreader( char const *filename );
+    mtlreader(const mtlreader &orig) = delete;
+    mtlreader operator =(const mtlreader &orig) = delete;
+    ~mtlreader() = default;
+
+    material const &operator []( std::string const &name ) const;
+    
+private:
+    material_t materials_;
+};
+
 class objreader {
 public:
-    using face_t = glm::vec< 3, glm::ivec3 >;
+    using face_t = glm::vec< 3, glm::ivec3 >; 
     
     objreader( char const *filename );
     objreader(const objreader &orig) = delete;
@@ -29,14 +56,15 @@ public:
     void load_position( std::vector< GLfloat > *pos );
     size_t facecount() const
     {
-        return faces_.size();
+        return facecount_;
     }
     
 private:
     std::vector< glm::vec3 > vertices_;
     std::vector< glm::vec2 > texels_;
     std::vector< glm::vec3 > normals_;
-    std::vector< face_t > faces_;
+    std::vector< std::pair< mtlreader::material, std::vector< face_t > > > mtlfaces_;
+    size_t facecount_ { 0 };
 };
 
 class figure {
