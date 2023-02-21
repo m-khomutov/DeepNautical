@@ -20,10 +20,10 @@ public:
     ~vessel();
 
 private:
-    static constexpr GLfloat maxlurch = 6.0f;
+    static constexpr glm::vec2 lurch_range = glm::vec2( 15.0f, 22.0f );
     static constexpr GLfloat factor_offset = 0.00005f;
     static constexpr glm::vec3 initial_factor = glm::vec3( 0.05f, 0.05f, 0.05f );
-    static constexpr glm::vec3 initial_offset = glm::vec3( -1.1f, 0.21f, 0.0f ); 
+    static constexpr glm::vec3 initial_offset = glm::vec3( -1.2f, 0.21f, 0.0f ); 
 
     std::vector< GLfloat > position_;
     GLfloat lurch_ { .1f };

@@ -51,7 +51,7 @@ scene::scene()
 {
     glEnable( GL_DEBUG_OUTPUT );
     glEnable( GL_DEPTH_TEST );
-    glDepthFunc( GL_ALWAYS );
+    glDepthFunc( GL_LESS );
     glDebugMessageCallback( scene::debugCb, this );
     glDebugMessageControl( GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE );
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );

@@ -18,16 +18,17 @@ uniform mat3 NormalMatrix;
 
 void main() {
     // vertex in world coords
-    vec3 World = (View * Model * vec4(position, 1.0)).xyz;
+    vec3 worldcoords = (View * Model * vec4(position, 1.0)).xyz;
     // normal in world coords
     vs_out.N = normalize(NormalMatrix * normal);
     // diffuse 
-    vec3 lightPos = vec3(0.0, 0.8, -10.0);
-    vs_out.L = normalize(lightPos - World);
+    vec3 lightPos = vec3(0.0, 0.5, -3.0);
+    vs_out.L = normalize(lightPos - worldcoords);
     // specular 
-    vs_out.V = normalize(-World);
+    vs_out.V = normalize(-worldcoords);
     //texels
     vs_out.tc = texcoord;
+
 
     gl_Position = Projection * View * Model * vec4(position, 1.0);
 }

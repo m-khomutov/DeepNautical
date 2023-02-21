@@ -219,7 +219,7 @@ avi::avi( char const *filename )
         {
             std::cerr <<e.what() <<std::endl;
         }
-	if( ftell( ifile_.get() ) >= filesize )
+        if( ftell( ifile_.get() ) >= filesize )
         {
            break;
         }

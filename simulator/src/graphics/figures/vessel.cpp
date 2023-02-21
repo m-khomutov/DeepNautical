@@ -24,6 +24,7 @@ vessel::vessel()
 {
     speed_ = glm::vec3( 0.00035f, -0.00015f, 0.0f );
     offset_ = initial_offset; 
+    angle_ = lurch_range[0];
     
     objreader reader( (std::string(utils::config()["objs"]) + obj_name).c_str() );
     reader.load_position( &position_ );
@@ -58,18 +59,18 @@ void vessel::f_draw( double currentTime )
 
 void vessel::f_set_model()
 {
-    if( angle_ < 0.0f || angle_ > maxlurch )
+    if( angle_ < lurch_range[0] || angle_ > lurch_range[1] )
     {
         lurch_ *= -1;
     }
     model_ = glm::mat4( glm::scale(
                             glm::translate(
                                 glm::rotate( glm::mat4(1.0f),
-                                             glm::radians( angle_ ),
+                                             glm::radians( angle_ - 90.0f ),
                                              glm::vec3( 1.0f, 0.0f, 0.0f ) ),
                                 offset_ ),
                             factor_ ) );
-    if( offset_.x < 1.4f )
+    if( offset_.x < 1.42f )
     {
         offset_ += speed_;
         factor_ += factor_offset;
