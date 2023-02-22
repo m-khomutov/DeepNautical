@@ -12,7 +12,7 @@ add_executable(simulator
 	src/graphics/figures/water.cpp
 	src/graphics/figures/sol.cpp
 	src/graphics/figures/antisubmarinefrigate.cpp
-	src/graphics/figures/vessel.cpp \
+	src/graphics/figures/vessel.cpp
 	src/graphics/texture/texture.cpp
 	src/graphics/texture/avi.cpp
 	src/graphics/figureset.cpp

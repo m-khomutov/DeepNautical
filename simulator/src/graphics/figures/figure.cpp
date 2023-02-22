@@ -31,7 +31,7 @@ namespace
         return false;
     }
     
-    bool str2face( const std::string &s, objreader::face_t *rc )
+    bool str2face( const std::string &s, mtlreader::face_t *rc )
     {
         return sscanf( s.c_str(), "f %u/%u/%u %u/%u/%u %u/%u/%u",
                        &((*rc)[0][0]), &((*rc)[0][1]), &((*rc)[0][2]),
@@ -155,17 +155,17 @@ objreader::objreader( const char* filename )
         }
         else if( line[ 0 ] == 'f' )
         {
-            face_t face;
-            if( str2face( line, &face ) && !mtlfaces_.empty() )
+            mtlreader::face_t face;
+            if( str2face( line, &face ) && !materials_.empty() )
             {
-                mtlfaces_.back().second.push_back( face );
+                materials_.back().faces.push_back( face );
                 ++facecount_;
             }
         }
         else if( line.find( "usemtl " ) == 0 )
         {
-            mtlfaces_.push_back( std::make_pair( mtlreader::material(), std::vector< face_t >() ) );
-            mtlfaces_.back().first.name = line.substr( 7 );
+            materials_.push_back( mtlreader::material() );
+            materials_.back().name = line.substr( 7 );
         }
         else if( line.find( "mtllib " ) == 0 )
         {
@@ -181,15 +181,23 @@ objreader::objreader( const char* filename )
     }
     if( mltr )
     {
-        for( std::pair< mtlreader::material, std::vector< face_t > > &p : mtlfaces_ )
+        for( mtlreader::material &mtl : materials_ )
         {
             try
             {
-                p.first = (*mltr)[p.first.name];
+                mtlreader::material const &m = (*mltr)[mtl.name];
+                mtl.Ns = m.Ns;
+                mtl.Ka = m.Ka;
+                mtl.Kd = m.Kd;
+                mtl.Ks = m.Ks;
+                mtl.Ke = m.Ke;
+                mtl.Ni = m.Ni;
+                mtl.d = m.d;
+                mtl.illum = m.illum;
             }
             catch( const std::runtime_error &e )
             {
-                std::cerr << p.first.name << " error: no such material in mtlfile\n";
+                std::cerr << mtl.name << " error: no such material in mtlfile\n";
             }
         }
     }
@@ -197,9 +205,9 @@ objreader::objreader( const char* filename )
 
 void objreader::load_position( std::vector< GLfloat > *pos )
 {
-    for( auto p : mtlfaces_ )
+    for( mtlreader::material const &mtl : materials_ )
     {
-        for( auto f : p.second )
+        for( auto f : mtl.faces )
         {
             for( int i(0); i < 3; ++i )
             {

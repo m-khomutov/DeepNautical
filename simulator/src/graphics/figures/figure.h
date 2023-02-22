@@ -19,6 +19,7 @@
 
 class mtlreader {
  public:
+    using face_t = glm::vec< 3, glm::ivec3 >; 
     struct material {
         std::string name;
 
@@ -30,6 +31,8 @@ class mtlreader {
         GLfloat Ni;
         GLfloat d;
         GLuint illum;
+
+        std::vector< face_t > faces;
     };
     using material_t = std::map< std::string, material >;
     
@@ -46,7 +49,6 @@ private:
 
 class objreader {
 public:
-    using face_t = glm::vec< 3, glm::ivec3 >; 
     
     objreader( char const *filename );
     objreader(const objreader &orig) = delete;
@@ -63,7 +65,7 @@ private:
     std::vector< glm::vec3 > vertices_;
     std::vector< glm::vec2 > texels_;
     std::vector< glm::vec3 > normals_;
-    std::vector< std::pair< mtlreader::material, std::vector< face_t > > > mtlfaces_;
+    std::vector< mtlreader::material > materials_;
     size_t facecount_ { 0 };
 };
 
