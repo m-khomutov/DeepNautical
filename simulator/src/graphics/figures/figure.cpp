@@ -224,7 +224,6 @@ void objreader::load_position( std::vector< GLfloat > *pos )
     }
 }
 
-
 figure::figure()
 {
     utils::geometry win { utils::config()["window"] };

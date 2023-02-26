@@ -60,6 +60,10 @@ public:
     {
         return facecount_;
     }
+    const  std::vector< mtlreader::material > &materials() const
+    {
+        return materials_;
+    }
     
 private:
     std::vector< glm::vec3 > vertices_;

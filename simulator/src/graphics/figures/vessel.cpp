@@ -21,14 +21,13 @@ bool vessel::environment_valid()
 }
 
 vessel::vessel()
+: objreader_( (std::string(utils::config()["objs"]) + obj_name).c_str() )
 {
     speed_ = glm::vec3( 0.00035f, -0.00015f, 0.0f );
     offset_ = initial_offset; 
     angle_ = lurch_range[0];
     
-    objreader reader( (std::string(utils::config()["objs"]) + obj_name).c_str() );
-    reader.load_position( &position_ );
-    facecount_ = reader.facecount();
+    objreader_.load_position( &position_ );
     
     f_set_model();
 }
@@ -54,7 +53,21 @@ void vessel::f_draw( double currentTime )
 {
     f_set_model();
     set_attribute( "NormalMatrix", glm::transpose( glm::inverse( glm::mat3(view_ * model_) ) ) );
-    glDrawArrays( GL_TRIANGLES, 0, facecount_ * 3 );
+    GLuint first = 0;
+    for( auto mtl : objreader_.materials() )
+    {
+
+        program_->uniform_block("Material" )["Ka"] = mtl.Ka;
+        program_->uniform_block("Material" )["Kd"] = mtl.Kd;
+        program_->uniform_block("Material" )["Ks"] = mtl.Ks;
+        program_->uniform_block("Material" )["Ns"] = mtl.Ns;
+        program_->uniform_block("Material" )["Ni"] = mtl.Ni;
+        program_->uniform_block("Material" )["d"] = mtl.d;
+        program_->uniform_block("Material" )["illum"] = mtl.illum;
+        program_->uniform_block("Material").copy();
+        glDrawArrays( GL_TRIANGLES, first, mtl.faces.size() * 3 );
+        first += mtl.faces.size() * 3;
+    }
 }
 
 void vessel::f_set_model()

@@ -52,10 +52,10 @@ public:
             value_[0] = value;
             return *this;    
         }
-        variable &operator =( glm::vec4 value )
+        variable &operator =( const glm::vec3 &value )
         {
-            value_.resize( 4 );
-            for (GLuint i(0); i < 4; ++i )
+            value_.resize( 3 );
+            for (GLuint i(0); i < 3; ++i )
             {
                 value_[i] = value[i];
             }
