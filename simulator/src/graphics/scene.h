@@ -20,7 +20,7 @@ public:
 
 class scene {
 public:
-    scene();
+    explicit scene( const std::string &specification );
     scene(const scene& orig) = delete;
     scene & operator =( const scene & rhs ) = delete;
     ~scene();
@@ -39,11 +39,13 @@ private:
                                     const GLchar * msg,
                                     const void * p );
 
+    void f_initialize( const std::string &specification );
     void f_debug_info();
     void f_debug_error( GLenum src, GLenum type, GLuint id, GLenum severity, std::string msg ) const;
+    void f_add_figure( const std::string &header, const std::vector< std::string > &settings );
 
     template< typename Figure >
-    void f_add_figure();
+    void f_add_figure( const std::vector< std::string > &settings );
 };
 
 #endif /* SCENE_H */

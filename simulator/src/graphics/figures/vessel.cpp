@@ -7,27 +7,18 @@
 
 #include "vessel.h"
 
-namespace
+vessel::vessel( const std::vector< std::string > &settings )
 {
-char const shader_name[] = "vessel.glsl";
-char const obj_name[] = "/vessel.obj";
-}
+    f_parse_settings( settings );
+    f_check_environment();
+    
+    objreader_.reset( new objreader( (std::string(utils::config()["objs"]) + "/" + obj_name_).c_str() ) );
 
-bool vessel::environment_valid()
-{
-    return utils::file_exists( (std::string(utils::config()["shaders"]) + "/vert_" + shader_name).c_str() ) &&
-           utils::file_exists( (std::string(utils::config()["shaders"]) + "/frag_" + shader_name).c_str() ) &&
-           utils::file_exists( (std::string(utils::config()["objs"]) + obj_name).c_str() );
-}
-
-vessel::vessel()
-: objreader_( (std::string(utils::config()["objs"]) + obj_name).c_str() )
-{
     speed_ = glm::vec3( 0.00035f, -0.00015f, 0.0f );
     offset_ = initial_offset; 
     angle_ = lurch_range[0];
     
-    objreader_.load_position( &position_ );
+    objreader_->load_position( &position_ );
     
     f_set_model();
 }
@@ -36,9 +27,39 @@ vessel::~vessel()
 {
 }
 
+
+void vessel::f_parse_settings( const std::vector< std::string > &settings )
+{
+    for( auto s : settings )
+    {
+        std::pair< std::string, std::string > p;
+        if( utils::str2key( s, &p ) )
+        {
+            if( p.first.find( "shader" ) != std::string::npos )
+            {
+                shader_name_ = p.second.substr( 1, p.second.size() - 2 );
+            }
+            else if( p.first.find( "object" ) != std::string::npos )
+            {
+                obj_name_ = p.second.substr( 1, p.second.size() - 2 );
+            }
+        }
+    }   
+}
+
+void vessel::f_check_environment() const
+{
+    if( ! (utils::file_exists( (std::string(utils::config()["shaders"]) + "/vert_" + shader_name_).c_str() ) &&
+           utils::file_exists( (std::string(utils::config()["shaders"]) + "/frag_" + shader_name_).c_str() ) &&
+           utils::file_exists( (std::string(utils::config()["objs"]) + "/" + obj_name_).c_str() )) )
+    {
+        throw  std::runtime_error( std::string("invalid environment in {") + shader_name_ + " " + obj_name_ + "}"  );
+    }
+}
+
 char const *vessel::f_shader_name() const
 {
-    return shader_name; 
+    return shader_name_.c_str(); 
 }
 
 void vessel::f_initialize()
@@ -52,19 +73,32 @@ void vessel::f_initialize()
 void vessel::f_draw( double currentTime )
 {
     f_set_model();
-    set_attribute( "NormalMatrix", glm::transpose( glm::inverse( glm::mat3(view_ * model_) ) ) );
-    GLuint first = 0;
-    for( auto mtl : objreader_.materials() )
+    try
     {
-
-        program_->uniform_block("Material" )["Ka"] = mtl.Ka;
-        program_->uniform_block("Material" )["Kd"] = mtl.Kd;
-        program_->uniform_block("Material" )["Ks"] = mtl.Ks;
-        program_->uniform_block("Material" )["Ns"] = mtl.Ns;
-        program_->uniform_block("Material" )["Ni"] = mtl.Ni;
-        program_->uniform_block("Material" )["d"] = mtl.d;
-        program_->uniform_block("Material" )["illum"] = mtl.illum;
-        program_->uniform_block("Material").copy();
+        set_attribute( "NormalMatrix", glm::transpose( glm::inverse( glm::mat3(view_ * model_) ) ) );
+    }
+    catch( const std::runtime_error &e )
+    {
+        std::cerr << "NormalMatrix error: " << e.what() << std::endl;
+    }
+    GLuint first = 0;
+    for( auto mtl : objreader_->materials() )
+    {
+        try
+        {
+            program_->uniform_block("Material" )["Ka"] = mtl.Ka;
+            program_->uniform_block("Material" )["Kd"] = mtl.Kd;
+            program_->uniform_block("Material" )["Ks"] = mtl.Ks;
+            program_->uniform_block("Material" )["Ns"] = mtl.Ns;
+            program_->uniform_block("Material" )["Ni"] = mtl.Ni;
+            program_->uniform_block("Material" )["d"] = mtl.d;
+            program_->uniform_block("Material" )["illum"] = mtl.illum;
+            program_->uniform_block("Material").copy();
+        }
+        catch( const std::runtime_error &e )
+        {
+            std::cerr << "Material error: " << e.what() << std::endl;
+        }
         glDrawArrays( GL_TRIANGLES, first, mtl.faces.size() * 3 );
         first += mtl.faces.size() * 3;
     }

@@ -108,6 +108,8 @@ protected:
     void set_layout( char const *name, GLuint size, GLuint step, GLuint off );
 
 private:
+    virtual void f_parse_settings( const std::vector< std::string > &settings ) = 0;
+    virtual void f_check_environment() const = 0;
     virtual char const *f_shader_name() const = 0;
     virtual void f_initialize() = 0;
     virtual void f_draw( double currentTime ) = 0;

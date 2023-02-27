@@ -11,6 +11,8 @@
 #include "figures/horizon.h"
 #include "figures/antisubmarinefrigate.h"
 #include "figures/vessel.h"
+#include <cstring>
+#include <fstream>
 #include <iostream>
 
 namespace {
@@ -47,7 +49,7 @@ scene::debugCb( GLenum src,
     reinterpret_cast< const scene * >(p)->f_debug_error( src, type, id, severity, std::string(msg, sz) );
 }
 
-scene::scene()
+scene::scene( const std::string &specification )
 {
     glEnable( GL_DEBUG_OUTPUT );
     glEnable( GL_DEPTH_TEST );
@@ -59,19 +61,7 @@ scene::scene()
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
     f_debug_info();
-    
-    if( utils::config()["graphicsdim"] == utils::graphicsdim::dim2D )
-    {
-        f_add_figure< sol >();
-        f_add_figure< water >();
-        f_add_figure< antisubmarinefrigate >();
-    }
-    else
-    {
-        f_add_figure< horizon >();
-        f_add_figure< vessel >();
-    }
-    figureset_.initialize();
+    f_initialize( specification );
 }
 
 scene::~scene()
@@ -84,6 +74,44 @@ void scene::display( GLuint width, GLuint height, double currentTime )
     glClearDepth(1.0f);
     glClear( GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     figureset_.draw( currentTime );
+}
+
+void scene::f_initialize( const std::string &specification )
+{
+    std::ifstream ifile( specification );
+    if( !ifile.is_open() )
+    {
+        std::cerr<< specification << " error: " << strerror(errno) << std::endl;
+    }
+    
+    std::vector< std::string > settings;
+    std::string line, header;
+    while( std::getline( ifile, line ) )
+    {
+        if( line.size() < 3 || line[0] == '#' )
+        {
+            continue;
+        }
+        std::string::size_type pos;
+        if( line[ 0 ] == '[' )
+        {
+            if( !header.empty() )
+            {
+                f_add_figure( header, settings );
+                settings.clear();
+            }
+            header = line;
+        }
+        else
+        {
+            settings.push_back( line );
+        }
+    } 
+    if( !header.empty() )
+    {
+        f_add_figure( header, settings );
+    }
+    figureset_.initialize();
 }
 
 void scene::f_debug_info()
@@ -112,17 +140,24 @@ void scene::f_debug_error( GLenum src,
     std::cerr << src << ":" << type <<"[" << severity2str(severity) <<"](" <<id <<") :" << msg << std::endl;
 }
 
-template< typename Figure >
-void scene::f_add_figure()
+void scene::f_add_figure( const std::string &header, const std::vector< std::string > &settings)
 {
-    if( ! Figure::environment_valid() )
+    if( header == "[Horizon]" )
     {
-        std::cerr << __PRETTY_FUNCTION__ << " environment is invalid\n";
-        return;
+        f_add_figure< horizon >( settings );
     }
+    else if( header == "[Vessel]" )
+    {
+        f_add_figure< vessel >( settings );
+    }
+}
+
+template< typename Figure >
+void scene::f_add_figure( const std::vector< std::string > &settings )
+{
     try
     {
-        figureset_.emplace( new Figure );
+        figureset_.emplace( new Figure( settings ) );
     }
     catch( const std::runtime_error &err )
     {

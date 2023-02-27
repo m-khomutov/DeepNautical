@@ -1,0 +1,7 @@
+[Horizon]
+shader="horizon.glsl"
+texture="56118_Peaceful_ocean_background_HD_BG.avi"
+
+[Vessel]
+shader="vessel.glsl"
+object="vessel.obj"

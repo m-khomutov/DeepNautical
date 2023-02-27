@@ -17,6 +17,7 @@ extern "C"
  #include <jerror.h>
 }
 #include <cstdlib>
+#include <functional>
 #include <iostream>
 #include <string>
 #include <map>
@@ -76,8 +77,6 @@ private:
     std::thread t_;
 };
 
-enum class graphicsdim { dim2D, dim3D };
-
 class config
 {
 public:
@@ -93,18 +92,15 @@ public:
         variant( int v );
         variant( std::string v );
         variant( geometry const &v );
-        variant( graphicsdim v );
 
         operator int() const;
         operator std::string() const;
         operator geometry() const;
-        operator graphicsdim() const;
 
     private:
         int ivalue_;
         std::string svalue_;
         geometry gvalue_;
-        graphicsdim dimvalue_;
     };
     using fields_t = std::map< std::string, variant >;
     
@@ -148,6 +144,10 @@ private:
 };
 
 bool file_exists( char const *filename );
+void read_directory( const std::string &path,
+                     char const *filter,
+                     std::function< void( const std::string& ) > foo );
+bool str2key( const std::string &s, std::pair< std::string, std::string > *rc );
 }  // namespace utils
 
 #endif /* UTILS_H */

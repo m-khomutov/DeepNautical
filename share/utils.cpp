@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <dirent.h> 
+#include <string.h> 
 #include <fstream>
 
 utils::config::fields_t utils::config::fields_ = utils::config::fields_t();
@@ -32,11 +34,6 @@ utils::config::variant::variant( utils::geometry const &v )
 {
 }
 
-utils::config::variant::variant( utils::graphicsdim v )
-: dimvalue_( v )
-{
-}
-
 utils::config::variant::operator int() const
 {
     return ivalue_;
@@ -50,11 +47,6 @@ utils::config::variant::operator std::string() const
 utils::config::variant::operator utils::geometry() const
 {
     return gvalue_;
-}
-
-utils::config::variant::operator utils::graphicsdim() const
-{
-    return dimvalue_;
 }
 
 
@@ -85,15 +77,6 @@ namespace
         return ::strtol( line, nullptr, 10 );
     }
     template<>
-    utils::graphicsdim str2conf< utils::graphicsdim >( char const *line )
-    {
-        if( strstr( line, "2D" ) == line )
-        {
-            return utils::graphicsdim::dim2D;
-        }
-        return utils::graphicsdim::dim3D;
-    }
-    template<>
     utils::geometry str2conf< utils::geometry >( char const *line )
     {
         return utils::geometry( line );
@@ -116,10 +99,9 @@ utils::config::config( int argc, char * argv[] )
     config::fields_["quality"] = 80;
     config::fields_["duration"] = 40;
     config::fields_["verify"] = false;
-    config::fields_["graphicsdim"] = graphicsdim::dim3D;
     
     int c;
-    while ((c = getopt (argc, argv, "g:d:p:q:s:t:u:vw:c:o:h")) != -1)
+    while ((c = getopt (argc, argv, "d:p:q:s:t:u:vw:c:o:h")) != -1)
     {
         switch (c)
         {
@@ -134,9 +116,6 @@ utils::config::config( int argc, char * argv[] )
               break;
         case 'p':
               config::fields_["port"] = str2conf< int >( optarg );
-              break;
-        case 'g':
-              config::fields_["graphicsdim"] = str2conf< graphicsdim >( optarg );
               break;
         case 'w':
               config::fields_["window"] = str2conf< utils::geometry >( optarg );
@@ -200,10 +179,6 @@ void utils::config::f_read_file( char const *fname )
         {
             config::fields_["port"] = str2conf< int >( line.substr( pos + 5 ).c_str() );
         }
-        else if( (pos = line.find( "graphicsdim=" )) != std::string::npos )
-        {
-            config::fields_["graphicsdim"] = str2conf< graphicsdim >( line.substr( pos + 12 ).c_str() );
-        }
         else if( (pos = line.find( "window=" )) != std::string::npos )
         {
             config::fields_["window"] = str2conf< utils::geometry >( line.substr( pos + 7 ).c_str() );
@@ -227,6 +202,10 @@ void utils::config::f_read_file( char const *fname )
         else if( (pos = line.find( "objs=" )) != std::string::npos )
         {
             config::fields_["objs"] = str2conf< std::string >( line.c_str() );
+        }
+        else if( (pos = line.find( "scenes=" )) != std::string::npos )
+        {
+            config::fields_["scenes"] = str2conf< std::string >( line.c_str() );
         }
     }
 }
@@ -297,4 +276,35 @@ bool utils::file_exists( char const *filename )
         return false;
     }
     return (info.st_mode & S_IFMT) == S_IFREG || (info.st_mode & S_IFMT) == S_IFLNK;
+}
+
+void utils::read_directory( const std::string &path,
+                            char const *filter, 
+                            std::function< void( const std::string& ) > foo )
+{
+    DIR *dir;
+    struct dirent *entry;
+    if( !(dir = opendir( path.c_str() ) ) )
+        throw std::runtime_error( path + std::string(" error: ") + std::string(strerror( errno ) ) );
+
+    while( (entry = readdir(dir))  )
+    {
+        if( entry->d_type == DT_REG && strstr( entry->d_name, filter ) )
+        {
+            foo( path + "/" + entry->d_name );
+        }
+    }
+    closedir( dir );
+}
+
+bool utils::str2key( const std::string &s, std::pair< std::string, std::string > *rc )
+{
+    size_t pos;
+    if( (pos = s.find( "=" )) != std::string::npos )
+    {
+        rc->first = s.substr(0, pos );
+        rc->second = s.substr( pos + 1 );
+        return true;
+    }
+    return false;
 }

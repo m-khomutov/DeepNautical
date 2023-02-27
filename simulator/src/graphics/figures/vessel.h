@@ -12,9 +12,7 @@
 
 class vessel: public figure {
 public:
-    static bool environment_valid();
-
-    vessel();
+    explicit vessel( const std::vector< std::string > &settings );
     vessel(const vessel& orig) = delete;
     vessel &operator =(const vessel& orig) = delete;
     ~vessel();
@@ -25,12 +23,17 @@ private:
     static constexpr glm::vec3 initial_factor = glm::vec3( 0.05f, 0.05f, 0.05f );
     static constexpr glm::vec3 initial_offset = glm::vec3( -1.2f, 0.21f, 0.0f ); 
 
-    objreader objreader_;
+    std::string shader_name_;
+    std::string obj_name_;
+    
+    std::unique_ptr< objreader > objreader_;
     std::vector< GLfloat > position_;
     GLfloat lurch_ { .1f };
     glm::vec3 factor_ { initial_factor };
 
 private:
+    void f_parse_settings( const std::vector< std::string > &settings ) override;
+    void f_check_environment() const override;
     char const *f_shader_name() const override;
     void f_initialize() override;
     void f_draw( double currentTime ) override;
