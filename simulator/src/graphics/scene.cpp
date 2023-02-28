@@ -78,21 +78,9 @@ void scene::display( GLuint width, GLuint height, double currentTime )
 
 void scene::f_initialize( const std::string &specification )
 {
-    std::ifstream ifile( specification );
-    if( !ifile.is_open() )
-    {
-        std::cerr<< specification << " error: " << strerror(errno) << std::endl;
-    }
-    
     std::vector< std::string > settings;
-    std::string line, header;
-    while( std::getline( ifile, line ) )
-    {
-        if( line.size() < 3 || line[0] == '#' )
-        {
-            continue;
-        }
-        std::string::size_type pos;
+    std::string header;
+    utils::read_config( specification.c_str(), [&]( const std::string &line ) {
         if( line[ 0 ] == '[' )
         {
             if( !header.empty() )
@@ -106,7 +94,7 @@ void scene::f_initialize( const std::string &specification )
         {
             settings.push_back( line );
         }
-    } 
+    });
     if( !header.empty() )
     {
         f_add_figure( header, settings );

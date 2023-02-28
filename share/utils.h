@@ -20,6 +20,8 @@ extern "C"
 #include <functional>
 #include <iostream>
 #include <string>
+#include <iterator>
+#include <sstream>
 #include <map>
 #include <thread>
 #include <vector>
@@ -147,7 +149,27 @@ bool file_exists( char const *filename );
 void read_directory( const std::string &path,
                      char const *filter,
                      std::function< void( const std::string& ) > foo );
+void read_config( char const *fname,
+                  std::function< void( const std::string& ) > foo );
 bool str2key( const std::string &s, std::pair< std::string, std::string > *rc );
+
+template< typename T >
+bool str2vec( const std::string &s, T *rc )
+{
+    std::istringstream iss(s);
+    std::vector< std::string > v( (std::istream_iterator<std::string>(iss)),
+                                   std::istream_iterator<std::string>() );
+    if( v.size() == sizeof(T) / sizeof(float) )
+    {
+        for( size_t i(0); i < v.size(); ++i )
+        { 
+            (*rc)[i] = std::stof(v[i]);
+        }
+        return true;
+    }
+    return false;
+}
+ 
 }  // namespace utils
 
 #endif /* UTILS_H */

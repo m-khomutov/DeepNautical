@@ -14,9 +14,9 @@ vessel::vessel( const std::vector< std::string > &settings )
     
     objreader_.reset( new objreader( (std::string(utils::config()["objs"]) + "/" + obj_name_).c_str() ) );
 
-    speed_ = glm::vec3( 0.00035f, -0.00015f, 0.0f );
-    offset_ = initial_offset; 
-    angle_ = lurch_range[0];
+    offset_ = start_position_; 
+    factor_ = start_factor_;
+    angle_ = pitching_[0];
     
     objreader_->load_position( &position_ );
     
@@ -43,8 +43,48 @@ void vessel::f_parse_settings( const std::vector< std::string > &settings )
             {
                 obj_name_ = p.second.substr( 1, p.second.size() - 2 );
             }
+            else if( p.first.find( "speed" ) != std::string::npos )
+            {
+                if( ! utils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &speed_ ) )
+                {
+                    std::cerr << "vessel error: invalid speed\n";
+                }
+            }
+            else if( p.first.find( "pitching_angles" ) != std::string::npos )
+            {
+                if( ! utils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &pitching_ ) )
+                {
+                    std::cerr << "vessel error: invalid pitching\n";
+                }
+            }
+            else if( p.first.find( "start_position" ) != std::string::npos )
+            {
+                if( ! utils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &start_position_ ) )
+                {
+                    std::cerr << "vessel error: invalid start position\n";
+                }
+            }
+            else if( p.first.find( "start_factor" ) != std::string::npos )
+            {
+                if( ! utils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &start_factor_ ) )
+                {
+                    std::cerr << "vessel error: invalid start factor\n";
+                }
+            }
+            else if( p.first.find( "factor_gain" ) != std::string::npos )
+            {
+                factor_gain_ = std::stof( p.second );
+            }
+            else if( p.first.find( "pitching_gain" ) != std::string::npos )
+            {
+                pitching_gain_ = std::stof( p.second );
+            }
+            else if( p.first.find( "x_trajectory" ) != std::string::npos )
+            {
+                x_trajectory_ = std::stof( p.second );
+            }
         }
-    }   
+    }
 }
 
 void vessel::f_check_environment() const
@@ -65,9 +105,16 @@ char const *vessel::f_shader_name() const
 void vessel::f_initialize()
 {
     glBufferData( GL_ARRAY_BUFFER, position_.size() * sizeof(GLfloat), position_.data(), GL_STATIC_DRAW );
-    set_layout( "position", 3, 8, 0 );
-    set_layout( "texcoord", 2, 8, 3 );
-    set_layout( "normal", 3, 8, 5 );
+    try
+    {
+        set_layout( "position", 3, 8, 0 );
+        set_layout( "texcoord", 2, 8, 3 );
+        set_layout( "normal", 3, 8, 5 );
+    }
+    catch( const std::runtime_error &e )
+    {
+        std::cerr << "vessel error: " << e.what() << std::endl;
+    }
 }
 
 void vessel::f_draw( double currentTime )
@@ -106,9 +153,9 @@ void vessel::f_draw( double currentTime )
 
 void vessel::f_set_model()
 {
-    if( angle_ < lurch_range[0] || angle_ > lurch_range[1] )
+    if( angle_ < pitching_[0] || angle_ > pitching_[1] )
     {
-        lurch_ *= -1;
+        pitching_gain_ *= -1;
     }
     model_ = glm::mat4( glm::scale(
                             glm::translate(
@@ -117,15 +164,15 @@ void vessel::f_set_model()
                                              glm::vec3( 1.0f, 0.0f, 0.0f ) ),
                                 offset_ ),
                             factor_ ) );
-    if( offset_.x < 1.42f )
+    if( offset_.x < x_trajectory_ + start_position_.x )
     {
         offset_ += speed_;
-        factor_ += factor_offset;
+        factor_ += factor_gain_;
     }
     else
     {
-        offset_ = initial_offset; 
-        factor_ = initial_factor;
+        offset_ = start_position_; 
+        factor_ = start_factor_;
     }
-    angle_ += lurch_;
+    angle_ += pitching_gain_;
 }

@@ -154,18 +154,7 @@ utils::config::variant &utils::config::operator [](char const *key) const
 
 void utils::config::f_read_file( char const *fname )
 {
-    std::ifstream ifile( fname );
-    if( !ifile.is_open() )
-    {
-        std::cerr<< fname << " error: " << strerror(errno) << std::endl;
-    }
-    std::string line;
-    while( std::getline( ifile, line ) )
-    {
-        if( line.size() < 3 || line[0] == '#' )
-        {
-            continue;
-        }
+    read_config( fname, [this]( const std::string &line ){
         std::string::size_type pos;
         if( (pos = line.find( "shaders=" )) != std::string::npos )
         {
@@ -206,8 +195,8 @@ void utils::config::f_read_file( char const *fname )
         else if( (pos = line.find( "scenes=" )) != std::string::npos )
         {
             config::fields_["scenes"] = str2conf< std::string >( line.c_str() );
-        }
-    }
+        }   
+    });
 }
 
 
@@ -295,6 +284,26 @@ void utils::read_directory( const std::string &path,
         }
     }
     closedir( dir );
+}
+
+void utils::read_config( char const *fname, std::function< void( const std::string& ) > foo )
+{
+    std::ifstream ifile( fname );
+    if( !ifile.is_open() )
+    {
+        std::cerr<< fname << " error: " << strerror(errno) << std::endl;
+        return;
+    }
+    std::string line;
+    while( std::getline( ifile, line ) )
+    {
+        if( line.size() < 3 || line[0] == '#' )
+        {
+            continue;
+        }
+        foo( line );
+    }
+    ifile.close();
 }
 
 bool utils::str2key( const std::string &s, std::pair< std::string, std::string > *rc )

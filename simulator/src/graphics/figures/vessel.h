@@ -18,18 +18,20 @@ public:
     ~vessel();
 
 private:
-    static constexpr glm::vec2 lurch_range = glm::vec2( 15.0f, 22.0f );
-    static constexpr GLfloat factor_offset = 0.00005f;
-    static constexpr glm::vec3 initial_factor = glm::vec3( 0.05f, 0.05f, 0.05f );
-    static constexpr glm::vec3 initial_offset = glm::vec3( -1.2f, 0.21f, 0.0f ); 
-
     std::string shader_name_;
     std::string obj_name_;
-    
     std::unique_ptr< objreader > objreader_;
+    
     std::vector< GLfloat > position_;
-    GLfloat lurch_ { .1f };
-    glm::vec3 factor_ { initial_factor };
+    glm::vec3 start_position_ = glm::vec3( 0.0f, 0.0f, 0.0f ); 
+    GLfloat x_trajectory_ = 1.0f;
+    
+    glm::vec2 pitching_{ 0.0f, 0.0f };
+    GLfloat pitching_gain_ { 0.0f };
+    
+    glm::vec3 start_factor_ = glm::vec3( 1.0f, 1.0f, 1.0f );
+    GLfloat factor_gain_ = 0.0f;
+    glm::vec3 factor_;
 
 private:
     void f_parse_settings( const std::vector< std::string > &settings ) override;

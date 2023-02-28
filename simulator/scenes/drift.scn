@@ -1,0 +1,21 @@
+[Horizon]
+shader="horizon.glsl"
+texture="56118_Peaceful_ocean_background_HD_BG.avi"
+
+[Vessel]
+shader="vessel.glsl"
+object="vessel.obj"
+# общая скорость движения по сцене
+speed={0.00035 -0.00015 0.0}
+# точка начала движения по сцене
+start_position={-1.2 0.21 0.0}
+# длина перемещения по координате х сцены
+x_trajectory=2.62
+# углы максимального отклонения качки
+pitching_angles={15.0 22.0}
+# скорость изменения текущего угла качки в процессе движения
+pitching_gain=0.1
+# фактор размера в начале движения
+start_factor={0.05 0.05 0.05}
+# скорость изменения фактора в процессе движения
+factor_gain=0.00005

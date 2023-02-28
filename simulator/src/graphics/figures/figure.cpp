@@ -9,28 +9,10 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 #include <fstream>
-#include <iterator>
-#include <sstream>
 
 namespace
 {
-    template< typename T >
-    bool str2vec( const std::string &s, T *rc )
-    {
-        std::istringstream iss(s);
-        std::vector< std::string > v( (std::istream_iterator<std::string>(iss)),
-                                       std::istream_iterator<std::string>() );
-        if( v.size() == sizeof(T) / sizeof(GLfloat) + 1 )
-        {
-            for( GLuint i(1); i < v.size(); ++i )
-            { 
-                (*rc)[i - 1] = std::stof(v[i]);
-            }
-            return true;
-        }
-        return false;
-    }
-    
+   
     bool str2face( const std::string &s, mtlreader::face_t *rc )
     {
         return sscanf( s.c_str(), "f %u/%u/%u %u/%u/%u %u/%u/%u",
@@ -75,16 +57,16 @@ mtlreader::mtlreader( const char* filename )
             switch( line[1] )
             {
             case 'a':
-                str2vec( line, &mtls.back().Ka );
+                utils::str2vec( line.substr( 3 ), &mtls.back().Ka );
                 break;
             case 'd':
-                str2vec( line, &mtls.back().Kd );
+                utils::str2vec( line.substr( 3 ), &mtls.back().Kd );
                 break;
             case 's':
-                str2vec( line, &mtls.back().Ks );
+                utils::str2vec( line.substr( 3 ), &mtls.back().Ks );
                 break;
             case 'e':
-                str2vec( line, &mtls.back().Ke );
+                utils::str2vec( line.substr( 3 ), &mtls.back().Ke );
                 break;
             }
         }
@@ -134,19 +116,19 @@ objreader::objreader( const char* filename )
             switch( line[1] )
             {
             case ' ':
-                if( str2vec( line, &v3 ) )
+                if( utils::str2vec( line.substr( 2 ), &v3 ) )
                 {
                     vertices_.push_back( v3 );
                 }
                 break;
             case 't':
-                if( str2vec( line, &v2 ) )
+                if( utils::str2vec( line.substr( 3 ), &v2 ) )
                 {
                     texels_.push_back( v2 );
                 }
                 break;
             case 'n':
-                if( str2vec( line, &v3 ) )
+                if( utils::str2vec( line.substr( 3 ), &v3 ) )
                 {
                     normals_.push_back( v3 );
                 }
