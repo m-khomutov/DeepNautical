@@ -12,9 +12,7 @@
 
 class water: public figure {
 public:
-    static bool environment_valid();
-
-    water();
+    explicit water( const std::vector< std::string > &settings );
     water( water const &orig ) = delete;
     water &operator =( water const &orig ) = delete;
     ~water();
@@ -29,6 +27,7 @@ private:
     GLuint indices_[6] = { 0, 1, 3, 1, 2, 3 };
 
 private:
+    void f_check_environment() const override;
     char const *f_shader_name() const override;
     void f_initialize() override;
     void f_draw( double currentTime ) override;

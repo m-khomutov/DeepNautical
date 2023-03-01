@@ -12,9 +12,7 @@
 
 class antisubmarinefrigate: public figure {
 public:
-    static bool environment_valid();
-
-    antisubmarinefrigate();
+    explicit antisubmarinefrigate( const std::vector< std::string > &settings );
     antisubmarinefrigate(const antisubmarinefrigate& orig) = delete;
     antisubmarinefrigate &operator=(const antisubmarinefrigate& orig) = delete;
     ~antisubmarinefrigate();
@@ -30,6 +28,7 @@ private:
     float waterline_ { 0.67f };
 
 private:
+    void f_check_environment() const override;
     char const *f_shader_name() const override;
     void f_initialize() override;
     void f_draw( double currentTime ) override;

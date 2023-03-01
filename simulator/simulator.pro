@@ -33,9 +33,11 @@ SOURCES += \
     src/graphics/figures/antisubmarinefrigate.cpp \
     src/graphics/figures/vessel.cpp \
     src/graphics/figures/figure.cpp \
+    src/graphics/figures/specification.cpp \
     src/graphics/figureset.cpp \
     src/graphics/program.cpp \
     src/graphics/scene.cpp \
+    src/graphics/blender.cpp \
     src/graphics/screens/basescreen.cpp \
     src/graphics/screens/qscreen.cpp \
     src/graphics/shader.cpp \
@@ -60,9 +62,11 @@ HEADERS += \
     src/graphics/figures/antisubmarinefrigate.h \
     src/graphics/figures/vessel.h \
     src/graphics/figures/figure.h \
+    src/graphics/figures/specification.h \
     src/graphics/figureset.h \
     src/graphics/program.h \
     src/graphics/scene.h \
+    src/graphics/blender.h \
     src/graphics/screens/basescreen.h \
     src/graphics/screens/qscreen.h \
     src/graphics/shader.h \

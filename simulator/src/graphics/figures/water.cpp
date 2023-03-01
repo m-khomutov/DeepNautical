@@ -7,35 +7,32 @@
 
 #include "water.h"
 
-namespace
-{
-char const shader_name[] = "water.glsl";
-char const texture_name[] = "/water.png";
-}
-
-bool water::environment_valid()
-{
-    return utils::file_exists( (std::string(utils::config()["shaders"]) + "/vert_" + shader_name).c_str() ) &&
-           utils::file_exists( (std::string(utils::config()["shaders"]) + "/frag_" + shader_name).c_str() ) &&
-           utils::file_exists( (std::string(utils::config()["textures"]) + texture_name).c_str() );
-}
-
-water::water()
+water::water( const std::vector< std::string > &settings )
+: figure( settings )
 {
 }
 
 water::~water()
 {
 }
+void water::f_check_environment() const
+{
+    if( ! (utils::file_exists( (std::string(utils::config()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
+           utils::file_exists( (std::string(utils::config()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
+           utils::file_exists( (std::string(utils::config()["textures"]) + "/" + spec_.texture_name).c_str() )) )
+    {
+        throw  std::runtime_error( std::string("invalid environment in {") + spec_.shader_name + " " + spec_.texture_name + "}"  );
+    }
+}
 
 char const *water::f_shader_name() const
 {
-    return shader_name; 
+    return spec_.shader_name.c_str(); 
 }
 
 void water::f_initialize()
 {
-    texture_.reset( new texture( (std::string(utils::config()["textures"]) + texture_name).c_str() ) );
+    texture_.reset( new texture( (std::string(utils::config()["textures"]) + spec_.texture_name).c_str() ) );
 
     glBufferData( GL_ARRAY_BUFFER, sizeof(position_), position_, GL_STATIC_DRAW );
     glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices_), indices_, GL_STATIC_DRAW); 

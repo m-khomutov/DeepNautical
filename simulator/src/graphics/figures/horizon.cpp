@@ -8,48 +8,29 @@
 #include "horizon.h"
 
 horizon::horizon( const std::vector< std::string > &settings )
+: figure( settings )
 {
-    f_parse_settings( settings );
     f_check_environment();
-    avi_.reset( new avi( (std::string(utils::config()["textures"]) + "/" + texture_name_).c_str() ) );
+    avi_.reset( new avi( (std::string(utils::config()["textures"]) + "/" + spec_.texture_name).c_str() ) );
 }
 
 horizon::~horizon()
 {
 }
 
-void horizon::f_parse_settings( const std::vector< std::string > &settings )
-{
-    for( auto s : settings )
-    {
-        std::pair< std::string, std::string > p;
-        if( utils::str2key( s, &p ) )
-        {
-            if( p.first.find( "shader" ) != std::string::npos )
-            {
-                shader_name_ = p.second.substr( 1, p.second.size() - 2 );
-            }
-            else if( p.first.find( "texture" ) != std::string::npos )
-            {
-                texture_name_ = p.second.substr( 1, p.second.size() - 2 );
-            }
-        }
-    }
-}
-
 void horizon::f_check_environment() const
 {
-    if( ! (utils::file_exists( (std::string(utils::config()["shaders"]) + "/vert_" + shader_name_).c_str() ) &&
-           utils::file_exists( (std::string(utils::config()["shaders"]) + "/frag_" + shader_name_).c_str() ) &&
-           utils::file_exists( (std::string(utils::config()["textures"]) + "/" + texture_name_).c_str() )) )
+    if( ! (utils::file_exists( (std::string(utils::config()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
+           utils::file_exists( (std::string(utils::config()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
+           utils::file_exists( (std::string(utils::config()["textures"]) + "/" + spec_.texture_name).c_str() )) )
     {
-        throw  std::runtime_error( std::string("invalid environment in {") + shader_name_ + " " + texture_name_ + "}"  );
+        throw  std::runtime_error( std::string("invalid environment in {") + spec_.shader_name + " " + spec_.texture_name + "}"  );
     }
 }
 
 char const *horizon::f_shader_name() const
 {
-    return shader_name_.c_str(); 
+    return spec_.shader_name.c_str(); 
 }
 
 void horizon::f_initialize()

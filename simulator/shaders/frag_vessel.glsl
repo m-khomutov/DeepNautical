@@ -24,7 +24,7 @@ void main() {
     vec3 suncolor = vec3(1.0f, 1.0f, 0.75f);
 
     float diff = max(dot(fs_in.N, fs_in.L), 0.0);
-    float Id = 0.5;
+    float Id = 0.9;
     vec3 diffuse = suncolor * diff * mtl.Kd * Id;
 
     if( mtl.illum == 0 )

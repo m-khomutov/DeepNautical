@@ -19,9 +19,6 @@ public:
     ~horizon();
     
 private:
-    std::string shader_name_;
-    std::string texture_name_;
-    
     GLfloat position_[20] = {    // текстурные координаты
             1.5f,  1.0f, -1.0f,   1.0f, 0.0f,
             1.5f, -1.0f, -1.0f,   1.0f, 1.0f,
@@ -33,7 +30,6 @@ private:
     double last_frame_time_ { 0.0f };
     
 private:
-    void f_parse_settings( const std::vector< std::string > &settings ) override;
     void f_check_environment() const override;
     char const *f_shader_name() const override;
     void f_initialize() override;

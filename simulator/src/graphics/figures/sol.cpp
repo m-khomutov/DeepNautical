@@ -8,17 +8,9 @@
 #include "sol.h"
 #include <glm/gtx/transform.hpp>
 
-namespace
-{
-char const shader_name[] = "sol.glsl";
-}
-bool sol::environment_valid()
-{
-    return utils::file_exists( (std::string(utils::config()["shaders"]) + "/vert_" + shader_name).c_str() ) &&
-           utils::file_exists( (std::string(utils::config()["shaders"]) + "/frag_" + shader_name).c_str() );
-}
 
-sol::sol()
+sol::sol( const std::vector< std::string > &settings )
+: figure( settings )
 {
     offset_ = glm::vec3( -2.5f, 2.0f, 0.0f );
     model_ = glm::mat4( glm::scale( 
@@ -30,10 +22,18 @@ sol::~sol()
 {
 }
 
+void sol::f_check_environment() const
+{
+    if( ! (utils::file_exists( (std::string(utils::config()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
+           utils::file_exists( (std::string(utils::config()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) ) )
+    {
+        throw  std::runtime_error( std::string("invalid environment in {") + spec_.shader_name + "}"  );
+    }
+}
 
 char const *sol::f_shader_name() const
 {
-    return shader_name; 
+    return spec_.shader_name.c_str(); 
 }
 
 void sol::f_initialize()

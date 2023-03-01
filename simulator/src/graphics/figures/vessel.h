@@ -9,6 +9,7 @@
 #define VESSEL_H
 
 #include "figure.h"
+#include "../blender.h"
 
 class vessel: public figure {
 public:
@@ -18,28 +19,20 @@ public:
     ~vessel();
 
 private:
-    std::string shader_name_;
-    std::string obj_name_;
-    std::unique_ptr< objreader > objreader_;
-    
+    std::unique_ptr< blender::object > object_;
     std::vector< GLfloat > position_;
-    glm::vec3 start_position_ = glm::vec3( 0.0f, 0.0f, 0.0f ); 
-    GLfloat x_trajectory_ = 1.0f;
-    
-    glm::vec2 pitching_{ 0.0f, 0.0f };
-    GLfloat pitching_gain_ { 0.0f };
-    
-    glm::vec3 start_factor_ = glm::vec3( 1.0f, 1.0f, 1.0f );
-    GLfloat factor_gain_ = 0.0f;
     glm::vec3 factor_;
+    GLfloat pitching_angle_ = 0.0f;
+    
 
 private:
-    void f_parse_settings( const std::vector< std::string > &settings ) override;
     void f_check_environment() const override;
     char const *f_shader_name() const override;
     void f_initialize() override;
     void f_draw( double currentTime ) override;
     void f_set_model();
+    bool f_full_trajectory();
+    void f_reset();
 };
 
 #endif /* VESSEL_H */

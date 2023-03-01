@@ -278,7 +278,7 @@ void utils::read_directory( const std::string &path,
 
     while( (entry = readdir(dir))  )
     {
-        if( entry->d_type == DT_REG && strstr( entry->d_name, filter ) )
+        if( entry->d_name[0] != '.' && entry->d_type == DT_REG && strstr( entry->d_name, filter ) )
         {
             foo( path + "/" + entry->d_name );
         }

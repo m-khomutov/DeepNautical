@@ -8,6 +8,7 @@
 #ifndef FIGURE_H
 #define FIGURE_H
 
+#include "specification.h"
 #include "../texture/texture.h"
 #include "../program.h"
 #include "../../../../share/utils.h"
@@ -17,65 +18,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <memory>
 
-class mtlreader {
- public:
-    using face_t = glm::vec< 3, glm::ivec3 >; 
-    struct material {
-        std::string name;
-
-        GLfloat Ns;
-        glm::vec3 Ka;
-        glm::vec3 Kd;
-        glm::vec3 Ks;
-        glm::vec3 Ke;
-        GLfloat Ni;
-        GLfloat d;
-        GLuint illum;
-
-        std::vector< face_t > faces;
-    };
-    using material_t = std::map< std::string, material >;
-    
-    mtlreader( char const *filename );
-    mtlreader(const mtlreader &orig) = delete;
-    mtlreader operator =(const mtlreader &orig) = delete;
-    ~mtlreader() = default;
-
-    material const &operator []( std::string const &name ) const;
-    
-private:
-    material_t materials_;
-};
-
-class objreader {
-public:
-    
-    objreader( char const *filename );
-    objreader(const objreader &orig) = delete;
-    objreader operator =(const objreader &orig) = delete;
-    ~objreader() = default;
-
-    void load_position( std::vector< GLfloat > *pos );
-    size_t facecount() const
-    {
-        return facecount_;
-    }
-    const  std::vector< mtlreader::material > &materials() const
-    {
-        return materials_;
-    }
-    
-private:
-    std::vector< glm::vec3 > vertices_;
-    std::vector< glm::vec2 > texels_;
-    std::vector< glm::vec3 > normals_;
-    std::vector< mtlreader::material > materials_;
-    size_t facecount_ { 0 };
-};
-
 class figure {
 public:
-    figure();
+    explicit figure( const std::vector< std::string > &setting );
     figure(const figure& orig) = delete;
     figure &operator=(const figure& orig) = delete;
     virtual ~figure();
@@ -84,6 +29,7 @@ public:
     void draw( double currentTime );
 
 protected:   
+    specification spec_;
     std::unique_ptr< program > program_;
     std::unique_ptr< texture > texture_;    
     glm::mat4 model_ { glm::rotate( glm::mat4(1.0f), glm::radians( 0.0f ), glm::vec3(1.0f, 0.0f, 0.0f) ) };
@@ -91,9 +37,8 @@ protected:
                                    glm::vec3(0.0f, 0.0f, 0.0f),
                                    glm::vec3(0.0f, 1.0f, 0.0f) ) };
     glm::mat4 projection_;
-    float angle_ = 0.0f;
+    glm::vec3 angle_ = glm::vec3( 0.0f, 0.0f, 0.0f );
     float scene_position_ { 0.0f };
-    glm::vec3 speed_ { 0.001f, 0.0f, 0.0f };
     float direction_ { -1.0f };
     glm::vec3 offset_ { 0.0f, 0.0f, 0.0f };
 
@@ -108,7 +53,6 @@ protected:
     void set_layout( char const *name, GLuint size, GLuint step, GLuint off );
 
 private:
-    virtual void f_parse_settings( const std::vector< std::string > &settings ) = 0;
     virtual void f_check_environment() const = 0;
     virtual char const *f_shader_name() const = 0;
     virtual void f_initialize() = 0;

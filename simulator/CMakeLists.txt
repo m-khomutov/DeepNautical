@@ -8,6 +8,7 @@ add_executable(simulator
 	src/encoding/baseframe.cpp
 	src/encoding/jpegframe.cpp
 	src/graphics/figures/figure.cpp
+	src/graphics/figures/specification.cpp
 	src/graphics/figures/horizon.cpp
 	src/graphics/figures/water.cpp
 	src/graphics/figures/sol.cpp
@@ -20,6 +21,7 @@ add_executable(simulator
 	src/graphics/shader.cpp
 	src/graphics/program.cpp
 	src/graphics/scene.cpp
+	src/graphics/blender.cpp
 	src/graphics/screens/basescreen.cpp
 	src/graphics/screens/glfwscreen.cpp
 	src/server/s_socket.cpp

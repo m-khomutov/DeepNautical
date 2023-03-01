@@ -12,9 +12,7 @@
 
 class sol: public figure {
 public:
-    static bool environment_valid();
-
-    sol();
+    explicit sol( const std::vector< std::string > &settings );
     sol(sol const& orig) = delete;
     sol &operator =(sol const& orig) = delete;
     ~sol();
@@ -29,6 +27,7 @@ private:
     GLuint indices_[6] = { 0, 1, 3, 1, 2, 3 };
 
 private:
+    void f_check_environment() const override;
     char const *f_shader_name() const override;
     void f_initialize() override;
     void f_draw( double currentTime ) override;
