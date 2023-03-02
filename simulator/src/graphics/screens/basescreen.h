@@ -9,6 +9,7 @@
 #define BASESCREEN_H
 
 #include "../../encoding/jpegframe.h"
+#include "../scene.h"
 #include <list>
 #include <string>
 #include <stdexcept>
@@ -28,9 +29,19 @@ public:
     virtual void run() = 0;
     virtual void stop() = 0;
 
+    const std::list< std::string > &scenes() const
+    {
+        return scenes_;
+    }
+    const std::string &current_scene() const
+    {
+        return *scene_iter_;
+    }
+
 protected:
     std::list< std::string > scenes_;
     std::list< std::string >::iterator scene_iter_;
+    std::unique_ptr< scene > sc_;
 
 private:
 

@@ -280,7 +280,7 @@ void utils::read_directory( const std::string &path,
     {
         if( entry->d_name[0] != '.' && entry->d_type == DT_REG && strstr( entry->d_name, filter ) )
         {
-            foo( path + "/" + entry->d_name );
+            foo( entry->d_name );
         }
     }
     closedir( dir );

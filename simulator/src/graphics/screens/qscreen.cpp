@@ -47,7 +47,7 @@ void qscreen::initializeGL()
     {
         throw screen_error("GLEW init error");
     }
-    sc_.reset(new scene( *scene_iter_ ) );
+    sc_.reset(new scene( std::string(utils::config()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
     glViewport( 0, 0, width(), height() );
 }
 

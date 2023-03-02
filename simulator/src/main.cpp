@@ -23,15 +23,10 @@
 
 namespace
 {
-std::unique_ptr< baseservice > main_service;
 
 void signal_handler( int s )
 {
-    if( ! main_service )
-    {
-        ::exit(0);
-    }
-    main_service->onsignal( s );
+    baseservice::instance().onsignal( s );
 }
 
 void show_options_and_exit( const char *prog, int rc )
@@ -79,10 +74,8 @@ int main(int argc, char** argv)
     {
         std::setlocale( LC_NUMERIC,"C" );
 
-        main_service = baseservice::make();
-        main_service->run();
-
-        return main_service->stop();
+        baseservice::instance().run();
+        return baseservice::instance().stop();
     }
     catch( const std::runtime_error &err )
     {
@@ -104,6 +97,5 @@ int main(int argc, char** argv)
         }
     }
 
-    main_service.reset();
     return (EXIT_FAILURE);
 }

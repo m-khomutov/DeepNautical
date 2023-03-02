@@ -9,7 +9,6 @@
 #define QSCREEN_H
 
 #include "basescreen.h"
-#include "../scene.h"
 #include <QOpenGLWidget>
 #include <memory>
 
@@ -24,7 +23,6 @@ public:
     void stop() override;
 
     baseframe *frame_;
-    std::unique_ptr<scene> sc_;
     int update_id_ { -1 };
 
     void timerEvent(QTimerEvent*);

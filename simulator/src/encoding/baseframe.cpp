@@ -24,5 +24,8 @@ void baseframe::store( int width, int height )
 
 void baseframe::load( baseprotocol * proto, float duration )
 {
-    f_load( proto, duration );
+    if( proto )
+    {
+        f_load( proto, duration );
+    }
 }

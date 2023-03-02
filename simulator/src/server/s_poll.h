@@ -15,7 +15,7 @@
 #include <map>
 
 class baseframe;
-class baseprotocol;
+class connection;
 
 class s_poll_error: public std::runtime_error
 {
@@ -25,7 +25,7 @@ public:
 
 class s_poll {
 public:
-    explicit s_poll( baseframe *frame );
+    s_poll( baseframe *frame );
     s_poll(const s_poll& orig) = delete;
     s_poll &operator =(const s_poll& orig) = delete;
     ~s_poll();
@@ -42,7 +42,7 @@ private:
     int fd_;
     baseframe *frame_;
     std::chrono::milliseconds frame_duration_;
-    std::map< int, std::shared_ptr< baseprotocol > > connections_;
+    std::map< int, std::shared_ptr< connection > > connections_;
 
 private:
     void f_add( int sock, uint32_t events );

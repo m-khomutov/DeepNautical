@@ -16,7 +16,7 @@
 
 class baseservice {
 public:
-    static std::unique_ptr< baseservice > make();
+    static baseservice &instance();
     
     baseservice(const baseservice& orig) = delete;
     baseservice &operator =(const baseservice& orig) = delete;
@@ -27,6 +27,15 @@ public:
     void run();
     int stop();
 
+    const std::list< std::string > &scenes() const
+    {
+        return screen_->scenes();
+    }
+    const std::string &current_scene() const
+    {
+        return screen_->current_scene();
+    }
+    
 protected:
     std::unique_ptr< baseframe > frame_;
     std::unique_ptr< basescreen > screen_;

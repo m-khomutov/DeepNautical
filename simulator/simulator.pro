@@ -46,8 +46,10 @@ SOURCES += \
     src/graphics/uniformblock.cpp \
     src/server/baseprotocol.cpp \
     src/server/flvprotocol.cpp \
+    src/server/httpprotocol.cpp \
     src/server/s_poll.cpp \
     src/server/s_socket.cpp \
+    src/server/connection.cpp \
     src/main.cpp \
     src/service/baseservice.cpp \
     src/service/qservice.cpp \
@@ -74,9 +76,11 @@ HEADERS += \
     src/graphics/texture/avi.h \
     src/graphics/uniformblock.h \
     src/server/baseprotocol.h \
+    src/server/httpprotocol.h \
     src/server/flvprotocol.h \
     src/server/s_poll.h \
     src/server/s_socket.h \
+    src/server/connection.h \
     src/service/baseservice.h \
     src/service/qservice.h \
     ../share/utils.h

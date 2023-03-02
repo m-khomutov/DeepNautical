@@ -15,7 +15,12 @@ screen_error::screen_error( const std::string &what )
 
 basescreen::basescreen()
 {
-    utils::read_directory( utils::config()["scenes"], ".scn", [this]( const std::string &name ){ scenes_.push_back( name ); } );
+    utils::read_directory( utils::config()["scenes"],
+                           ".scn",
+                           [this]( const std::string &name )
+                           {
+                               scenes_.push_back( name.substr( 0, name.size() - 4 ) );
+                           } );
     if( scenes_.empty() )
         throw screen_error( std::string("no scenes found") );
     

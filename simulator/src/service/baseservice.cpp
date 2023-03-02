@@ -13,13 +13,18 @@
 #include "glfwservice.h"
 #endif
 
-std::unique_ptr< baseservice > baseservice::make()
+baseservice &baseservice::instance()
 {
+    static std::unique_ptr< baseservice > ptr;
+    if( ! ptr )
+    {
 #ifdef QT_CORE_LIB
-    return std::unique_ptr< baseservice >(new qservice);
+        ptr.reset(new qservice);
 #else
-    return std::unique_ptr< baseservice >(new glfwservice);
+        ptr.reset(new glfwservice);
 #endif
+    }
+    return *ptr;
 }
 
 baseservice::baseservice()

@@ -6,7 +6,7 @@
  */
 
 #include "s_poll.h"
-#include "flvprotocol.h"
+#include "connection.h"
 #include "../encoding/baseframe.h"
 #include <sys/epoll.h>
 #include <unistd.h>
@@ -54,7 +54,7 @@ void s_poll::run()
         {
             if( events[i].data.fd == p_socket_ )
             {
-                std::shared_ptr< baseprotocol > conn( new flvprotocol( events[i].data.fd ) );
+                std::shared_ptr< connection > conn( new connection( events[i].data.fd ) );
                 try
                 {
                     f_add( *conn, EPOLLIN | EPOLLET | EPOLLRDHUP | EPOLLHUP );
@@ -118,7 +118,7 @@ void s_poll::f_send_frame( time_point_t * last_ts )
     {
         for( auto p : connections_ )
         {
-            frame_->load( p.second.get(), d.count() );
+            frame_->load( p.second->protocol(), d.count() );
         }
         *last_ts = ts;
     }

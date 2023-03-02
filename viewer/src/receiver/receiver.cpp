@@ -174,7 +174,7 @@ void receiver::stop()
 void receiver::f_start_connection()
 {
     connection_.reset( new c_socket( server_host_, server_port_ ) );
-    std::string request = "GET / HTTP/1.1\r\n"
+    std::string request = "GET /stream?proto=flv HTTP/1.1\r\n"
                           "User-Agent: Viewer/0.0.1 (agat-aquarius)\r\n"
                           "Accept: */*\r\n"
                           "Accept-Encoding: identity\r\n"

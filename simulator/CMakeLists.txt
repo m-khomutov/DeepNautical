@@ -25,7 +25,9 @@ add_executable(simulator
 	src/graphics/screens/basescreen.cpp
 	src/graphics/screens/glfwscreen.cpp
 	src/server/s_socket.cpp
+	src/server/connection.cpp
 	src/server/baseprotocol.cpp
+	src/server/httpprotocol.cpp
 	src/server/flvprotocol.cpp
 	src/server/s_poll.cpp
         src/service/baseservice.cpp
