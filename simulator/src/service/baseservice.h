@@ -27,13 +27,17 @@ public:
     void run();
     int stop();
 
-    const std::list< std::string > &scenes() const
+    const std::set< std::string > &scenes() const
     {
         return screen_->scenes();
     }
     const std::string &current_scene() const
     {
         return screen_->current_scene();
+    }
+    void set_scene( const std::string &scene )
+    {
+        screen_->set_scene( scene );
     }
     
 protected:

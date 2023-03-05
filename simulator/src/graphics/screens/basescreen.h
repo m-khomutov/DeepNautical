@@ -10,7 +10,7 @@
 
 #include "../../encoding/jpegframe.h"
 #include "../scene.h"
-#include <list>
+#include <set>
 #include <string>
 #include <stdexcept>
 
@@ -29,7 +29,7 @@ public:
     virtual void run() = 0;
     virtual void stop() = 0;
 
-    const std::list< std::string > &scenes() const
+    const std::set< std::string > &scenes() const
     {
         return scenes_;
     }
@@ -37,10 +37,11 @@ public:
     {
         return *scene_iter_;
     }
+    void set_scene( const std::string &scene );
 
 protected:
-    std::list< std::string > scenes_;
-    std::list< std::string >::iterator scene_iter_;
+    std::set< std::string > scenes_;
+    std::set< std::string >::iterator scene_iter_;
     std::unique_ptr< scene > sc_;
 
 private:
