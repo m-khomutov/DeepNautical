@@ -40,6 +40,26 @@ void basescreen::set_scene( const std::string &scene )
     std::set< std::string>::iterator it = scenes_.find( scene );
     if( it == scenes_.end() )
     {
-	throw screen_error( scene + " not found" );
+        throw screen_error( scene + " not found" );
+    }
+    scene_iter_ = it;
+
+    auto g = commands_.get();
+    g->emplace_back( command::set_scene );
+}
+
+void basescreen::f_exec_command()
+{
+    auto g = commands_.get();
+    if( ! g->empty() )
+    {
+        command cmd = g->front();
+        g->pop_front();
+        switch( cmd.type() )
+        {
+        case command::set_scene:
+            sc_.reset(new scene( std::string(utils::config()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
+            break;
+        }
     }
 }

@@ -46,7 +46,11 @@ scene::debugCb( GLenum src,
                 const GLchar * msg,
                 const void * p )
 {
-    reinterpret_cast< const scene * >(p)->f_debug_error( src, type, id, severity, std::string(msg, sz) );
+    reinterpret_cast< const scene * >(p)->f_debug_error( debug_message().set_source( src )
+                                                                        .set_type( type )
+                                                                        .set_id( id )
+                                                                        .set_severity( severity )
+                                                                        .set_body( msg, sz  ) );
 }
 
 scene::scene( const std::string &specification )
@@ -119,13 +123,13 @@ void scene::f_debug_info()
     std::cerr << "]\n}" << std::endl;   
 }
 
-void scene::f_debug_error( GLenum src,
-                           GLenum type,
-                           GLuint id,
-                           GLenum severity,
-                           std::string msg ) const
+void scene::f_debug_error( const debug_message &msg ) const
 {
-    std::cerr << src << ":" << type <<"[" << severity2str(severity) <<"](" <<id <<") :" << msg << std::endl;
+    std::cerr << msg.source << ":"
+              << msg.type << "["
+              << severity2str( msg.severity ) << "]("
+              << msg.id << ") : "
+              << msg.body << std::endl;
 }
 
 void scene::f_add_figure( const std::string &header, const std::vector< std::string > &settings)

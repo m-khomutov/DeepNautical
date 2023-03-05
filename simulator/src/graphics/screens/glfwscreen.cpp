@@ -58,6 +58,8 @@ void glfwscreen::run()
     sc_.reset(new scene( utils::config()["scenes"] + "/" + *scene_iter_ ) );
     while( !glfwWindowShouldClose( window_.get() ) )
     {
+        f_exec_command();
+
         glfwGetFramebufferSize( window_.get(), &w, &h );
         sc_->display( w, h, glfwGetTime() );
         frame_->store( w, h );

@@ -18,6 +18,41 @@ public:
     scene_error(const std::string & what);
 };
 
+struct debug_message {
+    GLenum source;
+    GLenum type;
+    GLuint id;
+    GLenum severity;
+    std::string body;
+
+    debug_message &set_source( GLenum src )
+    {
+        source = src;
+        return *this;
+    };
+    debug_message &set_type( GLenum t )
+    {
+        type = t;
+        return *this;
+    };
+    debug_message &set_id( GLenum i )
+    {
+         id = i;
+         return *this;
+    };
+    debug_message &set_severity( GLenum s )
+    {
+        severity = s;
+        return *this;
+    };
+    debug_message &set_body( const GLchar * msg, GLsizei sz )
+    {
+        body = std::string( msg, sz );
+        return *this;
+    }
+};
+
+
 class scene {
 public:
     explicit scene( const std::string &specification );
@@ -41,7 +76,7 @@ private:
 
     void f_initialize( const std::string &specification );
     void f_debug_info();
-    void f_debug_error( GLenum src, GLenum type, GLuint id, GLenum severity, std::string msg ) const;
+    void f_debug_error( const debug_message &msg ) const;
     void f_add_figure( const std::string &header, const std::vector< std::string > &settings );
 
     template< typename Figure >

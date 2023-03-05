@@ -23,6 +23,7 @@ extern "C"
 #include <iterator>
 #include <sstream>
 #include <map>
+#include <mutex>
 #include <thread>
 #include <vector>
 
@@ -143,6 +144,56 @@ public:
 private:
     jpeg_decompress_struct cinfo_;
     jpeg_error_mgr jerr_;
+};
+
+template< typename T >
+class safeguard {
+public:
+    class guard {
+    public:
+        T& operator *()
+        {
+            return *value_;
+        }
+        T* operator ->()
+        {
+            return value_;
+        }
+
+        guard( guard && rhs )
+        : m_( std::move( rhs.m_ ) )
+        , value_( rhs.value_ )
+        {}
+
+    private:
+        guard( std::mutex *m, T *v )
+        : m_( m, []( std::mutex *m_p ){ m_p->unlock(); } )
+        , value_( v )
+        {
+	    m_->lock();
+        }
+
+    private:
+        std::shared_ptr< std::mutex > m_;
+        T *value_;
+        friend class safeguard;
+    };
+
+public:
+    safeguard()
+    : value_( new T )
+    {}
+    safeguard(const safeguard& orig) = delete;
+    safeguard &operator =(const safeguard& orig) = delete;
+
+    guard get()
+    {
+        return guard( &mutex_, value_.get() );
+    }
+
+private:
+    std::mutex mutex_;
+    std::unique_ptr< T > value_;
 };
 
 bool file_exists( char const *filename );

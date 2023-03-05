@@ -53,6 +53,8 @@ void qscreen::initializeGL()
 
 void qscreen::paintGL()
 {
+    f_exec_command();
+
     sc_->display( width(), height(), QDateTime::currentMSecsSinceEpoch());
     frame_->store( width(), height() );
 }

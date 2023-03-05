@@ -167,7 +167,7 @@ void program::f_get_uniform_blocks() {
         {
             v.pop_back();
         }
-	std::string name(v.data(), v.size());
+        std::string name(v.data(), v.size());
         uniform_blocks_.emplace( name, new uniformblock( id_, name.data() ) );
         if( results[1] )
         {
@@ -189,7 +189,7 @@ void program::f_get_uniform_blocks() {
     {
         std::cerr << "\t'" << a.first << "' {" << std::endl;
         for( auto var : *a.second )
-	    std::cerr << "\t    " << var.name() << std::endl;
-	std::cerr << "\t}\n";
+            std::cerr << "\t    " << var.name() << std::endl;
+        std::cerr << "\t}\n";
     }
 }
