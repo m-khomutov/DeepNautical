@@ -11,6 +11,8 @@
 #include <cstddef>
 #include <cstdio>
 #include <cstdint>
+#include <cstring>
+#include <dirent.h>
 extern "C"
 {
  #include <jpeglib.h>
@@ -23,6 +25,7 @@ extern "C"
 #include <iterator>
 #include <sstream>
 #include <map>
+#include <memory>
 #include <mutex>
 #include <thread>
 #include <vector>
@@ -170,7 +173,7 @@ public:
         : m_( m, []( std::mutex *m_p ){ m_p->unlock(); } )
         , value_( v )
         {
-	    m_->lock();
+            m_->lock();
         }
 
     private:
@@ -197,12 +200,27 @@ private:
 };
 
 bool file_exists( char const *filename );
-void read_directory( const std::string &path,
-                     char const *filter,
-                     std::function< void( const std::string& ) > foo );
 void read_config( char const *fname,
                   std::function< void( const std::string& ) > foo );
 bool str2key( const std::string &s, std::pair< std::string, std::string > *rc );
+
+template< typename F >
+void read_directory( const std::string &path, char const *filter, F &&func )
+{
+    DIR *dir;
+    struct dirent *entry;
+    if( !(dir = opendir( path.c_str() ) ) )
+        throw std::runtime_error( path + std::string(" error: ") + std::string(strerror( errno ) ) );
+
+    while( (entry = readdir(dir))  )
+    {
+        if( entry->d_name[0] != '.' && entry->d_type == DT_REG && strstr( entry->d_name, filter ) )
+        {
+            func( entry->d_name );
+        }
+    }
+    closedir( dir );
+}
 
 template< typename T >
 bool str2vec( const std::string &s, T *rc )

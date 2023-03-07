@@ -35,7 +35,7 @@ program::program( char const *filter )
 {
     try
     {
-	std::string dir = utils::config()["shaders"];
+        std::string dir = utils::config()["shaders"];
         utils::read_directory( dir, filter, [&]( const std::string &name ){ f_emplace_shader( dir + "/" + name ); } );
     }
     catch( const std::runtime_error & err )

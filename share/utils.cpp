@@ -9,11 +9,6 @@
 #include <getopt.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <dirent.h> 
-#include <string.h> 
 #include <fstream>
 
 utils::config::fields_t utils::config::fields_ = utils::config::fields_t();
@@ -265,25 +260,6 @@ bool utils::file_exists( char const *filename )
         return false;
     }
     return (info.st_mode & S_IFMT) == S_IFREG || (info.st_mode & S_IFMT) == S_IFLNK;
-}
-
-void utils::read_directory( const std::string &path,
-                            char const *filter, 
-                            std::function< void( const std::string& ) > foo )
-{
-    DIR *dir;
-    struct dirent *entry;
-    if( !(dir = opendir( path.c_str() ) ) )
-        throw std::runtime_error( path + std::string(" error: ") + std::string(strerror( errno ) ) );
-
-    while( (entry = readdir(dir))  )
-    {
-        if( entry->d_name[0] != '.' && entry->d_type == DT_REG && strstr( entry->d_name, filter ) )
-        {
-            foo( entry->d_name );
-        }
-    }
-    closedir( dir );
 }
 
 void utils::read_config( char const *fname, std::function< void( const std::string& ) > foo )
