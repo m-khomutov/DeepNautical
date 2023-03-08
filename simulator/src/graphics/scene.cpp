@@ -72,7 +72,7 @@ scene::~scene()
 {
 }
 
-void scene::display( GLuint width, GLuint height, double currentTime )
+void scene::display( GLuint/* width*/, GLuint/* height*/, double currentTime )
 {
     glClearColor( 0.392f, 0.706f, 0.983f, 1.0f );
     glClearDepth(1.0f);

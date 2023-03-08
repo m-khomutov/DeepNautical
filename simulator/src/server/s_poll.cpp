@@ -57,7 +57,7 @@ void s_poll::run()
                 std::shared_ptr< connection > conn( new connection( events[i].data.fd ) );
                 try
                 {
-                    f_add( *conn, EPOLLIN | EPOLLET | EPOLLRDHUP | EPOLLHUP );
+                    f_add( *conn, EPOLLIN | EPOLLOUT | EPOLLET | EPOLLRDHUP | EPOLLHUP );
                 }
                 catch( const std::runtime_error &err )
                 {
@@ -76,6 +76,14 @@ void s_poll::run()
                     {
                         p->second->on_data( buffer, rc );
                     }
+                }
+            }
+            else if( events[i].events & EPOLLOUT )
+            {
+                auto p = connections_.find( events[i].data.fd );
+                if( p != connections_.end() )
+                {
+                    p->second->on_ready_to_write();
                 }
             }
             else

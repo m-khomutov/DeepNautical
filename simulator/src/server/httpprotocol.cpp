@@ -74,7 +74,16 @@ void httpprotocol::on_data( const uint8_t * data, int size )
     }
     else
     {
-        ::write( fd_, status_404, strlen( status_404 ) );
+        f_set_reply( (uint8_t const *)status_404, strlen( status_404 ) );
+	f_reply();
+    }
+}
+
+void httpprotocol::do_write()
+{
+    if( sent_ < reply_.size() )
+    {
+        f_reply();
     }
 }
 
@@ -91,17 +100,17 @@ void httpprotocol::f_send_scene_list()
     }
     body.pop_back();
     body += "]}";
-    std::string reply = std::string(status_200) + "Content-Length: " + std::to_string( body.size() ) + "\r\n\r\n";
-    ::write( fd_, reply.data(), reply.size() );
-    ::write( fd_, body.data(), body.size() );   
+    std::string reply = std::string(status_200) + "Content-Length: " + std::to_string( body.size() ) + "\r\n\r\n" + body;
+    f_set_reply( (uint8_t const *)reply.data(), reply.size() );
+    f_reply();
 }
 
 void httpprotocol::f_send_current_scene()
 {
     std::string body = "{\"success\":true,\"scene\":\"" + baseservice::instance().current_scene() + "\"}";
-    std::string reply = std::string(status_200) + "Content-Length: " + std::to_string( body.size() ) + "\r\n\r\n";
-    ::write( fd_, reply.data(), reply.size() );
-    ::write( fd_, body.data(), body.size() );   
+    std::string reply = std::string(status_200) + "Content-Length: " + std::to_string( body.size() ) + "\r\n\r\n" + body;
+    f_set_reply( (uint8_t const *)reply.data(), reply.size() );
+    f_reply();
 }
 
 void httpprotocol::f_set_current_scene( const std::string &scene )
@@ -114,6 +123,23 @@ void httpprotocol::f_set_current_scene( const std::string &scene )
     catch( const std::runtime_error &err )
     {
         std::cerr << "set scene " << scene << " error: " << err.what() << std::endl;
-        ::write( fd_, status_404, strlen( status_404 ) );
+        f_set_reply( (uint8_t const *)status_404, strlen( status_404 ) );
+        f_reply();
+    }
+}
+
+void httpprotocol::f_set_reply( uint8_t const * data, size_t size )
+{
+    reply_.resize( size );
+    ::memcpy( reply_.data(), data, size );
+    sent_ = 0;
+}
+
+void httpprotocol::f_reply()
+{
+    int rc = ::write( fd_, reply_.data() + sent_, reply_.size() - sent_ );
+    if( rc > 0 )
+    {
+        sent_ += rc;
     }
 }

@@ -21,6 +21,7 @@ class texture {
 public:
     explicit texture( char const *filename );
     explicit texture( utils::image &img );
+    texture( GLuint w, GLuint h, uint8_t value );
     texture(const texture& orig) = delete;
     texture &operator =(const texture& orig) = delete;
     ~texture();

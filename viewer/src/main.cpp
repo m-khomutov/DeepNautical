@@ -63,10 +63,12 @@ int main(int argc, char** argv)
 
 #ifdef QT_CORE_LIB
     QApplication a(argc, argv);
+#else
+    gtk_init( &argc, &argv );
 #endif
     try
     {
-        main_viewer = baseviewer::make( argc, argv );
+        main_viewer = baseviewer::make();
         main_viewer->run();
         return main_viewer->stop();
     }

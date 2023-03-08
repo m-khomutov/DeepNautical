@@ -11,6 +11,7 @@
 #include "baseprotocol.h"
 #include <map>
 #include <string>
+#include <vector>
 
 class httpprotocol:public baseprotocol {
 public:
@@ -34,12 +35,19 @@ public:
     ~httpprotocol();
 
     void on_data( const uint8_t * data, int size ) override;
+    void do_write() override;
     void send_frame( const uint8_t * data, int size, float duration ) override;
+
+private:
+    size_t sent_ { 0 };
+    std::vector< uint8_t > reply_;
 
 private:
     void f_send_scene_list();
     void f_send_current_scene();
     void f_set_current_scene( const std::string &scene );
+    void f_set_reply( uint8_t const * data, size_t size );
+    void f_reply();
 
 };
 

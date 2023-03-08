@@ -8,11 +8,11 @@
 #include "flvprotocol.h"
 #include <unistd.h>
 #include <cstring>
+#include <iostream>
 
 namespace
 {
 const char status[] = "HTTP/1.1 200 OK\r\nAccess-Control-Allow-Origin: *\r\nContent-Type: video/x-flv\r\n\r\n";
-const size_t status_len = strlen(status);
 const uint8_t header[13] = { 'F', 'L', 'V', 0x01, 0x01, 0x00, 0x00, 0x00, 0x09, 0x00, 0x00, 0x0, 0x00 };
 
 void copy3bytes( uint32_t from, uint8_t *to )
@@ -29,7 +29,10 @@ void copy3bytes( uint32_t from, uint8_t *to )
 
 flvprotocol::flvprotocol( int b_sock )
 : baseprotocol( b_sock )
+, http_flv_header_( strlen(status) + 13 )
 {
+    ::memcpy( http_flv_header_.data(), status, strlen(status) );
+    ::memcpy( http_flv_header_.data() + http_flv_header_.size() - 13, header, sizeof(header) );
 }
 
 flvprotocol::~flvprotocol()
@@ -38,23 +41,70 @@ flvprotocol::~flvprotocol()
 
 void flvprotocol::on_data( const uint8_t * data, int size )
 {
-    for( int i(0); i <size; ++i ) fprintf(stderr, "%c", char(data[i]));
-    ::write( fd_, status, status_len );
-    ::write( fd_, header, sizeof(header) );
+    for( int i(0); i < size; ++i ) fprintf(stderr, "%c", char(data[i]));
+    f_send_header();
+}
+
+void flvprotocol::do_write()
+{
+    if( sent_from_header_ != http_flv_header_.size() )
+    {
+        f_send_header();
+    }
+    if( sent_from_frame_ != flv_frame_.size() )
+    {
+        f_send_frame();
+    }
 }
 
 void flvprotocol::send_frame( const uint8_t * data, int size, float duration )
 {
-    copy3bytes( size + 1, tag_header_ + 1 );
-    //copy3bytes( timestamp_, tag_header_ + 4 );
-    //tag_header_[7] = (timestamp_ >> 24) & 0xff;
-    memcpy( tag_header_ + 4, &timestamp_, sizeof(timestamp_) );
+    if( sent_from_header_ != http_flv_header_.size() )
+    {
+        f_send_header();
+    }
+    if( sent_from_header_ == http_flv_header_.size() )
+    {
+        if( sent_from_frame_ != flv_frame_.size() )
+        {
+            f_send_frame();
+        }
+        if( sent_from_frame_ == flv_frame_.size() )
+        {
+            copy3bytes( size + 1, tag_header_ + 1 );
+            //copy3bytes( timestamp_, tag_header_ + 4 );
+            //tag_header_[7] = (timestamp_ >> 24) & 0xff;
+            memcpy( tag_header_ + 4, &timestamp_, sizeof(timestamp_) );
     
-    timestamp_ += duration;
+            timestamp_ += duration;
 
-    uint32_t tagsize = htobe32( size + 12 );
+            uint32_t tagsize = htobe32( size + 12 );
     
-    ::write( fd_, tag_header_, sizeof(tag_header_) );
-    ::write( fd_, data, size );
-    ::write( fd_, &tagsize, sizeof(tagsize) );
+            flv_frame_.resize( sizeof(tag_header_) + size + sizeof(tagsize) );
+            ::memcpy( flv_frame_.data(), tag_header_, sizeof(tag_header_) );
+            ::memcpy( flv_frame_.data() + sizeof(tag_header_), data, size );
+            ::memcpy( flv_frame_.data() + sizeof(tag_header_) + size, &tagsize, sizeof(tagsize) );
+
+            sent_from_frame_ = 0;
+            f_send_frame();
+        }
+    }
+}
+
+void flvprotocol::f_send_header()
+{
+    int rc = ::write( fd_, http_flv_header_.data() + sent_from_header_, http_flv_header_.size() - sent_from_header_ );
+    if( rc > 0 )
+    {
+        sent_from_header_ += rc;
+    }
+}
+
+void flvprotocol::f_send_frame()
+{
+    int rc = ::write( fd_, flv_frame_.data() + sent_from_frame_, flv_frame_.size() - sent_from_frame_ );
+    if( rc > 0 )
+    {
+        sent_from_frame_ += rc;
+    }
 }

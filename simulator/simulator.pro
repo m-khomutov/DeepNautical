@@ -85,4 +85,4 @@ HEADERS += \
     src/service/qservice.h \
     ../share/utils.h
 
-LIBS += -ljpeg -lGLEW -lSOIL
+LIBS += -ljpeg -lGLEW

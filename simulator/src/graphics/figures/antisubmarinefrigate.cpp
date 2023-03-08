@@ -42,7 +42,7 @@ void antisubmarinefrigate::f_initialize()
     set_layout( "texcoord", 2, 5, 3 );
 }
 
-void antisubmarinefrigate::f_draw( double currentTime )
+void antisubmarinefrigate::f_draw( double )
 {
     set_attribute( "Texture", GLuint(0) );
     set_attribute( "Offset", offset_ );

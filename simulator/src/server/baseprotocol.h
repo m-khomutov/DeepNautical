@@ -24,6 +24,7 @@ public:
     virtual ~baseprotocol();
 
     virtual void on_data( const uint8_t * data, int size ) = 0;
+    virtual void do_write() = 0;
     virtual void send_frame( const uint8_t * data, int size, float duration ) = 0;
     
 protected:

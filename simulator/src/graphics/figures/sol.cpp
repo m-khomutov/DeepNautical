@@ -49,7 +49,7 @@ void sol::f_initialize()
     program_->uniform_block("Circle").copy();
 }
 
-void sol::f_draw( double currentTime )
+void sol::f_draw( double )
 {
     glUseProgram( *program_ );
     set_attribute( "Offset", offset_ );

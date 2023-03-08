@@ -49,6 +49,11 @@ void connection::on_data( const uint8_t * data, int size )
     }
 }
 
+void connection::on_ready_to_write()
+{
+    proto_->do_write();
+}
+
 void connection::send_frame( const uint8_t * data, int size, float duration )
 {
     if( proto_ )

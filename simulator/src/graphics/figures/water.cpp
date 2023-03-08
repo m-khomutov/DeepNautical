@@ -40,7 +40,7 @@ void water::f_initialize()
     set_layout( "texcoord", 2, 5, 3 );
 }
 
-void water::f_draw( double currentTime )
+void water::f_draw( double )
 {
     set_attribute( "Offset", offset_ );
 

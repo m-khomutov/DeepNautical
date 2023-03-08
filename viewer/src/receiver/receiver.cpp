@@ -223,6 +223,11 @@ void receiver::f_start_connection()
 
 size_t receiver::f_receive_tag( uint8_t const *data, size_t size )
 {
+    if( size != flv_tag::size )
+    {
+        throw receiver_error( "invalid tag size" );
+    }
+
     flv_tag tag( data );
     if( !tag.valid() )
     {
@@ -245,8 +250,13 @@ size_t receiver::f_receive_body( uint8_t const *data, size_t size )
     return sizeof( uint32_t );
 }
 
-size_t receiver::f_receive_size( uint8_t const *data, size_t size )
+size_t receiver::f_receive_size( uint8_t const *, size_t size )
 {
+    if( size != sizeof(uint32_t) )
+    {
+        throw receiver_error( "invalid size" );
+    }
+
     if( verify_ )
     {
         fprintf( stderr, "%f mks\n", float(timedelay()) );

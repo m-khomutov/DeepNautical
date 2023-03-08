@@ -143,6 +143,7 @@ public:
     ~jpeg_codec();
     
     bool decode( uint8_t const *data, size_t size, image *img );
+    bool decode( char const *filename, image *img );
 
 private:
     jpeg_decompress_struct cinfo_;

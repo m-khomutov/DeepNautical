@@ -169,12 +169,36 @@ factor_gain=0.00005
 * scene?list  
   Вывести список имеющихся у эмулятора сцен  
   `wget -O list 'http://127.0.0.1:2232/scene?list'`  
+  Ответ:  
+```
+{
+  "success": true,
+  "scenes": [
+    "tug",
+    "wakeboard"
+  ]
+}
+```  
 * scene?get  
   Вывести текущую сцену  
   `wget -O scene 'http://127.0.0.1:2232/scene?get'`  
+  Ответ:  
+```
+{
+  "success": true,
+  "scene": "wakeboard"
+}
+```  
 * scene?set=имя_сцены  
   Сменить текущую сцену на предлагаемую  
-  `wget -O scene 'http://127.0.0.1:2232/scene?set=drift'`  
+  `wget -O scene 'http://127.0.0.1:2232/scene?set=tug'`  
+  Ответ:  
+```
+{
+  "success": true,
+  "scene": "tug"
+}
+```  
   
   
 **Протокол передачи медиа данных**

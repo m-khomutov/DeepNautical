@@ -52,7 +52,7 @@ void vessel::f_initialize()
     }
 }
 
-void vessel::f_draw( double currentTime )
+void vessel::f_draw( double )
 {
     f_set_model();
     try
@@ -80,6 +80,18 @@ void vessel::f_draw( double currentTime )
         catch( const std::runtime_error &e )
         {
             std::cerr << "Material error: " << e.what() << std::endl;
+        }
+        if( mtl.map_Kd )
+        {
+            try
+            {
+                mtl.map_Kd->activate();
+                set_attribute( "Texture", GLuint(0) );
+            }
+            catch( const std::runtime_error &e )
+            {
+                std::cerr << "Texture error: " << e.what() << std::endl;
+            }
         }
         glDrawArrays( GL_TRIANGLES, first, mtl.faces.size() * 3 );
         first += mtl.faces.size() * 3;

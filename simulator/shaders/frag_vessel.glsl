@@ -20,6 +20,8 @@ uniform Material
     int illum;
 }  mtl;
 
+uniform sampler2D Texture;
+
 void main() {
     vec3 suncolor = vec3(1.0f, 1.0f, 0.75f);
 
@@ -27,9 +29,10 @@ void main() {
     float Id = 0.9;
     vec3 diffuse = suncolor * diff * mtl.Kd * Id;
 
+    vec4 map_Kd = vec4(texture(Texture, fs_in.tc));
     if( mtl.illum == 0 )
     {
-        Color = vec4(diffuse, 1.0);
+        Color = vec4(diffuse, 1.0) * map_Kd;
     }
     else
     {
@@ -37,7 +40,7 @@ void main() {
         vec3 ambient = mtl.Ka * Ia;
         if( mtl.illum == 1 )
         {
-            Color = vec4((ambient + diffuse), 1.0);
+            Color = vec4((ambient + diffuse), 1.0) * map_Kd;
         }
         else
         {
@@ -46,7 +49,7 @@ void main() {
             vec3 R = reflect(-fs_in.L, fs_in.N);
             float spec = pow(max(dot(R, fs_in.V), 0.0), mtl.Ns);
             vec3 specular = suncolor * spec * mtl.Ks * Is;
-            Color = vec4((ambient + diffuse + specular), 1.0);
+            Color = vec4((ambient + diffuse + specular), 1.0) * map_Kd;
         }
     }
 }

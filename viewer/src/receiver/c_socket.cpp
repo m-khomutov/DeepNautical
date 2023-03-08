@@ -25,7 +25,7 @@ c_socket::c_socket( std::string const &addr, uint16_t port )
 
     fcntl( fd_, F_SETFL, fcntl(fd_, F_GETFL, 0) | O_NONBLOCK );
 
-    sockaddr_in ca = { AF_INET, htons(port), { f_resolve_host( addr ) } };
+    sockaddr_in ca = { AF_INET, htons(port), { f_resolve_host( addr ) }, { 0 } };
     int rc = connect( fd_, (sockaddr*)&ca, sizeof(sockaddr_in) );
     if( rc == -1 )
     {

@@ -19,12 +19,12 @@ viewer_error::viewer_error( const std::string &what )
 {
 }
 
-std::unique_ptr< baseviewer > baseviewer::make( int argc, char *argv[] )
+std::unique_ptr< baseviewer > baseviewer::make()
 {
 #ifdef QT_CORE_LIB
     return std::unique_ptr< baseviewer >(new qviewer);
 #else
-    return std::unique_ptr< baseviewer >(new g_viewer( argc, argv ));
+    return std::unique_ptr< baseviewer >(new g_viewer);
 #endif
 }
 

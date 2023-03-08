@@ -35,4 +35,4 @@ add_executable(simulator
         src/main.cpp
         )
 
-target_link_libraries(simulator GL glfw GLEW SOIL jpeg pthread)
+target_link_libraries(simulator GL glfw GLEW jpeg pthread)

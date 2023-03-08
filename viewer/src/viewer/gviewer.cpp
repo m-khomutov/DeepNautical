@@ -38,10 +38,8 @@ GdkPixbuf *create_pixbuf(const gchar * filename)
 
 }  // namespace
 
-g_viewer::g_viewer( int argc, char *argv[] )
+g_viewer::g_viewer()
 {
-    gtk_init( &argc, &argv );
-    
     window_ = gtk_window_new( GTK_WINDOW_TOPLEVEL );
     layout_ = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
     allocation_.reset( g_new(GtkAllocation, 1) );

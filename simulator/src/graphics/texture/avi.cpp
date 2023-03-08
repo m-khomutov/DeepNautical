@@ -22,8 +22,11 @@ namespace
             T value;
             char buf[sizeof(T)];
         } u;
-        fread( u.buf, 1, sizeof(u.buf), f );
-        return u.value; 
+        if( fread( u.buf, 1, sizeof(u.buf), f ) == sizeof(u.buf) )
+        {
+            return u.value;
+        }
+        throw avi_error( "not enough data to read int" );
     }
     
     uint32_t atomfromfile( FILE *f )
@@ -32,13 +35,16 @@ namespace
             uint32_t value;
             char buf[sizeof(value)];
         } u;
-        fread( u.buf, 1, sizeof(u.buf), f );
-        for( size_t i(0); i < sizeof(u.buf); ++i )
+        if( fread( u.buf, 1, sizeof(u.buf), f ) == sizeof(u.buf) )
         {
-            if( !isascii( u.buf[ i ] ) )
-                throw avi_error( "invalid type: " + std::to_string(u.value) );
+            for( size_t i(0); i < sizeof(u.buf); ++i )
+            {
+                if( !isascii( u.buf[ i ] ) )
+                    throw avi_error( "invalid type: " + std::to_string(u.value) );
+            }
+            return u.value;
         }
-        return u.value;
+        throw avi_error( "not enough data to read atom" );
     }
     std::string atom2str( uint32_t a )
     {
@@ -49,11 +55,11 @@ namespace
         u.value = a;
         return std::string(u.buf, sizeof(u.buf));
     }
-    std::ostream &operator <<( std::ostream& out, const avi::atom &a )
+    /*std::ostream &operator <<( std::ostream& out, const avi::atom &a )
     {
-	out << a.to_str();
+        out << a.to_str();
         return out;
-    }
+    }*/
 }  // namespace
 
 
@@ -69,7 +75,10 @@ bool avi::frame::valid( FILE *f ) const
     size_t pos = ftell( f );
     fseek( f, begin, SEEK_SET );
     uint8_t buf[2];
-    fread( (char*)buf, 1, sizeof(buf), f );
+    if( fread( (char*)buf, 1, sizeof(buf), f ) != sizeof(buf) )
+    {
+        throw avi_error( "not enough data to check validness" );
+    }
     fseek( f, pos, SEEK_SET );
     
     return buf[0] == 0xff && buf[1] == 0xd8;
@@ -172,7 +181,10 @@ avi::list::list( atom::type type, FILE *f, frame_t *frames )
         while( !feof( f ) )
         {
             char buf[4];
-            fread( buf, 1, sizeof(buf), f );
+            if( fread( buf, 1, sizeof(buf), f ) != sizeof(buf) )
+            {
+                throw avi_error( "not enough data to get next list atom" );
+	    }
             if( buf[0] == '0' && buf[1] == '0' && buf[2] == 'd' && buf[3] == 'c' )
             {
                 frames->emplace_back( frame( f ) );
@@ -201,7 +213,7 @@ avi::avi( char const *filename )
         throw avi_error( std::string("failed to open ") + filename );
     }
     fseek( ifile_.get(), 0, SEEK_END ); 
-    size_t filesize = ftell( ifile_.get() );
+    long filesize = ftell( ifile_.get() );
     fseek( ifile_.get(), 0, SEEK_SET ); 
 
     while( ! feof( ifile_.get() ) )
@@ -246,17 +258,23 @@ utils::image &avi::next_image()
         jpeg.resize( frame_iter_->size );
     }
     fseek( ifile_.get(), frame_iter_->begin, SEEK_SET );
-    fread( (char*)jpeg.data(), 1, frame_iter_->size, ifile_.get() );
-    
-    try
+    if( fread( (char*)jpeg.data(), 1, frame_iter_->size, ifile_.get() ) == frame_iter_->size )
     {
-        codec_.decode( jpeg.data(), frame_iter_->size, &image_ );
-        ++ frame_iter_;
+        try
+        {
+            codec_.decode( jpeg.data(), frame_iter_->size, &image_ );
+            ++ frame_iter_;
+        }
+        catch( const std::runtime_error &err )
+        {
+            std::cerr << err.what() << std::endl;
+            frame_iter_ = frames_.begin();
+        }
     }
-    catch( const std::runtime_error &err )
+    else
     {
-        std::cerr << err.what() <<std::endl;
-        frame_iter_ = frames_.begin();
+        std::cerr << "failed to read full image\n";
+        ++ frame_iter_;
     }
     return image_; 
 }

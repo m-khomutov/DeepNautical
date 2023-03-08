@@ -7,6 +7,8 @@
 
 #include "utils.h"
 #include <getopt.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fstream>
@@ -220,6 +222,30 @@ utils::jpeg_codec::jpeg_codec()
 utils::jpeg_codec::~jpeg_codec()
 {
     jpeg_destroy_decompress( &cinfo_ );
+}
+
+bool utils::jpeg_codec::decode( char const *filename, image *img )
+{
+    struct stat info;
+    if( stat(filename, &info) != 0 )
+    {
+        throw utils::jpeg_codec::error( strerror( errno ) );
+    }
+
+    int fd = open( filename, O_RDONLY );
+    if( fd < 0 )
+    {
+        throw utils::jpeg_codec::error( strerror( errno ) );
+    }
+
+    std::vector< uint8_t > jdata( info.st_size );
+    size_t rc = ::read( fd, jdata.data(), jdata.size() );
+    close(fd);
+    if( rc != jdata.size() )
+    {
+        throw utils::jpeg_codec::error( "not whole file was read" );
+    }
+    return decode( jdata.data(), jdata.size(), img );
 }
 
 bool utils::jpeg_codec::decode( uint8_t const *data, size_t in_size, image *img )

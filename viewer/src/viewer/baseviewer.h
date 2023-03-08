@@ -22,7 +22,7 @@ public:
 
 class baseviewer {
 public:
-    static std::unique_ptr< baseviewer > make( int argc, char *argv[] );
+    static std::unique_ptr< baseviewer > make();
 
     baseviewer();
     baseviewer(const baseviewer& orig) = delete;

@@ -14,7 +14,7 @@
 
 class g_viewer: public baseviewer {
 public:
-    g_viewer( int argc, char *argv[] );
+    g_viewer();
     g_viewer(const g_viewer& orig) = delete;
     g_viewer &operator =(const g_viewer& orig) = delete;
     ~g_viewer() = default;
