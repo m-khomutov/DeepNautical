@@ -181,10 +181,6 @@ blender::object::object( char const *fname )
                 mtl.d = m.d;
                 mtl.illum = m.illum;
                 mtl.map_Kd = m.map_Kd;
-                if( !mtl.map_Kd )
-                {
-                   mtl.map_Kd.reset( new texture(1, 1, 255) );
-                }
             }
             catch( const std::runtime_error &e )
             {

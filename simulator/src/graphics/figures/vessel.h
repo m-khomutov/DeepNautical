@@ -23,6 +23,7 @@ private:
     std::vector< GLfloat > position_;
     glm::vec3 factor_;
     GLfloat pitching_angle_ = 0.0f;
+    std::shared_ptr< texture > empty_texture_;
     
 
 private:

@@ -39,6 +39,7 @@ char const *vessel::f_shader_name() const
 
 void vessel::f_initialize()
 {
+    empty_texture_.reset( new texture(1, 1, 255) );
     glBufferData( GL_ARRAY_BUFFER, position_.size() * sizeof(GLfloat), position_.data(), GL_STATIC_DRAW );
     try
     {
@@ -81,17 +82,21 @@ void vessel::f_draw( double )
         {
             std::cerr << "Material error: " << e.what() << std::endl;
         }
-        if( mtl.map_Kd )
+        try
         {
-            try
+            if( mtl.map_Kd )
             {
                 mtl.map_Kd->activate();
-                set_attribute( "Texture", GLuint(0) );
             }
-            catch( const std::runtime_error &e )
+            else
             {
-                std::cerr << "Texture error: " << e.what() << std::endl;
+                empty_texture_->activate();
             }
+            set_attribute( "Texture", GLuint(0) );
+        }
+        catch( const std::runtime_error &e )
+        {
+            std::cerr << "Texture error: " << e.what() << std::endl;
         }
         glDrawArrays( GL_TRIANGLES, first, mtl.faces.size() * 3 );
         first += mtl.faces.size() * 3;
