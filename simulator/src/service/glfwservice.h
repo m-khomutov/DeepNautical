@@ -12,7 +12,6 @@
 
 class glfwservice: public baseservice {
 public:
-    glfwservice();
     glfwservice( glfwservice const &orig ) = delete;
     glfwservice &operator =( glfwservice const &orig ) = delete;
     ~glfwservice() = default;
@@ -20,8 +19,12 @@ public:
     void onsignal( int ) override;
     
 private:
+    glfwservice();
+
     void f_run() override;
     int f_stop() override;
+
+    friend baseservice;
 };
 
 #endif /* SERVICE_H */

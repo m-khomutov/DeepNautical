@@ -9,6 +9,7 @@
 # Параметры объекта Horizon:
 # * shader - имя файла шейдера. Сам файл должен находиться в каталоге, определенном в файле конфигурации.
 # * texture - имя файла текстуры. Сам файл должен находиться в каталоге, определенном в файле конфигурации.
+# * viewport - экран отображения фона. Точки: левая верхняя, правая верхняя, правая нижняя, левая нижняя
 #
 # Параметры объекта Vessel:
 # * shader - имя файла шейдера. Сам файл должен находиться в каталоге, определенном в файле конфигурации.
@@ -27,17 +28,18 @@
 [Horizon]
 shader="horizon.glsl"
 texture="56118_Peaceful_ocean_background_HD_BG.avi"
+viewport={{-1.5 1.0 -1.0} {1.5 1.0 -1.0} {1.5 -1.0 0.66} {-1.5 -1.0 0.66}} # {topleft topright bottomright bottomleft}
 
 # катер, дрейфующий из левого верхнего в правый нижний угол экрана
 [Vessel]
 shader="vessel.glsl"
 object="wakeboard_boat/boat.obj"
-speed={0.00075 -0.00015 0.0}
+speed={0.00075 -0.00015 0.00006}
 start_position={-1.2 0.0 0.0}
 course={-90.0 0.0 0.0}
 trajectory=2.7
-pitching_range={15.0 22.0}
-pitching=0.1
+pitching_range={17.0 22.0}
+pitching=0.07
 angle_gain={0.0, 0.0, 0.0}
 start_factor={0.05 0.05 0.05}
 factor_gain=0.00005

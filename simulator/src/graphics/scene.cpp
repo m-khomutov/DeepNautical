@@ -153,6 +153,6 @@ void scene::f_add_figure( const std::vector< std::string > &settings )
     }
     catch( const std::runtime_error &err )
     {
-        std::cerr << __PRETTY_FUNCTION__ << " error: " <<err.what() <<std::endl;
+        std::cerr << __PRETTY_FUNCTION__ << " error: " << err.what() <<std::endl;
     }
 }

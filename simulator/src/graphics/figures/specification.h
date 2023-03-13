@@ -35,9 +35,10 @@ public:
     glm::vec3 start_factor = glm::vec3( 1.0f, 1.0f, 1.0f );
     float factor_gain = 0.0f;
 
-private:
+    std::vector< float > viewport;
 
+private:
+    void f_read_viewport( const std::string& config );
 };
 
 #endif /* SPECIFICATION_H */
-

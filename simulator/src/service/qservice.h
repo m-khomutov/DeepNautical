@@ -13,7 +13,6 @@
 
 class qservice: public baseservice {
 public:
-    qservice();
     qservice(const qservice& orig) = delete;
     qservice operator =(const qservice& orig) = delete;
     ~qservice() = default;
@@ -21,8 +20,12 @@ public:
     void onsignal( int ) override;
 
 private:
+    qservice();
+
     void f_run() override;
     int f_stop() override;
+
+    friend baseservice;
 };
 
 #endif /* QSERVICE_H */

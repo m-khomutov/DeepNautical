@@ -232,8 +232,16 @@ bool str2vec( const std::string &s, T *rc )
     if( v.size() == sizeof(T) / sizeof(float) )
     {
         for( size_t i(0); i < v.size(); ++i )
-        { 
-            (*rc)[i] = std::stof(v[i]);
+        {
+            try
+            {
+                (*rc)[i] = std::stof(v[i]);
+            }
+            catch( const std::logic_error & err )
+            {
+                std::cerr << __PRETTY_FUNCTION__ << " error: " << err.what() <<std::endl;
+                return false;
+            }
         }
         return true;
     }

@@ -19,16 +19,10 @@ public:
     ~horizon();
     
 private:
-    GLfloat position_[20] = {    // текстурные координаты
-            1.5f,  1.0f, -1.0f,   1.0f, 0.0f,
-            1.5f, -1.0f, -1.0f,   1.0f, 1.0f,
-           -1.5f, -1.0f, -1.0f,   0.0f, 1.0f,
-           -1.5f,  1.0f, -1.0f,   0.0f, 0.0f,
-    };
     GLuint indices_[6] = { 0, 1, 3, 1, 2, 3 };
     std::unique_ptr< avi > avi_;
     double last_frame_time_ { 0.0f };
-    
+
 private:
     void f_check_environment() const override;
     char const *f_shader_name() const override;
