@@ -34,11 +34,11 @@ viewport={{-1.5 1.0 -1.0} {1.5 1.0 -1.0} {1.5 -1.0 0.66} {-1.5 -1.0 0.66}} # {to
 [Vessel]
 shader="vessel.glsl"
 object="wakeboard_boat/boat.obj"
-speed={0.00075 -0.00015 0.00006}
-start_position={-1.2 0.0 0.0}
+speed={0.00075 -0.0004 0.00006}
+start_position={-1.2 0.0 -0.05}
 course={-90.0 0.0 0.0}
 trajectory=2.7
-pitching_range={17.0 22.0}
+pitching_range={23.0 27.0}
 pitching=0.07
 angle_gain={0.0, 0.0, 0.0}
 start_factor={0.05 0.05 0.05}
@@ -48,13 +48,13 @@ factor_gain=0.00005
 [Vessel]
 shader="vessel.glsl"
 object="wakeboard_boat/boat.obj"
-speed={0.0009 -0.0004 0.0}
-start_position={-1.0 1.0 0.18}
-course={75.0 0.0 180.0}
+speed={0.0009 -0.0001 0.00001}
+start_position={-1.0 0.5 0.18}
+course={60.0 0.0 180.0}
 trajectory=2.6
-pitching_range={1.0 3.2}
-pitching=0.03
-angle_gain={0.01, 0.01, -0.0005}
+pitching_range={2.0 4.2}
+pitching=0.02
+angle_gain={0.01, 0.005, -0.0005}
 start_factor={0.07 0.07 0.07}
-factor_gain=-0.00001
+factor_gain=-0.000008
 

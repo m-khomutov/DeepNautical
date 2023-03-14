@@ -28,7 +28,7 @@
 [Horizon]
 shader="horizon.glsl"
 texture="56118_Peaceful_ocean_background_HD_BG.avi"
-viewport={{-1.5 1.0 -1.0} {1.5 1.0 -1.0} {1.5 -1.0 0.66} {-1.5 -1.0 0.66}} # {topleft topright bottomright bottomleft}
+viewport={{-1.5 1.0 -1.0} {1.5 1.0 -1.0} {1.5 -1.0 1.55} {-1.5 -1.0 1.55}} # {topleft topright bottomright bottomleft}
 
 # катер, проходящий от правого в левый край экрана
 [Vessel]

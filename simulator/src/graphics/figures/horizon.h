@@ -19,7 +19,7 @@ public:
     ~horizon();
     
 private:
-    GLuint indices_[6] = { 0, 1, 3, 1, 2, 3 };
+    GLuint indices_[6] = { 0, 3, 1, 1, 3, 2 };
     std::unique_ptr< avi > avi_;
     double last_frame_time_ { 0.0f };
 
