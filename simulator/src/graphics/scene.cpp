@@ -14,6 +14,7 @@
 #include <cstring>
 #include <fstream>
 #include <iostream>
+#include <list>
 
 namespace {
     std::string severity2str( GLuint severity ) {
@@ -83,14 +84,17 @@ void scene::display( GLuint/* width*/, GLuint/* height*/, double currentTime )
 
 void scene::f_initialize( const std::string &specification )
 {
-    std::vector< std::string > settings;
+    using param_t = std::vector< std::string >;
+
+    std::map< std::string/*header*/, std::list< param_t > > figures;
+    param_t settings;
     std::string header;
     utils::read_config( specification.c_str(), [&]( const std::string &line ) {
         if( line[ 0 ] == '[' )
         {
             if( !header.empty() )
             {
-                f_add_figure( header, settings );
+                figures[header].push_back( settings );
                 settings.clear();
             }
             header = line;
@@ -102,7 +106,20 @@ void scene::f_initialize( const std::string &specification )
     });
     if( !header.empty() )
     {
-        f_add_figure( header, settings );
+        figures[header].push_back( settings );
+    }
+
+    const std::list< param_t > &lighting_params = figures["[Lighting]"];
+    for( auto figure : figures )
+    {
+        for( param_t &param : figure.second )
+        {
+            if( !(lighting_params.empty() || figure.first == "[Lighting]") )
+            {
+                param.insert( param.end(), lighting_params.back().begin(), lighting_params.back().end() );
+            }
+            f_add_figure( figure.first, param );
+        }
     }
     figureset_.initialize();
 }
@@ -133,7 +150,7 @@ void scene::f_debug_error( const debug_message &msg ) const
               << msg.body << std::endl;
 }
 
-void scene::f_add_figure( const std::string &header, const std::vector< std::string > &settings)
+void scene::f_add_figure( const std::string &header, const std::vector< std::string > &settings )
 {
     if( header == "[Horizon]" )
     {

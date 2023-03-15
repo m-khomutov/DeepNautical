@@ -12,6 +12,8 @@
 #include <signal.h>
 #ifdef QT_CORE_LIB
 # include <QApplication>
+#else
+#include <gtk/gtk.h>
 #endif
 
 #include <iostream>

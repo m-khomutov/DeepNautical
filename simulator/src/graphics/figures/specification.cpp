@@ -86,6 +86,20 @@ specification::specification( const std::vector< std::string > &settings )
             {
                 f_read_viewport( p.second );
             }
+            else if( p.first.find( "light_color" ) != std::string::npos )
+            {
+                if( ! utils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &light_color ) )
+                {
+                    std::cerr << "light error: invalid light color\n";
+                }
+            }
+            else if( p.first.find( "light_position" ) != std::string::npos )
+            {
+                if( ! utils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &light_position ) )
+                {
+                    std::cerr << "light error: invalid light position\n";
+                }
+            }
         }
     }
 }

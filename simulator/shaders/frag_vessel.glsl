@@ -18,16 +18,15 @@ uniform Material
     float Ni;  // optical density
     float d;   // dissolve (transparency)
     int illum;
-}  mtl;
+} mtl;
 
+uniform vec3 LightColor;
 uniform sampler2D Texture;
 
 void main() {
-    vec3 suncolor = vec3(1.0f, 1.0f, 0.75f);
-
     float diff = max(dot(fs_in.N, fs_in.L), 0.0);
     float Id = 0.9;
-    vec3 diffuse = suncolor * diff * mtl.Kd * Id;
+    vec3 diffuse = LightColor * diff * mtl.Kd * Id;
 
     vec4 map_Kd = vec4(texture(Texture, fs_in.tc));
     if( mtl.illum == 0 )
@@ -48,7 +47,7 @@ void main() {
             float Is = 1.0;
             vec3 R = reflect(-fs_in.L, fs_in.N);
             float spec = pow(max(dot(R, fs_in.V), 0.0), mtl.Ns);
-            vec3 specular = suncolor * spec * mtl.Ks * Is;
+            vec3 specular = LightColor * spec * mtl.Ks * Is;
             Color = vec4((ambient + diffuse + specular), 1.0) * map_Kd;
         }
     }

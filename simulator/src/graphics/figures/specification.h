@@ -15,9 +15,10 @@
 
 class specification {
 public:
+    specification() = default;
     explicit specification( const std::vector< std::string > &settings );
-    specification(const specification& orig) = delete;
-    specification &operator =(const specification& orig) = delete;
+    specification(const specification& orig) = default;
+    specification &operator =(const specification& orig) = default;
     ~specification() = default;
 
     std::string shader_name;
@@ -36,6 +37,9 @@ public:
     float factor_gain = 0.0f;
 
     std::vector< float > viewport;
+
+    glm::vec3 light_color = glm::vec3( 1.0f, 1.0f, 1.0f ); 
+    glm::vec3 light_position = glm::vec3( 0.0f, 1.0f, -3.0f ); 
 
 private:
     void f_read_viewport( const std::string& config );

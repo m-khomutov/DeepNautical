@@ -55,13 +55,13 @@ glfwscreen::~glfwscreen()
 void glfwscreen::run()
 {
     GLint w, h;
-    sc_.reset(new scene( utils::config()["scenes"] + "/" + *scene_iter_ ) );
+    sc_.reset(new scene( std::string(utils::config()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
     while( !glfwWindowShouldClose( window_.get() ) )
     {
         f_exec_command();
 
         glfwGetFramebufferSize( window_.get(), &w, &h );
-        sc_->display( w, h, glfwGetTime() );
+        sc_->display( w, h, glfwGetTime() * 1000 );
         frame_->store( w, h );
         glfwSwapBuffers( window_.get() );
         glfwPollEvents();

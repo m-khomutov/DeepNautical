@@ -15,6 +15,7 @@ uniform mat4 Model;
 uniform mat4 View;
 uniform mat4 Projection;
 uniform mat3 NormalMatrix;
+uniform vec3 LightPosition;
 
 void main() {
     // vertex in world coords
@@ -22,13 +23,11 @@ void main() {
     // normal in world coords
     vs_out.N = normalize(NormalMatrix * normal);
     // diffuse 
-    vec3 lightPos = vec3(0.0, 0.5, -3.0);
-    vs_out.L = normalize(lightPos - worldcoords);
+    vs_out.L = normalize(LightPosition - worldcoords);
     // specular 
     vs_out.V = normalize(-worldcoords);
     //texels
     vs_out.tc = texcoord;
-
 
     gl_Position = Projection * View * Model * vec4(position, 1.0);
 }

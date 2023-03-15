@@ -56,14 +56,10 @@ void vessel::f_initialize()
 void vessel::f_draw( double )
 {
     f_set_model();
-    try
-    {
-        set_attribute( "NormalMatrix", glm::transpose( glm::inverse( glm::mat3(view_ * model_) ) ) );
-    }
-    catch( const std::runtime_error &e )
-    {
-        std::cerr << "NormalMatrix error: " << e.what() << std::endl;
-    }
+    set_attribute( "NormalMatrix", glm::transpose( glm::inverse( glm::mat3(view_ * model_) ) ) );
+    set_attribute( "LightPosition", spec_.light_position );
+    set_attribute( "LightColor", spec_.light_color );
+
     GLuint first = 0;
     for( auto mtl : object_->materials() )
     {
