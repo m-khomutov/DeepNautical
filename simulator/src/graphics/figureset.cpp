@@ -31,7 +31,7 @@ void figureset::initialize()
 {
     if( figures_.empty() )
     {
-	return;
+        return;
     }
     vao_.resize( figures_.size() );
     vbo_.resize( figures_.size() );
@@ -46,7 +46,14 @@ void figureset::initialize()
         glBindVertexArray( vao_[i] );
         glBindBuffer( GL_ARRAY_BUFFER, vbo_[i] );
         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ebo_[i] );
-        figures_[i]->initialize();
+        try
+        {
+            figures_[i]->initialize();
+        }
+        catch( const std::runtime_error& err )
+        {
+            std::cerr << typeid(*figures_[i]).name() << " error: " << err.what() <<std::endl;
+        }
         glBindBuffer( GL_ARRAY_BUFFER, 0 );
         glBindVertexArray( 0 );
     }
@@ -56,8 +63,11 @@ void figureset::draw( double currentTime )
 {
     for( figure_t::size_type i(0); i < figures_.size(); ++i )
     {
-        glBindVertexArray( vao_[i] );
-        figures_[i]->draw( currentTime );
-        glBindVertexArray( 0 );
+        if( figures_[i]->valid() )
+        {
+           glBindVertexArray( vao_[i] );
+            figures_[i]->draw( currentTime );
+            glBindVertexArray( 0 );
+        }
     }
 }

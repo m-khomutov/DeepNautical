@@ -8,6 +8,7 @@
 #include "program.h"
 #include "../../../share/utils.h"
 #include <iostream>
+#include <tuple>
 
 
 program_error::program_error( const std::string &what )
@@ -17,7 +18,7 @@ program_error::program_error( const std::string &what )
 
 namespace
 {
-bool block_variable( GLuint id, GLuint idx, std::pair< std::string, GLint > *rc )
+bool block_variable( GLuint id, GLuint idx, std::tuple< std::string, GLenum, GLint > *rc )
 {
     GLenum const properties[] = { GL_NAME_LENGTH, GL_TYPE, GL_LOCATION, GL_BLOCK_INDEX };
     GLint results[4];
@@ -25,7 +26,7 @@ bool block_variable( GLuint id, GLuint idx, std::pair< std::string, GLint > *rc 
     std::vector< char > name( results[0] + 1, ' ' );
     glGetProgramResourceName( id, GL_UNIFORM, idx, results[0] + 1, nullptr, name.data() );
     
-    *rc = std::make_pair( std::string(name.data(), name.size()), results[2] );
+    *rc = std::make_tuple( std::string(name.data(), name.size()), results[1], results[2] );
     return results[3] != -1; 
 }
 }  // namespace
@@ -143,10 +144,10 @@ void program::f_get_uniforms() {
     GLint num;
     glGetProgramInterfaceiv( id_, GL_UNIFORM, GL_ACTIVE_RESOURCES, &num );
     for( int i(0); i < num; ++i ) {
-        std::pair< std::string, GLint > rc;
+        std::tuple< std::string, GLenum, GLint > rc;
         if( !block_variable( id_, i, &rc ) )
         {
-            uniforms_.emplace( rc.first, rc.second );
+            uniforms_.emplace( std::get< 0 >( rc ), std::get< 2 > ( rc ) );
         }
     }
     std::cerr << "uniforms: \n";
@@ -176,10 +177,10 @@ void program::f_get_uniform_blocks() {
             glGetProgramResourceiv( id_, GL_UNIFORM_BLOCK, i, 1, var_props, results[1], nullptr, vars.data() );
             for( int v(0); v < results[1]; ++v )
             {
-                std::pair< std::string, GLint > rc;
+                std::tuple< std::string, GLenum, GLint > rc;
                 if( block_variable( id_, vars[v], &rc ) )
                 {
-                    uniform_blocks_[name]->emplace_variable( rc.first, rc.second );
+                    uniform_blocks_[name]->emplace_variable( std::get< 0 >( rc ), std::get< 2 > ( rc ), std::get< 1 >( rc ) );
                 }
             }
         }

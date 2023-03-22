@@ -25,12 +25,9 @@ public:
     class variable
     {
     public:
-        variable( const GLchar *name, GLint index )
-        : name_( name )
-        , index_( index ) 
-        {
-        }
-        operator const GLfloat *() const {
+        variable( const GLchar *name, GLint index, GLenum type );
+
+        operator const void *() const {
             return value_.data();
         }
         std::string const &name() const
@@ -43,29 +40,22 @@ public:
         }
         GLuint size() const
         {
-            return value_.size() *sizeof(GLfloat);
+            return value_.size();
         }
 
-        variable &operator =( GLfloat value )
+        template< typename T >
+        void set( T val )
         {
-            value_.resize( 1 );
-            value_[0] = value;
-            return *this;    
-        }
-        variable &operator =( const glm::vec3 &value )
-        {
-            value_.resize( 3 );
-            for (GLuint i(0); i < 3; ++i )
-            {
-                value_[i] = value[i];
-            }
-            return *this;    
+            if( sizeof(T) != value_.size() )
+                throw uniformblock_error( std::string("invalid type: ") + std::string(typeid(T).name()) );
+            memcpy( value_.data(), &val, value_.size() );
         }
 
     private:
         std::string name_;
         GLint index_;
-        std::vector< GLfloat> value_;
+        GLenum type_;
+        std::vector< uint8_t > value_;
     };
 
     uniformblock( GLuint program_id, const GLchar *name );
@@ -73,7 +63,7 @@ public:
     uniformblock &operator =(const uniformblock& orig) = delete;
     ~uniformblock();
 
-    void emplace_variable( std::string const &name, GLint index );
+    void emplace_variable( std::string const &name, GLint index, GLenum type );
     void copy();
     variable &operator []( GLchar const *name );
     

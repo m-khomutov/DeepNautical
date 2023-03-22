@@ -65,13 +65,13 @@ void vessel::f_draw( double )
     {
         try
         {
-            program_->uniform_block("Material" )["Ka"] = mtl.Ka;
-            program_->uniform_block("Material" )["Kd"] = mtl.Kd;
-            program_->uniform_block("Material" )["Ks"] = mtl.Ks;
-            program_->uniform_block("Material" )["Ns"] = mtl.Ns;
-            program_->uniform_block("Material" )["Ni"] = mtl.Ni;
-            program_->uniform_block("Material" )["d"] = mtl.d;
-            program_->uniform_block("Material" )["illum"] = mtl.illum;
+            program_->uniform_block("Material" )["Ka"].set( mtl.Ka );
+            program_->uniform_block("Material" )["Kd"].set( mtl.Kd );
+            program_->uniform_block("Material" )["Ks"].set( mtl.Ks );
+            program_->uniform_block("Material" )["Ns"].set( mtl.Ns );
+            program_->uniform_block("Material" )["Ni"].set( mtl.Ni );
+            program_->uniform_block("Material" )["d"].set( mtl.d );
+            program_->uniform_block("Material" )["illum"].set( mtl.illum );
             program_->uniform_block("Material").copy();
         }
         catch( const std::runtime_error &e )

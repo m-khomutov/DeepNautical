@@ -28,6 +28,11 @@ public:
     void initialize();
     void draw( double currentTime );
 
+    bool valid() const
+    {
+        return valid_;
+    }
+
 protected:   
     specification spec_;
     std::unique_ptr< program > program_;
@@ -41,6 +46,8 @@ protected:
     float scene_position_ { 0.0f };
     float direction_ { -1.0f };
     glm::vec3 offset_ { 0.0f, 0.0f, 0.0f };
+
+    bool valid_ { false };
 
 protected:
     void set_attribute( const GLchar * name, float value );

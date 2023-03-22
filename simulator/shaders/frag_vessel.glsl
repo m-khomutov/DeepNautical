@@ -23,32 +23,38 @@ uniform Material
 uniform vec3 LightColor;
 uniform sampler2D Texture;
 
-void main() {
+vec3 Diffuse() {
     float diff = max(dot(fs_in.N, fs_in.L), 0.0);
     float Id = 0.9;
-    vec3 diffuse = LightColor * diff * mtl.Kd * Id;
+    return LightColor * diff * mtl.Kd * Id;
+}
 
-    vec4 map_Kd = vec4(texture(Texture, fs_in.tc));
-    if( mtl.illum == 0 )
+vec3 Ambient() {
+    float Ia = 0.4;
+    vec3 ambient = mtl.Ka * Ia;
+    return Diffuse() + ambient;
+}
+
+vec3 Specular() {
+    float Is = 1.0;
+    vec3 R = reflect(-fs_in.L, fs_in.N);
+    float spec = pow(max(dot(R, fs_in.V), 0.0), mtl.Ns);
+    vec3 specular = LightColor * spec * mtl.Ks * Is;
+    return Ambient() + specular;
+}
+
+void main() {
+    switch( mtl.illum )
     {
-        Color = vec4(diffuse, 1.0) * map_Kd;
+    case 0:
+        Color = vec4(Diffuse(), 1.0);
+        break;
+    case 1:
+        Color = vec4(Ambient(), 1.0);
+        break;
+    default:
+        Color = vec4(Specular(), 1.0);
+        break;
     }
-    else
-    {
-        float Ia = 0.4;
-        vec3 ambient = mtl.Ka * Ia;
-        if( mtl.illum == 1 )
-        {
-            Color = vec4((ambient + diffuse), 1.0) * map_Kd;
-        }
-        else
-        {
-            // specular 
-            float Is = 1.0;
-            vec3 R = reflect(-fs_in.L, fs_in.N);
-            float spec = pow(max(dot(R, fs_in.V), 0.0), mtl.Ns);
-            vec3 specular = LightColor * spec * mtl.Ks * Is;
-            Color = vec4((ambient + diffuse + specular), 1.0) * map_Kd;
-        }
-    }
+    Color *= vec4(texture(Texture, fs_in.tc));
 }

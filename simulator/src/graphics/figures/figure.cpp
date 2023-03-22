@@ -24,6 +24,7 @@ void figure::initialize()
 {
     program_.reset( new program( f_shader_name() ) );
     f_initialize();    
+    valid_ = true;
 }
 
 void figure::draw( double currentTime )
