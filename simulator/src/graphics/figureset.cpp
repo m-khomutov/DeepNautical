@@ -65,7 +65,7 @@ void figureset::draw( double currentTime )
     {
         if( figures_[i]->valid() )
         {
-           glBindVertexArray( vao_[i] );
+            glBindVertexArray( vao_[i] );
             figures_[i]->draw( currentTime );
             glBindVertexArray( 0 );
         }

@@ -111,12 +111,23 @@ void figure::set_attribute( const GLchar *name, glm::mat4 value ) {
 void figure::set_subroutine( const GLchar *uniform_name, const GLchar * subroutine_name, GLenum shader_type ) {
     int num;
     glGetProgramStageiv( *program_, shader_type, GL_ACTIVE_SUBROUTINES, &num );
-    if( num > 0 ) {
-        std::vector< GLuint > indices( num, 0 );
-        GLuint n = glGetSubroutineUniformLocation( *program_, shader_type, uniform_name );
-        indices[ n ] = glGetSubroutineIndex( *program_, shader_type, subroutine_name );
-        glUniformSubroutinesuiv( shader_type, 1, indices.data() );
+    if( num <= 0 )
+    {
+        throw std::runtime_error( (shader_type == GL_VERTEX_SHADER ? std::string("vertex ") : std::string("fragment ")) +
+                                  std::string("shader has no active subroutines") );
     }
+    std::vector< GLuint > indices( num, 0 );
+    GLint n = glGetSubroutineUniformLocation( *program_, shader_type, uniform_name );
+    if( n < 0 )
+    {
+        throw std::runtime_error( std::string("failed to find uniform ") + uniform_name );
+    }
+    indices[ n ] = glGetSubroutineIndex( *program_, shader_type, subroutine_name );
+    if( indices[ n ] == GL_INVALID_INDEX )
+    {
+        throw std::runtime_error( std::string("failed to find subroutine ") + subroutine_name );
+    }
+    glUniformSubroutinesuiv( shader_type, n, indices.data() );
 }
 
 void figure::set_layout( char const *name, GLuint size, GLuint step, GLuint off )
