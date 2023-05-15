@@ -17,6 +17,24 @@ antisubmarinefrigate::~antisubmarinefrigate()
 {
 }
 
+void antisubmarinefrigate::draw()
+{
+    set_attribute( "Texture", GLuint(0) );
+    set_attribute( "Offset", offset_ );
+    set_attribute( "Waterline", waterline_ );
+    if( scene_position_ < -1.5 || scene_position_ > 1.5 )
+    {
+        offset_.x = 0.0f;
+        direction_ *= -1;
+        angle_.x = angle_.x == 0.0f ? 180.0f : 0.0f;
+        f_set_model();
+    }
+    scene_position_ += spec_.speed.x * direction_;
+    offset_.x -= spec_.speed.x;
+    
+    glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );   
+}
+
 void antisubmarinefrigate::f_check_environment() const
 {
     if( ! (utils::file_exists( (std::string(utils::config()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
@@ -42,22 +60,9 @@ void antisubmarinefrigate::f_initialize()
     set_layout( "texcoord", 2, 5, 3 );
 }
 
-void antisubmarinefrigate::f_draw( double )
+void antisubmarinefrigate::f_accept( visitor &p, double )
 {
-    set_attribute( "Texture", GLuint(0) );
-    set_attribute( "Offset", offset_ );
-    set_attribute( "Waterline", waterline_ );
-    if( scene_position_ < -1.5 || scene_position_ > 1.5 )
-    {
-        offset_.x = 0.0f;
-        direction_ *= -1;
-        angle_.x = angle_.x == 0.0f ? 180.0f : 0.0f;
-        f_set_model();
-    }
-    scene_position_ += spec_.speed.x * direction_;
-    offset_.x -= spec_.speed.x;
-    
-    glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
+    p.visit( this );
 }
 
 void antisubmarinefrigate::f_set_model()

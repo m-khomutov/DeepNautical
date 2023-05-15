@@ -34,6 +34,7 @@ SOURCES += \
     src/graphics/figures/vessel.cpp \
     src/graphics/figures/figure.cpp \
     src/graphics/figures/specification.cpp \
+    src/graphics/visitor.cpp \
     src/graphics/figureset.cpp \
     src/graphics/program.cpp \
     src/graphics/scene.cpp \
@@ -65,6 +66,7 @@ HEADERS += \
     src/graphics/figures/vessel.h \
     src/graphics/figures/figure.h \
     src/graphics/figures/specification.h \
+    src/graphics/visitor.h \
     src/graphics/figureset.h \
     src/graphics/program.h \
     src/graphics/scene.h \
@@ -85,4 +87,4 @@ HEADERS += \
     src/service/qservice.h \
     ../share/utils.h
 
-LIBS += -ljpeg -lGLEW
+LIBS += -ljpeg -lGLEW -lGLU

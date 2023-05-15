@@ -16,6 +16,7 @@ add_executable(simulator
 	src/graphics/figures/vessel.cpp
 	src/graphics/texture/texture.cpp
 	src/graphics/texture/avi.cpp
+	src/graphics/visitor.cpp
 	src/graphics/figureset.cpp
 	src/graphics/uniformblock.cpp
 	src/graphics/shader.cpp
@@ -35,4 +36,4 @@ add_executable(simulator
         src/main.cpp
         )
 
-target_link_libraries(simulator GL glfw GLEW jpeg pthread)
+target_link_libraries(simulator GL glfw GLEW GLU jpeg pthread)

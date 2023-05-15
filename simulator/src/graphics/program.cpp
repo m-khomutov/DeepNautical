@@ -103,10 +103,10 @@ uniformblock &program::uniform_block( std::string const &name ) {
 }
 
 void program::f_check() {
-    int glErr = glGetError();
+    GLenum glErr = glGetError();
     std::string what;
     while( glErr != GL_NO_ERROR ) {
-        what.append( std::to_string( glErr ) + " ");
+        what.append(std::string((const char*)gluErrorString( glErr )) + "\n");
         glErr = glGetError();
     }
     if( !what.empty() )

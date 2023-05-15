@@ -11,10 +11,13 @@ uniform Circle
     float OuterRadius;
 } circle;
 
+uniform sampler2D Texture;
+
 void main() {
     vec2 center = TexCoord - 0.5f;
     float dist = sqrt(center.x * center.x + center.y * center.y);
-    Color = mix(vec4(circle.InnerColor, 1.0),
-                vec4(circle.OuterColor, 1.0),
-                smoothstep(circle.InnerRadius, circle.OuterRadius, dist));
+    vec4 sol = mix(vec4(circle.InnerColor, 1.0),
+                   vec4(circle.OuterColor, 1.0),
+                   smoothstep(circle.InnerRadius, circle.OuterRadius, dist));
+    Color = texture(Texture, TexCoord);
 }

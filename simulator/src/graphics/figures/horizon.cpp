@@ -18,6 +18,11 @@ horizon::~horizon()
 {
 }
 
+void horizon::draw()
+{
+    glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
+}
+
 void horizon::f_check_environment() const
 {
     if( ! (utils::file_exists( (std::string(utils::config()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
@@ -43,7 +48,7 @@ void horizon::f_initialize()
     set_layout( "texcoord", 2, 5, 3 );
 }
 
-void horizon::f_draw( double current_time )
+void horizon::f_accept( visitor &p, double current_time )
 {
     if( last_frame_time_ < 0.01f )
     {
@@ -54,5 +59,5 @@ void horizon::f_draw( double current_time )
         *texture_ = avi_->next_image();
         last_frame_time_ = current_time;
     }
-    glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
+    p.visit( this );
 }

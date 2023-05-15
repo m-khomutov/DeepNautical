@@ -11,51 +11,20 @@ vessel::vessel( const std::vector< std::string > &settings )
 : figure( settings )
 {
     f_check_environment();
-    f_reset();
-    f_set_model();
     
     object_.reset( new blender::object( (std::string(utils::config()["objs"]) + "/" + spec_.obj_name).c_str() ) );
-    object_->load_position( &position_ );
+    object_->load_position( &vertices_ );
+    
+    f_reset();
 }
 
 vessel::~vessel()
 {
 }
 
-void vessel::f_check_environment() const
+void vessel::draw()
 {
-    if( ! (utils::file_exists( (std::string(utils::config()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
-           utils::file_exists( (std::string(utils::config()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
-           utils::file_exists( (std::string(utils::config()["objs"]) + "/" + spec_.obj_name).c_str() )) )
-    {
-        throw  std::runtime_error( std::string("invalid environment in {") + spec_.shader_name + " " + spec_.obj_name + "}"  );
-    }
-}
-
-char const *vessel::f_shader_name() const
-{
-    return spec_.shader_name.c_str(); 
-}
-
-void vessel::f_initialize()
-{
-    empty_texture_.reset( new texture(1, 1, 255) );
-    glBufferData( GL_ARRAY_BUFFER, position_.size() * sizeof(GLfloat), position_.data(), GL_STATIC_DRAW );
-    try
-    {
-        set_layout( "position", 3, 8, 0 );
-        set_layout( "texcoord", 2, 8, 3 );
-        set_layout( "normal", 3, 8, 5 );
-    }
-    catch( const std::runtime_error &e )
-    {
-        std::cerr << "vessel error: " << e.what() << std::endl;
-    }
-}
-
-void vessel::f_draw( double )
-{
-    f_set_model();
+    glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
     set_attribute( "NormalMatrix", glm::transpose( glm::inverse( glm::mat3(view_ * model_) ) ) );
     set_attribute( "LightPosition", spec_.light_position );
     set_attribute( "LightColor", spec_.light_color );
@@ -99,6 +68,48 @@ void vessel::f_draw( double )
     }
 }
 
+const figure::position &vessel::position()
+{
+    return position_;
+}
+
+void vessel::f_check_environment() const
+{
+    if( ! (utils::file_exists( (std::string(utils::config()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
+           utils::file_exists( (std::string(utils::config()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
+           utils::file_exists( (std::string(utils::config()["objs"]) + "/" + spec_.obj_name).c_str() )) )
+    {
+        throw  std::runtime_error( std::string("invalid environment in {") + spec_.shader_name + " " + spec_.obj_name + "}"  );
+    }
+}
+
+char const *vessel::f_shader_name() const
+{
+    return spec_.shader_name.c_str(); 
+}
+
+void vessel::f_initialize()
+{
+    empty_texture_.reset( new texture(1, 1, 255) );
+    glBufferData( GL_ARRAY_BUFFER, vertices_.size() * sizeof(GLfloat), vertices_.data(), GL_STATIC_DRAW );
+    try
+    {
+        set_layout( "position", 3, 8, 0 );
+        set_layout( "texcoord", 2, 8, 3 );
+        set_layout( "normal", 3, 8, 5 );
+    }
+    catch( const std::runtime_error &e )
+    {
+        std::cerr << "vessel error: " << e.what() << std::endl;
+    }
+}
+
+void vessel::f_accept( visitor &p, double )
+{
+    f_set_model();
+    p.visit( this );
+}
+
 void vessel::f_set_model()
 {
     pitching_angle_ += spec_.pitching;
@@ -123,6 +134,9 @@ void vessel::f_set_model()
     {
         offset_ += spec_.speed;
         factor_ += spec_.factor_gain;
+        position_.current.x +=  spec_.speed.x;
+        position_.current.y +=  spec_.speed.y;
+        position_.current.z += spec_.course.x < 0 ? -spec_.speed.z :  spec_.speed.z;
     }
     else
     {
@@ -148,4 +162,9 @@ void vessel::f_reset()
     angle_ = glm::vec3( 0.0f, 0.0f, 0.0f );
     pitching_angle_ = spec_.pitching_range[0];
     angle_.x = pitching_angle_;
+    
+    f_set_model();
+
+    position_.current = offset_;
+    position_.course = spec_.course;
 }

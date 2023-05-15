@@ -17,20 +17,22 @@ public:
     sol &operator =(sol const& orig) = delete;
     ~sol();
     
+    void draw();
+
 private:
     GLfloat position_[20] = {    // текстурные координаты
-            0.5f,  0.5f, 0.0f,   1.0f, 0.0f,
-            0.5f, -0.5f, 0.0f,   1.0f, 1.0f,
-           -0.5f, -0.5f, 0.0f,   0.0f, 1.0f,
-           -0.5f,  0.5f, 0.0f,   0.0f, 0.0f,
+           -2.0f,  1.0f, -1.0f,   1.0f, 0.0f,
+            2.5f,  1.0f, -1.0f,   1.0f, 1.0f,
+            2.5f,  0.0f, -1.0f,   0.0f, 1.0f,
+           -2.0f,  0.0f, -1.0f,   0.0f, 0.0f,
     };
-    GLuint indices_[6] = { 0, 1, 3, 1, 2, 3 };
+    GLuint indices_[6] = { 0, 3, 1, 1, 3, 2 };
 
 private:
     void f_check_environment() const override;
     char const *f_shader_name() const override;
     void f_initialize() override;
-    void f_draw( double currentTime ) override;
+    void f_accept( visitor &p, double currentTime ) override;
 };
 
 #endif /* SOL_H */

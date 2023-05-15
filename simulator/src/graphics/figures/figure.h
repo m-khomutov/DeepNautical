@@ -9,6 +9,7 @@
 #define FIGURE_H
 
 #include "specification.h"
+#include "../visitor.h"
 #include "../texture/texture.h"
 #include "../program.h"
 #include "../../../../share/utils.h"
@@ -20,13 +21,19 @@
 
 class figure {
 public:
+    struct position
+    {
+        glm::vec3 course;
+        glm::vec3 current;
+    };
+    
     explicit figure( const std::vector< std::string > &setting );
     figure(const figure& orig) = delete;
     figure &operator=(const figure& orig) = delete;
     virtual ~figure();
 
     void initialize();
-    void draw( double currentTime );
+    void accept( visitor &p, double currentTime );
 
     bool valid() const
     {
@@ -63,7 +70,7 @@ private:
     virtual void f_check_environment() const = 0;
     virtual char const *f_shader_name() const = 0;
     virtual void f_initialize() = 0;
-    virtual void f_draw( double currentTime ) = 0;
+    virtual void f_accept( visitor &p, double currentTime ) = 0;
 };
 
 #endif /* FIGURE_H */

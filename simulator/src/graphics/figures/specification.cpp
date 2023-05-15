@@ -24,6 +24,14 @@ specification::specification( const std::vector< std::string > &settings )
             {
                 texture_name = p.second.substr( 1, p.second.size() - 2 );
             }
+            else if( p.first.find( "alpha" ) != std::string::npos )
+            {
+                alpha = p.second.substr( 1, p.second.size() - 2 );
+            }
+            else if( p.first.find( "air" ) != std::string::npos )
+            {
+                texture_air = p.second.substr( 1, p.second.size() - 2 );
+            }
             else if( p.first.find( "object" ) != std::string::npos )
             {
                 obj_name = p.second.substr( 1, p.second.size() - 2 );
@@ -98,6 +106,20 @@ specification::specification( const std::vector< std::string > &settings )
                 if( ! utils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &light_position ) )
                 {
                     std::cerr << "light error: invalid light position\n";
+                }
+            }
+            else if( p.first.find( "wave" ) != std::string::npos )
+            {
+                if( ! utils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &wave ) )
+                {
+                    std::cerr << "wave error\n";
+                }
+            }
+            else if( p.first.find( "wake" ) != std::string::npos )
+            {
+                if( ! utils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &wake ) )
+                {
+                    std::cerr << "wake error\n";
                 }
             }
         }

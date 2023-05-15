@@ -9,7 +9,7 @@
 #include "figures/sol.h"
 #include "figures/water.h"
 #include "figures/horizon.h"
-#include "figures/antisubmarinefrigate.h"
+#include "figures/sol.h"
 #include "figures/vessel.h"
 #include <cstring>
 #include <fstream>
@@ -159,6 +159,14 @@ void scene::f_add_figure( const std::string &header, const std::vector< std::str
     else if( header == "[Vessel]" )
     {
         f_add_figure< vessel >( settings );
+    }
+    else if( header == "[Water]" )
+    {
+        f_add_figure< water >( settings );
+    }
+    else if( header == "[Sol]" )
+    {
+        f_add_figure< sol >( settings );
     }
 }
 

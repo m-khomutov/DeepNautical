@@ -19,7 +19,7 @@ public:
 
 class texture {
 public:
-    explicit texture( char const *filename );
+    explicit texture( char const *filename, char const *alpha = nullptr );
     explicit texture( utils::image &img );
     texture( GLuint w, GLuint h, uint8_t value );
     texture(const texture& orig) = delete;
@@ -28,7 +28,7 @@ public:
     
     texture &operator =( utils::image &img );
     
-    void activate() const;
+    void activate( uint16_t number = GL_TEXTURE0 ) const;
 
 private:
     GLuint id_;

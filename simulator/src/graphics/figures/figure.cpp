@@ -27,7 +27,7 @@ void figure::initialize()
     valid_ = true;
 }
 
-void figure::draw( double currentTime )
+void figure::accept( visitor &p, double currentTime )
 {
     glUseProgram( *program_ );
     set_attribute( "Model", model_ );
@@ -35,9 +35,10 @@ void figure::draw( double currentTime )
     set_attribute( "Projection", projection_ );
     if( texture_ )
     {
+	set_attribute( "Texture", GLuint(0) );
         texture_->activate();
     }
-    f_draw( currentTime );    
+    f_accept( p, currentTime );    
 }
 
 void figure::set_attribute( const GLchar *name, float value )

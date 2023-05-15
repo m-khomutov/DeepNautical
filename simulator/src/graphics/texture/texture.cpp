@@ -13,13 +13,32 @@ texture_error::texture_error( const std::string &what )
 }
 
 
-texture::texture( char const *filename )
+texture::texture( char const *filename, char const *alpha )
 {
+    GLenum format { GL_RGB };
+    
     utils::image img;
     utils::jpeg_codec codec;
     if( !codec.decode( filename, &img ) )
     {
         throw texture_error( std::string("invalid file: ") + std::string(filename) );
+    }
+    
+    if( alpha )
+    {
+        utils::image a_img;
+        if( !codec.decode( alpha, &a_img ) || a_img.pixels.size() * 3 != img.pixels.size() )
+        {
+            throw texture_error( std::string("invalid alpha file: ") + std::string(alpha) );
+        }
+        std::vector< uint8_t > tex( img.pixels.size() + a_img.pixels.size() );
+        for( size_t i(0); i < a_img.pixels.size(); ++i )
+        {
+            std::copy( img.pixels.data() + i * 3, img.pixels.data() + i * 3 + 3, tex.data() + i * 4 );
+            tex[i * 4 + 3] = a_img.pixels[i];
+        }
+        std::swap( img.pixels, tex );
+        format = GL_RGBA;
     }
     
     glGenTextures( 1, &id_ );
@@ -28,7 +47,7 @@ texture::texture( char const *filename )
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, img.window.width, img.window.height, 0, GL_RGB, GL_UNSIGNED_BYTE, img.pixels.data() );
+    glTexImage2D( GL_TEXTURE_2D, 0, format, img.window.width, img.window.height, 0, format, GL_UNSIGNED_BYTE, img.pixels.data() );
     glGenerateMipmap( GL_TEXTURE_2D );   
     glBindTexture( GL_TEXTURE_2D, 0 );
 }
@@ -67,8 +86,8 @@ texture &texture::operator =( utils::image &img )
     return *this;   
 }
 
-void texture::activate() const
+void texture::activate( uint16_t number ) const
 {
-    glActiveTexture( GL_TEXTURE0 );
+    glActiveTexture( number );
     glBindTexture( GL_TEXTURE_2D, id_ );
 }

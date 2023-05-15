@@ -6,6 +6,11 @@
  */
 
 #include "figureset.h"
+#include "figures/antisubmarinefrigate.h"
+#include "figures/sol.h"
+#include "figures/water.h"
+#include "figures/horizon.h"
+#include "figures/vessel.h"
 #include <glm/gtc/type_ptr.hpp>
 
 figureset::figureset()
@@ -25,6 +30,11 @@ figureset::~figureset()
 void figureset::emplace( figure *fig )
 {
     figures_.emplace_back( fig );
+}
+
+figure *figureset::back()
+{
+    return figures_.back().get();
 }
 
 void figureset::initialize()
@@ -66,8 +76,38 @@ void figureset::draw( double currentTime )
         if( figures_[i]->valid() )
         {
             glBindVertexArray( vao_[i] );
-            figures_[i]->draw( currentTime );
+            glBindBuffer( GL_ARRAY_BUFFER, vbo_[i] );
+            figures_[i]->accept( *this, currentTime );
+            glBindBuffer( GL_ARRAY_BUFFER, 0 );
             glBindVertexArray( 0 );
         }
     }
+}
+
+void figureset::visit( antisubmarinefrigate *frigate )
+{
+    frigate->draw();
+}
+
+void figureset::visit( sol *_sol )
+{
+    _sol->draw();
+}
+
+void figureset::visit( water *_water )
+{
+    _water->set_wake_position( vessel_positions_ );
+    _water->draw();
+    vessel_positions_.clear();
+}
+
+void figureset::visit( horizon *_horizon )
+{
+    _horizon->draw();
+}
+
+void figureset::visit( vessel *_vessel )
+{
+    _vessel->draw();
+    vessel_positions_.push_back( _vessel->position() );
 }

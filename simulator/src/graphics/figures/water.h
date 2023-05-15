@@ -16,21 +16,26 @@ public:
     water( water const &orig ) = delete;
     water &operator =( water const &orig ) = delete;
     ~water();
+
+    void draw();
+    void set_wake_position( const std::vector< figure::position > &pos );
     
 private:
-    GLfloat position_[20] = {    // текстурные координаты
-            1.0f, -0.17f, 0.0f,   1.0f, 0.0f,
-            1.0f, -1.0f,  0.0f,   1.0f, 1.0f,
-           -1.0f, -1.0f,  0.0f,   0.0f, 1.0f,
-           -1.0f, -0.17f, 0.0f,   0.0f, 0.0f,
-    };
-    GLuint indices_[6] = { 0, 1, 3, 1, 2, 3 };
+    static const uint32_t resolution = 64;
+    GLfloat surface_[6 * resolution * (resolution + 1)]; 
+    GLfloat normals_[6 * resolution * (resolution + 1)]; 
+    float phase_ { 0.0f };
+    std::unique_ptr< texture > air_texture_;    
+    std::vector< figure::position > wake_position_;
 
 private:
     void f_check_environment() const override;
     char const *f_shader_name() const override;
     void f_initialize() override;
-    void f_draw( double currentTime ) override;
+    void f_accept( visitor &p, double currentTime ) override;
+
+    void f_load_surface( double currentTime );
+    GLfloat f_generate_surface( GLfloat x, GLfloat z );
 };
 
 #endif /* WATER_H */

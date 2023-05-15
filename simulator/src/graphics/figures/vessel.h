@@ -18,19 +18,22 @@ public:
     vessel &operator =(const vessel& orig) = delete;
     ~vessel();
 
+    void draw();
+    const figure::position &position();
+
 private:
     std::unique_ptr< blender::object > object_;
-    std::vector< GLfloat > position_;
+    std::vector< GLfloat > vertices_;
     glm::vec3 factor_;
     GLfloat pitching_angle_ = 0.0f;
     std::shared_ptr< texture > empty_texture_;
-    
+    figure::position position_;
 
 private:
     void f_check_environment() const override;
     char const *f_shader_name() const override;
     void f_initialize() override;
-    void f_draw( double currentTime ) override;
+    void f_accept( visitor &p, double currentTime ) override;
     void f_set_model();
     bool f_full_trajectory();
     void f_reset();

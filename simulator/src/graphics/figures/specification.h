@@ -23,7 +23,9 @@ public:
 
     std::string shader_name;
     std::string texture_name;
+    std::string texture_air;
     std::string obj_name;
+    std::string alpha;
     
     glm::vec3 speed { 0.001f, 0.0f, 0.0f };
     glm::vec3 start_position = glm::vec3( 0.0f, 0.0f, 0.0f ); 
@@ -41,6 +43,10 @@ public:
     glm::vec3 light_color = glm::vec3( 1.0f, 1.0f, 1.0f ); 
     glm::vec3 light_position = glm::vec3( 0.0f, 1.0f, -3.0f ); 
 
+    // amplitude, velocity
+    glm::vec2 wave = { 10.0f, 0.2f };
+    glm::vec2 wake = { 20.0f, 2.0f };
+    
 private:
     void f_read_viewport( const std::string& config );
 };

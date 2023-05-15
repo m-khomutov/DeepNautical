@@ -7,6 +7,7 @@
 
 #include "shader.h"
 
+#include <cstring>
 #include <fstream>
 #include <vector>
 
@@ -61,10 +62,10 @@ shader::~shader()
 }
 
 void shader::f_verify() {
-    int glErr = glGetError();
+    GLenum glErr = glGetError();
     std::string what;
     while( glErr != GL_NO_ERROR ) {
-        what.append( std::to_string( glErr ) + " ");
+        what.append(std::string((const char*)gluErrorString( glErr )) + "\n");
         glErr = glGetError();
     }
     if( !what.empty() )

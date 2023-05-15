@@ -17,6 +17,8 @@ public:
     antisubmarinefrigate &operator=(const antisubmarinefrigate& orig) = delete;
     ~antisubmarinefrigate();
 
+    void draw();
+
 private:
     GLfloat position_[20] = {    // текстурные координаты
             0.5f,  0.5f, 0.0f,   1.0f, 0.0f,
@@ -31,7 +33,7 @@ private:
     void f_check_environment() const override;
     char const *f_shader_name() const override;
     void f_initialize() override;
-    void f_draw( double currentTime ) override;
+    void f_accept( visitor &p, double currentTime ) override;
     void f_set_model();
 };
 
