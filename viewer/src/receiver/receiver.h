@@ -89,6 +89,7 @@ private:
     size_t (receiver::*action)(uint8_t const *, size_t);
     float timestamp_ { 0.0f };
     bool verify_ { bool(utils::config()["verify"]) };
+    int reconnect_delay_ { 0 };
 
 private:
     void f_start_connection();

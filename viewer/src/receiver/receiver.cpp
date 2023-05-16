@@ -138,11 +138,21 @@ void receiver::run()
     size_t expected = flv_tag::size, received = 0;
     while( running_.load() )
     {
-        size_t rc = connection_->receive( buffer.data() + received, expected );
+        if( reconnect_delay_ < 100 )
+            ++reconnect_delay_;
+
+        ssize_t rc = connection_->receive( buffer.data() + received, expected );
         if( rc > 0 )
         {
             expected -= rc;
             received += rc;
+            reconnect_delay_ = 0;
+        }
+        else if( reconnect_delay_ >= 100 )
+        {
+            f_start_connection();
+            receiver::action = &receiver::f_receive_tag;
+            expected = flv_tag::size;
         }
         if( expected == 0 )
         {
@@ -173,7 +183,22 @@ void receiver::stop()
 
 void receiver::f_start_connection()
 {
-    connection_.reset( new c_socket( server_host_, server_port_ ) );
+    while( running_.load() )
+    {
+        try
+        {
+            connection_.reset( new c_socket( server_host_, server_port_ ) );
+            break;
+        }
+        catch( const std::runtime_error &e )
+        {
+            ::sleep( 1 );
+        }
+    }
+    if( !connection_ )
+    {
+        throw receiver_error( "invalid connection" );
+    }
     std::string request = "GET /stream?proto=flv HTTP/1.1\r\n"
                           "User-Agent: Viewer/0.0.1 (agat-aquarius)\r\n"
                           "Accept: */*\r\n"

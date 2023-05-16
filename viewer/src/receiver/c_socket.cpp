@@ -58,7 +58,7 @@ c_socket::~c_socket()
     close( fd_ );
 }
 
-size_t c_socket::send( uint8_t const * buf, size_t size )
+ssize_t c_socket::send( uint8_t const * buf, size_t size )
 {
     size_t rc { 0 };
     while( rc < size )
@@ -79,7 +79,7 @@ size_t c_socket::send( uint8_t const * buf, size_t size )
     return rc;
 }
 
-size_t c_socket::receive( uint8_t *buffer, size_t size )
+ssize_t c_socket::receive( uint8_t *buffer, size_t size )
 {
     timeval tv = { 1, 500 };
     fd_set rfds;

@@ -34,8 +34,8 @@ public:
         return fd_;
     }
     
-    size_t send( uint8_t const *data, size_t size );
-    size_t receive( uint8_t *buffer, size_t size );
+    ssize_t send( uint8_t const *data, size_t size );
+    ssize_t receive( uint8_t *buffer, size_t size );
     
 private:
     int fd_;

@@ -12,6 +12,23 @@
 #include <QWidget>
 #include <QImage>
 
+class qspinner {
+public:
+    qspinner( const QRect &rect, int lines, int speed_factor );
+
+    void paint( QPainter *painter );
+
+private:
+    QRect window_;
+    QPointF center_;
+    int lines_;
+    qreal angle_unit_;
+    qreal fade_unit_;
+    qreal fading_angle_ { 0.0 };
+    int speed_factor_;
+    int speed_ { 0 };
+};
+
 class qviewer: public baseviewer, public QWidget {
 public:
     qviewer();
@@ -30,7 +47,9 @@ private:
 
 private:
     QImage img_;
+    std::unique_ptr< qspinner > spinner_;
     int result_ { EXIT_FAILURE };
+    int noimage_counter_ { 0 };
 };
 
 #endif /* QVIEWER_H */
