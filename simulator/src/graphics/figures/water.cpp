@@ -59,6 +59,8 @@ void water::draw()
 
     set_attribute( "AirTexture", GLuint(1) );
     air_texture_->activate( GL_TEXTURE1 );
+    set_attribute( "FoamTexture", GLuint(2) );
+    foam_texture_->activate( GL_TEXTURE2 );
 
     uint32_t len = 2 * (resolution + 1);
     for( uint32_t i(0); i < resolution; i++ )
@@ -77,8 +79,9 @@ void water::f_check_environment() const
 {
     if( ! (utils::file_exists( (std::string(utils::config()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
            utils::file_exists( (std::string(utils::config()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
-           utils::file_exists( (std::string(utils::config()["textures"]) + "/"     + spec_.texture_name).c_str())  &&
-           utils::file_exists( (std::string(utils::config()["textures"]) + "/"     + spec_.texture_air).c_str() )) )
+           utils::file_exists( (std::string(utils::config()["textures"]) + "/"     + spec_.texture_name).c_str()) &&
+           utils::file_exists( (std::string(utils::config()["textures"]) + "/"     + spec_.texture_air).c_str() ) &&
+           utils::file_exists( (std::string(utils::config()["textures"]) + "/"     + spec_.texture_foam).c_str() )) )
     {
         throw  std::runtime_error( std::string("invalid environment in {") + spec_.shader_name + " " + spec_.texture_name + "}"  );
     }
@@ -94,6 +97,7 @@ void water::f_initialize()
     std::string alpha = spec_.alpha.empty() ? "" : std::string(utils::config()["textures"]) + "/" + spec_.alpha;
     texture_.reset( new texture( (std::string(utils::config()["textures"]) + "/" + spec_.texture_name).c_str(), alpha.empty() ? nullptr : alpha.c_str() ) );
     air_texture_.reset( new texture( (std::string(utils::config()["textures"]) + "/" + spec_.texture_air).c_str() ) );
+    foam_texture_.reset( new texture( (std::string(utils::config()["textures"]) + "/" + spec_.texture_foam).c_str() ) );
 
     glBufferData( GL_ARRAY_BUFFER, sizeof(surface_) + sizeof(normals_), NULL, GL_STREAM_DRAW );
     

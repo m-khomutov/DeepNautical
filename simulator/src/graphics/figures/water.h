@@ -26,6 +26,7 @@ private:
     GLfloat normals_[6 * resolution * (resolution + 1)]; 
     float phase_ { 0.0f };
     std::unique_ptr< texture > air_texture_;    
+    std::unique_ptr< texture > foam_texture_;
     std::vector< figure::position > wake_position_;
 
 private:

@@ -32,6 +32,10 @@ specification::specification( const std::vector< std::string > &settings )
             {
                 texture_air = p.second.substr( 1, p.second.size() - 2 );
             }
+            else if( p.first.find( "foam" ) != std::string::npos )
+            {
+                texture_foam = p.second.substr( 1, p.second.size() - 2 );
+            }
             else if( p.first.find( "object" ) != std::string::npos )
             {
                 obj_name = p.second.substr( 1, p.second.size() - 2 );

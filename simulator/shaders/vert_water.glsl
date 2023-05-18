@@ -8,6 +8,7 @@ out VS_OUT {
     out vec3 L;
     out vec3 V;
     out float distance;
+    out float amplitude;
 } vs_out;
 
 
@@ -29,6 +30,8 @@ void main() {
     vs_out.V = normalize(-worldcoords);
     // distance from camera
     vs_out.distance = length(worldcoords - CameraPosition);
+    // wave amplitude
+    vs_out.amplitude = position.y;
 
     gl_Position = Projection * View * Model * vec4(position + Offset, 1.0);
 }

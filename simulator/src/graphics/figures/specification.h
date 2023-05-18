@@ -25,6 +25,7 @@ public:
     std::string shader_name;
     std::string texture_name;
     std::string texture_air;
+    std::string texture_foam;
     std::string obj_name;
     std::string alpha;
     
