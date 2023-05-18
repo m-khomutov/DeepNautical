@@ -46,5 +46,10 @@ vec4 Specular() {
 }
 
 void main() {
-    Color = mix(FogParams.color, Specular(), FogFactor(FogParams));
+    float factor = FogFactor(FogParams);
+    Color = mix(FogParams.color, Specular(), factor);
+    vec4 filter = mix(FogParams.color, vec4(0.4), factor);
+    bvec3 toDiscard = lessThan(Color.rgb, filter.rgb);
+    if( all(toDiscard) )
+        discard;
 }
