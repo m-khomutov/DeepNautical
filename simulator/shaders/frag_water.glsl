@@ -3,14 +3,14 @@
 struct FogParameters
 {
     vec4 color;
-    float start;
-    float end;
+    float density;
 };
 
 in VS_OUT {
     in vec3 N;
     in vec3 L;
     in vec3 V;
+    in float distance;
 } fs_in;
 
 layout (location = 0) out vec4 Color;
@@ -20,8 +20,9 @@ uniform sampler2D Texture;
 uniform sampler2D AirTexture;
 uniform FogParameters FogParams;
 
-float FogFactor(FogParameters params, float coord) {
-    return (params.end - coord) / (params.end - params.start);
+float FogFactor(FogParameters params) {
+    float factor = pow(params.density * fs_in.distance, 2);
+    return clamp(exp(-factor), 0.0, 1.0);
 }
 
 vec4 Diffuse() {
@@ -45,6 +46,5 @@ vec4 Specular() {
 }
 
 void main() {
-    float coord = abs(gl_FragCoord.z / gl_FragCoord.w);
-    Color = mix(Specular(), FogParams.color, FogFactor(FogParams, coord));
+    Color = mix(FogParams.color, Specular(), FogFactor(FogParams));
 }

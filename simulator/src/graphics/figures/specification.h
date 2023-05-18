@@ -10,6 +10,7 @@
 
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
 #include <string>
 #include <vector>
 
@@ -40,6 +41,8 @@ public:
 
     std::vector< float > viewport;
 
+    glm::vec3 camera_position = glm::vec3( 0.0f, 0.0f, 5.0f ); 
+    
     glm::vec3 light_color = glm::vec3( 1.0f, 1.0f, 1.0f ); 
     glm::vec3 light_position = glm::vec3( 0.0f, 1.0f, -3.0f ); 
 
@@ -47,6 +50,9 @@ public:
     glm::vec2 wave = { 10.0f, 0.2f };
     glm::vec2 wake = { 20.0f, 2.0f };
     
+    glm::vec4 fog_color = {1.0f, 1.0f, 1.0f, 1.0f};
+    float fog_density = 0.0f;
+
 private:
     void f_read_viewport( const std::string& config );
 };

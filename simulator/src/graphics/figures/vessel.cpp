@@ -28,6 +28,9 @@ void vessel::draw()
     set_attribute( "NormalMatrix", glm::transpose( glm::inverse( glm::mat3(view_ * model_) ) ) );
     set_attribute( "LightPosition", spec_.light_position );
     set_attribute( "LightColor", spec_.light_color );
+    set_attribute( "CameraPosition", spec_.camera_position );
+    set_attribute( "fog.color", spec_.fog_color );
+    set_attribute( "fog.density", spec_.fog_density );
 
     GLuint first = 0;
     for( auto mtl : object_->materials() )

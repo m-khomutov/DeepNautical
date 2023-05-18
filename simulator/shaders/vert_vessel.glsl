@@ -9,6 +9,7 @@ out VS_OUT {
     out vec3 L;
     out vec3 V;
     out vec2 tc;
+    out float distance;
 } vs_out;
 
 uniform mat4 Model;
@@ -16,6 +17,7 @@ uniform mat4 View;
 uniform mat4 Projection;
 uniform mat3 NormalMatrix;
 uniform vec3 LightPosition;
+uniform vec3 CameraPosition;
 
 void main() {
     // vertex in world coords
@@ -28,6 +30,8 @@ void main() {
     vs_out.V = normalize(-worldcoords);
     //texels
     vs_out.tc = texcoord;
+    // distance from camera
+    vs_out.distance = length(worldcoords - CameraPosition);
 
     gl_Position = Projection * View * Model * vec4(position, 1.0);
 }

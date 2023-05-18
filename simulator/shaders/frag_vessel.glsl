@@ -1,10 +1,17 @@
 #version 330
 
+struct Fog
+{
+    vec4 color;
+    float density;
+};
+
 in VS_OUT {
     in vec3 N;
     in vec3 L;
     in vec3 V;
     in vec2 tc;
+    in float distance;
 } fs_in;
 
 layout (location = 0) out vec4 Color;
@@ -21,7 +28,13 @@ uniform Material
 } mtl;
 
 uniform vec3 LightColor;
+uniform Fog fog;
 uniform sampler2D Texture;
+
+float FogFactor(in float density, in float distance) {
+    float factor = pow(density * distance, 2);
+    return clamp(exp(-factor), 0.0, 1.0);
+}
 
 vec3 Diffuse() {
     float diff = max(dot(fs_in.N, fs_in.L), 0.0);
@@ -56,5 +69,6 @@ void main() {
         Color = vec4(Specular(), 1.0);
         break;
     }
-    Color *= vec4(texture(Texture, fs_in.tc));
+
+    Color *= mix(fog.color, vec4(texture(Texture, fs_in.tc)), FogFactor(fog.density, fs_in.distance));
 }

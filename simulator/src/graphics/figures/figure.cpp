@@ -14,6 +14,9 @@ figure::figure( const std::vector< std::string > &settings )
 {
     utils::geometry win { utils::config()["window"] };
     projection_ = glm::perspective( glm::radians( 26.5f ), (GLfloat)win.width / (GLfloat)win.height, 0.1f, 100.0f );
+    view_ = glm::lookAt( spec_.camera_position,
+                         glm::vec3(0.0f, 0.0f, 0.0f),
+                         glm::vec3(0.0f, 1.0f, 0.0f) );
 }
 
 figure::~figure()

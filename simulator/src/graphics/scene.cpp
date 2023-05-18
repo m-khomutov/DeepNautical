@@ -109,14 +109,14 @@ void scene::f_initialize( const std::string &specification )
         figures[header].push_back( settings );
     }
 
-    const std::list< param_t > &lighting_params = figures["[Lighting]"];
+    const std::list< param_t > &environment_params = figures["[Environment]"];
     for( auto figure : figures )
     {
         for( param_t &param : figure.second )
         {
-            if( !(lighting_params.empty() || figure.first == "[Lighting]") )
+            if( !(environment_params.empty() || figure.first == "[Environment]") )
             {
-                param.insert( param.end(), lighting_params.back().begin(), lighting_params.back().end() );
+                param.insert( param.end(), environment_params.back().begin(), environment_params.back().end() );
             }
             f_add_figure( figure.first, param );
         }

@@ -122,6 +122,24 @@ specification::specification( const std::vector< std::string > &settings )
                     std::cerr << "wake error\n";
                 }
             }
+            else if( p.first.find( "camera_position" ) != std::string::npos )
+            {
+                if( ! utils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &camera_position ) )
+                {
+                    std::cerr << "camera position error\n";
+                }
+            }
+            else if( p.first.find( "fog_color" ) != std::string::npos )
+            {
+                if( ! utils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &fog_color ) )
+                {
+                    std::cerr << "fog color error\n";
+                }
+            }
+            else if( p.first.find( "fog_density" ) != std::string::npos )
+            {
+                fog_density = std::stof( p.second );
+            }
         }
     }
 }

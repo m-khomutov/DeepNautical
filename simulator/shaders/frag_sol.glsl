@@ -1,7 +1,14 @@
 #version 330
 
 in vec2 TexCoord;
+in float distance;
 layout (location = 0) out vec4 Color;
+
+struct Fog
+{
+    vec4 color;
+    float density;
+};
 
 uniform Circle
 {
@@ -11,7 +18,13 @@ uniform Circle
     float OuterRadius;
 } circle;
 
+uniform Fog fog;
 uniform sampler2D Texture;
+
+float FogFactor(in float density) {
+    float factor = pow(density * distance, 2);
+    return clamp(exp(-factor), 0.0, 1.0);
+}
 
 void main() {
     vec2 center = TexCoord - 0.5f;
@@ -19,5 +32,5 @@ void main() {
     vec4 sol = mix(vec4(circle.InnerColor, 1.0),
                    vec4(circle.OuterColor, 1.0),
                    smoothstep(circle.InnerRadius, circle.OuterRadius, dist));
-    Color = texture(Texture, TexCoord);
+    Color = mix(fog.color, texture(Texture, TexCoord), FogFactor(fog.density));
 }

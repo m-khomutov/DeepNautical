@@ -53,9 +53,9 @@ void water::draw()
     set_attribute( "Offset", offset_ );
     set_attribute( "LightPosition", spec_.light_position );
     set_attribute( "LightColor", spec_.light_color );
-    set_attribute( "FogParams.color", glm::vec4(0.392, 0.706, 0.983, 1.0f) );
-    set_attribute( "FogParams.start", 4.0f );
-    set_attribute( "FogParams.end", 2.5f);
+    set_attribute( "CameraPosition", spec_.camera_position );
+    set_attribute( "FogParams.color", spec_.fog_color );
+    set_attribute( "FogParams.density", spec_.fog_density );
 
     set_attribute( "AirTexture", GLuint(1) );
     air_texture_->activate( GL_TEXTURE1 );
