@@ -10,7 +10,7 @@ in VS_OUT {
     in vec3 N;
     in vec3 L;
     in vec3 V;
-    in float distance;
+    in vec4 distance;
     in float amplitude;
 } fs_in;
 
@@ -23,7 +23,8 @@ uniform sampler2D FoamTexture;
 uniform FogParameters FogParams;
 
 float FogFactor(FogParameters params) {
-    float factor = pow(params.density * fs_in.distance, 2);
+    float fogCoord = abs(fs_in.distance.z / fs_in.distance.w);
+    float factor = pow(params.density * fogCoord, 2);
     return clamp(exp(-factor), 0.0, 1.0);
 }
 
@@ -63,7 +64,7 @@ void main() {
     bvec3 toDiscard = lessThan(Color.rgb, mix(FogParams.color, vec4(0.4), factor).rgb);
     if( all(toDiscard) )
     {
-        discard;
+        Color = FogParams.color;
     }
     if( fs_in.amplitude > 0.02 || fs_in.amplitude < -0.02 )
     {

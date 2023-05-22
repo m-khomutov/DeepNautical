@@ -11,7 +11,7 @@ in VS_OUT {
     in vec3 L;
     in vec3 V;
     in vec2 tc;
-    in float distance;
+    in vec4 distance;
 } fs_in;
 
 layout (location = 0) out vec4 Color;
@@ -32,7 +32,8 @@ uniform Fog fog;
 uniform sampler2D Texture;
 
 float FogFactor(in float density, in float distance) {
-    float factor = pow(density * distance, 2);
+    float fogCoord = abs(fs_in.distance.z / fs_in.distance.w);
+    float factor = pow(density * fogCoord, 2);
     return clamp(exp(-factor), 0.0, 1.0);
 }
 
