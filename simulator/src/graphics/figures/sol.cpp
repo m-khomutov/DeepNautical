@@ -14,7 +14,9 @@ sol::sol( const std::vector< std::string > &settings )
 {
     offset_ = glm::vec3( -2.5f, 2.0f, 0.0f );
     model_ = glm::mat4( glm::scale( 
-                            glm::translate( glm::vec3(0.0f, 0.0f, -1.0f) ),
+                            glm::rotate(
+                                glm::translate( glm::vec3(0.0f, 0.0f, -1.0f) ),
+                                glm::radians( 50.0f ), glm::vec3(1.0f, 0.0f, 0.0f) ),
                             glm::vec3( 0.3f ) ) );
 }
 

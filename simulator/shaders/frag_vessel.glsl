@@ -37,37 +37,41 @@ float FogFactor(in float density, in float distance) {
     return clamp(exp(-factor), 0.0, 1.0);
 }
 
-vec3 Diffuse() {
-    float diff = max(dot(fs_in.N, fs_in.L), 0.0);
-    float Id = 0.9;
-    return LightColor * diff * mtl.Kd * Id;
-}
-
 vec3 Ambient() {
     float Ia = 0.4;
     vec3 ambient = mtl.Ka * Ia;
-    return Diffuse() + ambient;
+    return ambient;
+}
+
+vec3 Diffuse() {
+    float Id = 0.9;
+    float diff = max(dot(fs_in.N, fs_in.L), 0.0) * Id;
+    return diff * mtl.Kd * LightColor;
 }
 
 vec3 Specular() {
-    float Is = 1.0;
-    vec3 R = reflect(-fs_in.L, fs_in.N);
-    float spec = pow(max(dot(R, fs_in.V), 0.0), mtl.Ns);
-    vec3 specular = LightColor * spec * mtl.Ks * Is;
-    return Ambient() + specular;
+    vec3 specular = Diffuse();
+    if( any(greaterThan(specular, vec3(0.0, 0.0, 0.0))) )
+    {
+        float Is = 1.0;
+        vec3 R = reflect(-fs_in.L, fs_in.N);
+        float spec = pow(max(dot(R, fs_in.V), 0.0), mtl.Ns) * Is;
+        specular += spec * mtl.Ks * LightColor;
+    }
+    return specular;
 }
 
 void main() {
     switch( mtl.illum )
     {
     case 0:
-        Color = vec4(Diffuse(), 1.0);
+        Color = vec4(Ambient(), mtl.d);
         break;
     case 1:
-        Color = vec4(Ambient(), 1.0);
+        Color = vec4(Ambient() + Diffuse(), mtl.d);
         break;
     default:
-        Color = vec4(Specular(), 1.0);
+        Color = vec4(Ambient() + Specular(), mtl.d);
         break;
     }
 
