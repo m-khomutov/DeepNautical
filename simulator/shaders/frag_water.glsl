@@ -10,7 +10,7 @@ in VS_OUT {
     in vec3 N;
     in vec3 L;
     in vec3 V;
-    in float distance;
+    in vec4 distance;
     in float amplitude;
     in float wake;
 } fs_in;
@@ -24,7 +24,8 @@ uniform sampler2D FoamTexture;
 uniform FogParameters FogParams;
 
 float FogFactor(FogParameters params) {
-    float factor = pow(params.density * fs_in.distance, 2);
+    float fogCoord = abs(fs_in.distance.z / fs_in.distance.w);
+    float factor = pow(params.density * fogCoord, 2);
     return clamp(exp(-factor), 0.0, 1.0);
 }
 
@@ -37,24 +38,30 @@ vec3 FoamColor(sampler2D foam, vec2 surfaceUV ) {
     return clamp(vec3(gray), 0.0, 1.0);
 }
 
-vec4 Diffuse() {
-    float diff = max(dot(fs_in.N, fs_in.L), 0.0);
-    float Id = 0.9;
-    vec3 Kd = vec3(0.392, 0.706, 0.983);
-    return vec4(LightColor * diff * Kd * Id, 0.0f);
-}
 vec4 Ambient() {
     float Ia = 0.7;
     vec4 ambient = mix(texture( Texture, fs_in.N.xy ), texture( AirTexture, vec2(fs_in.N.x, 1 - fs_in.N.y) ), 0.2) * Ia;
-    //vec4 ambient = texture( Texture, fs_in.N.xy ) * Ia;
-    return Diffuse() + ambient;
+    return ambient;
 }
+
+vec4 Diffuse() {
+    float Id = 0.9;
+    vec3 Kd = vec3(0.392, 0.706, 0.983);
+    float diff = max(dot(fs_in.N, fs_in.L), 0.0) * Id;
+    return vec4(diff * Kd * LightColor, 0.0);
+}
+
 vec4 Specular() {
-    float Is = 0.5;
-    vec3 R = reflect(-fs_in.L, fs_in.N);
-    float spec = pow(max(dot(R, fs_in.V), 0.0), 128);
-    vec3 specular = LightColor * spec * Is;
-    return Ambient() + vec4(specular, 0.0);
+    vec4 specular = Diffuse();
+    if( any(greaterThan(specular, vec4(0.0, 0.0, 0.0, 0.0))) )
+    {
+        float Is = 0.5;
+        vec3 Ks = vec3(1.0, 1.0, 1.0);
+        vec3 R = reflect(-fs_in.L, fs_in.N);
+        float spec = pow(max(dot(R, fs_in.V), 0.0), 128) * Is;
+        specular += vec4(spec * Ks * LightColor, 0.0);
+    }
+    return Ambient() + specular;
 }
 
 void main() {
@@ -64,7 +71,7 @@ void main() {
     bvec3 toDiscard = lessThan(Color.rgb, mix(FogParams.color, vec4(0.4), factor).rgb);
     if( all(toDiscard) )
     {
-        discard;
+        Color = FogParams.color;
     }
     if( fs_in.wake > 0.0 || fs_in.amplitude > 0.02 || fs_in.amplitude < -0.02 )
     {

@@ -1,7 +1,7 @@
 #version 330
 
 in vec2 TexCoord;
-in float distance;
+in vec4 distance;
 layout (location = 0) out vec4 Color;
 
 struct Fog
@@ -22,7 +22,8 @@ uniform Fog fog;
 uniform sampler2D Texture;
 
 float FogFactor(in float density) {
-    float factor = pow(density * distance, 2);
+    float fogCoord = abs(distance.z / distance.w);
+    float factor = pow(density * fogCoord, 2);
     return clamp(exp(-factor), 0.0, 1.0);
 }
 

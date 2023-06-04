@@ -7,7 +7,7 @@ out VS_OUT {
     out vec3 N;
     out vec3 L;
     out vec3 V;
-    out float distance;
+    out vec4 distance;
     out float amplitude;
     out float wake;
 } vs_out;
@@ -21,6 +21,8 @@ uniform vec3 LightPosition;
 uniform vec3 CameraPosition;
 
 void main() {
+    // distance from camera
+    vs_out.distance = View * Model * vec4(position.xyz, 1.0);
     // vertex in world coords
     vec3 worldcoords = (View * Model * vec4(position.xyz, 1.0)).xyz;
     // normal in world coords
@@ -29,8 +31,6 @@ void main() {
     vs_out.L = normalize(LightPosition - worldcoords);
     // specular 
     vs_out.V = normalize(-worldcoords);
-    // distance from camera
-    vs_out.distance = length(worldcoords - CameraPosition);
     // wave amplitude
     vs_out.amplitude = position.y;
     // wake position
