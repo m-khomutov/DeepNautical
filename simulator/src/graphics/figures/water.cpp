@@ -101,7 +101,7 @@ void water::f_initialize()
 
     glBufferData( GL_ARRAY_BUFFER, sizeof(surface_) + sizeof(normals_), NULL, GL_STREAM_DRAW );
     
-    set_layout( "position", 3, 3, 0 );
+    set_layout( "position", 4, 4, 0 );
     set_layout( "normals", 3, 3, sizeof(surface_) / sizeof(GLfloat) );
 }
 
@@ -124,44 +124,46 @@ void water::f_load_surface( double )
         for( uint32_t x(0); x <= resolution; ++x )
         {
             GLfloat x_coord = x * delta - 1.0f;
-            int idx = 6 * (x + z * (resolution + 1));
-            surface_[idx + 3] = ( x_coord );
-            surface_[idx + 4] = f_generate_surface( x_coord, z_coord );
-            surface_[idx + 5] = z_coord;
+            int idx = 8 * (x + z * (resolution + 1));
+            surface_[idx + 4] = ( x_coord );
+            surface_[idx + 5] = f_generate_surface( x_coord, z_coord, &surface_[idx + 7] );
+            surface_[idx + 6] = z_coord;
             if( z )
             {
-                int pidx = 6 * (x + (z - 1) * (resolution + 1));
-                surface_[idx + 0] = surface_[pidx + 3];
-                surface_[idx + 1] = surface_[pidx + 4];
-                surface_[idx + 2] = surface_[pidx + 5];
+                int pidx = 8 * (x + (z - 1) * (resolution + 1));
+                surface_[idx + 0] = surface_[pidx + 4];
+                surface_[idx + 1] = surface_[pidx + 5];
+                surface_[idx + 2] = surface_[pidx + 6];
+                surface_[idx + 3] = surface_[pidx + 7];
             }
             else
             {
                 surface_[idx + 0] = ( x_coord );
-                surface_[idx + 1] = f_generate_surface( x_coord, z_coord );
+                surface_[idx + 1] = f_generate_surface( x_coord, z_coord, &surface_[idx + 3] );
                 surface_[idx + 2] = z_coord;
             }
 
             // Normals
-            glm::vec3 a = glm::vec3( surface_[idx + 3], surface_[idx + 4],  surface_[idx + 5] );
-            glm::vec3 b = glm::vec3( surface_[idx + 3], surface_[idx + 1],  surface_[idx + 2] );
-            glm::vec3 c = glm::vec3( surface_[idx + 9], surface_[idx + 10], surface_[idx + 5] );
+            int n_idx = 6 * (x + z * (resolution + 1));
+            glm::vec3 a = glm::vec3( surface_[idx + 4], surface_[idx + 5],  surface_[idx + 6] );
+            glm::vec3 b = glm::vec3( surface_[idx + 4], surface_[idx + 1],  surface_[idx + 2] );
+            glm::vec3 c = glm::vec3( surface_[idx + 12], surface_[idx + 13], surface_[idx + 6] );
             if( x >= resolution )
             {
                 const float xn = (resolution + 1) * delta + 1;
                 c = glm::vec3( xn, f_generate_surface( xn, a[2] ), a[2] );
             }
             glm::vec3 n = glm::normalize(glm::cross(c - a, b - a));
-            normals_[idx + 3] = n[0];
-            normals_[idx + 4] = n[1];
-            normals_[idx + 5] = n[2];
+            normals_[n_idx + 3] = n[0];
+            normals_[n_idx + 4] = n[1];
+            normals_[n_idx + 5] = n[2];
 
             if( z )
             {
                 int pidx = 6 * (x + (z - 1) * (resolution + 1));
-                normals_[idx + 0] = normals_[pidx + 3];
-                normals_[idx + 1] = normals_[pidx + 4];
-                normals_[idx + 2] = normals_[pidx + 5];
+                normals_[n_idx + 0] = normals_[pidx + 3];
+                normals_[n_idx + 1] = normals_[pidx + 4];
+                normals_[n_idx + 2] = normals_[pidx + 5];
             }
             else
             {
@@ -172,9 +174,9 @@ void water::f_load_surface( double )
                 c[2]= b[2];
 
                 n = glm::normalize(glm::cross(c - a, b - a));
-                normals_[idx + 0] = n[0];
-                normals_[idx + 1] = n[1];
-                normals_[idx + 2] = n[2];
+                normals_[n_idx + 0] = n[0];
+                normals_[n_idx + 1] = n[1];
+                normals_[n_idx + 2] = n[2];
             }
         }
     }
@@ -182,17 +184,24 @@ void water::f_load_surface( double )
     glBufferSubData( GL_ARRAY_BUFFER, sizeof(surface_), sizeof(normals_), normals_ );
 }
 
-GLfloat water::f_generate_surface(GLfloat x, GLfloat z)
+GLfloat water::f_generate_surface(GLfloat x, GLfloat z, GLfloat *in_wake)
 {
+    if( in_wake ) *in_wake = 0.0;
     GLfloat rc = waveGen( x, z, phase_, spec_.wave );
     for( auto pos : wake_position_ )
     {
         if( pos.course.x ) {
             bool coords_inverted = pos.course.x < 0;
             bool in_x_trace = coords_inverted ? ( x < pos.current.x ) : x > -pos.current.x;
-            bool in_z_trace = ( z > pos.current.z - 0.3f && z < pos.current.z);
+            bool in_z_trace = ( z > pos.current.z - spec_.wake_width && z < pos.current.z);
             if( in_x_trace && in_z_trace )
+            {
                 rc += wakeGen( x, z, coords_inverted ? phase_ : -phase_, spec_.wake );
+                if( in_wake )
+                {
+                    *in_wake = 1.0;
+                }
+            }
         }
     }
     return rc;

@@ -1,6 +1,6 @@
 #version 330
 
-layout (location=0) in vec3 position;
+layout (location=0) in vec4 position;
 layout (location=1) in vec3 normals;
 
 out VS_OUT {
@@ -9,6 +9,7 @@ out VS_OUT {
     out vec3 V;
     out float distance;
     out float amplitude;
+    out float wake;
 } vs_out;
 
 
@@ -21,7 +22,7 @@ uniform vec3 CameraPosition;
 
 void main() {
     // vertex in world coords
-    vec3 worldcoords = (View * Model * vec4(position, 1.0)).xyz;
+    vec3 worldcoords = (View * Model * vec4(position.xyz, 1.0)).xyz;
     // normal in world coords
     vs_out.N = normalize((inverse(transpose(Model)) * vec4(normals, 1.0)).xyz);
     // diffuse 
@@ -32,6 +33,8 @@ void main() {
     vs_out.distance = length(worldcoords - CameraPosition);
     // wave amplitude
     vs_out.amplitude = position.y;
+    // wake position
+    vs_out.wake = position.w;
 
-    gl_Position = Projection * View * Model * vec4(position + Offset, 1.0);
+    gl_Position = Projection * View * Model * vec4(position.xyz + Offset, 1.0);
 }

@@ -144,6 +144,10 @@ specification::specification( const std::vector< std::string > &settings )
             {
                 fog_density = std::stof( p.second );
             }
+            else if( p.first.find( "wake_width" ) != std::string::npos )
+            {
+                wake_width = std::stof( p.second );
+            }
         }
     }
 }

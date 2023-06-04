@@ -54,6 +54,8 @@ public:
     glm::vec4 fog_color = {1.0f, 1.0f, 1.0f, 1.0f};
     float fog_density = 0.0f;
 
+    float wake_width = 0.3f;
+
 private:
     void f_read_viewport( const std::string& config );
 };

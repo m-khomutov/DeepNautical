@@ -22,8 +22,8 @@ public:
     
 private:
     static const uint32_t resolution = 64;
-    GLfloat surface_[6 * resolution * (resolution + 1)]; 
-    GLfloat normals_[6 * resolution * (resolution + 1)]; 
+    GLfloat surface_[8 * resolution * (resolution + 1)];
+    GLfloat normals_[6 * resolution * (resolution + 1)];
     float phase_ { 0.0f };
     std::unique_ptr< texture > air_texture_;    
     std::unique_ptr< texture > foam_texture_;
@@ -36,7 +36,7 @@ private:
     void f_accept( visitor &p, double currentTime ) override;
 
     void f_load_surface( double currentTime );
-    GLfloat f_generate_surface( GLfloat x, GLfloat z );
+    GLfloat f_generate_surface( GLfloat x, GLfloat z, GLfloat *in_wake = nullptr );
 };
 
 #endif /* WATER_H */

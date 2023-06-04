@@ -12,6 +12,7 @@ in VS_OUT {
     in vec3 V;
     in float distance;
     in float amplitude;
+    in float wake;
 } fs_in;
 
 layout (location = 0) out vec4 Color;
@@ -65,8 +66,8 @@ void main() {
     {
         discard;
     }
-    if( fs_in.amplitude > 0.02 || fs_in.amplitude < -0.02 )
+    if( fs_in.wake > 0.0 || fs_in.amplitude > 0.02 || fs_in.amplitude < -0.02 )
     {
-        Color.rgb += FoamColor(FoamTexture, fs_in.N.xy);
+        Color.rgb = mix(Color.rgb, Color.rgb + FoamColor(FoamTexture, fs_in.N.xy), 0.4);
     }
 }
