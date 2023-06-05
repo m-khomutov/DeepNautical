@@ -121,7 +121,14 @@ specification::specification( const std::vector< std::string > &settings )
             }
             else if( p.first.find( "wake" ) != std::string::npos )
             {
-                if( ! utils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &wake ) )
+                if( p.first.find( "wake_width" ) != std::string::npos )
+                {
+                    if( ! utils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &wake_width ) )
+                    {
+                        std::cerr << "vessel error: invalid wake parameters\n";
+                    }
+                }
+                else if( ! utils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &wake ) )
                 {
                     std::cerr << "wake error\n";
                 }
@@ -143,10 +150,6 @@ specification::specification( const std::vector< std::string > &settings )
             else if( p.first.find( "fog_density" ) != std::string::npos )
             {
                 fog_density = std::stof( p.second );
-            }
-            else if( p.first.find( "wake_width" ) != std::string::npos )
-            {
-                wake_width = std::stof( p.second );
             }
         }
     }

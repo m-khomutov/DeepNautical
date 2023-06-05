@@ -186,14 +186,19 @@ void water::f_load_surface( double )
 
 GLfloat water::f_generate_surface(GLfloat x, GLfloat z, GLfloat *in_wake)
 {
-    if( in_wake ) *in_wake = 0.0;
+    if( in_wake )
+    {
+        *in_wake = 0.0;
+    }
     GLfloat rc = waveGen( x, z, phase_, spec_.wave );
     for( auto pos : wake_position_ )
     {
         if( pos.course.x ) {
-            bool coords_inverted = pos.course.x < 0;
+            bool coords_inverted = pos.course.x < 0; // движения слева направо по экрану
             bool in_x_trace = coords_inverted ? ( x < pos.current.x ) : x > -pos.current.x;
-            bool in_z_trace = ( z > pos.current.z - spec_.wake_width && z < pos.current.z);
+            GLfloat wake_width = coords_inverted ? pos.wake[0] - x * pos.wake[1]
+                                                 : pos.wake[0] + x * pos.wake[1];
+            bool in_z_trace = ( z > pos.current.z - wake_width && z < pos.current.z );
             if( in_x_trace && in_z_trace )
             {
                 rc += wakeGen( x, z, coords_inverted ? phase_ : -phase_, spec_.wake );

@@ -25,6 +25,7 @@ public:
     {
         glm::vec3 course;
         glm::vec3 current;
+        glm::vec2 wake;
     };
     
     explicit figure( const std::vector< std::string > &setting );

@@ -170,4 +170,5 @@ void vessel::f_reset()
 
     position_.current = offset_;
     position_.course = spec_.course;
+    position_.wake = spec_.wake_width;
 }
