@@ -26,7 +26,7 @@ sol::~sol()
 
 void sol::draw()
 {
-    set_attribute( "Offset", offset_ );
+    set_uniform( "Offset", offset_ );
     glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
 }
 
@@ -51,17 +51,17 @@ void sol::f_initialize()
 
     glBufferData( GL_ARRAY_BUFFER, spec_.viewport.size() * sizeof(float), spec_.viewport.data(), GL_STATIC_DRAW );
     glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices_), indices_, GL_STATIC_DRAW); 
-    set_layout( "position", 3, 5, 0 );
-    set_layout( "texcoord", 2, 5, 3 );
-    set_attribute( "CameraPosition", spec_.camera_position );
-    set_attribute( "fog.color", spec_.fog_color );
-    set_attribute( "fog.density", spec_.fog_density );
-    program_->uniform_block("Circle")["OuterColor"].set( glm::vec3(0.392f, 0.706f, 0.983f) );
-    program_->uniform_block("Circle")["InnerColor"].set( glm::vec3(1.0f, 1.0f, 0.75f) );
-    program_->uniform_block("Circle")["OuterColor"].set( glm::vec3(0.392f, 0.706f, 0.983f) );
-    program_->uniform_block("Circle")["InnerRadius"].set( 0.25f );
-    program_->uniform_block("Circle")["OuterRadius"].set( 0.45f );
-    program_->uniform_block("Circle").copy();
+    set_attribute( "Position", 3, 5, 0 );
+    set_attribute( "Texcoord", 2, 5, 3 );
+    set_uniform( "CameraPosition", spec_.camera_position );
+    set_uniform( "Fog.color", spec_.fog_color );
+    set_uniform( "Fog.density", spec_.fog_density );
+    program_->uniform_block("CircleParams")["OuterColor"].set( glm::vec3(0.392f, 0.706f, 0.983f) );
+    program_->uniform_block("CircleParams")["InnerColor"].set( glm::vec3(1.0f, 1.0f, 0.75f) );
+    program_->uniform_block("CircleParams")["OuterColor"].set( glm::vec3(0.392f, 0.706f, 0.983f) );
+    program_->uniform_block("CircleParams")["InnerRadius"].set( 0.25f );
+    program_->uniform_block("CircleParams")["OuterRadius"].set( 0.45f );
+    program_->uniform_block("CircleParams").copy();
 }
 
 void sol::f_accept( visitor &p, double )

@@ -58,14 +58,14 @@ protected:
     bool valid_ { false };
 
 protected:
-    void set_attribute( const GLchar * name, float value );
-    void set_attribute( const GLchar * name, GLuint value );
-    void set_attribute( const GLchar * name, glm::vec3 );
-    void set_attribute( const GLchar * name, glm::vec4 );
-    void set_attribute( const GLchar * name, glm::mat3 );
-    void set_attribute( const GLchar * name, glm::mat4 );
+    void set_uniform( const GLchar * name, float value );
+    void set_uniform( const GLchar * name, GLuint value );
+    void set_uniform( const GLchar * name, glm::vec3 );
+    void set_uniform( const GLchar * name, glm::vec4 );
+    void set_uniform( const GLchar * name, glm::mat3 );
+    void set_uniform( const GLchar * name, glm::mat4 );
     void set_subroutine( const GLchar * uniform_name, const GLchar * subroutine_name, GLenum shader_type );
-    void set_layout( char const *name, GLuint size, GLuint step, GLuint off );
+    void set_attribute( char const *name, GLuint size, GLuint step, GLuint off );
 
 private:
     virtual void f_check_environment() const = 0;

@@ -19,9 +19,9 @@ antisubmarinefrigate::~antisubmarinefrigate()
 
 void antisubmarinefrigate::draw()
 {
-    set_attribute( "Texture", GLuint(0) );
-    set_attribute( "Offset", offset_ );
-    set_attribute( "Waterline", waterline_ );
+    set_uniform( "Texture", GLuint(0) );
+    set_uniform( "Offset", offset_ );
+    set_uniform( "Waterline", waterline_ );
     if( scene_position_ < -1.5 || scene_position_ > 1.5 )
     {
         offset_.x = 0.0f;
@@ -56,8 +56,8 @@ void antisubmarinefrigate::f_initialize()
     
     glBufferData( GL_ARRAY_BUFFER, sizeof(position_), position_, GL_STATIC_DRAW );
     glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices_), indices_, GL_STATIC_DRAW); 
-    set_layout( "position", 3, 5, 0 );
-    set_layout( "texcoord", 2, 5, 3 );
+    set_attribute( "Position", 3, 5, 0 );
+    set_attribute( "Texcoord", 2, 5, 3 );
 }
 
 void antisubmarinefrigate::f_accept( visitor &p, double )

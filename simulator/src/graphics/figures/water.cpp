@@ -50,16 +50,16 @@ void water::draw()
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE); 
     //glPolygonMode (GL_FRONT_AND_BACK, GL_LINE);
-    set_attribute( "Offset", offset_ );
-    set_attribute( "LightPosition", spec_.light_position );
-    set_attribute( "LightColor", spec_.light_color );
-    set_attribute( "CameraPosition", spec_.camera_position );
-    set_attribute( "FogParams.color", spec_.fog_color );
-    set_attribute( "FogParams.density", spec_.fog_density );
+    set_uniform( "Offset", offset_ );
+    set_uniform( "LightPosition", spec_.light_position );
+    set_uniform( "LightColor", spec_.light_color );
+    set_uniform( "CameraPosition", spec_.camera_position );
+    set_uniform( "FogParams.color", spec_.fog_color );
+    set_uniform( "FogParams.density", spec_.fog_density );
 
-    set_attribute( "AirTexture", GLuint(1) );
+    set_uniform( "AirTexture", GLuint(1) );
     air_texture_->activate( GL_TEXTURE1 );
-    set_attribute( "FoamTexture", GLuint(2) );
+    set_uniform( "FoamTexture", GLuint(2) );
     foam_texture_->activate( GL_TEXTURE2 );
 
     uint32_t len = 2 * (resolution + 1);
@@ -101,8 +101,8 @@ void water::f_initialize()
 
     glBufferData( GL_ARRAY_BUFFER, sizeof(surface_) + sizeof(normals_), NULL, GL_STREAM_DRAW );
     
-    set_layout( "position", 4, 4, 0 );
-    set_layout( "normals", 3, 3, sizeof(surface_) / sizeof(GLfloat) );
+    set_attribute( "Position", 4, 4, 0 );
+    set_attribute( "Normals", 3, 3, sizeof(surface_) / sizeof(GLfloat) );
 }
 
 void water::f_accept( visitor &p, double currentTime )

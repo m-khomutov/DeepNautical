@@ -44,8 +44,8 @@ void horizon::f_initialize()
 
     glBufferData( GL_ARRAY_BUFFER, spec_.viewport.size() * sizeof(float), spec_.viewport.data(), GL_STATIC_DRAW );
     glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices_), indices_, GL_STATIC_DRAW); 
-    set_layout( "position", 3, 5, 0 );
-    set_layout( "texcoord", 2, 5, 3 );
+    set_attribute( "Position", 3, 5, 0 );
+    set_attribute( "Texcoord", 2, 5, 3 );
 }
 
 void horizon::f_accept( visitor &p, double current_time )

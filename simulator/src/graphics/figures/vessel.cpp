@@ -25,12 +25,12 @@ vessel::~vessel()
 void vessel::draw()
 {
     glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
-    set_attribute( "NormalMatrix", glm::transpose( glm::inverse( glm::mat3(view_ * model_) ) ) );
-    set_attribute( "LightPosition", spec_.light_position );
-    set_attribute( "LightColor", spec_.light_color );
-    set_attribute( "CameraPosition", spec_.camera_position );
-    set_attribute( "fog.color", spec_.fog_color );
-    set_attribute( "fog.density", spec_.fog_density );
+    set_uniform( "NormalMatrix", glm::transpose( glm::inverse( glm::mat3(view_ * model_) ) ) );
+    set_uniform( "LightPosition", spec_.light_position );
+    set_uniform( "LightColor", spec_.light_color );
+    set_uniform( "CameraPosition", spec_.camera_position );
+    set_uniform( "fog.color", spec_.fog_color );
+    set_uniform( "fog.density", spec_.fog_density );
 
     GLuint first = 0;
     for( auto mtl : object_->materials() )
@@ -60,7 +60,7 @@ void vessel::draw()
             {
                 empty_texture_->activate();
             }
-            set_attribute( "Texture", GLuint(0) );
+            set_uniform( "Texture", GLuint(0) );
         }
         catch( const std::runtime_error &e )
         {
@@ -97,9 +97,9 @@ void vessel::f_initialize()
     glBufferData( GL_ARRAY_BUFFER, vertices_.size() * sizeof(GLfloat), vertices_.data(), GL_STATIC_DRAW );
     try
     {
-        set_layout( "position", 3, 8, 0 );
-        set_layout( "texcoord", 2, 8, 3 );
-        set_layout( "normal", 3, 8, 5 );
+        set_attribute( "Position", 3, 8, 0 );
+        set_attribute( "Texcoord", 2, 8, 3 );
+        set_attribute( "Normal", 3, 8, 5 );
     }
     catch( const std::runtime_error &e )
     {

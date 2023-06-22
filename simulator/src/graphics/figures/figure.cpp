@@ -33,18 +33,18 @@ void figure::initialize()
 void figure::accept( visitor &p, double currentTime )
 {
     glUseProgram( *program_ );
-    set_attribute( "Model", model_ );
-    set_attribute( "View", view_ );
-    set_attribute( "Projection", projection_ );
+    set_uniform( "Model", model_ );
+    set_uniform( "View", view_ );
+    set_uniform( "Projection", projection_ );
     if( texture_ )
     {
-	set_attribute( "Texture", GLuint(0) );
+        set_uniform( "Texture", GLuint(0) );
         texture_->activate();
     }
     f_accept( p, currentTime );    
 }
 
-void figure::set_attribute( const GLchar *name, float value )
+void figure::set_uniform( const GLchar *name, float value )
 {
     try {
         glProgramUniform1f ( *program_, program_->uniform_index( name ), value );
@@ -56,7 +56,7 @@ void figure::set_attribute( const GLchar *name, float value )
     }
 }
 
-void figure::set_attribute( const GLchar *name, GLuint value ) {
+void figure::set_uniform( const GLchar *name, GLuint value ) {
     try {
         glProgramUniform1i ( *program_, program_->uniform_index( name ), value );
     }
@@ -67,7 +67,7 @@ void figure::set_attribute( const GLchar *name, GLuint value ) {
     }
 }
 
-void figure::set_attribute( const GLchar *name, glm::vec3 value ) {
+void figure::set_uniform( const GLchar *name, glm::vec3 value ) {
     try {
         glProgramUniform3f( *program_, program_->uniform_index( name ), value.x, value.y, value.z );
     }
@@ -78,7 +78,7 @@ void figure::set_attribute( const GLchar *name, glm::vec3 value ) {
     }
 }
 
-void figure::set_attribute( const GLchar *name, glm::vec4 value ) {
+void figure::set_uniform( const GLchar *name, glm::vec4 value ) {
     try {
         glProgramUniform4f( *program_, program_->uniform_index( name ), value.x, value.y, value.z, value.w );
     }
@@ -90,7 +90,7 @@ void figure::set_attribute( const GLchar *name, glm::vec4 value ) {
     }
 }
 
-void figure::set_attribute( const GLchar *name, glm::mat3 value ) {
+void figure::set_uniform( const GLchar *name, glm::mat3 value ) {
     try {
         glUniformMatrix3fv( program_->uniform_index( name ), 1, GL_FALSE, glm::value_ptr( value ) );
     }
@@ -101,7 +101,7 @@ void figure::set_attribute( const GLchar *name, glm::mat3 value ) {
     }
 }
 
-void figure::set_attribute( const GLchar *name, glm::mat4 value ) {
+void figure::set_uniform( const GLchar *name, glm::mat4 value ) {
     try {
         glUniformMatrix4fv( program_->uniform_index( name ), 1, GL_FALSE, glm::value_ptr( value ) );
     }
@@ -134,7 +134,7 @@ void figure::set_subroutine( const GLchar *uniform_name, const GLchar * subrouti
     glUniformSubroutinesuiv( shader_type, n, indices.data() );
 }
 
-void figure::set_layout( char const *name, GLuint size, GLuint step, GLuint off )
+void figure::set_attribute( char const *name, GLuint size, GLuint step, GLuint off )
 {
     try
     {
