@@ -55,9 +55,11 @@ public:
     float fog_density = 0.0f;
 
     glm::vec2 wake_width = {0.3f, 0.3f};
+    glm::vec2 surge[2] = { glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f) };
 
 private:
     void f_read_viewport( const std::string& config );
+    void f_read_surge( const std::string& config );
 };
 
 #endif /* SPECIFICATION_H */

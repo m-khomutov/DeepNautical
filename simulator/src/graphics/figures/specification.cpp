@@ -151,6 +151,10 @@ specification::specification( const std::vector< std::string > &settings )
             {
                 fog_density = std::stof( p.second );
             }
+            else if( p.first.find( "surge" ) != std::string::npos )
+            {
+                f_read_surge( p.second );
+            }
         }
     }
 }
@@ -189,4 +193,37 @@ void specification::f_read_viewport( const std::string& config )
         for( int i(0); i <3; ++i ) rc[off++] = point[i];
     }
     std::swap( viewport, rc );
+}
+
+void specification::f_read_surge( const std::string& config )
+{
+    size_t off { 0 };
+    size_t p1 = 2, p2 = config.find("} {");
+    while( p2 != std::string::npos )
+    {
+        if( ! utils::str2vec( config.substr( p1, p2 - p1 ), &surge[off] ) )
+        {
+            std::cerr << "invalid surge: " << config << "\n";
+            return;
+        }
+        if( ++off > 1 )
+        {
+            return;
+        }
+        p1 = p2 + 3;
+        p2 = config.find("} {", p1);
+    }
+    if( off > 1 )
+    {
+        return;
+    }
+    p2 = config.find("}}", p1 );
+    if( p2 != std::string::npos )
+    {
+        if( ! utils::str2vec( config.substr( p1, p2 - p1 ), &surge[off] ) )
+        {
+            std::cerr << "invalid viewport: " << config << "\n";
+            return;
+        }
+    }
 }

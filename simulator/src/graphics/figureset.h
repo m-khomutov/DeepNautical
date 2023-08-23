@@ -35,6 +35,7 @@ public:
     void visit( water *fig ) override;
     void visit( horizon *fig ) override;
     void visit( vessel *fig ) override;
+    void visit( sparklets *fig ) override;
 
 private:
     std::vector< GLuint > vao_;

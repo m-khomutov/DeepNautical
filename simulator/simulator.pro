@@ -32,6 +32,7 @@ SOURCES += \
     src/graphics/figures/horizon.cpp \
     src/graphics/figures/antisubmarinefrigate.cpp \
     src/graphics/figures/vessel.cpp \
+    src/graphics/figures/sparklets.cpp \
     src/graphics/figures/figure.cpp \
     src/graphics/figures/specification.cpp \
     src/graphics/visitor.cpp \
@@ -64,6 +65,7 @@ HEADERS += \
     src/graphics/figures/horizon.h \
     src/graphics/figures/antisubmarinefrigate.h \
     src/graphics/figures/vessel.h \
+    src/graphics/figures/sparklets.h \
     src/graphics/figures/figure.h \
     src/graphics/figures/specification.h \
     src/graphics/visitor.h \

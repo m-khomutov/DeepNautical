@@ -67,6 +67,35 @@ void figure::set_uniform( const GLchar *name, GLuint value ) {
     }
 }
 
+void figure::set_uniform( const GLchar *name, glm::vec2 value ) {
+    try {
+        glProgramUniform2f( *program_, program_->uniform_index( name ), value.x, value.y );
+    }
+    catch( const std::exception & e ) {
+        GLint idx = glGetUniformLocation( *program_, name );
+        if( idx != -1 )
+            glProgramUniform2f( *program_, idx, value.x, value.y );
+    }
+}
+
+void figure::set_uniform( const GLchar *name, GLsizei count, glm::vec2 *value ) {
+    std::vector< GLfloat > v( 2 *count );
+    GLsizei it {0};
+    for( GLsizei i(0); i < count; ++i ) {
+	v[it++] = value[i].x;
+	v[it++] = value[i].y;
+    }
+    
+    try {
+        glProgramUniform2fv( *program_, program_->uniform_index( name ), count, v.data() );
+    }
+    catch( const std::exception & e ) {
+        GLint idx = glGetUniformLocation( *program_, name );
+        if( idx != -1 )
+            glProgramUniform2fv( *program_, idx, count, v.data() );
+    }
+}
+
 void figure::set_uniform( const GLchar *name, glm::vec3 value ) {
     try {
         glProgramUniform3f( *program_, program_->uniform_index( name ), value.x, value.y, value.z );

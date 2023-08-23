@@ -11,6 +11,7 @@
 #include "figures/horizon.h"
 #include "figures/sol.h"
 #include "figures/vessel.h"
+#include "figures/sparklets.h"
 #include <cstring>
 #include <fstream>
 #include <iostream>
@@ -167,6 +168,10 @@ void scene::f_add_figure( const std::string &header, const std::vector< std::str
     else if( header == "[Sol]" )
     {
         f_add_figure< sol >( settings );
+    }
+    else if( header == "[Sparklets]" )
+    {
+        f_add_figure< sparklets >( settings );
     }
 }
 

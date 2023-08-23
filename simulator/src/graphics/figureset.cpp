@@ -11,6 +11,7 @@
 #include "figures/water.h"
 #include "figures/horizon.h"
 #include "figures/vessel.h"
+#include "figures/sparklets.h"
 #include <glm/gtc/type_ptr.hpp>
 
 figureset::figureset()
@@ -110,4 +111,10 @@ void figureset::visit( vessel *_vessel )
 {
     _vessel->draw();
     vessel_positions_.push_back( _vessel->position() );
+}
+
+
+void figureset::visit( sparklets *_sparklets )
+{
+    _sparklets->draw();
 }

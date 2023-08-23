@@ -60,6 +60,8 @@ protected:
 protected:
     void set_uniform( const GLchar * name, float value );
     void set_uniform( const GLchar * name, GLuint value );
+    void set_uniform( const GLchar * name, glm::vec2 );
+    void set_uniform( const GLchar *name, GLsizei count, glm::vec2 *value );
     void set_uniform( const GLchar * name, glm::vec3 );
     void set_uniform( const GLchar * name, glm::vec4 );
     void set_uniform( const GLchar * name, glm::mat3 );

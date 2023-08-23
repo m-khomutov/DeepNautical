@@ -33,6 +33,7 @@ GLfloat wakeGen( GLfloat x, GLfloat z, GLfloat t, const glm::vec2 &params )
 water::water( const std::vector< std::string > &settings )
 : figure( settings )
 {
+    f_check_environment();
     model_ = glm::rotate( 
                  glm::rotate( 
                      glm::translate( model_, glm::vec3( 0.0f, -0.1f, 0.0f ) ),

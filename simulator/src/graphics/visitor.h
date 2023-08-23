@@ -13,6 +13,7 @@ class sol;
 class water;
 class horizon;
 class vessel;
+class sparklets;
 
 class visitor {
 public:
@@ -26,6 +27,7 @@ public:
     virtual void visit( water * ) = 0;
     virtual void visit( horizon * ) = 0;
     virtual void visit( vessel * ) = 0;
+    virtual void visit( sparklets * ) = 0;
 
 private:
 
