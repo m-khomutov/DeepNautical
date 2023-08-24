@@ -18,7 +18,12 @@ public:
     sparklets &operator =(const sparklets& orig) = delete;
     ~sparklets();
 
-    void draw();
+    size_t vbo_count() const override
+    {
+        return 2;
+    }
+
+    void draw( size_t vbo_number );
 
 private:
     static const uint32_t resolution = 64;
@@ -36,8 +41,8 @@ private:
 private:
     void f_check_environment() const override;
     char const *f_shader_name() const override;
-    void f_initialize() override;
-    void f_accept( visitor &p, double currentTime ) override;
+    void f_initialize( size_t vbo_number ) override;
+    void f_accept( size_t vbo_number, visitor &p, double currentTime ) override;
 
     void f_set_points();
     void f_reset_points();

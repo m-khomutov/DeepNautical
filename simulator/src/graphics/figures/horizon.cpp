@@ -18,7 +18,7 @@ horizon::~horizon()
 {
 }
 
-void horizon::draw()
+void horizon::draw( size_t )
 {
     glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
 }
@@ -38,7 +38,7 @@ char const *horizon::f_shader_name() const
     return spec_.shader_name.c_str(); 
 }
 
-void horizon::f_initialize()
+void horizon::f_initialize( size_t )
 {
     texture_.reset( new texture( avi_->next_image() ) );
 
@@ -48,7 +48,7 @@ void horizon::f_initialize()
     set_attribute( "Texcoord", 2, 5, 3 );
 }
 
-void horizon::f_accept( visitor &p, double current_time )
+void horizon::f_accept( size_t vbo_number, visitor &p, double current_time )
 {
     if( last_frame_time_ < 0.01f )
     {
@@ -59,5 +59,5 @@ void horizon::f_accept( visitor &p, double current_time )
         *texture_ = avi_->next_image();
         last_frame_time_ = current_time;
     }
-    p.visit( this );
+    p.visit( vbo_number, this );
 }

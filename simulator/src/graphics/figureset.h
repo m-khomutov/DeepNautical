@@ -30,17 +30,18 @@ public:
     void initialize();
     void draw( double currentTime );
     
-    void visit( antisubmarinefrigate *fig ) override;
-    void visit( sol *fig ) override;
-    void visit( water *fig ) override;
-    void visit( horizon *fig ) override;
-    void visit( vessel *fig ) override;
-    void visit( sparklets *fig ) override;
+    void visit( size_t vbo_number, antisubmarinefrigate *fig ) override;
+    void visit( size_t vbo_number, sol *fig ) override;
+    void visit( size_t vbo_number, water *fig ) override;
+    void visit( size_t vbo_number, horizon *fig ) override;
+    void visit( size_t vbo_number, vessel *fig ) override;
+    void visit( size_t vbo_number, sparklets *fig ) override;
 
 private:
     std::vector< GLuint > vao_;
     std::vector< GLuint > vbo_;
     std::vector< GLuint > ebo_;
+    size_t vbo_count_ { 0 };
 
     figure_t figures_;
     std::vector< figure::position > vessel_positions_; 

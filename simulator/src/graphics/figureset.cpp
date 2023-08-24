@@ -31,6 +31,7 @@ figureset::~figureset()
 void figureset::emplace( figure *fig )
 {
     figures_.emplace_back( fig );
+    vbo_count_ += fig->vbo_count();
 }
 
 figure *figureset::back()
@@ -45,7 +46,7 @@ void figureset::initialize()
         return;
     }
     vao_.resize( figures_.size() );
-    vbo_.resize( figures_.size() );
+    vbo_.resize( vbo_count_ );
     ebo_.resize( figures_.size() );
     
 
@@ -53,68 +54,78 @@ void figureset::initialize()
     glGenBuffers( vbo_.size(), vbo_.data() );
     glGenBuffers( ebo_.size(), ebo_.data() );
     
+    GLuint *p_vbo = vbo_.data();
     for( figure_t::size_type i(0); i < figures_.size(); ++i ) {
         glBindVertexArray( vao_[i] );
-        glBindBuffer( GL_ARRAY_BUFFER, vbo_[i] );
         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ebo_[i] );
-        try
+        for( size_t bc(0); bc < figures_[i]->vbo_count(); ++bc )
         {
-            figures_[i]->initialize();
-        }
-        catch( const std::runtime_error& err )
-        {
-            std::cerr << typeid(*figures_[i]).name() << " error: " << err.what() <<std::endl;
-        }
-        glBindBuffer( GL_ARRAY_BUFFER, 0 );
+            glBindBuffer( GL_ARRAY_BUFFER, *p_vbo );
+            try
+            {
+                figures_[i]->initialize( bc );
+            }
+            catch( const std::runtime_error& err )
+            {
+                std::cerr << typeid(*figures_[i]).name() << " error: " << err.what() <<std::endl;
+            }
+            glBindBuffer( GL_ARRAY_BUFFER, 0 );
+	    p_vbo ++;
+	}
         glBindVertexArray( 0 );
     }
 }
 
 void figureset::draw( double currentTime )
 {
+    GLuint *p_vbo = vbo_.data();
     for( figure_t::size_type i(0); i < figures_.size(); ++i )
     {
         if( figures_[i]->valid() )
         {
             glBindVertexArray( vao_[i] );
-            glBindBuffer( GL_ARRAY_BUFFER, vbo_[i] );
-            figures_[i]->accept( *this, currentTime );
-            glBindBuffer( GL_ARRAY_BUFFER, 0 );
+            for( size_t bc(0); bc < figures_[i]->vbo_count(); ++bc )
+            {
+                glBindBuffer( GL_ARRAY_BUFFER, *p_vbo );
+                figures_[i]->accept( bc, *this, currentTime );
+                glBindBuffer( GL_ARRAY_BUFFER, 0 );
+                p_vbo ++;
+            }
             glBindVertexArray( 0 );
         }
     }
 }
 
-void figureset::visit( antisubmarinefrigate *frigate )
+void figureset::visit( size_t vbo_number, antisubmarinefrigate *frigate )
 {
-    frigate->draw();
+    frigate->draw( vbo_number );
 }
 
-void figureset::visit( sol *_sol )
+void figureset::visit( size_t vbo_number, sol *_sol )
 {
-    _sol->draw();
+    _sol->draw( vbo_number );
 }
 
-void figureset::visit( water *_water )
+void figureset::visit( size_t vbo_number, water *_water )
 {
     _water->set_wake_position( vessel_positions_ );
-    _water->draw();
+    _water->draw( vbo_number );
     vessel_positions_.clear();
 }
 
-void figureset::visit( horizon *_horizon )
+void figureset::visit( size_t vbo_number, horizon *_horizon )
 {
-    _horizon->draw();
+    _horizon->draw( vbo_number );
 }
 
-void figureset::visit( vessel *_vessel )
+void figureset::visit( size_t vbo_number, vessel *_vessel )
 {
-    _vessel->draw();
+    _vessel->draw( vbo_number );
     vessel_positions_.push_back( _vessel->position() );
 }
 
 
-void figureset::visit( sparklets *_sparklets )
+void figureset::visit( size_t vbo_number, sparklets *_sparklets )
 {
-    _sparklets->draw();
+    _sparklets->draw( vbo_number );
 }

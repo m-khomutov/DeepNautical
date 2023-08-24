@@ -45,7 +45,7 @@ water::~water()
 {
 }
 
-void water::draw()
+void water::draw( size_t )
 {
     //glEnable(GL_BLEND);  
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
@@ -93,7 +93,7 @@ char const *water::f_shader_name() const
     return spec_.shader_name.c_str(); 
 }
 
-void water::f_initialize()
+void water::f_initialize( size_t )
 {
     std::string alpha = spec_.alpha.empty() ? "" : std::string(utils::config()["textures"]) + "/" + spec_.alpha;
     texture_.reset( new texture( (std::string(utils::config()["textures"]) + "/" + spec_.texture_name).c_str(), alpha.empty() ? nullptr : alpha.c_str() ) );
@@ -106,11 +106,11 @@ void water::f_initialize()
     set_attribute( "Normals", 3, 3, sizeof(surface_) / sizeof(GLfloat) );
 }
 
-void water::f_accept( visitor &p, double currentTime )
+void water::f_accept( size_t vbo_number, visitor &p, double currentTime )
 {
     f_load_surface( currentTime );
 
-    p.visit( this );
+    p.visit( vbo_number, this );
 }
 
 void water::f_load_surface( double )

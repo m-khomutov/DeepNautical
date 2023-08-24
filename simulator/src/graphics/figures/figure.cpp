@@ -23,14 +23,14 @@ figure::~figure()
 {
 }
 
-void figure::initialize()
+void figure::initialize( size_t vbo_number )
 {
     program_.reset( new program( f_shader_name() ) );
-    f_initialize();    
+    f_initialize( vbo_number );    
     valid_ = true;
 }
 
-void figure::accept( visitor &p, double currentTime )
+void figure::accept( size_t vbo_number, visitor &p, double currentTime )
 {
     glUseProgram( *program_ );
     set_uniform( "Model", model_ );
@@ -41,7 +41,7 @@ void figure::accept( visitor &p, double currentTime )
         set_uniform( "Texture", GLuint(0) );
         texture_->activate();
     }
-    f_accept( p, currentTime );    
+    f_accept( vbo_number, p, currentTime );    
 }
 
 void figure::set_uniform( const GLchar *name, float value )

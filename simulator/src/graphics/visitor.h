@@ -8,6 +8,8 @@
 #ifndef VISITOR_H
 #define VISITOR_H
 
+#include <cstddef>
+
 class antisubmarinefrigate;
 class sol;
 class water;
@@ -22,12 +24,12 @@ public:
     visitor &operator =(const visitor& orig) = delete;
     virtual ~visitor();
 
-    virtual void visit( antisubmarinefrigate * ) = 0;
-    virtual void visit( sol * ) = 0;
-    virtual void visit( water * ) = 0;
-    virtual void visit( horizon * ) = 0;
-    virtual void visit( vessel * ) = 0;
-    virtual void visit( sparklets * ) = 0;
+    virtual void visit( size_t vbo_number, antisubmarinefrigate * ) = 0;
+    virtual void visit( size_t vbo_number, sol * ) = 0;
+    virtual void visit( size_t vbo_number, water * ) = 0;
+    virtual void visit( size_t vbo_number, horizon * ) = 0;
+    virtual void visit( size_t vbo_number, vessel * ) = 0;
+    virtual void visit( size_t vbo_number, sparklets * ) = 0;
 
 private:
 

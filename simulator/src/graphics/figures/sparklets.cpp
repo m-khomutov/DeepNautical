@@ -22,7 +22,7 @@ sparklets::~sparklets()
 {
 }
 
-void sparklets::draw()
+void sparklets::draw( size_t )
 {
     set_uniform( "Surge", GLsizei(2), spec_.surge );
     set_uniform( "Time", GLfloat(last_frame_time_) );
@@ -50,7 +50,7 @@ char const *sparklets::f_shader_name() const
     return spec_.shader_name.c_str(); 
 }
 
-void sparklets::f_initialize()
+void sparklets::f_initialize( size_t )
 {
     std::string alpha = std::string(utils::config()["textures"]) + "/" + spec_.alpha;
     texture_.reset( new texture( (std::string(utils::config()["textures"]) + "/" + spec_.texture_name).c_str(), alpha.c_str() ) );
@@ -69,10 +69,10 @@ void sparklets::f_initialize()
     }
 }
 
-void sparklets::f_accept( visitor &p, double )
+void sparklets::f_accept( size_t vbo_number, visitor &p, double )
 {
     last_frame_time_ += spec_.speed.x;
-    p.visit( this );
+    p.visit( vbo_number, this );
 }
 
 void sparklets::f_set_points()

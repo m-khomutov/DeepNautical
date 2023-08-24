@@ -22,7 +22,7 @@ vessel::~vessel()
 {
 }
 
-void vessel::draw()
+void vessel::draw( size_t )
 {
     glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
     set_uniform( "NormalMatrix", glm::transpose( glm::inverse( glm::mat3(view_ * model_) ) ) );
@@ -91,7 +91,7 @@ char const *vessel::f_shader_name() const
     return spec_.shader_name.c_str(); 
 }
 
-void vessel::f_initialize()
+void vessel::f_initialize( size_t )
 {
     empty_texture_.reset( new texture(1, 1, 255) );
     glBufferData( GL_ARRAY_BUFFER, vertices_.size() * sizeof(GLfloat), vertices_.data(), GL_STATIC_DRAW );
@@ -107,10 +107,10 @@ void vessel::f_initialize()
     }
 }
 
-void vessel::f_accept( visitor &p, double )
+void vessel::f_accept( size_t vbo_number, visitor &p, double )
 {
     f_set_model();
-    p.visit( this );
+    p.visit( vbo_number, this );
 }
 
 void vessel::f_set_model()

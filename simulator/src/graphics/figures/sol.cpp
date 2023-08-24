@@ -24,7 +24,7 @@ sol::~sol()
 {
 }
 
-void sol::draw()
+void sol::draw( size_t )
 {
     set_uniform( "Offset", offset_ );
     glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
@@ -45,7 +45,7 @@ char const *sol::f_shader_name() const
     return spec_.shader_name.c_str(); 
 }
 
-void sol::f_initialize()
+void sol::f_initialize( size_t )
 {
     texture_.reset( new texture( (std::string(utils::config()["textures"]) + "/" + spec_.texture_name).c_str() ) );
 
@@ -64,7 +64,7 @@ void sol::f_initialize()
     program_->uniform_block("CircleParams").copy();
 }
 
-void sol::f_accept( visitor &p, double )
+void sol::f_accept( size_t vbo_number, visitor &p, double )
 {
-    p.visit( this );
+    p.visit( vbo_number, this );
 }

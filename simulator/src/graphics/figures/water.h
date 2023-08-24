@@ -17,7 +17,7 @@ public:
     water &operator =( water const &orig ) = delete;
     ~water();
 
-    void draw();
+    void draw( size_t vbo_number );
     void set_wake_position( const std::vector< figure::position > &pos );
     
 private:
@@ -32,8 +32,8 @@ private:
 private:
     void f_check_environment() const override;
     char const *f_shader_name() const override;
-    void f_initialize() override;
-    void f_accept( visitor &p, double currentTime ) override;
+    void f_initialize( size_t vbo_number ) override;
+    void f_accept( size_t vbo_number, visitor &p, double currentTime ) override;
 
     void f_load_surface( double currentTime );
     GLfloat f_generate_surface( GLfloat x, GLfloat z, GLfloat *in_wake = nullptr );

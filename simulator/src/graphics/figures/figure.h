@@ -36,9 +36,16 @@ public:
     void initialize();
     void accept( visitor &p, double currentTime );
 
+    void initialize( size_t vbo_number );
+    void accept( size_t vbo_number, visitor &p, double currentTime );
+
     bool valid() const
     {
         return valid_;
+    }
+    virtual size_t vbo_count() const
+    {
+        return 1;
     }
 
 protected:   
@@ -72,8 +79,8 @@ protected:
 private:
     virtual void f_check_environment() const = 0;
     virtual char const *f_shader_name() const = 0;
-    virtual void f_initialize() = 0;
-    virtual void f_accept( visitor &p, double currentTime ) = 0;
+    virtual void f_initialize( size_t vbo_number ) = 0;
+    virtual void f_accept( size_t vbo_number, visitor &p, double currentTime ) = 0;
 };
 
 #endif /* FIGURE_H */

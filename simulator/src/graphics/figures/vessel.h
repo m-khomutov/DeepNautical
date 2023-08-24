@@ -18,7 +18,7 @@ public:
     vessel &operator =(const vessel& orig) = delete;
     ~vessel();
 
-    void draw();
+    void draw( size_t vbo_number );
     const figure::position &position();
 
 private:
@@ -32,8 +32,8 @@ private:
 private:
     void f_check_environment() const override;
     char const *f_shader_name() const override;
-    void f_initialize() override;
-    void f_accept( visitor &p, double currentTime ) override;
+    void f_initialize( size_t vbo_number ) override;
+    void f_accept( size_t vbo_number, visitor &p, double currentTime ) override;
     void f_set_model();
     bool f_full_trajectory();
     void f_reset();

@@ -17,7 +17,7 @@ antisubmarinefrigate::~antisubmarinefrigate()
 {
 }
 
-void antisubmarinefrigate::draw()
+void antisubmarinefrigate::draw( size_t )
 {
     set_uniform( "Texture", GLuint(0) );
     set_uniform( "Offset", offset_ );
@@ -50,7 +50,7 @@ char const *antisubmarinefrigate::f_shader_name() const
     return spec_.shader_name.c_str(); 
 }
 
-void antisubmarinefrigate::f_initialize()
+void antisubmarinefrigate::f_initialize( size_t )
 {
     texture_.reset( new texture( (std::string(utils::config()["textures"]) + spec_.texture_name).c_str() ) );
     
@@ -60,9 +60,9 @@ void antisubmarinefrigate::f_initialize()
     set_attribute( "Texcoord", 2, 5, 3 );
 }
 
-void antisubmarinefrigate::f_accept( visitor &p, double )
+void antisubmarinefrigate::f_accept( size_t vbo_number, visitor &p, double )
 {
-    p.visit( this );
+    p.visit( vbo_number, this );
 }
 
 void antisubmarinefrigate::f_set_model()
