@@ -1,6 +1,8 @@
 #version 330
 
 in vec2 TexCoord;
+in vec3 Sparkle;
+
 layout (location = 0) out vec4 Color;
 
 uniform sampler2D Texture;
@@ -29,6 +31,14 @@ float perturb( vec2 surge )
 }
 
 void main() {
-    vec2 off = vec2(perturb(Surge[0]), perturb(Surge[1]));
-    Color = mix(texture2D( Texture, off + TexCoord ), texture2D(AirTexture, off + TexCoord), 0.7);
+    bvec3 drawSparkle = greaterThan(Sparkle, vec3(0.0) );
+    if( all(drawSparkle) )
+    {
+        Color = vec4(Sparkle, 1.0);
+    }
+    else
+    {
+        vec2 off = vec2(perturb(Surge[0]), perturb(Surge[1]));
+        Color = mix(texture2D( Texture, off + TexCoord ), texture2D(AirTexture, off + TexCoord), 0.7);
+    }
 }

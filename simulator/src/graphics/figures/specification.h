@@ -56,6 +56,7 @@ public:
 
     glm::vec2 wake_width = {0.3f, 0.3f};
     glm::vec2 surge[2] = { glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f) };
+    float step = 0.01;
 
 private:
     void f_read_viewport( const std::string& config );

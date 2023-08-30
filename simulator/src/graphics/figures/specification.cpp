@@ -155,6 +155,10 @@ specification::specification( const std::vector< std::string > &settings )
             {
                 f_read_surge( p.second );
             }
+            else if( p.first.find( "step" ) != std::string::npos )
+            {
+                step = std::stof( p.second );
+            }
         }
     }
 }

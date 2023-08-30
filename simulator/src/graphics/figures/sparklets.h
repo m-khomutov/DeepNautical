@@ -26,13 +26,8 @@ public:
     void draw( size_t vbo_number );
 
 private:
-    static const uint32_t resolution = 64;
     std::vector< GLfloat > points_;
     std::vector< GLfloat > colors_;
-    std::vector< GLfloat > starts_;
-    std::vector< GLfloat > velocities_;
-    int width_ { 50 };
-    int height_ { 50 };
 
     GLuint indices_[6] = { 0, 3, 1, 1, 3, 2 };
     double last_frame_time_ { 0.0f };
@@ -44,6 +39,12 @@ private:
     void f_initialize( size_t vbo_number ) override;
     void f_accept( size_t vbo_number, visitor &p, double currentTime ) override;
 
+    void f_initialize_layout();
+    void f_initialize_sparklets();
+
+    void f_draw_layout();
+    void f_draw_sparklets();
+    
     void f_set_points();
     void f_reset_points();
 };
