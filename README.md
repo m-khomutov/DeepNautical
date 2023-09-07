@@ -245,7 +245,8 @@ wake_width={0.3 0.3}
   "success": true,
   "scenes": [
     "tug",
-    "wakeboard"
+    "wakeboard",
+    "cruiser"
   ]
 }
 ```  
