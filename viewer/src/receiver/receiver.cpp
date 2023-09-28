@@ -109,10 +109,10 @@ receiver::receiver( basedecoder *decoder )
     try
     {
         std::string url = utils::config()["url"];
-        std::regex r("^([a-z]+)://([0-9\\.\\S]+):([0-9]+)/(.*)$"); // proto://host:port/context
+        std::regex r("^([a-z]+)://([0-9\\.\\S]+):([0-9]{4,5})/(.*)$"); // proto://host:port/context
         std::smatch cm;
 
-        if( !(std::regex_match( url, cm, r )) )
+        if( !(std::regex_match( url, cm, r )) || cm.size() != 5 )
         {
             throw receiver_error( std::string("invalid url ") + url );
         }
