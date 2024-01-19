@@ -6,7 +6,7 @@
  */
 
 #include "service/baseservice.h"
-#include "../../share/utils.h"
+#include "utils.h"
 #ifdef QT_CORE_LIB
 # include <QApplication>
 #endif

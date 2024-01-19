@@ -9,7 +9,7 @@
 #define RECEIVER_H
 
 #include "c_socket.h"
-#include "../../../share/utils.h"
+#include "utils.h"
 #include <atomic>
 #include <memory>
 #include <string>

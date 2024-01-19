@@ -6,7 +6,7 @@
  */
 
 #include "viewer/baseviewer.h"
-#include "../../share/utils.h"
+#include "utils.h"
 
 #include <getopt.h>
 #include <signal.h>

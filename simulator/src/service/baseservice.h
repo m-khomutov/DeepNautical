@@ -11,8 +11,8 @@
 
 #include "../graphics/screens/basescreen.h"
 #include "../server/s_poll.h"
-#include "../encoding/jpegframe.h"
-#include "../../../share/utils.h"
+#include "encoding/jpegframe.h"
+#include "utils.h"
 
 class baseservice {
 public:

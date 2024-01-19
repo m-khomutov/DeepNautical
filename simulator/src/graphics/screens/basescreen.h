@@ -8,7 +8,7 @@
 #ifndef BASESCREEN_H
 #define BASESCREEN_H
 
-#include "../../encoding/jpegframe.h"
+#include "encoding/jpegframe.h"
 #include "../scene.h"
 #include <list>
 #include <set>

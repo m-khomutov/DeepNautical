@@ -1,19 +1,19 @@
 /* 
- * File:   httpprotocol.h
+ * File:   httpapi.h
  * Author: mkh
  *
  * Created on 2 марта 2023 г., 14:19
  */
 
-#ifndef HTTPPROTOCOL_H
-#define HTTPPROTOCOL_H
+#ifndef HTTPAPI_H
+#define HTTPAPI_H
 
-#include "baseprotocol.h"
+#include "protocol/baseprotocol.h"
 #include <map>
 #include <string>
 #include <vector>
 
-class httpprotocol:public baseprotocol {
+class httpapi:public baseprotocol {
 public:
     class message {
     public:
@@ -29,10 +29,10 @@ public:
         std::map< std::string, std::string > headers;
     };
 
-    explicit httpprotocol( int b_sock );
-    httpprotocol(const httpprotocol& orig) = delete;
-    httpprotocol &operator =(const httpprotocol& orig) = delete;
-    ~httpprotocol();
+    explicit httpapi( int b_sock );
+    httpapi(const httpapi& orig) = delete;
+    httpapi &operator =(const httpapi& orig) = delete;
+    ~httpapi();
 
     void on_data( const uint8_t * data, int size ) override;
     void do_write() override;
@@ -51,5 +51,5 @@ private:
 
 };
 
-#endif /* HTTPPROTOCOL_H */
+#endif /* HTTPAPI_H */
 

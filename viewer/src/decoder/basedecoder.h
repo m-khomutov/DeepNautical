@@ -8,7 +8,7 @@
 #ifndef BASEDECODER_H
 #define BASEDECODER_H
 
-#include "../../../share/utils.h"
+#include "utils.h"
 #include <cstdint>
 #include <vector>
 #include <stdexcept>

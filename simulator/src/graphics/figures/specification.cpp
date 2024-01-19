@@ -6,7 +6,7 @@
  */
 
 #include "specification.h"
-#include "../../../../share/utils.h"
+#include "utils.h"
 #include <iostream>
 
 specification::specification( const std::vector< std::string > &settings )

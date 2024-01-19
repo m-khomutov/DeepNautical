@@ -6,8 +6,8 @@
  */
 
 #include "connection.h"
-#include "httpprotocol.h"
-#include "flvprotocol.h"
+#include "httpapi.h"
+#include "protocol/flvprotocol.h"
 #include <unistd.h>
 #include <fcntl.h>
 #include <cstdio>
@@ -76,7 +76,7 @@ void connection::f_determine_protocol( const uint8_t * data, int size )
         }
 	else
         {
-            proto_.reset( new httpprotocol( fd_ ) );
+            proto_.reset( new httpapi( fd_ ) );
         }
         proto_->on_data( (const uint8_t*)request_.data(), request_.size() );
     }

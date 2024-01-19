@@ -25,8 +25,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
-    src/encoding/baseframe.cpp \
-    src/encoding/jpegframe.cpp \
     src/graphics/figures/sol.cpp \
     src/graphics/figures/water.cpp \
     src/graphics/figures/horizon.cpp \
@@ -46,20 +44,15 @@ SOURCES += \
     src/graphics/texture/texture.cpp \
     src/graphics/texture/avi.cpp \
     src/graphics/uniformblock.cpp \
-    src/server/baseprotocol.cpp \
-    src/server/flvprotocol.cpp \
-    src/server/httpprotocol.cpp \
     src/server/s_poll.cpp \
     src/server/s_socket.cpp \
     src/server/connection.cpp \
+    src/server/httpapi.cpp \
     src/main.cpp \
     src/service/baseservice.cpp \
-    src/service/qservice.cpp \
-    ../share/utils.cpp
+    src/service/qservice.cpp
 
 HEADERS += \
-    src/encoding/baseframe.h \
-    src/encoding/jpegframe.h \
     src/graphics/figures/sol.h \
     src/graphics/figures/water.h \
     src/graphics/figures/horizon.h \
@@ -79,14 +72,12 @@ HEADERS += \
     src/graphics/texture/texture.h \
     src/graphics/texture/avi.h \
     src/graphics/uniformblock.h \
-    src/server/baseprotocol.h \
-    src/server/httpprotocol.h \
-    src/server/flvprotocol.h \
     src/server/s_poll.h \
     src/server/s_socket.h \
     src/server/connection.h \
+    src/server/httpapi.h \
     src/service/baseservice.h \
-    src/service/qservice.h \
-    ../share/utils.h
+    src/service/qservice.h
 
-LIBS += -ljpeg -lGLEW -lGLU
+INCLUDEPATH += ../kformat
+LIBS += ../build/kformat/lib/libkformat.a -lGLEW -lGLU -ljpeg

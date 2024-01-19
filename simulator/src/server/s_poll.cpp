@@ -7,7 +7,7 @@
 
 #include "s_poll.h"
 #include "connection.h"
-#include "../encoding/baseframe.h"
+#include "encoding/baseframe.h"
 #include <sys/epoll.h>
 #include <unistd.h>
 #include <cstring>

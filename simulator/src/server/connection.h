@@ -8,7 +8,7 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
-#include "baseprotocol.h"
+#include "protocol/baseprotocol.h"
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <arpa/inet.h>

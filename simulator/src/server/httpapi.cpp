@@ -1,14 +1,17 @@
 /* 
- * File:   httpprotocol.cpp
+ * File:   httpapi.cpp
  * Author: mkh
  * 
  * Created on 2 марта 2023 г., 14:19
  */
 
-#include "httpprotocol.h"
+#include "httpapi.h"
 #include "../service/baseservice.h"
 #include <unistd.h>
 #include <cstring>
+#include <iostream>
+#include <iterator>
+#include <sstream>
 
 namespace
 {
@@ -16,7 +19,7 @@ const char status_200[] = "HTTP/1.1 200 OK\r\nAccess-Control-Allow-Origin: *\r\n
 const char status_404[] = "HTTP/1.1 404 Not Found\r\nAccess-Control-Allow-Origin: *\r\n\r\n";
 } // namespace
 
-httpprotocol::message::message( const std::string &data )
+httpapi::message::message( const std::string &data )
 : origin( data )
 {
     std::istringstream iss( origin );
@@ -47,16 +50,16 @@ httpprotocol::message::message( const std::string &data )
 }
 
 
-httpprotocol::httpprotocol( int b_sock )
+httpapi::httpapi( int b_sock )
 : baseprotocol( b_sock )
 {
 }
 
-httpprotocol::~httpprotocol()
+httpapi::~httpapi()
 {
 }
 
-void httpprotocol::on_data( const uint8_t * data, int size )
+void httpapi::on_data( const uint8_t * data, int size )
 {
     message request( std::string((const char*)data, size) );
     std::cerr << request.origin << std::endl;
@@ -79,7 +82,7 @@ void httpprotocol::on_data( const uint8_t * data, int size )
     }
 }
 
-void httpprotocol::do_write()
+void httpapi::do_write()
 {
     if( sent_ < reply_.size() )
     {
@@ -87,11 +90,11 @@ void httpprotocol::do_write()
     }
 }
 
-void httpprotocol::send_frame( const uint8_t *, int, float )
+void httpapi::send_frame( const uint8_t *, int, float )
 {
 }
 
-void httpprotocol::f_send_scene_list()
+void httpapi::f_send_scene_list()
 {
     std::string body = "{\"success\":true,\"scenes\":[";
     for( auto sc : baseservice::instance().scenes() )
@@ -105,7 +108,7 @@ void httpprotocol::f_send_scene_list()
     f_reply();
 }
 
-void httpprotocol::f_send_current_scene()
+void httpapi::f_send_current_scene()
 {
     std::string body = "{\"success\":true,\"scene\":\"" + baseservice::instance().current_scene() + "\"}";
     std::string reply = std::string(status_200) + "Content-Length: " + std::to_string( body.size() ) + "\r\n\r\n" + body;
@@ -113,7 +116,7 @@ void httpprotocol::f_send_current_scene()
     f_reply();
 }
 
-void httpprotocol::f_set_current_scene( const std::string &scene )
+void httpapi::f_set_current_scene( const std::string &scene )
 {
     try
     {
@@ -128,14 +131,14 @@ void httpprotocol::f_set_current_scene( const std::string &scene )
     }
 }
 
-void httpprotocol::f_set_reply( uint8_t const * data, size_t size )
+void httpapi::f_set_reply( uint8_t const * data, size_t size )
 {
     reply_.resize( size );
     ::memcpy( reply_.data(), data, size );
     sent_ = 0;
 }
 
-void httpprotocol::f_reply()
+void httpapi::f_reply()
 {
     int rc = ::write( fd_, reply_.data() + sent_, reply_.size() - sent_ );
     if( rc > 0 )

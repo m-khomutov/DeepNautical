@@ -8,7 +8,7 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
-#include "../../../../share/utils.h"
+#include "utils.h"
 #include <GL/glew.h>
 #include <stdexcept>
 

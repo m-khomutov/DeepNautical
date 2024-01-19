@@ -30,8 +30,7 @@ SOURCES += \
     src/receiver/receiver.cpp \
     src/main.cpp \
     src/viewer/baseviewer.cpp \
-    src/viewer/qviewer.cpp \
-    ../share/utils.cpp
+    src/viewer/qviewer.cpp
 
 HEADERS += \
     src/decoder/basedecoder.h \
@@ -39,7 +38,7 @@ HEADERS += \
     src/receiver/c_socket.h \
     src/receiver/receiver.h \
     src/viewer/baseviewer.h \
-    src/viewer/qviewer.h \
-    ../share/utils.h
+    src/viewer/qviewer.h
 
-LIBS += -ljpeg
+INCLUDEPATH += ../kformat
+LIBS += ../build/kformat/lib/libkformat.a -ljpeg

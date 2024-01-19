@@ -8,7 +8,7 @@
 #ifndef BASEFRAME_H
 #define BASEFRAME_H
 
-#include "../../../share/utils.h"
+#include "../utils.h"
 
 class baseprotocol;
 

@@ -6,7 +6,7 @@
  */
 
 #include "jpegframe.h"
-#include "../server/baseprotocol.h"
+#include "../protocol/baseprotocol.h"
 #include <GL/glew.h>
 #include <unistd.h>
 #include <iostream>
