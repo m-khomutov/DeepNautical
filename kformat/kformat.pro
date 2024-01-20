@@ -5,7 +5,8 @@ OBJECTS_DIR = ../build/kformat
 DESTDIR += $$OBJECTS_DIR/lib
 CONFIG += 14
 
-HEADERS = utils.h \
+HEADERS = kformat.h \
+    utils.h \
     encoding/baseframe.h \
     encoding/jpegframe.h \
     protocol/baseprotocol.h \
@@ -20,4 +21,5 @@ SOURCES = \
         protocol/flvprotocol.cpp
 
 
+INCLUDEPATH += $$PWD
 LIBS = -ljpeg

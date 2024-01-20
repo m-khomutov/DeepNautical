@@ -8,7 +8,7 @@
 #ifndef BASESCREEN_H
 #define BASESCREEN_H
 
-#include "encoding/jpegframe.h"
+#include <kformat.h>
 #include "../scene.h"
 #include <list>
 #include <set>
@@ -70,6 +70,7 @@ protected:
 
 protected:
     void f_exec_command();
+    void f_store();
 
 private:
 

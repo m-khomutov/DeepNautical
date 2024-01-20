@@ -8,8 +8,8 @@
 #ifndef HTTPAPI_H
 #define HTTPAPI_H
 
-#include "protocol/baseprotocol.h"
-#include "../graphics/screens/basescreen.h"
+#include <kformat.h>
+#include "graphics/screens/basescreen.h"
 #include <map>
 #include <string>
 #include <vector>

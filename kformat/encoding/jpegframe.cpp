@@ -6,10 +6,8 @@
  */
 
 #include "jpegframe.h"
-#include "../protocol/baseprotocol.h"
-#include <GL/glew.h>
+#include "protocol/baseprotocol.h"
 #include <unistd.h>
-#include <iostream>
 
 namespace
 {
@@ -75,53 +73,43 @@ jpegframe::~jpegframe()
     jpeg_destroy_compress( &cinfo_ );
 }
 
-void jpegframe::f_store( int width, int height )
+uint8_t *jpegframe::buffer( int width, int height )
 {
-    GLsizei channels { 3 };
-    GLsizei stride = channels * width;
+    size_t channels { 3 };
+    size_t stride = channels * width;
     //stride += (stride % 4) ? (4 - stride % 4) : 0;
     std::vector< uint8_t >::size_type sz = stride * height;
- 
+
     if( sz != rgb_buffer_.size() )
     {
+        std::lock_guard< std::mutex > lk( mutex_ );
+
         rgb_buffer_.resize( sz );
         jpeg_frame_.resize( sz );
-    	cinfo_.image_width = width;
-    	cinfo_.image_height = height;
-    	cinfo_.input_components = 3;
+        cinfo_.image_width = width;
+        cinfo_.image_height = height;
+        cinfo_.input_components = 3;
         cinfo_.dct_method = JDCT_FASTEST;
     }
-    int q; glGetIntegerv( GL_READ_BUFFER, &q );
-    glPixelStorei( GL_PACK_ALIGNMENT, 1 );
-    //glReadBuffer( GL_FRONT);//COLOR_ATTACHMENT0 );
-    glReadPixels( 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, rgb_buffer_.data() );
-    
-    f_encode();
+
+    return rgb_buffer_.data();
 }
 
-void jpegframe::f_load( baseprotocol * proto, float duration )
+void jpegframe::f_store()
 {
     std::lock_guard< std::mutex > lk( mutex_ );
-    if( size_)
-    {
-        proto->send_frame( jpeg_frame_.data(), size_, duration );   
-    }
-}
 
-void jpegframe::f_encode()
-{
     mem_destination_ptr_t dest = mem_destination_ptr_t( cinfo_.dest );
     dest->buf = jpeg_frame_.data();
     dest->bufsize  = jpeg_frame_.size();
     dest->jpegsize = 0;
 
     jpeg_start_compress( &cinfo_, TRUE );
-    
+
     int stride = cinfo_.image_width * cinfo_.input_components;
     JSAMPROW row_ptr[1];
     uint8_t * data = rgb_buffer_.data();
     {
-        std::lock_guard< std::mutex > lk( mutex_ );
         for( int y(cinfo_.image_height - 1); y >= 0; --y )
         {
             row_ptr[0] = &data[y * stride];
@@ -129,5 +117,14 @@ void jpegframe::f_encode()
         }
         jpeg_finish_compress( &cinfo_ );
         size_ = dest->jpegsize;
+    }
+}
+
+void jpegframe::f_load( baseprotocol * proto, float duration )
+{
+    std::lock_guard< std::mutex > lk( mutex_ );
+    if( size_ )
+    {
+        proto->send_frame( jpeg_frame_.data(), size_, duration );   
     }
 }

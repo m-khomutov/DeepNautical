@@ -79,5 +79,5 @@ HEADERS += \
     src/service/baseservice.h \
     src/service/qservice.h
 
-INCLUDEPATH += ../kformat
+INCLUDEPATH += ../simulator/src ../kformat
 LIBS += ../build/kformat/lib/libkformat.a -lGLEW -lGLU -ljpeg

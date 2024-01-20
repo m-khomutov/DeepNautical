@@ -10,14 +10,14 @@
 
 #include "baseframe.h"
 
-#include <cstddef>
-#include <cstdio>
 extern "C"
 {
  #include <jpeglib.h>
  #include <jerror.h>
 }
 
+#include <cstddef>
+#include <cstdio>
 #include <cstdint>
 #include <vector>
 #include <mutex>
@@ -29,21 +29,19 @@ public:
     jpegframe &operator =( const jpegframe &rhs ) = delete;
     ~jpegframe();
 
+    uint8_t *buffer( int width, int height ) override;
+
 private:
     jpeg_compress_struct cinfo_;
     jpeg_error_mgr jerr_;
 
-    std::vector< uint8_t > rgb_buffer_;
     std::vector< uint8_t > jpeg_frame_;
     size_t size_ { 0 };
     std::mutex mutex_;
 
 private:
-    void f_store( int width, int height ) override;
+    void f_store() override;
     void f_load( baseprotocol * proto, float duration ) override;
-    
-    void f_encode();
-
 };
 
 #endif /* JPEGFRAME_H */

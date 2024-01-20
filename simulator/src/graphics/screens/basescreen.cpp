@@ -63,3 +63,15 @@ void basescreen::f_exec_command()
         }
     }
 }
+
+void basescreen::f_store()
+{
+    int q;
+    glGetIntegerv( GL_READ_BUFFER, &q );
+    glPixelStorei( GL_PACK_ALIGNMENT, 1 );
+    //glReadBuffer( GL_FRONT);//COLOR_ATTACHMENT0 );
+    uint8_t *buffer = frame_->buffer( frame_->width(), frame_->height() );
+    glReadPixels( 0, 0, frame_->width(), frame_->height(), GL_RGB, GL_UNSIGNED_BYTE, buffer );
+
+    frame_->store();
+}

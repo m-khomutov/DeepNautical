@@ -7,7 +7,7 @@
 
 #include "s_poll.h"
 #include "connection.h"
-#include "../graphics/screens/basescreen.h"
+#include "graphics/screens/basescreen.h"
 #include <sys/epoll.h>
 #include <unistd.h>
 #include <cstring>

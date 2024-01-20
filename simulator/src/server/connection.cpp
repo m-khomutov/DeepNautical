@@ -7,7 +7,6 @@
 
 #include "connection.h"
 #include "httpapi.h"
-#include "protocol/flvprotocol.h"
 #include <unistd.h>
 #include <fcntl.h>
 #include <cstdio>

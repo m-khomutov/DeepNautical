@@ -7,6 +7,7 @@
 
 #include "qscreen.h"
 #include <QDateTime>
+#include <GL/glew.h>
 
 qscreen::qscreen( baseframe* frame )
 : basescreen( frame )
@@ -53,9 +54,8 @@ void qscreen::initializeGL()
 void qscreen::paintGL()
 {
     f_exec_command();
-
     sc_->display( width(), height(), QDateTime::currentMSecsSinceEpoch());
-    frame_->store( width(), height() );
+    f_store();
 }
 
 void qscreen::resizeGL(int w, int h)

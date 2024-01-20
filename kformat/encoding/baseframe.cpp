@@ -15,9 +15,9 @@ baseframe::~baseframe()
 {}
 
 
-void baseframe::store( int width, int height )
+void baseframe::store()
 {
-    f_store( width, height );
+    f_store();
 }
 
 void baseframe::load( baseprotocol * proto, float duration )

@@ -6,9 +6,6 @@
  */
 
 #include "glfwscreen.h"
-#include "../scene.h"
-#include <iostream>
-
 
 glfwscreen::glfwscreen( baseframe *frame )
 : basescreen( frame )
@@ -61,7 +58,9 @@ void glfwscreen::run()
 
         glfwGetFramebufferSize( window_.get(), &w, &h );
         sc_->display( w, h, glfwGetTime() * 1000 );
-        frame_->store( w, h );
+
+        f_store();
+
         glfwSwapBuffers( window_.get() );
         glfwPollEvents();
     }

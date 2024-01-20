@@ -8,7 +8,7 @@
 #ifndef BASEFRAME_H
 #define BASEFRAME_H
 
-#include "../utils.h"
+#include "utils.h"
 
 class baseprotocol;
 
@@ -19,7 +19,9 @@ public:
     baseframe &operator =( const baseframe& orig ) = delete;
     virtual ~baseframe();
 
-    void store( int width, int height );
+    virtual uint8_t *buffer( int width, int height ) = 0;
+
+    void store();
     void load( baseprotocol *, float duration );
 
     int width() const
@@ -33,9 +35,11 @@ public:
     
 protected:
     utils::geometry geometry_;
+    std::vector< uint8_t > rgb_buffer_;
+
 
 private:
-    virtual void f_store( int width, int height ) = 0;
+    virtual void f_store() = 0;
     virtual void f_load( baseprotocol * proto, float duration ) = 0;
 
 };
