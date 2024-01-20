@@ -12,19 +12,18 @@
 
 class glfwservice: public baseservice {
 public:
+    glfwservice( baseframe *frame );
+
     glfwservice( glfwservice const &orig ) = delete;
     glfwservice &operator =( glfwservice const &orig ) = delete;
+
     ~glfwservice() = default;
 
     void onsignal( int ) override;
     
 private:
-    glfwservice();
-
     void f_run() override;
     int f_stop() override;
-
-    friend baseservice;
 };
 
 #endif /* SERVICE_H */

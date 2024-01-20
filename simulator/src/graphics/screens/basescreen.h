@@ -39,7 +39,7 @@ private:
 
 class basescreen {
 public:
-    basescreen();
+    basescreen( baseframe *frame );
     basescreen(const basescreen& orig) = delete;
     basescreen &operator =(const basescreen& orig) = delete;
     virtual ~basescreen();
@@ -47,6 +47,10 @@ public:
     virtual void run() = 0;
     virtual void stop() = 0;
 
+    baseframe *frame()
+    {
+        return frame_;
+    }
     const std::set< std::string > &scenes() const
     {
         return scenes_;
@@ -58,6 +62,7 @@ public:
     void set_scene( const std::string &scene );
 
 protected:
+    baseframe *frame_;
     std::set< std::string > scenes_;
     std::set< std::string >::iterator scene_iter_;
     std::unique_ptr< scene > sc_;

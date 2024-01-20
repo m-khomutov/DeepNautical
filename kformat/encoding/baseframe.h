@@ -14,7 +14,7 @@ class baseprotocol;
 
 class baseframe {
 public:
-    baseframe();
+    baseframe( const utils::geometry &geometry );
     baseframe( const baseframe& orig ) = delete;
     baseframe &operator =( const baseframe& orig ) = delete;
     virtual ~baseframe();

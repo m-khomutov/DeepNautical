@@ -7,48 +7,20 @@
 
 #include "baseservice.h"
 
-#ifdef QT_CORE_LIB
-#include "qservice.h"
-#else
-#include "glfwservice.h"
-#endif
-
-baseservice &baseservice::instance()
-{
-    static std::unique_ptr< baseservice > ptr;
-    if( ! ptr )
-    {
-#ifdef QT_CORE_LIB
-        ptr.reset(new qservice);
-#else
-        ptr.reset(new glfwservice);
-#endif
-    }
-    return *ptr;
-}
-
-baseservice::baseservice()
-: frame_( new jpegframe )
-, poll_( frame_.get() )
+baseservice::baseservice( basescreen *screen )
+: poll_( screen )
 , poll_thread_( &poll_ )
-{
-}
+{}
 
 baseservice::~baseservice()
-{
-}
+{}
 
 void baseservice::run()
 {
-    screen_->run();
     f_run();
 }
 
 int baseservice::stop()
 {
-    if( screen_ )
-    {
-        screen_->stop();
-    }
     return f_stop();
 }

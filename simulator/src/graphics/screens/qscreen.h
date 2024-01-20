@@ -22,16 +22,15 @@ public:
     void run() override;
     void stop() override;
 
-    baseframe *frame_;
-    int update_id_ { -1 };
-
     void timerEvent(QTimerEvent*);
     void initializeGL() override;
     void paintGL() override;
     void resizeGL(int w, int h) override;
 
     static void error_cb( int error, const GLchar * description );
+
 private:
+    int update_id_ { -1 };
 
 };
 

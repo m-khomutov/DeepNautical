@@ -6,10 +6,11 @@
  */
 
 #include "qservice.h"
-#include "../graphics/screens/qscreen.h"
 #include <QApplication>
+#include <QSurfaceFormat>
 
-qservice::qservice()
+qservice::qservice( basescreen *screen )
+: baseservice( screen )
 {
     QSurfaceFormat format;
     format.setDepthBufferSize(24);
@@ -19,8 +20,6 @@ qservice::qservice()
     format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
     QSurfaceFormat::setDefaultFormat(format);
     QApplication::setAttribute(Qt::AA_ForceRasterWidgets, false);
-
-    screen_.reset( new qscreen( frame_.get() ) );
 }
 
 void qservice::f_run()
@@ -30,7 +29,6 @@ void qservice::f_run()
 
 int qservice::f_stop()
 {
-    screen_.reset();
     return result_;
 }
 

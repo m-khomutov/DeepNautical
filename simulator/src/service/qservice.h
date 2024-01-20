@@ -9,23 +9,21 @@
 #define QSERVICE_H
 
 #include "baseservice.h"
-#include <memory>
 
 class qservice: public baseservice {
 public:
+    qservice( basescreen *screen );
+
     qservice(const qservice& orig) = delete;
     qservice operator =(const qservice& orig) = delete;
+
     ~qservice() = default;
     
     void onsignal( int ) override;
 
 private:
-    qservice();
-
     void f_run() override;
     int f_stop() override;
-
-    friend baseservice;
 };
 
 #endif /* QSERVICE_H */

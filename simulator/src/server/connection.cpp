@@ -37,11 +37,11 @@ connection::~connection()
     std::cerr << "[-] connection " << saddr2str(address_) << ":" << ntohs(address_.sin_port) << " closed\n";
 }
 
-void connection::on_data( const uint8_t * data, int size )
+void connection::on_data( basescreen *screen, const uint8_t * data, int size )
 {
     if( !proto_ )
     {
-        f_determine_protocol( data, size );
+        f_determine_protocol( screen, data, size );
     }
     else
     {
@@ -65,7 +65,7 @@ void connection::send_frame( const uint8_t * data, int size, float duration )
     }
 }
 
-void connection::f_determine_protocol( const uint8_t * data, int size )
+void connection::f_determine_protocol( basescreen *screen, const uint8_t * data, int size )
 {
     request_ += std::string( (const char*)data, size );
     if( request_.find( "\r\n\r\n" ) != std::string::npos )
@@ -74,9 +74,9 @@ void connection::f_determine_protocol( const uint8_t * data, int size )
         {
             proto_.reset( new flvprotocol( fd_ ) );
         }
-	else
+        else
         {
-            proto_.reset( new httpapi( fd_ ) );
+            proto_.reset( new httpapi( fd_, screen ) );
         }
         proto_->on_data( (const uint8_t*)request_.data(), request_.size() );
     }

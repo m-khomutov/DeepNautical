@@ -27,7 +27,6 @@ public:
 private:
     struct del { void operator()(GLFWwindow * w) { glfwDestroyWindow( w ); glfwTerminate(); } };
     std::unique_ptr< GLFWwindow, del > window_;
-    baseframe *frame_;
 
 private:
     static void error_cb( int error, const GLchar * description );

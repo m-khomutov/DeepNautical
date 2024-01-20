@@ -6,9 +6,15 @@
  */
 
 #include "service/baseservice.h"
+#include "encoding/jpegframe.h"
 #include "utils.h"
 #ifdef QT_CORE_LIB
 # include <QApplication>
+# include "service/qservice.h"
+# include "graphics/screens/qscreen.h"
+#else
+# include "service/glfwservice.h"
+# include "graphics/screens/glfwscreen.h"
 #endif
 
 #include <stdlib.h>
@@ -24,9 +30,13 @@
 namespace
 {
 
+static std::unique_ptr< baseservice > service;
 void signal_handler( int s )
 {
-    baseservice::instance().onsignal( s );
+    if( service)
+    {
+        service->onsignal( s );
+    }
 }
 
 void show_options_and_exit( const char *prog, int rc )
@@ -66,20 +76,36 @@ int main(int argc, char** argv)
     signal( SIGSEGV, signal_handler);
     signal( SIGINT,  signal_handler);
     
-#ifdef QT_CORE_LIB
-    QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL, true);
-    QApplication a(argc, argv);
-#endif
     try
     {
+        std::unique_ptr< basescreen > screen;
+
+#ifdef QT_CORE_LIB
+        QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL, true);
+        QApplication a(argc, argv);
+
+        screen.reset( new qscreen( new jpegframe( utils::config()["window"],
+                                                  utils::config()["quality"] ) ) );
+        service.reset( new qservice( screen.get() ) );
+#else
+        screen.reset( new glfwscreen( new jpegframe( utils::config()["window"],
+                                                     utils::config()["quality"] ) ) );
+        service.reset(new glfwservice( screen.get() ) );
+#endif
+
         std::setlocale( LC_NUMERIC,"C" );
 
-        baseservice::instance().run();
-        return baseservice::instance().stop();
+        screen->run();
+        service->run();
+
+        screen->stop();
+        screen.reset();
+
+        return service->stop();
     }
     catch( const std::runtime_error &err )
     {
-        std::cerr << "1. error: " << err.what() << "\n";
+        std::cerr << "error: " << err.what() << "\n";
     }
     catch( ...)
     {

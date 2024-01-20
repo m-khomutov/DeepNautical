@@ -6,7 +6,6 @@
  */
 
 #include "httpapi.h"
-#include "../service/baseservice.h"
 #include <unistd.h>
 #include <cstring>
 #include <iostream>
@@ -50,8 +49,9 @@ httpapi::message::message( const std::string &data )
 }
 
 
-httpapi::httpapi( int b_sock )
+httpapi::httpapi( int b_sock, basescreen *screen )
 : baseprotocol( b_sock )
+, screen_( screen )
 {
 }
 
@@ -91,13 +91,12 @@ void httpapi::do_write()
 }
 
 void httpapi::send_frame( const uint8_t *, int, float )
-{
-}
+{}
 
 void httpapi::f_send_scene_list()
 {
     std::string body = "{\"success\":true,\"scenes\":[";
-    for( auto sc : baseservice::instance().scenes() )
+    for( auto sc : screen_->scenes() )
     {
         body += "\"" + sc + "\",";
     }
@@ -110,7 +109,7 @@ void httpapi::f_send_scene_list()
 
 void httpapi::f_send_current_scene()
 {
-    std::string body = "{\"success\":true,\"scene\":\"" + baseservice::instance().current_scene() + "\"}";
+    std::string body = "{\"success\":true,\"scene\":\"" + screen_->current_scene() + "\"}";
     std::string reply = std::string(status_200) + "Content-Length: " + std::to_string( body.size() ) + "\r\n\r\n" + body;
     f_set_reply( (uint8_t const *)reply.data(), reply.size() );
     f_reply();
@@ -120,7 +119,7 @@ void httpapi::f_set_current_scene( const std::string &scene )
 {
     try
     {
-        baseservice::instance().set_scene( scene );
+        screen_->set_scene( scene );
         f_send_current_scene();
     }
     catch( const std::runtime_error &err )

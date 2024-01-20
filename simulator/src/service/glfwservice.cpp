@@ -6,12 +6,10 @@
  */
 
 #include "glfwservice.h"
-#include "../graphics/screens/glfwscreen.h"
 
-glfwservice::glfwservice()
-{
-     screen_.reset( new glfwscreen( frame_.get() ) );
-}
+glfwservice::glfwservice( baseframe *frame )
+: baseservice( frame )
+{}
 
 void glfwservice::onsignal( int )
 {

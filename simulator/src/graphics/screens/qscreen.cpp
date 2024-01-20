@@ -9,15 +9,14 @@
 #include <QDateTime>
 
 qscreen::qscreen( baseframe* frame )
-: QOpenGLWidget(nullptr)
-, frame_( frame )
+: basescreen( frame )
+, QOpenGLWidget(nullptr)
 {
     resize( frame_->width(), frame_->height() );
 }
 
 qscreen::~qscreen()
-{
-}
+{}
 
 void qscreen::run()
 {

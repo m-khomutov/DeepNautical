@@ -14,7 +14,7 @@
 #include <memory>
 #include <map>
 
-class baseframe;
+class basescreen;
 class connection;
 
 class s_poll_error: public std::runtime_error
@@ -25,7 +25,7 @@ public:
 
 class s_poll {
 public:
-    s_poll( baseframe *frame );
+    s_poll( basescreen *screen );
     s_poll(const s_poll& orig) = delete;
     s_poll &operator =(const s_poll& orig) = delete;
     ~s_poll();
@@ -40,7 +40,7 @@ private:
     std::atomic< bool > running_ { true };
     s_socket p_socket_;
     int fd_;
-    baseframe *frame_;
+    basescreen *screen_;
     std::chrono::milliseconds frame_duration_;
     std::map< int, std::shared_ptr< connection > > connections_;
 

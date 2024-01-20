@@ -11,7 +11,7 @@
 
 
 glfwscreen::glfwscreen( baseframe *frame )
-: frame_( frame )
+: basescreen( frame )
 {
     glfwSetErrorCallback( glfwscreen::error_cb );
     
@@ -49,8 +49,7 @@ glfwscreen::glfwscreen( baseframe *frame )
 }
 
 glfwscreen::~glfwscreen()
-{
-}
+{}
 
 void glfwscreen::run()
 {

@@ -7,7 +7,7 @@
 
 #include "s_poll.h"
 #include "connection.h"
-#include "encoding/baseframe.h"
+#include "../graphics/screens/basescreen.h"
 #include <sys/epoll.h>
 #include <unistd.h>
 #include <cstring>
@@ -19,10 +19,10 @@ s_poll_error::s_poll_error( const std::string &what )
 }
 
 
-s_poll::s_poll( baseframe *frame )
+s_poll::s_poll( basescreen *screen )
 : p_socket_( utils::config()["port"] )
 , fd_( epoll_create( 1 ) )
-, frame_( frame )
+, screen_( screen )
 , frame_duration_( utils::config()["duration"] )
 {
     try
@@ -74,7 +74,7 @@ void s_poll::run()
                     auto p = connections_.find( events[i].data.fd );
                     if( p != connections_.end() )
                     {
-                        p->second->on_data( buffer, rc );
+                        p->second->on_data( screen_, buffer, rc );
                     }
                 }
             }
@@ -126,7 +126,7 @@ void s_poll::f_send_frame( time_point_t * last_ts )
     {
         for( auto p : connections_ )
         {
-            frame_->load( p.second->protocol(), d.count() );
+            screen_->frame()->load( p.second->protocol(), d.count() );
         }
         *last_ts = ts;
     }

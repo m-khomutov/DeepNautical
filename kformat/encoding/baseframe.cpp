@@ -7,14 +7,12 @@
 
 #include "baseframe.h"
 
-baseframe::baseframe()
-: geometry_( utils::config()["window"] )
-{
-}
+baseframe::baseframe( const utils::geometry &g )
+: geometry_( g )
+{}
 
 baseframe::~baseframe()
-{
-}
+{}
 
 
 void baseframe::store( int width, int height )

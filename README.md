@@ -283,3 +283,70 @@ wake_width={0.3 0.3}
 Timestamp UI24 
 TimestampExtended UI8
 ```
+
+**Библиотека протокола передачи медиа данных**
+
+В проекте собирается и используется статическая библиотека **libkformat.a**.
+В библиотеке имеется реализация используемого протокола передачи медиа данных.
+
+***Использование библиотечного функционала***
+
+Классы библиотеки
+* baseprotocol - интерфейс взаимодействия с классом передачи медиа данных
+* flvprotocol - реализация интерфейса baseprotocol для протокола **Flash Video**.
+
+****baseprotocol****
+
+Содержит следующие функции-члены
+* virtual void on_data( const uint8_t * data, int size ) = 0; Вызывается при наличии на сокете данных для получения
+* virtual void do_write() = 0; - Вызывается для допередачи данных при освобождении места в tcp-буферах сокета
+* virtual void send_frame( const uint8_t * data, int size, float duration ) = 0; - Вызывается для отправки фрейма данных
+
+****flvprotocol****
+
+Реализует интерфейс baseprotocol для протокола передачи **Flash Video**
+
+***Пример использования***
+
+В качестве примера используется применение flvprotocol с функционалом epoll
+```
+int fd_count = epoll_wait( fd_, events, maxevents, 40 );
+for( int i(0); i < fd_count; ++i )
+{
+    if( events[i].data.fd == socket_ )
+    {
+        . . .
+        std::unique_ptr< flvprotocol > proto;
+        . . .
+        int fd = accept( events[i].data.fd, . . . );
+        proto.reset( new flvprotocol( fd ) );
+        . . .
+    }
+    else if( events[i].events & EPOLLIN )
+    {
+         int rc = ::read( events[i].data.fd, buffer, sizeof(buffer) );
+         if( rc > 0 )
+         {
+             . . .
+             {
+                 proto->on_data( buffer, rc );
+             }
+         }
+     }
+     else if( events[i].events & EPOLLOUT )
+     {
+         . . .
+         {
+             proto->on_ready_to_write();
+         }
+     } 
+}
+. . .
+if( std::chrono::duration_cast< std::chrono::milliseconds >(d) >= frame_duration_ )
+{
+    . . .
+    proto->send_frame( frame.data(), frame.size() )
+    . . .
+}
+
+```

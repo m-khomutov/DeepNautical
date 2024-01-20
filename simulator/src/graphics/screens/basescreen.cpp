@@ -13,7 +13,8 @@ screen_error::screen_error( const std::string &what )
 {
 }
 
-basescreen::basescreen()
+basescreen::basescreen( baseframe *frame )
+: frame_( frame )
 {
     utils::read_directory( utils::config()["scenes"],
                            ".scn",
@@ -28,8 +29,7 @@ basescreen::basescreen()
 }
 
 basescreen::~basescreen()
-{
-}
+{}
 
 void basescreen::set_scene( const std::string &scene )
 {

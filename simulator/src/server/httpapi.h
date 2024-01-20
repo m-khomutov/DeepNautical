@@ -9,6 +9,7 @@
 #define HTTPAPI_H
 
 #include "protocol/baseprotocol.h"
+#include "../graphics/screens/basescreen.h"
 #include <map>
 #include <string>
 #include <vector>
@@ -29,7 +30,7 @@ public:
         std::map< std::string, std::string > headers;
     };
 
-    explicit httpapi( int b_sock );
+    explicit httpapi( int b_sock, basescreen *screen );
     httpapi(const httpapi& orig) = delete;
     httpapi &operator =(const httpapi& orig) = delete;
     ~httpapi();
@@ -39,6 +40,7 @@ public:
     void send_frame( const uint8_t * data, int size, float duration ) override;
 
 private:
+    basescreen *screen_;
     size_t sent_ { 0 };
     std::vector< uint8_t > reply_;
 

@@ -11,14 +11,11 @@
 
 protocol_error::protocol_error( const std::string &what )
 : std::runtime_error( what + std::string(" failed: ") + std::string(strerror( errno )) )
-{
-}
+{}
 
 baseprotocol::baseprotocol( int sock )
 : fd_( sock )
-{
-}
+{}
 
 baseprotocol::~baseprotocol()
-{
-}
+{}
