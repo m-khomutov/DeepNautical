@@ -1,5 +1,5 @@
 /* сборка командой
- * g++ -o example example.cpp -I. ../build/kformat/lib/libkformat.a
+ * g++ -o example example.cpp -I.. ../../build/kformat/lib/libkformat.a -ljpeg
  * из текущего каталога
  * Запуск с одним аргументом - путь к файлу jpeg.
  * Открывает сокет tcp и слушает входные запросы на порт 5555.
@@ -17,6 +17,8 @@
 #include <sys/wait.h>
 #include <sys/time.h>
 #include <signal.h>
+
+#include <thread>
 
 #include <kformat.h>
 
@@ -79,26 +81,29 @@ namespace {
 
     }
 
-    void readJPEGContent( const char* filename, std::vector< uint8_t > &data ) {
-        FILE *f = fopen( filename, "rb");
-        if( !f ) {
-            throw std::logic_error( std::string("file error: ") + strerror( errno ) );
+    void frame_thread( baseframe *frame )
+    {
+        size_t redrow = 0;
+        while( running ) {
+            std::this_thread::sleep_for( std::chrono::duration( std::chrono::microseconds( 100 )));
+            uint8_t *buf = frame->buffer( 800, 600 );
+
+            uint8_t *ptr = buf;
+            for( size_t y(0); y < 600; ++y ) {
+                for( size_t x(0); x < 800; ++x ) {
+                    *ptr ++ = x >= redrow && x < redrow + 10 ? 0xff : 0x00;
+                    *ptr ++ = 0x00;
+                    *ptr ++ = 0x00;
+                }
+            }
+            frame->store();
+            redrow = (redrow + 1) % 800;
         }
-        fseek( f, 0, SEEK_END );
-        data.resize( ftell( f ) );
-        fseek( f, 0, SEEK_SET );
-        fread( data.data(), 1, data.size(), f );
-        fclose( f );
     }
 }  // namespace
 
 int main( int argc, char* argv[] )
 {
-    if( argc != 2 ) {
-        std::cerr << "run: " << argv[0] << " jpeg file\n";
-        return 1;
-    }
-
     socklen_t socklen = sizeof (sockaddr_in);
     sockaddr_in dst;
     std::string http_request;
@@ -110,12 +115,11 @@ int main( int argc, char* argv[] )
     signal( SIGINT,  signal_handler);
 
     try {
-        std::vector< uint8_t > frame;
-        readJPEGContent( argv[1], frame );
-
         Socket sock;
         std::unique_ptr< baseprotocol > proto;
+        std::unique_ptr< baseframe > jframe( new jpegframe( utils::geometry(800, 600), 80 ) );
 
+        std::thread jthread( frame_thread, jframe.get() );
 
         timeval tv = { 0, 40 };
         int afd = -1;
@@ -185,12 +189,14 @@ int main( int argc, char* argv[] )
                 uint64_t t = now();
                 if( t - ts > 40 /*период выдачи фрейма 40 мсек */ )
                 {
-                    proto->send_frame( frame.data(), frame.size(), duration );
+                    jframe->load( proto.get(), duration );
                     duration += float(t - ts);
                     ts = t;
                 }
             }
         }
+
+        jthread.join();
     }
     catch (std::exception const &e )
     {
