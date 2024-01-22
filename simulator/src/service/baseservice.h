@@ -30,6 +30,7 @@ protected:
     int result_ { EXIT_SUCCESS };
     
 private:
+    std::unique_ptr< basescreen > screen_;
     s_poll poll_;
     utils::scoped_thread< s_poll > poll_thread_;
 

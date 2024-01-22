@@ -9,12 +9,12 @@
 #define GLFWSCREEN_H
 
 #include "../shader.h"
-#include "basescreen.h"
+#include "openglscreen.h"
 #include <GLFW/glfw3.h>
 #include <memory>
 
 
-class glfwscreen: public basescreen {
+class glfwscreen: public openglscreen {
 public:
     explicit glfwscreen( baseframe *frame );
     glfwscreen(const glfwscreen& orig) = delete;

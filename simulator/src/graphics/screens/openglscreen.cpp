@@ -6,15 +6,15 @@
  * Created on 5 февраля 2023 г., 14:25
  */
 
-#include "basescreen.h"
+#include "openglscreen.h"
 
 screen_error::screen_error( const std::string &what )
 : std::runtime_error( what )
 {
 }
 
-basescreen::basescreen( baseframe *frame )
-: frame_( frame )
+openglscreen::openglscreen( baseframe *frame )
+: basescreen( frame )
 {
     utils::read_directory( utils::config()["scenes"],
                            ".scn",
@@ -28,10 +28,10 @@ basescreen::basescreen( baseframe *frame )
     scene_iter_ = scenes_.begin();
 }
 
-basescreen::~basescreen()
+openglscreen::~openglscreen()
 {}
 
-void basescreen::set_scene( const std::string &scene )
+void openglscreen::set_scene( const std::string &scene )
 {
     if( scene == *scene_iter_ )
     {
@@ -48,7 +48,7 @@ void basescreen::set_scene( const std::string &scene )
     g->emplace_back( command::set_scene );
 }
 
-void basescreen::f_exec_command()
+void openglscreen::f_exec_command()
 {
     auto g = commands_.get();
     if( ! g->empty() )
@@ -64,7 +64,7 @@ void basescreen::f_exec_command()
     }
 }
 
-void basescreen::f_store()
+void openglscreen::f_store()
 {
     int q;
     glGetIntegerv( GL_READ_BUFFER, &q );

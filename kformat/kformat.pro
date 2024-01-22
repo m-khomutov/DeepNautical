@@ -7,6 +7,7 @@ CONFIG += 14
 
 HEADERS = kformat.h \
     utils.h \
+    screen/basescreen.h \
     encoding/baseframe.h \
     encoding/jpegframe.h \
     protocol/baseprotocol.h \
@@ -15,6 +16,7 @@ HEADERS = kformat.h \
 
 SOURCES = \
         utils.cpp \
+        screen/basescreen.cpp \
         encoding/baseframe.cpp \
         encoding/jpegframe.cpp \
         protocol/baseprotocol.cpp \

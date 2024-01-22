@@ -7,8 +7,8 @@
 
 #include "glfwservice.h"
 
-glfwservice::glfwservice( baseframe *frame )
-: baseservice( frame )
+glfwservice::glfwservice( basescreen *screen )
+: baseservice( screen )
 {}
 
 void glfwservice::onsignal( int )

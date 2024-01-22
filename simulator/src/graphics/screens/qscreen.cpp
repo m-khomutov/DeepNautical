@@ -10,7 +10,7 @@
 #include <GL/glew.h>
 
 qscreen::qscreen( baseframe* frame )
-: basescreen( frame )
+: openglscreen( frame )
 , QOpenGLWidget(nullptr)
 {
     resize( frame_->width(), frame_->height() );

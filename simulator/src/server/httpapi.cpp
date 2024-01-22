@@ -49,7 +49,7 @@ httpapi::message::message( const std::string &data )
 }
 
 
-httpapi::httpapi( int b_sock, basescreen *screen )
+httpapi::httpapi( int b_sock, openglscreen *screen )
 : baseprotocol( b_sock )
 , screen_( screen )
 {

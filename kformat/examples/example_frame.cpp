@@ -1,5 +1,5 @@
 /* сборка командой
- * g++ -o example example.cpp -I.. ../../build/kformat/lib/libkformat.a -ljpeg
+ * g++ -o example example_frame.cpp -I.. ../../build/kformat/lib/libkformat.a -ljpeg
  * из текущего каталога
  * Запуск с одним аргументом - путь к файлу jpeg.
  * Открывает сокет tcp и слушает входные запросы на порт 5555.

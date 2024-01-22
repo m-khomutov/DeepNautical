@@ -5,10 +5,11 @@
  * Created on 5 февраля 2023 г., 14:25
  */
 
-#ifndef BASESCREEN_H
-#define BASESCREEN_H
+#ifndef OPENGLSCREEN_H
+#define OPENGLSCREEN_H
 
 #include <kformat.h>
+
 #include "../scene.h"
 #include <list>
 #include <set>
@@ -37,20 +38,13 @@ private:
     command_type t_;
 };
 
-class basescreen {
+class openglscreen: public basescreen {
 public:
-    basescreen( baseframe *frame );
-    basescreen(const basescreen& orig) = delete;
-    basescreen &operator =(const basescreen& orig) = delete;
-    virtual ~basescreen();
+    openglscreen( baseframe *frame );
+    openglscreen(const openglscreen& orig) = delete;
+    openglscreen &operator =(const openglscreen& orig) = delete;
+    virtual ~openglscreen();
 
-    virtual void run() = 0;
-    virtual void stop() = 0;
-
-    baseframe *frame()
-    {
-        return frame_;
-    }
     const std::set< std::string > &scenes() const
     {
         return scenes_;
@@ -62,7 +56,6 @@ public:
     void set_scene( const std::string &scene );
 
 protected:
-    baseframe *frame_;
     std::set< std::string > scenes_;
     std::set< std::string >::iterator scene_iter_;
     std::unique_ptr< scene > sc_;
@@ -76,5 +69,5 @@ private:
 
 };
 
-#endif /* BASESCREEN_H */
+#endif /* OPENGLSCREEN_H */
 

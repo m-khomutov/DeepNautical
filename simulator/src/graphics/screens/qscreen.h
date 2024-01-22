@@ -8,13 +8,13 @@
 #ifndef QSCREEN_H
 #define QSCREEN_H
 
-#include "basescreen.h"
+#include "openglscreen.h"
 #include <QOpenGLWidget>
 #include <memory>
 
-class qscreen: public basescreen, public QOpenGLWidget {
+class qscreen: public openglscreen, public QOpenGLWidget {
 public:
-    explicit qscreen( baseframe *frame );
+    qscreen( baseframe *frame );
     qscreen(const qscreen& orig) = delete;
     qscreen &operator =(const qscreen& orig) = delete;
     ~qscreen();

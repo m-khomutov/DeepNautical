@@ -78,28 +78,23 @@ int main(int argc, char** argv)
     
     try
     {
-        std::unique_ptr< basescreen > screen;
-
 #ifdef QT_CORE_LIB
         QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL, true);
         QApplication a(argc, argv);
 
-        screen.reset( new qscreen( new jpegframe( utils::config()["window"],
-                                                  utils::config()["quality"] ) ) );
-        service.reset( new qservice( screen.get() ) );
+        service.reset( new qservice(
+                           new qscreen(
+                                new jpegframe( utils::config()["window"],
+                                               utils::config()["quality"] ) ) ) );
 #else
-        screen.reset( new glfwscreen( new jpegframe( utils::config()["window"],
-                                                     utils::config()["quality"] ) ) );
-        service.reset(new glfwservice( screen.get() ) );
+        service.reset( new glfwservice(
+                           new glfwscreen( new jpegframe( utils::config()["window"],
+                                                          utils::config()["quality"] ) ) ) );
 #endif
 
         std::setlocale( LC_NUMERIC,"C" );
 
-        screen->run();
         service->run();
-
-        screen->stop();
-        screen.reset();
 
         return service->stop();
     }

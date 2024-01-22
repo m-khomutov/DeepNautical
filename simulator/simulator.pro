@@ -38,7 +38,7 @@ SOURCES += \
     src/graphics/program.cpp \
     src/graphics/scene.cpp \
     src/graphics/blender.cpp \
-    src/graphics/screens/basescreen.cpp \
+    src/graphics/screens/openglscreen.cpp \
     src/graphics/screens/qscreen.cpp \
     src/graphics/shader.cpp \
     src/graphics/texture/texture.cpp \
@@ -66,7 +66,7 @@ HEADERS += \
     src/graphics/program.h \
     src/graphics/scene.h \
     src/graphics/blender.h \
-    src/graphics/screens/basescreen.h \
+    src/graphics/screens/openglscreen.h \
     src/graphics/screens/qscreen.h \
     src/graphics/shader.h \
     src/graphics/texture/texture.h \
@@ -79,5 +79,5 @@ HEADERS += \
     src/service/baseservice.h \
     src/service/qservice.h
 
-INCLUDEPATH += ../simulator/src ../kformat
+INCLUDEPATH += ../simolator/src ../kformat
 LIBS += ../build/kformat/lib/libkformat.a -lGLEW -lGLU -ljpeg

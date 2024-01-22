@@ -12,7 +12,7 @@
 
 class glfwservice: public baseservice {
 public:
-    glfwservice( baseframe *frame );
+    glfwservice( basescreen *screen );
 
     glfwservice( glfwservice const &orig ) = delete;
     glfwservice &operator =( glfwservice const &orig ) = delete;
