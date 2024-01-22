@@ -18,6 +18,8 @@ public:
 
 class baseprotocol {
 public:
+    static baseprotocol * create( const std::string &request, int sock );
+
     explicit baseprotocol( int sock );
     baseprotocol(const baseprotocol& orig) = delete;
     baseprotocol &operator =(const baseprotocol& orig) = delete;

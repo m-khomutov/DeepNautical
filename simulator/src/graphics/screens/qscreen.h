@@ -31,7 +31,6 @@ public:
 
 private:
     int update_id_ { -1 };
-
 };
 
 #endif /* QSCREEN_H */

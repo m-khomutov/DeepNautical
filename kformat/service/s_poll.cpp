@@ -19,11 +19,11 @@ s_poll_error::s_poll_error( const std::string &what )
 }
 
 
-s_poll::s_poll( basescreen *screen )
-: p_socket_( utils::config()["port"] )
+s_poll::s_poll( basescreen *screen, uint16_t port, uint32_t duration  )
+: p_socket_( port )
 , fd_( epoll_create( 1 ) )
 , screen_( screen )
-, frame_duration_( utils::config()["duration"] )
+, frame_duration_( duration )
 {
     try
     {
@@ -74,7 +74,7 @@ void s_poll::run()
                     auto p = connections_.find( events[i].data.fd );
                     if( p != connections_.end() )
                     {
-                        p->second->on_data( screen_, buffer, rc );
+                        p->second->on_data( buffer, rc );
                     }
                 }
             }

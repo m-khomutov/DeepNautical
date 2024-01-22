@@ -85,11 +85,16 @@ int main(int argc, char** argv)
         service.reset( new qservice(
                            new qscreen(
                                 new jpegframe( utils::config()["window"],
-                                               utils::config()["quality"] ) ) ) );
+                                               utils::config()["quality"] ) ),
+
+                           utils::config()["port"],
+                           utils::config()["duration"] ) );
 #else
         service.reset( new glfwservice(
                            new glfwscreen( new jpegframe( utils::config()["window"],
-                                                          utils::config()["quality"] ) ) ) );
+                                                          utils::config()["quality"] ) ),
+                           utils::config()["port"],
+                           utils::config()["duration"] ) );
 #endif
 
         std::setlocale( LC_NUMERIC,"C" );

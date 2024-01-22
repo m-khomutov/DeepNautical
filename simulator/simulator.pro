@@ -44,12 +44,8 @@ SOURCES += \
     src/graphics/texture/texture.cpp \
     src/graphics/texture/avi.cpp \
     src/graphics/uniformblock.cpp \
-    src/server/s_poll.cpp \
-    src/server/s_socket.cpp \
-    src/server/connection.cpp \
     src/server/httpapi.cpp \
     src/main.cpp \
-    src/service/baseservice.cpp \
     src/service/qservice.cpp
 
 HEADERS += \
@@ -72,11 +68,7 @@ HEADERS += \
     src/graphics/texture/texture.h \
     src/graphics/texture/avi.h \
     src/graphics/uniformblock.h \
-    src/server/s_poll.h \
-    src/server/s_socket.h \
-    src/server/connection.h \
     src/server/httpapi.h \
-    src/service/baseservice.h \
     src/service/qservice.h
 
 INCLUDEPATH += ../simolator/src ../kformat

@@ -8,11 +8,11 @@
 #ifndef QSERVICE_H
 #define QSERVICE_H
 
-#include "baseservice.h"
+#include "service/baseservice.h"
 
 class qservice: public baseservice {
 public:
-    qservice( basescreen *screen );
+    qservice( basescreen *screen, uint16_t port, uint32_t duration );
 
     qservice(const qservice& orig) = delete;
     qservice operator =(const qservice& orig) = delete;

@@ -59,7 +59,7 @@ void glfwscreen::run()
         glfwGetFramebufferSize( window_.get(), &w, &h );
         sc_->display( w, h, glfwGetTime() * 1000 );
 
-        f_store();
+        store();
 
         glfwSwapBuffers( window_.get() );
         glfwPollEvents();

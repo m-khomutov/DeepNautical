@@ -8,14 +8,14 @@
 #ifndef BASESERVICE_H
 #define BASESERVICE_H
 
-#include "../server/s_poll.h"
+#include "s_poll.h"
 #include "utils.h"
 
 class basescreen;
 
 class baseservice {
 public:
-    baseservice( basescreen *screen );
+    baseservice( basescreen *screen, uint16_t port, uint32_t duration );
 
     baseservice(const baseservice& orig) = delete;
     baseservice &operator =(const baseservice& orig) = delete;

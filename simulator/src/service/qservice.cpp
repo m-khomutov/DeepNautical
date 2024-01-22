@@ -9,8 +9,8 @@
 #include <QApplication>
 #include <QSurfaceFormat>
 
-qservice::qservice( basescreen *screen )
-: baseservice( screen )
+qservice::qservice( basescreen *screen, uint16_t port, uint32_t duration )
+: baseservice( screen, port, duration )
 {
     QSurfaceFormat format;
     format.setDepthBufferSize(24);

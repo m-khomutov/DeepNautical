@@ -8,7 +8,8 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
-#include <kformat.h>
+#include "protocol/baseprotocol.h"
+
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <arpa/inet.h>
@@ -32,7 +33,7 @@ public:
         return proto_.get();
     }
 
-    void on_data( basescreen* screen, const uint8_t * data, int size );
+    void on_data( const uint8_t * data, int size );
     void on_ready_to_write();
     void send_frame( const uint8_t * data, int size, float duration );
 
@@ -42,9 +43,6 @@ private:
     sockaddr_in address_;
     std::unique_ptr< baseprotocol > proto_;
     std::string request_;
-
-private:
-    void f_determine_protocol( basescreen *screen, const uint8_t * data, int size );
 };
 
 #endif /* CONNECTION_H */

@@ -64,7 +64,7 @@ void openglscreen::f_exec_command()
     }
 }
 
-void openglscreen::f_store()
+void openglscreen::store()
 {
     int q;
     glGetIntegerv( GL_READ_BUFFER, &q );

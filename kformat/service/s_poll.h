@@ -25,7 +25,7 @@ public:
 
 class s_poll {
 public:
-    s_poll( basescreen *screen );
+    s_poll( basescreen *screen, uint16_t port, uint32_t duration );
     s_poll(const s_poll& orig) = delete;
     s_poll &operator =(const s_poll& orig) = delete;
     ~s_poll();

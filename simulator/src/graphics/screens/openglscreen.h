@@ -45,6 +45,8 @@ public:
     openglscreen &operator =(const openglscreen& orig) = delete;
     virtual ~openglscreen();
 
+    void store() override;
+
     const std::set< std::string > &scenes() const
     {
         return scenes_;
@@ -63,7 +65,6 @@ protected:
 
 protected:
     void f_exec_command();
-    void f_store();
 
 private:
 

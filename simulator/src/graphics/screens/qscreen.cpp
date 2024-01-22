@@ -55,7 +55,7 @@ void qscreen::paintGL()
 {
     f_exec_command();
     sc_->display( width(), height(), QDateTime::currentMSecsSinceEpoch());
-    f_store();
+    store();
 }
 
 void qscreen::resizeGL(int w, int h)

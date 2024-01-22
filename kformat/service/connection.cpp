@@ -6,7 +6,6 @@
  */
 
 #include "connection.h"
-#include "httpapi.h"
 #include <unistd.h>
 #include <fcntl.h>
 #include <cstdio>
@@ -36,13 +35,18 @@ connection::~connection()
     std::cerr << "[-] connection " << saddr2str(address_) << ":" << ntohs(address_.sin_port) << " closed\n";
 }
 
-void connection::on_data( basescreen *screen, const uint8_t * data, int size )
+void connection::on_data( const uint8_t * data, int size )
 {
     if( !proto_ )
     {
-        f_determine_protocol( screen, data, size );
+        request_ += std::string((const char*)data, size);
+        baseprotocol *p = baseprotocol::create( request_, fd_ );
+        if( p )
+        {
+            proto_.reset( p );
+        }
     }
-    else
+    if( proto_ )
     {
         proto_->on_data( data, size );
     }
@@ -61,22 +65,5 @@ void connection::send_frame( const uint8_t * data, int size, float duration )
     if( proto_ )
     {
         proto_->send_frame( data, size, duration );
-    }
-}
-
-void connection::f_determine_protocol( basescreen *screen, const uint8_t * data, int size )
-{
-    request_ += std::string( (const char*)data, size );
-    if( request_.find( "\r\n\r\n" ) != std::string::npos )
-    {
-        if( request_.find( "GET /stream?proto=flv HTTP/1.1\r\n" ) != std::string::npos )
-        {
-            proto_.reset( new flvprotocol( fd_ ) );
-        }
-        else
-        {
-            proto_.reset( new httpapi( fd_, static_cast< openglscreen* >(screen) ) );
-        }
-        proto_->on_data( (const uint8_t*)request_.data(), request_.size() );
     }
 }
