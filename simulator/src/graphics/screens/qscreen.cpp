@@ -19,13 +19,13 @@ qscreen::qscreen( baseframe* frame )
 qscreen::~qscreen()
 {}
 
-void qscreen::run()
+void qscreen::f_run()
 {
     show();
     update_id_ = startTimer(0);
 }
 
-void qscreen::stop()
+void qscreen::f_stop()
 {
     if(update_id_ != -1)
     {
@@ -55,7 +55,11 @@ void qscreen::paintGL()
 {
     f_exec_command();
     sc_->display( width(), height(), QDateTime::currentMSecsSinceEpoch());
-    store();
+
+    if( frame_duration_passed( &store_ts_ ) > 0.f )
+    {
+        basescreen::store();
+    }
 }
 
 void qscreen::resizeGL(int w, int h)

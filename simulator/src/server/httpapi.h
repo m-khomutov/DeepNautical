@@ -9,7 +9,6 @@
 #define HTTPAPI_H
 
 #include <kformat.h>
-#include "../graphics/screens/openglscreen.h"
 #include <map>
 #include <string>
 #include <vector>
@@ -30,7 +29,7 @@ public:
         std::map< std::string, std::string > headers;
     };
 
-    explicit httpapi( int b_sock, openglscreen *screen );
+    explicit httpapi( int b_sock, basescreen *screen );
     httpapi(const httpapi& orig) = delete;
     httpapi &operator =(const httpapi& orig) = delete;
     ~httpapi();
@@ -40,7 +39,7 @@ public:
     void send_frame( const uint8_t * data, int size, float duration ) override;
 
 private:
-    openglscreen *screen_;
+    basescreen *screen_;
     size_t sent_ { 0 };
     std::vector< uint8_t > reply_;
 

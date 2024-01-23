@@ -9,19 +9,21 @@
 #define BASEFRAME_H
 
 #include "utils.h"
+#include <chrono>
 
 class baseprotocol;
 
 class baseframe {
 public:
-    baseframe( const utils::geometry &geometry );
+    using time_point_t = std::chrono::time_point< std::chrono::high_resolution_clock >;
+
+    baseframe( const utils::geometry &geometry, int duration );
     baseframe( const baseframe& orig ) = delete;
     baseframe &operator =( const baseframe& orig ) = delete;
     virtual ~baseframe();
 
     virtual uint8_t *buffer( int width, int height ) = 0;
 
-    void store();
     void load( baseprotocol *, float duration );
 
     int width() const
@@ -32,14 +34,14 @@ public:
     {
         return geometry_.height;
     }
+    float duration_passed( time_point_t *ts ) const;
     
 protected:
     utils::geometry geometry_;
+    std::chrono::milliseconds duration_;
     std::vector< uint8_t > rgb_buffer_;
 
-
 private:
-    virtual void f_store() = 0;
     virtual void f_load( baseprotocol * proto, float duration ) = 0;
 
 };

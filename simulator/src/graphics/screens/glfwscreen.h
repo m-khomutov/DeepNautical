@@ -21,15 +21,15 @@ public:
     glfwscreen &operator =(const glfwscreen &rhs) = delete;
     ~glfwscreen();
 
-    void run() override;
-    void stop() override;
-
 private:
     struct del { void operator()(GLFWwindow * w) { glfwDestroyWindow( w ); glfwTerminate(); } };
     std::unique_ptr< GLFWwindow, del > window_;
 
 private:
     static void error_cb( int error, const GLchar * description );
+
+    void f_run() override;
+    void f_stop() override;
 };
 
 #endif /* GLFWSCREEN_H */

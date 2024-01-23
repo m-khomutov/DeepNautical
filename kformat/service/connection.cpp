@@ -59,11 +59,3 @@ void connection::on_ready_to_write()
         proto_->do_write();
     }
 }
-
-void connection::send_frame( const uint8_t * data, int size, float duration )
-{
-    if( proto_ )
-    {
-        proto_->send_frame( data, size, duration );
-    }
-}

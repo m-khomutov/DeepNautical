@@ -80,13 +80,17 @@ namespace {
 
     }
 
+    std::mutex mutex;
+
     void frame_thread( baseframe *frame )
     {
         size_t redrow = 0;
         while( running ) {
             std::this_thread::sleep_for( std::chrono::duration( std::chrono::microseconds( 100 )));
-            uint8_t *buf = frame->buffer( 800, 600 );
 
+            std::lock_guard< std::mutex > lk(mutex);
+
+            uint8_t *buf = frame->buffer( 800, 600 );
             uint8_t *ptr = buf;
             for( size_t y(0); y < 600; ++y ) {
                 for( size_t x(0); x < 800; ++x ) {
@@ -95,7 +99,6 @@ namespace {
                     *ptr ++ = 0x00;
                 }
             }
-            frame->store();
             redrow = (redrow + 1) % 800;
         }
     }
@@ -116,15 +119,15 @@ int main( int argc, char* argv[] )
     try {
         Socket sock;
         std::unique_ptr< baseprotocol > proto;
-        std::unique_ptr< baseframe > jframe( new jpegframe( utils::geometry(800, 600), 80 ) );
+        std::unique_ptr< baseframe > jframe( new jpegframe( utils::geometry(800, 600), 80, 40 ) );
 
         std::thread jthread( frame_thread, jframe.get() );
 
         timeval tv = { 0, 40 };
         int afd = -1;
         fd_set  rfds;
-        uint64_t ts {0};
         float duration = 0.f;
+        baseframe::time_point_t last_ts = std::chrono::high_resolution_clock::now();
 
         while( running )
         {
@@ -172,7 +175,7 @@ int main( int argc, char* argv[] )
                             if( http_request.find( "GET /stream?proto=flv HTTP/1.1\r\n" ) != std::string::npos )
                             {
                                 proto.reset( new flvprotocol( afd ) );
-                                ts = now();
+                                last_ts = std::chrono::high_resolution_clock::now();
                             }
                             http_request.clear();
                         }
@@ -185,12 +188,13 @@ int main( int argc, char* argv[] )
             }
             if( proto )
             {
-                uint64_t t = now();
-                if( t - ts > 40 /*период выдачи фрейма 40 мсек */ )
+                float dur = jframe->duration_passed( &last_ts );
+                if( dur > 0.f )
                 {
+                    std::lock_guard< std::mutex > lk(mutex);
+
                     jframe->load( proto.get(), duration );
-                    duration += float(t - ts);
-                    ts = t;
+                    duration += dur;
                 }
             }
         }

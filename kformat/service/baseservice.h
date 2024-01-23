@@ -15,7 +15,7 @@ class basescreen;
 
 class baseservice {
 public:
-    baseservice( basescreen *screen, uint16_t port, uint32_t duration );
+    baseservice( basescreen *screen, uint16_t port );
 
     baseservice(const baseservice& orig) = delete;
     baseservice &operator =(const baseservice& orig) = delete;

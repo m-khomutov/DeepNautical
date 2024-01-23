@@ -45,17 +45,15 @@ public:
     openglscreen &operator =(const openglscreen& orig) = delete;
     virtual ~openglscreen();
 
-    void store() override;
-
-    const std::set< std::string > &scenes() const
+    const std::set< std::string > &scenes() const override
     {
         return scenes_;
     }
-    const std::string &current_scene() const
+    const std::string &current_scene() const override
     {
         return *scene_iter_;
     }
-    void set_scene( const std::string &scene );
+    void set_scene( const std::string &scene ) override;
 
 protected:
     std::set< std::string > scenes_;
@@ -67,7 +65,8 @@ protected:
     void f_exec_command();
 
 private:
-
+    void f_store() override;
+    void f_load( baseprotocol *proto, float duration ) override;
 };
 
 #endif /* OPENGLSCREEN_H */

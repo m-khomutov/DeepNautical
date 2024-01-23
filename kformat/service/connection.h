@@ -35,7 +35,6 @@ public:
 
     void on_data( const uint8_t * data, int size );
     void on_ready_to_write();
-    void send_frame( const uint8_t * data, int size, float duration );
 
 private:
     socklen_t socklen_ { sizeof(sockaddr_in) };

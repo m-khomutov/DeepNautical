@@ -48,7 +48,7 @@ glfwscreen::glfwscreen( baseframe *frame )
 glfwscreen::~glfwscreen()
 {}
 
-void glfwscreen::run()
+void glfwscreen::f_run()
 {
     GLint w, h;
     sc_.reset(new scene( std::string(utils::config()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
@@ -59,14 +59,14 @@ void glfwscreen::run()
         glfwGetFramebufferSize( window_.get(), &w, &h );
         sc_->display( w, h, glfwGetTime() * 1000 );
 
-        store();
+        basescreen::store();
 
         glfwSwapBuffers( window_.get() );
         glfwPollEvents();
     }
 }
 
-void glfwscreen::stop()
+void glfwscreen::f_stop()
 {
     glfwSetWindowShouldClose( window_.get(), GL_TRUE );
 }

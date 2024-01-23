@@ -24,8 +24,8 @@ namespace {
 /* Класс обслуживания сетевых соединений */
 class service: public baseservice {
 public:
-    service( basescreen *screen, uint16_t port, uint32_t duration )
-    : baseservice( screen, port, duration )
+    service( basescreen *screen, uint16_t port )
+    : baseservice( screen, port )
     {}
 
     void onsignal( int ) override
@@ -47,14 +47,18 @@ public:
     : basescreen( frame )
     {}
 
-    void run() override
+private:
+    size_t m_redrow = 0;
+
+private:
+    void f_run() override
     {}
-    void stop() override
+    void f_stop() override
     {}
 
-    void store() override
+    void f_store() override
     {
-        uint8_t *buf = frame()->buffer( 800, 600 );
+        uint8_t *buf = frame_->buffer( 800, 600 );
 
         uint8_t *ptr = buf;
         for( size_t y(0); y < 600; ++y ) {
@@ -64,11 +68,13 @@ public:
                 *ptr ++ = 0x00;
             }
         }
-        frame()->store();
         m_redrow = (m_redrow + 1) % 800;
     }
-private:
-    size_t m_redrow = 0;
+
+    void f_load( baseprotocol *proto, float duration )
+    {
+        frame_->load( proto, duration );
+    }
 };
 
 int main( int argc, char* argv[] )
@@ -80,9 +86,9 @@ int main( int argc, char* argv[] )
 
     try
     {
-        basescreen *scr( new screen( new jpegframe( utils::geometry( 800, 600 ), 80 ) ) );
+        basescreen *scr( new screen( new jpegframe( utils::geometry( 800, 600 ), 80, 40 ) ) );
 
-        std::unique_ptr< baseservice > srv( new service( scr, 5555, 40 ) );
+        std::unique_ptr< baseservice > srv( new service( scr, 5555 ) );
 
         srv->run();
         while( running ) {

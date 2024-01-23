@@ -20,11 +20,10 @@ extern "C"
 #include <cstdio>
 #include <cstdint>
 #include <vector>
-#include <mutex>
 
 class jpegframe: public baseframe {
 public:
-    jpegframe( const utils::geometry &geometry, int quality );
+    jpegframe( const utils::geometry &geometry, int quality, int duration );
     jpegframe( const jpegframe& orig ) = delete;
     jpegframe &operator =( const jpegframe &rhs ) = delete;
     ~jpegframe();
@@ -37,11 +36,11 @@ private:
 
     std::vector< uint8_t > jpeg_frame_;
     size_t size_ { 0 };
-    std::mutex mutex_;
 
 private:
-    void f_store() override;
     void f_load( baseprotocol * proto, float duration ) override;
+
+    void f_compress();
 };
 
 #endif /* JPEGFRAME_H */

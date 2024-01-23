@@ -19,9 +19,6 @@ public:
     qscreen &operator =(const qscreen& orig) = delete;
     ~qscreen();
 
-    void run() override;
-    void stop() override;
-
     void timerEvent(QTimerEvent*);
     void initializeGL() override;
     void paintGL() override;
@@ -31,6 +28,10 @@ public:
 
 private:
     int update_id_ { -1 };
+
+private:
+    void f_run() override;
+    void f_stop() override;
 };
 
 #endif /* QSCREEN_H */

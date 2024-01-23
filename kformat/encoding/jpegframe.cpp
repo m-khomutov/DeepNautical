@@ -46,8 +46,8 @@ METHODDEF(void) term_destination(j_compress_ptr cinfo)
 
 }  // namespace
 
-jpegframe::jpegframe( const utils::geometry &geometry, int quality )
-: baseframe( geometry )
+jpegframe::jpegframe( const utils::geometry &geometry, int quality, int duration )
+: baseframe( geometry, duration )
 {
     cinfo_.err = jpeg_std_error( &jerr_ );  // errors get written to stderr 
     jpeg_create_compress( &cinfo_ );
@@ -82,8 +82,6 @@ uint8_t *jpegframe::buffer( int width, int height )
 
     if( sz != rgb_buffer_.size() )
     {
-        std::lock_guard< std::mutex > lk( mutex_ );
-
         rgb_buffer_.resize( sz );
         jpeg_frame_.resize( sz );
         cinfo_.image_width = width;
@@ -95,10 +93,8 @@ uint8_t *jpegframe::buffer( int width, int height )
     return rgb_buffer_.data();
 }
 
-void jpegframe::f_store()
+void jpegframe::f_compress()
 {
-    std::lock_guard< std::mutex > lk( mutex_ );
-
     mem_destination_ptr_t dest = mem_destination_ptr_t( cinfo_.dest );
     dest->buf = jpeg_frame_.data();
     dest->bufsize  = jpeg_frame_.size();
@@ -122,9 +118,12 @@ void jpegframe::f_store()
 
 void jpegframe::f_load( baseprotocol * proto, float duration )
 {
-    std::lock_guard< std::mutex > lk( mutex_ );
+    time_point_t now = std::chrono::high_resolution_clock::now();
+    f_compress();
+
     if( size_ )
     {
-        proto->send_frame( jpeg_frame_.data(), size_, duration );   
+        duration += std::chrono::duration< float, std::milli >(std::chrono::high_resolution_clock::now() - now).count();
+        proto->send_frame( jpeg_frame_.data(), size_, duration );
     }
 }

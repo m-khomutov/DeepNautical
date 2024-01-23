@@ -19,11 +19,10 @@ s_poll_error::s_poll_error( const std::string &what )
 }
 
 
-s_poll::s_poll( basescreen *screen, uint16_t port, uint32_t duration  )
+s_poll::s_poll( basescreen *screen, uint16_t port )
 : p_socket_( port )
 , fd_( epoll_create( 1 ) )
 , screen_( screen )
-, frame_duration_( duration )
 {
     try
     {
@@ -45,7 +44,7 @@ void s_poll::run()
 {
     epoll_event events[maxevents];
     uint8_t buffer[0xffff];
-    time_point_t last_ts = std::chrono::high_resolution_clock::now();
+    baseframe::time_point_t last_ts = std::chrono::high_resolution_clock::now();
     
     while( running_.load() )
     {
@@ -113,21 +112,18 @@ void s_poll::f_add( int sock, uint32_t events )
     ev.data.fd = sock;
     if( epoll_ctl( fd_, EPOLL_CTL_ADD, sock, &ev ) == -1 )
     {
-        throw s_poll_error( "epoll_ctl");
+        throw s_poll_error( "epoll_ctl" );
     }
 }
 
-void s_poll::f_send_frame( time_point_t * last_ts )
+void s_poll::f_send_frame( baseframe::time_point_t * last_ts )
 {
-    time_point_t ts = std::chrono::high_resolution_clock::now();
-    std::chrono::duration< float, std::milli > d( ts - *last_ts );
-
-    if( std::chrono::duration_cast< std::chrono::milliseconds >(d) >= frame_duration_ )
+    float duration = screen_->frame_duration_passed( last_ts );
+    if( duration > 0.f )
     {
         for( auto p : connections_ )
         {
-            screen_->frame()->load( p.second->protocol(), d.count() );
+            screen_->load( p.second->protocol(), duration );
         }
-        *last_ts = ts;
     }
 }

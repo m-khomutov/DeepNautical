@@ -8,9 +8,9 @@
 #include "baseservice.h"
 #include "screen/basescreen.h"
 
-baseservice::baseservice( basescreen *screen, uint16_t port, uint32_t duration )
+baseservice::baseservice( basescreen *screen, uint16_t port )
 : screen_( screen )
-, poll_( screen, port, duration )
+, poll_( screen, port )
 , poll_thread_( &poll_ )
 {}
 

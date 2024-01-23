@@ -12,7 +12,7 @@
 
 class glfwservice: public baseservice {
 public:
-    glfwservice( basescreen *screen, uint16_t port, uint32_t duration );
+    glfwservice( basescreen *screen, uint16_t port );
 
     glfwservice( glfwservice const &orig ) = delete;
     glfwservice &operator =( glfwservice const &orig ) = delete;
