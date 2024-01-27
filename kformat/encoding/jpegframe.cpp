@@ -118,12 +118,10 @@ void jpegframe::f_compress()
 
 void jpegframe::f_load( baseprotocol * proto, float duration )
 {
-    time_point_t now = std::chrono::high_resolution_clock::now();
     f_compress();
 
     if( size_ )
     {
-        duration += std::chrono::duration< float, std::milli >(std::chrono::high_resolution_clock::now() - now).count();
         proto->send_frame( jpeg_frame_.data(), size_, duration );
     }
 }

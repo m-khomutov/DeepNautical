@@ -73,7 +73,7 @@ void s_poll::run()
                     auto p = connections_.find( events[i].data.fd );
                     if( p != connections_.end() )
                     {
-                        p->second->on_data( buffer, rc );
+                        p->second->on_data( screen_, buffer, rc );
                     }
                 }
             }
@@ -123,7 +123,10 @@ void s_poll::f_send_frame( baseframe::time_point_t * last_ts )
     {
         for( auto p : connections_ )
         {
-            screen_->load( p.second->protocol(), duration );
+            if( p.second->protocol() && p.second->protocol()->can_send_frame() )
+            {
+                screen_->load( p.second->protocol(), duration );
+            }
         }
     }
 }

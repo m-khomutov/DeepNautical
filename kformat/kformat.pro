@@ -15,7 +15,8 @@ HEADERS = kformat.h \
     encoding/baseframe.h \
     encoding/jpegframe.h \
     protocol/baseprotocol.h \
-    protocol/flvprotocol.h
+    protocol/flvprotocol.h \
+    protocol/httpapi.h
 
 
 SOURCES = \
@@ -28,7 +29,8 @@ SOURCES = \
         encoding/baseframe.cpp \
         encoding/jpegframe.cpp \
         protocol/baseprotocol.cpp \
-        protocol/flvprotocol.cpp
+        protocol/flvprotocol.cpp \
+        protocol/httpapi.cpp
 
 
 INCLUDEPATH += $$PWD

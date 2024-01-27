@@ -7,6 +7,7 @@
 
 #include "baseprotocol.h"
 #include "flvprotocol.h"
+#include "httpapi.h"
 #include <cstring>
 #include <cerrno>
 #include <iostream>
@@ -15,13 +16,17 @@ protocol_error::protocol_error( const std::string &what )
 : std::runtime_error( what + std::string(" failed: ") + std::string(strerror( errno )) )
 {}
 
-baseprotocol *baseprotocol::create( const std::string &request, int sock )
+baseprotocol *baseprotocol::create( basescreen *screen, const std::string &request, int sock )
 {
     if( request.find( "\r\n\r\n" ) != std::string::npos )
     {
         if( request.find( "GET /stream?proto=flv HTTP/1.1\r\n" ) != std::string::npos )
         {
             return new flvprotocol( sock );
+        }
+        if( request.find( "GET /scene?" ) != std::string::npos )
+        {
+            return new httpapi( sock, screen );
         }
     }
     return nullptr;

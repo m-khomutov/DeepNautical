@@ -81,19 +81,15 @@ int main(int argc, char** argv)
 #ifdef QT_CORE_LIB
         QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL, true);
         QApplication a(argc, argv);
-
-        service.reset( new qservice(
-                           new qscreen(
-                                new jpegframe( utils::config()["window"],
-                                               utils::config()["quality"],
-                                               utils::config()["duration"] ) ),
-                           utils::config()["port"] ) );
+        std::unique_ptr< basescreen > scr( new qscreen( new jpegframe( utils::config()["window"],
+                                                                       utils::config()["quality"],
+                                                                       utils::config()["duration"] ) ) );
+        service.reset( new qservice( scr.get(), utils::config()["port"] ) );
 #else
-        service.reset( new glfwservice(
-                           new glfwscreen( new jpegframe( utils::config()["window"],
-                                                          utils::config()["quality"],
-                                                          utils::config()["duration"] ) ),
-                           utils::config()["port"] ) );
+        std::unique_ptr< basescreen > scr ( new glfwscreen( new jpegframe( utils::config()["window"],
+                                                                           utils::config()["quality"],
+                                                                           utils::config()["duration"] ) ) )
+        service.reset( new glfwservice( scr.get(), utils::config()["port"] ) );
 #endif
 
         std::setlocale( LC_NUMERIC,"C" );

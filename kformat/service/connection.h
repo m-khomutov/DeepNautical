@@ -33,7 +33,7 @@ public:
         return proto_.get();
     }
 
-    void on_data( const uint8_t * data, int size );
+    void on_data( basescreen *screen, const uint8_t * data, int size );
     void on_ready_to_write();
 
 private:

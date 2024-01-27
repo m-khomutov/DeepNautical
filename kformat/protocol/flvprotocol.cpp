@@ -91,6 +91,11 @@ void flvprotocol::send_frame( const uint8_t * data, int size, float duration )
     }
 }
 
+bool flvprotocol::can_send_frame() const
+{
+    return true;
+}
+
 void flvprotocol::f_send_header()
 {
     int rc = ::write( fd_, http_flv_header_.data() + sent_from_header_, http_flv_header_.size() - sent_from_header_ );

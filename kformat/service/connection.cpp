@@ -35,12 +35,12 @@ connection::~connection()
     std::cerr << "[-] connection " << saddr2str(address_) << ":" << ntohs(address_.sin_port) << " closed\n";
 }
 
-void connection::on_data( const uint8_t * data, int size )
+void connection::on_data( basescreen *screen, const uint8_t * data, int size )
 {
     if( !proto_ )
     {
         request_ += std::string((const char*)data, size);
-        baseprotocol *p = baseprotocol::create( request_, fd_ );
+        baseprotocol *p = baseprotocol::create( screen, request_, fd_ );
         if( p )
         {
             proto_.reset( p );

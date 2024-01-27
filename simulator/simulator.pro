@@ -44,9 +44,8 @@ SOURCES += \
     src/graphics/texture/texture.cpp \
     src/graphics/texture/avi.cpp \
     src/graphics/uniformblock.cpp \
-    src/server/httpapi.cpp \
-    src/main.cpp \
-    src/service/qservice.cpp
+    src/service/qservice.cpp \
+    src/main.cpp
 
 HEADERS += \
     src/graphics/figures/sol.h \
@@ -68,7 +67,6 @@ HEADERS += \
     src/graphics/texture/texture.h \
     src/graphics/texture/avi.h \
     src/graphics/uniformblock.h \
-    src/server/httpapi.h \
     src/service/qservice.h
 
 INCLUDEPATH += ../simolator/src ../kformat

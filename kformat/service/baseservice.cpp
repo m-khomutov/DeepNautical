@@ -26,7 +26,6 @@ void baseservice::run()
 int baseservice::stop()
 {
     screen_->stop();
-    screen_.reset();
 
     return f_stop();
 }

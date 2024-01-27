@@ -22,6 +22,7 @@ public:
     void on_data( const uint8_t * data, int size ) override;
     void do_write() override;
     void send_frame( const uint8_t * data, int size, float duration ) override;
+    bool can_send_frame() const override;
     
 private:
     std::vector< uint8_t > http_flv_header_;

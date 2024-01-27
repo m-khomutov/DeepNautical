@@ -301,6 +301,7 @@ TimestampExtended UI8
 * virtual void on_data( const uint8_t * data, int size ) = 0; Вызывается при наличии на сокете данных для получения
 * virtual void do_write() = 0; - Вызывается для допередачи данных при освобождении места в tcp-буферах сокета
 * virtual void send_frame( const uint8_t * data, int size, float duration ) = 0; - Вызывается для отправки фрейма данных
+* virtual bool can_send_frame() const = 0; - Используется ли протокол для отправки медиа контента (протокол может быть служебным для передачи команд)
 
 ****flvprotocol****
 

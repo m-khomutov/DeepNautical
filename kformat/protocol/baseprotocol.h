@@ -16,9 +16,11 @@ public:
     protocol_error( const std::string & what );
 };
 
+class basescreen;
+
 class baseprotocol {
 public:
-    static baseprotocol * create( const std::string &request, int sock );
+    static baseprotocol * create( basescreen *screen, const std::string &request, int sock );
 
     explicit baseprotocol( int sock );
     baseprotocol(const baseprotocol& orig) = delete;
@@ -28,6 +30,7 @@ public:
     virtual void on_data( const uint8_t * data, int size ) = 0;
     virtual void do_write() = 0;
     virtual void send_frame( const uint8_t * data, int size, float duration ) = 0;
+    virtual bool can_send_frame() const = 0;
     
 protected:
     int fd_;

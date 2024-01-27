@@ -93,6 +93,11 @@ void httpapi::do_write()
 void httpapi::send_frame( const uint8_t *, int, float )
 {}
 
+bool httpapi::can_send_frame() const
+{
+    return false;
+}
+
 void httpapi::f_send_scene_list()
 {
     std::string body = "{\"success\":true,\"scenes\":[";

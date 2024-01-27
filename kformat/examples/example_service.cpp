@@ -11,6 +11,7 @@
 
 #include <kformat.h>
 #include <signal.h>
+#include <thread>
 
 namespace {
     bool running = true;
@@ -45,10 +46,25 @@ class screen: public basescreen {
 public:
     screen( baseframe *frame )
     : basescreen( frame )
+    {
+        m_scenes.insert( "scene" );
+    }
+
+    const std::set< std::string > &scenes() const override
+    {
+        return m_scenes;
+    }
+    const std::string &current_scene() const override
+    {
+        return *m_scenes.begin();
+    }
+    void set_scene( const std::string &scene ) override
     {}
 
 private:
     size_t m_redrow = 0;
+
+    std::set< std::string > m_scenes;
 
 private:
     void f_run() override
@@ -86,9 +102,9 @@ int main( int argc, char* argv[] )
 
     try
     {
-        basescreen *scr( new screen( new jpegframe( utils::geometry( 800, 600 ), 80, 40 ) ) );
+         std::unique_ptr< basescreen > scr( new screen( new jpegframe( utils::geometry( 800, 600 ), 80, 40 ) ) );
 
-        std::unique_ptr< baseservice > srv( new service( scr, 5555 ) );
+        std::unique_ptr< baseservice > srv( new service( scr.get(), 5555 ) );
 
         srv->run();
         while( running ) {
