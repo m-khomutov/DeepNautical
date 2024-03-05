@@ -6,6 +6,7 @@
  */
 
 #include "flvprotocol.h"
+#include "../utils.h"
 #include <unistd.h>
 #include <cstring>
 #include <iostream>
@@ -74,11 +75,12 @@ void flvprotocol::send_frame( const uint8_t * data, int size, float duration )
             copy3bytes( size + 1, tag_header_ + 1 );
             //copy3bytes( timestamp_, tag_header_ + 4 );
             //tag_header_[7] = (timestamp_ >> 24) & 0xff;
+            timestamp_ = htobe64(utils::now());
             memcpy( tag_header_ + 4, &timestamp_, sizeof(timestamp_) );
     
-            timestamp_ += duration;
+            //timestamp_ += duration;
 
-            uint32_t tagsize = htobe32( size + 12 );
+            uint32_t tagsize = htobe32( size + sizeof(tag_header_) );
     
             flv_frame_.resize( sizeof(tag_header_) + size + sizeof(tagsize) );
             ::memcpy( flv_frame_.data(), tag_header_, sizeof(tag_header_) );

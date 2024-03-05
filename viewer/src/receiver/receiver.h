@@ -41,7 +41,7 @@ private:
 class flv_tag
 {
 public:
-    enum { size = 12 };
+    enum { size = 13 };
 
     flv_tag() = default;
     explicit flv_tag( uint8_t const *data );
@@ -51,7 +51,7 @@ public:
     {
         return data_size_;
     }
-    float timestamp() const 
+    uint64_t timestamp() const
     {
         return timestamp_;
     }
@@ -62,7 +62,7 @@ private:
     
     tag_type type_ { tag_type::video };
     uint32_t data_size_ { 0 };
-    float timestamp_ { 0.0f };
+    uint64_t timestamp_ { 0ul };
     uint32_t stream_id_ { 0 };
     uint8_t frame_type_ { 1 };
     uint8_t codec_id_ { codec_id::jpeg };
@@ -87,7 +87,7 @@ private:
     std::string server_host_;
     uint16_t server_port_;
     size_t (receiver::*action)(uint8_t const *, size_t);
-    float timestamp_ { 0.0f };
+    uint64_t timestamp_ { 0ul };
     bool verify_ { bool(utils::config()["verify"]) };
     int reconnect_delay_ { 0 };
 

@@ -29,8 +29,14 @@ private:
     std::vector< uint8_t > flv_frame_;
     size_t sent_from_header_ { 0 };
     size_t sent_from_frame_ { 0 };
-    uint8_t tag_header_[12] { 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x11 };
-    float timestamp_ { 0.0f };
+    /* TagType   | UI8 = 9
+     * DataSize  | UI24
+     * Timestamp | UI64
+     * FrameType | UB[4] = 1
+     * CodecID   | UB[4] = 1
+     */
+    uint8_t tag_header_[13] { 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x11 };
+    uint64_t timestamp_ { 0ul };
 
 private:
     void f_send_header();

@@ -13,6 +13,7 @@
 #include <cstdint>
 #include <cstring>
 #include <dirent.h>
+#include <sys/time.h>
 extern "C"
 {
  #include <jpeglib.h>
@@ -124,7 +125,7 @@ struct image
     std::vector< uint8_t > pixels;
     utils::geometry window;
     int channels { 3 };
-    uint32_t timestamp { 0xff };
+    uint64_t timestamp { 0xff };
 
     image() = default;
     image( utils::geometry const &win ) : window( win ) {};
@@ -248,6 +249,14 @@ bool str2vec( const std::string &s, T *rc )
     return false;
 }
  
+inline uint64_t now()
+{
+    timespec ts;
+    clock_gettime( CLOCK_REALTIME, &ts );
+
+    return ts.tv_sec * 1000000000 + ts.tv_nsec;
+}
+
 }  // namespace utils
 
 #endif /* UTILS_H */

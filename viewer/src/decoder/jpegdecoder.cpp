@@ -35,7 +35,7 @@ void jpegdecoder::f_load( utils::image *img )
     codec_.decode( frame_[1].data(), frame_[1].size(), img );
 }
 
-void jpegdecoder::f_store( uint8_t const *frame, size_t size, uint32_t timestamp )
+void jpegdecoder::f_store( uint8_t const *frame, size_t size, uint64_t timestamp )
 {
     std::lock_guard< std::mutex > lk( mutex_ );
     if( frame_[0].size() != size )

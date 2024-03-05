@@ -26,7 +26,7 @@ private:
 
 private:
     void f_load( utils::image *img ) override;
-    void f_store( uint8_t const *frame, size_t size, uint32_t timestamp ) override;
+    void f_store( uint8_t const *frame, size_t size, uint64_t timestamp ) override;
 };
 
 #endif /* JPEGDECODER_H */

@@ -33,14 +33,14 @@ public:
     virtual ~basedecoder();
 
     bool load( utils::image *img );
-    void store( uint8_t const *frame, size_t size, uint32_t timestamp );
+    void store( uint8_t const *frame, size_t size, uint64_t timestamp );
     
 protected:
-    uint32_t timestamp_ { 0 };
+    uint64_t timestamp_ { 0ul };
     
 private:
     virtual void f_load( utils::image *img ) = 0;
-    virtual void f_store( uint8_t const *frame, size_t size, uint32_t timestamp ) = 0;
+    virtual void f_store( uint8_t const *frame, size_t size, uint64_t timestamp ) = 0;
 
 };
 

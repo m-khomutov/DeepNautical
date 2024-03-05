@@ -46,7 +46,7 @@ bool basedecoder::load( utils::image *img )
     return true;
 }
 
-void basedecoder::store( uint8_t const *frame, size_t size, uint32_t timestamp )
+void basedecoder::store( uint8_t const *frame, size_t size, uint64_t timestamp )
 {
     f_store( frame, size, timestamp );
 }
