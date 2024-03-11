@@ -19,6 +19,22 @@ s_poll_error::s_poll_error( const std::string &what )
 }
 
 
+s_poll::s_poll( char const *videodevname, uint16_t port )
+: p_socket_( port )
+, fd_( epoll_create( 1 ) )
+, videodev_( new videodevice( videodevname ) )
+{
+    try
+    {
+        f_add( p_socket_, EPOLLIN | EPOLLOUT | EPOLLET );
+    }
+    catch( const std::runtime_error & err )
+    {
+        close( fd_ );
+        throw;
+    }
+}
+
 s_poll::s_poll( basescreen *screen, uint16_t port )
 : p_socket_( port )
 , fd_( epoll_create( 1 ) )
@@ -48,7 +64,7 @@ void s_poll::run()
     
     while( running_.load() )
     {
-        int fd_count = epoll_wait( fd_, events, maxevents, 40 );
+        int fd_count = epoll_wait( fd_, events, maxevents, 10 );
         for( int i(0); i < fd_count; ++i )
         {
             if( events[i].data.fd == p_socket_ )
@@ -118,14 +134,21 @@ void s_poll::f_add( int sock, uint32_t events )
 
 void s_poll::f_send_frame( baseframe::time_point_t * last_ts )
 {
-    float duration = screen_->frame_duration_passed( last_ts );
+    float duration = screen_ ? screen_->frame_duration_passed( last_ts ) : videodev_->frame_duration_passed( last_ts );
     if( duration > 0.f )
     {
         for( auto p : connections_ )
         {
             if( p.second->protocol() && p.second->protocol()->can_send_frame() )
             {
-                screen_->load( p.second->protocol(), duration );
+                if( screen_ )
+                {
+                    screen_->load( p.second->protocol(), duration );
+                }
+                if( videodev_ )
+                {
+                    videodev_->load( p.second->protocol(), duration );
+                }
             }
         }
     }

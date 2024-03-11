@@ -63,6 +63,13 @@ void httpapi::on_data( const uint8_t * data, int size )
 {
     message request( std::string((const char*)data, size) );
     std::cerr << request.origin << std::endl;
+
+    if( !screen_ )
+    {
+        f_set_reply( (uint8_t const *)status_404, strlen( status_404 ) );
+        f_reply();
+    }
+
     if( request.uri == "/scene?list" )
     {
         f_send_scene_list();
@@ -78,7 +85,7 @@ void httpapi::on_data( const uint8_t * data, int size )
     else
     {
         f_set_reply( (uint8_t const *)status_404, strlen( status_404 ) );
-	f_reply();
+        f_reply();
     }
 }
 

@@ -14,18 +14,35 @@ baseservice::baseservice( basescreen *screen, uint16_t port )
 , poll_thread_( &poll_ )
 {}
 
+baseservice::baseservice( char const *videodevname, uint16_t port )
+: poll_( videodevname, port )
+{}
+
 baseservice::~baseservice()
 {}
 
 void baseservice::run()
 {
-    screen_->run();
+    if( screen_ )
+    {
+        screen_->run();
+    }
+    else
+    {
+        poll_.run();
+    }
     f_run();
 }
 
 int baseservice::stop()
 {
-    screen_->stop();
-
+    if( screen_ )
+    {
+        screen_->stop();
+    }
+    else
+    {
+        poll_.stop();
+    }
     return f_stop();
 }

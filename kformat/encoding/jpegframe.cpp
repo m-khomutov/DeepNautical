@@ -46,8 +46,9 @@ METHODDEF(void) term_destination(j_compress_ptr cinfo)
 
 }  // namespace
 
-jpegframe::jpegframe( const utils::geometry &geometry, int quality, int duration )
+jpegframe::jpegframe( const utils::geometry &geometry, int quality, int duration, bool reverse )
 : baseframe( geometry, duration )
+, reverse_( reverse )
 {
     cinfo_.err = jpeg_std_error( &jerr_ );  // errors get written to stderr 
     jpeg_create_compress( &cinfo_ );
@@ -106,10 +107,21 @@ void jpegframe::f_compress()
     JSAMPROW row_ptr[1];
     uint8_t * data = rgb_buffer_.data();
     {
-        for( int y(cinfo_.image_height - 1); y >= 0; --y )
+        if( reverse_ )
         {
-            row_ptr[0] = &data[y * stride];
-            jpeg_write_scanlines( &cinfo_, row_ptr, 1 );
+            for( int y(cinfo_.image_height - 1); y >= 0; --y )
+            {
+                row_ptr[0] = &data[y * stride];
+                jpeg_write_scanlines( &cinfo_, row_ptr, 1 );
+            }
+        }
+        else
+        {
+            for( int y(0); y < int(cinfo_.image_height); ++y )
+            {
+                row_ptr[0] = &data[y * stride];
+                jpeg_write_scanlines( &cinfo_, row_ptr, 1 );
+            }
         }
         jpeg_finish_compress( &cinfo_ );
         size_ = dest->jpegsize;

@@ -9,6 +9,7 @@ HEADERS = kformat.h \
     utils.h \
     screen/basescreen.h \
     service/s_socket.h \
+    service/videodevice.h \
     service/s_poll.h \
     service/connection.h \
     service/baseservice.h \
@@ -23,6 +24,7 @@ SOURCES = \
         utils.cpp \
         screen/basescreen.cpp \
         service/s_socket.cpp \
+        service/videodevice.cpp \
         service/connection.cpp \
         service/s_poll.cpp \
         service/baseservice.cpp \

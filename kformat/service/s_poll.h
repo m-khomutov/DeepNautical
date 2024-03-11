@@ -9,6 +9,7 @@
 #define S_POLL_H
 
 #include "s_socket.h"
+#include "videodevice.h"
 #include "encoding/baseframe.h"
 #include <atomic>
 #include <chrono>
@@ -27,6 +28,7 @@ public:
 class s_poll {
 public:
     s_poll( basescreen *screen, uint16_t port );
+    s_poll( char const *videodevname, uint16_t port );
     s_poll(const s_poll& orig) = delete;
     s_poll &operator =(const s_poll& orig) = delete;
     ~s_poll();
@@ -40,7 +42,8 @@ private:
     std::atomic< bool > running_ { true };
     s_socket p_socket_;
     int fd_;
-    basescreen *screen_;
+    basescreen *screen_ { nullptr };
+    std::unique_ptr< videodevice > videodev_;
     std::map< int, std::shared_ptr< connection > > connections_;
 
 private:

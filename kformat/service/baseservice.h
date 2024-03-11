@@ -16,6 +16,7 @@ class basescreen;
 class baseservice {
 public:
     baseservice( basescreen *screen, uint16_t port );
+    baseservice( char const *videodevname, uint16_t port );
 
     baseservice(const baseservice& orig) = delete;
     baseservice &operator =(const baseservice& orig) = delete;
@@ -30,7 +31,7 @@ protected:
     int result_ { EXIT_SUCCESS };
     
 private:
-    basescreen * screen_;
+    basescreen * screen_ { nullptr };
     s_poll poll_;
     utils::scoped_thread< s_poll > poll_thread_;
 

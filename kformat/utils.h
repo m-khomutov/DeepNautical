@@ -63,6 +63,7 @@ template< typename T >
 class scoped_thread
 {
  public:
+     scoped_thread() = default;
      explicit scoped_thread( T *obj )
      : object_( obj )
      , t_( [this](){ try { object_->run(); } catch ( const std::exception &e ) { std::cerr << e.what() <<std::endl; } } )
@@ -72,15 +73,18 @@ class scoped_thread
      scoped_thread &operator =( scoped_thread const &rhs ) = delete;
      ~scoped_thread()
      {
-         object_->stop();
-         if( t_.joinable() )
+         if( object_ )
          {
-             t_.join();
+             object_->stop();
+             if( t_.joinable() )
+             {
+                 t_.join();
+             }
          }
      }
 
 private:
-    T *object_;
+     T *object_ { nullptr };
     std::thread t_;
 };
 
