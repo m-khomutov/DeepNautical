@@ -8,7 +8,7 @@
 #ifndef GLFWSERVICE_H
 #define GLFWSERVICE_H
 
-#include "baseservice.h"
+#include "kformat/service/baseservice.h"
 
 class glfwservice: public baseservice {
 public:

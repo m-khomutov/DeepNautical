@@ -8,7 +8,7 @@
 #ifndef QSERVICE_H
 #define QSERVICE_H
 
-#include "service/baseservice.h"
+#include "kformat/service/baseservice.h"
 
 class qservice: public baseservice {
 public:

@@ -4,37 +4,29 @@ project(simulator)
 set(CMAKE_CXX_STANDARD 17)
 
 add_executable(simulator
-        ../share/utils.cpp
-        src/encoding/baseframe.cpp
-        src/encoding/jpegframe.cpp
-        src/graphics/figures/figure.cpp
-        src/graphics/figures/specification.cpp
-        src/graphics/figures/horizon.cpp
-        src/graphics/figures/water.cpp
         src/graphics/figures/sol.cpp
+        src/graphics/figures/water.cpp
+        src/graphics/figures/horizon.cpp
         src/graphics/figures/antisubmarinefrigate.cpp
         src/graphics/figures/vessel.cpp
         src/graphics/figures/sparklets.cpp
-        src/graphics/texture/texture.cpp
-        src/graphics/texture/avi.cpp
+        src/graphics/figures/figure.cpp
+        src/graphics/figures/specification.cpp
         src/graphics/visitor.cpp
         src/graphics/figureset.cpp
-        src/graphics/uniformblock.cpp
-        src/graphics/shader.cpp
         src/graphics/program.cpp
         src/graphics/scene.cpp
         src/graphics/blender.cpp
-        src/graphics/screens/basescreen.cpp
+        src/graphics/screens/openglscreen.cpp
         src/graphics/screens/glfwscreen.cpp
-        src/server/s_socket.cpp
-        src/server/connection.cpp
-        src/server/baseprotocol.cpp
-        src/server/httpprotocol.cpp
-        src/server/flvprotocol.cpp
-        src/server/s_poll.cpp
-        src/service/baseservice.cpp
+        src/graphics/shader.cpp
+        src/graphics/texture/texture.cpp
+        src/graphics/texture/avi.cpp
+        src/graphics/uniformblock.cpp
         src/service/glfwservice.cpp
         src/main.cpp
         )
 
-target_link_libraries(simulator GL glfw GLEW GLU jpeg pthread)
+target_include_directories(simulator PRIVATE ${PROJECT_SOURCE_DIR}/..)
+link_directories(${CMAKE_BINARY_DIR}/kformat)
+target_link_libraries(simulator kformat GL glfw GLEW GLU jpeg pthread)

@@ -19,9 +19,9 @@ pkg_check_modules(GTK REQUIRED gtk+-3.0)
 #  pkg_search_module(GDK gdk-3.0)
 #endif ()
 
-include_directories(${GTK_INCLUDE_DIRS})
+include_directories(${GTK_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/../kformat)
 add_executable(viewer
-	../share/utils.cpp
+        ../kformat/utils.cpp
 	src/decoder/basedecoder.cpp
 	src/decoder/jpegdecoder.cpp
 	src/receiver/c_socket.cpp

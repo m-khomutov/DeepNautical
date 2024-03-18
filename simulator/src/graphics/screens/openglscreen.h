@@ -8,7 +8,7 @@
 #ifndef OPENGLSCREEN_H
 #define OPENGLSCREEN_H
 
-#include <kformat.h>
+#include <kformat/kformat.h>
 
 #include "../scene.h"
 #include <list>

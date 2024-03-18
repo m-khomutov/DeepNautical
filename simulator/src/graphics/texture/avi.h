@@ -8,7 +8,7 @@
 #ifndef AVI_H
 #define AVI_H
 
-#include "utils.h"
+#include "kformat/utils.h"
 #include <fstream>
 #include <stdexcept>
 #include <memory>

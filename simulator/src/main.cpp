@@ -5,9 +5,9 @@
  * Created on 23 января 2023 г., 18:31
  */
 
-#include "service/baseservice.h"
-#include "encoding/jpegframe.h"
-#include "utils.h"
+#include "kformat/service/baseservice.h"
+#include "kformat/encoding/jpegframe.h"
+#include "kformat/utils.h"
 #ifdef QT_CORE_LIB
 # include <QApplication>
 # include "service/qservice.h"
@@ -88,7 +88,7 @@ int main(int argc, char** argv)
 #else
         std::unique_ptr< basescreen > scr ( new glfwscreen( new jpegframe( utils::config()["window"],
                                                                            utils::config()["quality"],
-                                                                           utils::config()["duration"] ) ) )
+                                                                           utils::config()["duration"] ) ) );
         service.reset( new glfwservice( scr.get(), utils::config()["port"] ) );
 #endif
 

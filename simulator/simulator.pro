@@ -69,5 +69,5 @@ HEADERS += \
     src/graphics/uniformblock.h \
     src/service/qservice.h
 
-INCLUDEPATH += ../simolator/src ../kformat
+INCLUDEPATH += ../simolator/src ..
 LIBS += ../build/kformat/lib/libkformat.a -lGLEW -lGLU -ljpeg

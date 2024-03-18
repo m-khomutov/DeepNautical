@@ -10,7 +10,7 @@
 
 #include "s_socket.h"
 #include "videodevice.h"
-#include "encoding/baseframe.h"
+#include "../encoding/baseframe.h"
 #include <atomic>
 #include <chrono>
 #include <memory>
