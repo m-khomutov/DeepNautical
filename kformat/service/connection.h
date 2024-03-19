@@ -39,6 +39,7 @@ public:
 private:
     socklen_t socklen_ { sizeof(sockaddr_in) };
     int fd_;
+    int send_flags_ = MSG_ZEROCOPY;
     sockaddr_in address_;
     std::unique_ptr< baseprotocol > proto_;
     std::string request_;

@@ -29,7 +29,7 @@ public:
         std::map< std::string, std::string > headers;
     };
 
-    explicit httpapi( int b_sock, basescreen *screen );
+    explicit httpapi( int b_sock, int flags, basescreen *screen );
     httpapi(const httpapi& orig) = delete;
     httpapi &operator =(const httpapi& orig) = delete;
     ~httpapi();

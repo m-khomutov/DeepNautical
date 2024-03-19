@@ -7,6 +7,10 @@
 
 #include "httpapi.h"
 #include <unistd.h>
+
+#include <sys/types.h>
+#include <sys/socket.h>
+
 #include <cstring>
 #include <iostream>
 #include <iterator>
@@ -49,8 +53,8 @@ httpapi::message::message( const std::string &data )
 }
 
 
-httpapi::httpapi( int b_sock, basescreen *screen )
-: baseprotocol( b_sock )
+httpapi::httpapi( int b_sock, int flags, basescreen *screen )
+: baseprotocol( b_sock, flags )
 , screen_( screen )
 {
 }
@@ -151,7 +155,7 @@ void httpapi::f_set_reply( uint8_t const * data, size_t size )
 
 void httpapi::f_reply()
 {
-    int rc = ::write( fd_, reply_.data() + sent_, reply_.size() - sent_ );
+    int rc = ::send( fd_, reply_.data() + sent_, reply_.size() - sent_, flags_ );
     if( rc > 0 )
     {
         sent_ += rc;

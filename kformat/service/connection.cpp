@@ -26,6 +26,13 @@ connection::connection( int b_sock )
 : fd_( accept( b_sock, (struct sockaddr *)&address_, &socklen_ ) )
 {
     fcntl( fd_, F_SETFD, fcntl( fd_, F_GETFD, 0) | O_NONBLOCK );
+    long one;
+    if( setsockopt( fd_, SOL_SOCKET, SO_ZEROCOPY, &one, sizeof(one)) )
+    {
+        send_flags_ = 0;
+        std::cerr << "setsockopt zerocopy error: " << strerror( errno ) << std::endl;
+    }
+
     std::cerr << "[+] connected with " << saddr2str(address_) << ":" << ntohs(address_.sin_port) << "\n";
 }
 
@@ -40,7 +47,7 @@ void connection::on_data( basescreen *screen, const uint8_t * data, int size )
     if( !proto_ )
     {
         request_ += std::string((const char*)data, size);
-        baseprotocol *p = baseprotocol::create( screen, request_, fd_ );
+        baseprotocol *p = baseprotocol::create( screen, request_, fd_, send_flags_ );
         if( p )
         {
             proto_.reset( p );

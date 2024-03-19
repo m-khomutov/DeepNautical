@@ -7,6 +7,10 @@
 
 #include "flvprotocol.h"
 #include "../utils.h"
+
+#include <sys/types.h>
+#include <sys/socket.h>
+
 #include <unistd.h>
 #include <cstring>
 #include <iostream>
@@ -28,8 +32,8 @@ void copy3bytes( uint32_t from, uint8_t *to )
 }
 }  // namespace
 
-flvprotocol::flvprotocol( int b_sock )
-: baseprotocol( b_sock )
+flvprotocol::flvprotocol( int b_sock, int flags )
+: baseprotocol( b_sock, flags )
 , http_flv_header_( strlen(status) + 13 )
 {
     ::memcpy( http_flv_header_.data(), status, strlen(status) );
@@ -58,7 +62,7 @@ void flvprotocol::do_write()
     }
 }
 
-void flvprotocol::send_frame( const uint8_t * data, int size, float duration )
+void flvprotocol::send_frame( const uint8_t * data, int size, float )
 {
     if( sent_from_header_ != http_flv_header_.size() )
     {
@@ -100,7 +104,7 @@ bool flvprotocol::can_send_frame() const
 
 void flvprotocol::f_send_header()
 {
-    int rc = ::write( fd_, http_flv_header_.data() + sent_from_header_, http_flv_header_.size() - sent_from_header_ );
+    int rc = ::send( fd_, http_flv_header_.data() + sent_from_header_, http_flv_header_.size() - sent_from_header_, flags_ );
     if( rc > 0 )
     {
         sent_from_header_ += rc;
@@ -109,7 +113,7 @@ void flvprotocol::f_send_header()
 
 void flvprotocol::f_send_frame()
 {
-    int rc = ::write( fd_, flv_frame_.data() + sent_from_frame_, flv_frame_.size() - sent_from_frame_ );
+    int rc = ::send( fd_, flv_frame_.data() + sent_from_frame_, flv_frame_.size() - sent_from_frame_, flags_ );
     if( rc > 0 )
     {
         sent_from_frame_ += rc;

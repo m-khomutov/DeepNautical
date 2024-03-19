@@ -20,9 +20,9 @@ class basescreen;
 
 class baseprotocol {
 public:
-    static baseprotocol * create( basescreen *screen, const std::string &request, int sock );
+    static baseprotocol * create( basescreen *screen, const std::string &request, int sock, int flags );
 
-    explicit baseprotocol( int sock );
+    explicit baseprotocol( int sock, int flags );
     baseprotocol(const baseprotocol& orig) = delete;
     baseprotocol &operator =(const baseprotocol& orig) = delete;
     virtual ~baseprotocol();
@@ -34,6 +34,7 @@ public:
     
 protected:
     int fd_;
+    int flags_;
 
 private:
 

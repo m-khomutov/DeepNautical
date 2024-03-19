@@ -16,24 +16,25 @@ protocol_error::protocol_error( const std::string &what )
 : std::runtime_error( what + std::string(" failed: ") + std::string(strerror( errno )) )
 {}
 
-baseprotocol *baseprotocol::create( basescreen *screen, const std::string &request, int sock )
+baseprotocol *baseprotocol::create( basescreen *screen, const std::string &request, int sock, int flags )
 {
     if( request.find( "\r\n\r\n" ) != std::string::npos )
     {
         if( request.find( "GET /stream?proto=flv HTTP/1.1\r\n" ) != std::string::npos )
         {
-            return new flvprotocol( sock );
+            return new flvprotocol( sock, flags );
         }
         if( request.find( "GET /scene?" ) != std::string::npos )
         {
-            return new httpapi( sock, screen );
+            return new httpapi( sock, flags, screen );
         }
     }
     return nullptr;
 }
 
-baseprotocol::baseprotocol( int sock )
+baseprotocol::baseprotocol( int sock, int flags )
 : fd_( sock )
+, flags_( flags )
 {}
 
 baseprotocol::~baseprotocol()
