@@ -39,7 +39,7 @@ private:
     bool reverse_;
 
 private:
-    void f_load( baseprotocol * proto, float duration ) override;
+    bool f_load( baseprotocol * proto, float duration ) override;
 
     void f_compress( size_t view );
 };

@@ -58,7 +58,7 @@ void openglscreen::f_exec_command()
         switch( cmd.type() )
         {
         case command::set_scene:
-            sc_.reset(new scene( std::string(utils::config()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
+            sc_.back().reset(new scene( std::string(utils::config()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
             break;
         }
     }
@@ -77,7 +77,7 @@ void openglscreen::f_store()
     }
 }
 
-void openglscreen::f_load( baseprotocol *proto, float duration )
+bool openglscreen::f_load( baseprotocol *proto, float duration )
 {
-   frame_->load( proto, duration );
+   return frame_->load( proto, duration );
 }

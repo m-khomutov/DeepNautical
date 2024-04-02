@@ -19,6 +19,7 @@ namespace
 {
 const char status[] = "HTTP/1.1 200 OK\r\nAccess-Control-Allow-Origin: *\r\nContent-Type: video/x-flv\r\n\r\n";
 const uint8_t header[13] = { 'F', 'L', 'V', 0x01, 0x01, 0x00, 0x00, 0x00, 0x09, 0x00, 0x00, 0x0, 0x00 };
+const char not_found[] = "HTTP/1.1 404 Stream Not Found\r\nContent-Type: text/plain\r\nContent-Length: 0\r\n\r\n";
 
 void copy3bytes( uint32_t from, uint8_t *to )
 {
@@ -105,6 +106,11 @@ void flvprotocol::send_frame( const uint8_t * data, int size, float )
 bool flvprotocol::can_send_frame() const
 {
     return true;
+}
+
+void flvprotocol::write_error()
+{
+    ::send( fd_, not_found, strlen(not_found), flags_ );
 }
 
 void flvprotocol::f_send_header()

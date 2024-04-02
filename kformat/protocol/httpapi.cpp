@@ -109,6 +109,12 @@ bool httpapi::can_send_frame() const
     return false;
 }
 
+void httpapi::write_error()
+{
+    f_set_reply( (uint8_t const *)status_404, strlen( status_404 ) );
+    f_reply();
+}
+
 void httpapi::f_send_scene_list()
 {
     std::string body = "{\"success\":true,\"scenes\":[";

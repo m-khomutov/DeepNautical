@@ -24,7 +24,7 @@ public:
 
     virtual uint8_t *buffer( size_t view, int width, int height ) = 0;
 
-    void load( baseprotocol *, float duration );
+    bool load( baseprotocol *, float duration );
 
     int width() const
     {
@@ -44,7 +44,7 @@ protected:
     std::vector< image > rgb_buffer_;
 
 private:
-    virtual void f_load( baseprotocol * proto, float duration ) = 0;
+    virtual bool f_load( baseprotocol * proto, float duration ) = 0;
 
 };
 

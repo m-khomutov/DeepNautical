@@ -82,11 +82,6 @@ void scene::display( size_t view, GLuint/* width*/, GLuint/* height*/, double cu
 {
     if( view < figureset_.size() )
     {
-        if( view == 0 )
-        {
-            glClear( GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-        }
-
         figureset_[view]->draw( currentTime );
     }
 }

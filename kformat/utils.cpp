@@ -96,7 +96,8 @@ utils::config::config( int argc, char * argv[] )
     config::fields_["quality"] = 80;
     config::fields_["duration"] = 40;
     config::fields_["verify"] = false;
-    
+    config::fields_["scene_count"] = 1;
+
     int c;
     while ((c = getopt (argc, argv, "d:p:q:s:t:u:vw:c:o:h")) != -1)
     {
@@ -193,6 +194,10 @@ void utils::config::f_read_file( char const *fname )
         {
             config::fields_["scenes"] = str2conf< std::string >( line.c_str() );
         }   
+        else if( (pos = line.find( "scene_count=" )) != std::string::npos )
+        {
+            config::fields_["scene_count"] = str2conf< int >( line.substr( pos + 12 ).c_str() );
+        }
     });
 }
 

@@ -13,6 +13,7 @@
 #include <cstring>
 #include <iostream>
 
+
 s_poll_error::s_poll_error( const std::string &what )
 : std::runtime_error( what + std::string(" failed: ") + std::string(strerror( errno )) )
 {
@@ -143,7 +144,10 @@ void s_poll::f_send_frame( baseframe::time_point_t * last_ts )
             {
                 if( screen_ )
                 {
-                    screen_->load( p.second->protocol(), duration );
+                    if( !screen_->load( p.second->protocol(), duration ) && p.second->protocol() )
+                    {
+                        p.second->protocol()->write_error();
+                    }
                 }
                 if( videodev_ )
                 {

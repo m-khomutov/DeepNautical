@@ -133,12 +133,18 @@ void jpegframe::f_compress( size_t view )
     }
 }
 
-void jpegframe::f_load( baseprotocol * proto, float duration )
+bool jpegframe::f_load( baseprotocol * proto, float duration )
 {
+    if( proto->view() > rgb_buffer_.size() - 1 )
+    {
+        return false;
+    }
+
     f_compress( proto->view() );
 
     if( size_ )
     {
         proto->send_frame( jpeg_frame_[proto->view()].data(), size_, duration );
     }
+    return true;
 }

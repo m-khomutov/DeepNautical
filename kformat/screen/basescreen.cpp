@@ -22,11 +22,11 @@ void basescreen::store()
     f_store();
 }
 
-void basescreen::load( baseprotocol *proto, float duration )
+bool basescreen::load( baseprotocol *proto, float duration )
 {
     std::lock_guard< std::mutex > lk(frame_mutex_);
 
-    f_load( proto, duration );
+    return f_load( proto, duration );
 }
 
 float basescreen::frame_duration_passed(baseframe::time_point_t *ts) const

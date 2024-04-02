@@ -16,7 +16,7 @@ public:
     void run();
     void stop();
     void store();
-    void load( baseprotocol *proto, float duration );
+    bool load( baseprotocol *proto, float duration );
     float frame_duration_passed( baseframe::time_point_t *ts ) const;
 
     virtual const std::set< std::string > &scenes() const = 0;
@@ -33,7 +33,7 @@ private:
     virtual void f_run() = 0;
     virtual void f_stop() = 0;
     virtual void f_store() = 0;
-    virtual void f_load( baseprotocol *proto, float duration ) = 0;
+    virtual bool f_load( baseprotocol *proto, float duration ) = 0;
 };
 
 #endif // BASESCREEN_H

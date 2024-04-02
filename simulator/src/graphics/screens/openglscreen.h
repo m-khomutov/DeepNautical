@@ -58,7 +58,7 @@ public:
 protected:
     std::set< std::string > scenes_;
     std::set< std::string >::iterator scene_iter_;
-    std::unique_ptr< scene > sc_;
+    std::vector< std::shared_ptr< scene > > sc_;
     utils::safeguard< std::list< command > > commands_;
 
 protected:
@@ -66,7 +66,7 @@ protected:
 
 private:
     void f_store() override;
-    void f_load( baseprotocol *proto, float duration ) override;
+    bool f_load( baseprotocol *proto, float duration ) override;
 };
 
 #endif /* OPENGLSCREEN_H */

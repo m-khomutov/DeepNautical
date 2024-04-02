@@ -48,7 +48,7 @@
 
 
 [Environment]
-camera_position={{0.4 0.0 3.0} {-0.4 0.0 3.0}}
+camera_position={{0.0 0.0 3.0}}
 light_color={1.0 1.0 1.0}
 light_position={0.0 0.0 1.0}
 fog_color={0.0, 0.0, 0.0 1.0}

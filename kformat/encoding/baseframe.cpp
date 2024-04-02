@@ -15,12 +15,13 @@ baseframe::baseframe( const utils::geometry &g, int duration )
 baseframe::~baseframe()
 {}
 
-void baseframe::load( baseprotocol * proto, float duration )
+bool baseframe::load( baseprotocol * proto, float duration )
 {
     if( proto )
     {
-        f_load( proto, duration );
+        return f_load( proto, duration );
     }
+    return false;
 }
 
 float baseframe::duration_passed( time_point_t *ts ) const
