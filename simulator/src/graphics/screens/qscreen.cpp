@@ -48,13 +48,20 @@ void qscreen::initializeGL()
         throw screen_error("GLEW init error");
     }
     sc_.reset(new scene( std::string(utils::config()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
-    glViewport( 0, 0, width(), height() );
+
+    viewes_ = sc_->cameras();
+    resize( viewes_ * frame_->width(), frame_->height() );
 }
 
 void qscreen::paintGL()
 {
     f_exec_command();
-    sc_->display( width(), height(), QDateTime::currentMSecsSinceEpoch());
+
+    for( size_t v(0); v < viewes_; ++v )
+    {
+        glViewport( v * frame_->width(), 0, frame_->width(), height() );
+        sc_->display( v, frame_->width(), height(), QDateTime::currentMSecsSinceEpoch());
+    }
 
     if( frame_duration_passed( &store_ts_ ) > 0.f )
     {

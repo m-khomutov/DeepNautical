@@ -9,8 +9,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-figure::figure( const std::vector< std::string > &settings )
-: spec_( settings )
+figure::figure( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
+: spec_( settings, camera_pos )
 {
     utils::geometry win { utils::config()["window"] };
     projection_ = glm::perspective( glm::radians( 26.5f ), (GLfloat)win.width / (GLfloat)win.height, 0.1f, 100.0f );

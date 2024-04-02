@@ -81,6 +81,7 @@ public:
     void stop();
 
 private:
+    size_t view_ {0};
     basedecoder *decoder_;
     std::atomic< bool > running_ { true };
     std::unique_ptr< c_socket > connection_;

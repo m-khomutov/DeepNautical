@@ -13,7 +13,7 @@
 
 class vessel: public figure {
 public:
-    explicit vessel( const std::vector< std::string > &settings );
+    explicit vessel( const std::vector< std::string > &settings, const glm::vec3 &camera_pos );
     vessel(const vessel& orig) = delete;
     vessel &operator =(const vessel& orig) = delete;
     ~vessel();

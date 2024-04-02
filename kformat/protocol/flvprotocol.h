@@ -13,7 +13,7 @@
 
 class flvprotocol: public baseprotocol {
 public:
-    explicit flvprotocol( int b_sock, int flags );
+    explicit flvprotocol( int b_sock, int flags, const std::string& request );
     flvprotocol(const flvprotocol& orig) = delete;
     flvprotocol & operator =(const flvprotocol& orig) = delete;
     ~flvprotocol();
@@ -24,6 +24,11 @@ public:
     void send_frame( const uint8_t * data, int size, float duration ) override;
     bool can_send_frame() const override;
     
+    size_t view() const override
+    {
+        return view_;
+    }
+
 private:
     std::vector< uint8_t > http_flv_header_;
     std::vector< uint8_t > flv_frame_;
@@ -37,6 +42,7 @@ private:
      */
     uint8_t tag_header_[13] { 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x11 };
     uint64_t timestamp_ { 0ul };
+    size_t view_ {0};
 
 private:
     void f_send_header();

@@ -22,7 +22,7 @@ public:
     baseframe &operator =( const baseframe& orig ) = delete;
     virtual ~baseframe();
 
-    virtual uint8_t *buffer( int width, int height ) = 0;
+    virtual uint8_t *buffer( size_t view, int width, int height ) = 0;
 
     void load( baseprotocol *, float duration );
 
@@ -37,9 +37,11 @@ public:
     float duration_passed( time_point_t *ts ) const;
     
 protected:
+    using image = std::vector< uint8_t >;
+
     utils::geometry geometry_;
     std::chrono::milliseconds duration_;
-    std::vector< uint8_t > rgb_buffer_;
+    std::vector< image > rgb_buffer_;
 
 private:
     virtual void f_load( baseprotocol * proto, float duration ) = 0;

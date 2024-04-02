@@ -7,8 +7,8 @@
 
 #include "horizon.h"
 
-horizon::horizon( const std::vector< std::string > &settings )
-: figure( settings )
+horizon::horizon( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
+: figure( settings, camera_pos )
 {
     f_check_environment();
     avi_.reset( new avi( (std::string(utils::config()["textures"]) + "/" + spec_.texture_name).c_str() ) );

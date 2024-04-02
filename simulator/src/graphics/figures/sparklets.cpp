@@ -7,8 +7,8 @@
 
 #include "sparklets.h"
 
-sparklets::sparklets( const std::vector< std::string > &settings )
-: figure( settings )
+sparklets::sparklets( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
+: figure( settings, camera_pos )
 {
     f_check_environment();
     f_set_points();

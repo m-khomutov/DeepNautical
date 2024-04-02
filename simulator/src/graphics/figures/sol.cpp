@@ -9,8 +9,8 @@
 #include <glm/gtx/transform.hpp>
 
 
-sol::sol( const std::vector< std::string > &settings )
-: figure( settings )
+sol::sol( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
+: figure( settings, camera_pos )
 {
     offset_ = glm::vec3( -2.5f, 2.0f, 0.0f );
     model_ = glm::mat4( glm::scale( 

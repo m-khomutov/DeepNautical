@@ -13,7 +13,7 @@
 
 class sparklets: public figure {
 public:
-    explicit sparklets( const std::vector< std::string > &settings );
+    explicit sparklets( const std::vector< std::string > &settings, const glm::vec3 &camera_pos );
     sparklets(const vessel& orig) = delete;
     sparklets &operator =(const sparklets& orig) = delete;
     ~sparklets();

@@ -9,7 +9,8 @@
 #include "kformat/utils.h"
 #include <iostream>
 
-specification::specification( const std::vector< std::string > &settings )
+specification::specification( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
+: camera_position( camera_pos )
 {
     for( auto s : settings )
     {
@@ -133,13 +134,6 @@ specification::specification( const std::vector< std::string > &settings )
                     std::cerr << "wake error\n";
                 }
             }
-            else if( p.first.find( "camera_position" ) != std::string::npos )
-            {
-                if( ! utils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &camera_position ) )
-                {
-                    std::cerr << "camera position error\n";
-                }
-            }
             else if( p.first.find( "fog_color" ) != std::string::npos )
             {
                 if( ! utils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &fog_color ) )
@@ -182,7 +176,7 @@ void specification::f_read_viewport( const std::string& config )
             return;
         }
         for( int i(0); i <3; ++i ) rc[off++] = point[i];
-	off += 2;
+        off += 2;
         p1 = p2 + 3;
         p2 = config.find("} {", p1);
     }
@@ -226,7 +220,7 @@ void specification::f_read_surge( const std::string& config )
     {
         if( ! utils::str2vec( config.substr( p1, p2 - p1 ), &surge[off] ) )
         {
-            std::cerr << "invalid viewport: " << config << "\n";
+            std::cerr << "invalid surge: " << config << "\n";
             return;
         }
     }

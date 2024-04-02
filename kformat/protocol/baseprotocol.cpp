@@ -20,9 +20,9 @@ baseprotocol *baseprotocol::create( basescreen *screen, const std::string &reque
 {
     if( request.find( "\r\n\r\n" ) != std::string::npos )
     {
-        if( request.find( "GET /stream?proto=flv HTTP/1.1\r\n" ) != std::string::npos )
+        if( request.find( "GET /stream?" ) != std::string::npos )
         {
-            return new flvprotocol( sock, flags );
+            return new flvprotocol( sock, flags, request );
         }
         if( request.find( "GET /scene?" ) != std::string::npos )
         {

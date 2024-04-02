@@ -12,7 +12,7 @@
 
 class sol: public figure {
 public:
-    explicit sol( const std::vector< std::string > &settings );
+    explicit sol( const std::vector< std::string > &settings, const glm::vec3 &camera_pos );
     sol(sol const& orig) = delete;
     sol &operator =(sol const& orig) = delete;
     ~sol();

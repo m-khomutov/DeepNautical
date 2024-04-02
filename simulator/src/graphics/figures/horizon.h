@@ -13,7 +13,7 @@
 
 class horizon: public figure {
 public:
-    explicit horizon( const std::vector< std::string > &settings );
+    explicit horizon( const std::vector< std::string > &settings, const glm::vec3 &camera_pos );
     horizon(const horizon& orig) = delete;
     horizon &operator =(const horizon& orig) = delete;
     ~horizon();

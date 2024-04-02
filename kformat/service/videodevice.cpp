@@ -328,10 +328,10 @@ bool videodevice::f_get_frame()
         yuyv_.resize( v4l2_buffer_.bytesused );
         ::memcpy( yuyv_.data(), (uint8_t*)mmap_ptr_, yuyv_.size() );
 
-        yuyv_to_rgb( yuyv_.data(), frame_->buffer( width_, height_ ), width_, height_ );
+        yuyv_to_rgb( yuyv_.data(), frame_->buffer( 0, width_, height_ ), width_, height_ );
     }
     else if( pixelformat_ == V4L2_PIX_FMT_RGB24 ) {
-        ::memcpy( frame_->buffer( width_, height_ ), (uint8_t*)mmap_ptr_, v4l2_buffer_.bytesused );
+        ::memcpy( frame_->buffer( 0, width_, height_ ), (uint8_t*)mmap_ptr_, v4l2_buffer_.bytesused );
     }
     return true;
 }

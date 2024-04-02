@@ -12,7 +12,7 @@
 
 class water: public figure {
 public:
-    explicit water( const std::vector< std::string > &settings );
+    explicit water( const std::vector< std::string > &settings, const glm::vec3 &camera_pos );
     water( water const &orig ) = delete;
     water &operator =( water const &orig ) = delete;
     ~water();

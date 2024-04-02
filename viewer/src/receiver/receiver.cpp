@@ -75,7 +75,7 @@ receiver::receiver( basedecoder *decoder )
     try
     {
         std::string url = utils::config()["url"];
-        std::regex r("^([a-z]+)://([0-9\\.\\S]+):([0-9]{4,5})/(.*)$"); // proto://host:port/context
+        std::regex r("^([a-z]+)://([0-9\\.\\S]+):([0-9]{4,5})/([0-9])$"); // proto://host:port/context
         std::smatch cm;
 
         if( !(std::regex_match( url, cm, r )) || cm.size() != 5 )
@@ -84,6 +84,7 @@ receiver::receiver( basedecoder *decoder )
         }
         server_host_ = cm[2].str();
         server_port_ = std::stoi( cm[3].str() );
+        view_ = std::stoi( cm[4].str() );
     }
     catch (const std::regex_error &e)
     {
@@ -165,7 +166,7 @@ void receiver::f_start_connection()
     {
         throw receiver_error( "invalid connection" );
     }
-    std::string request = "GET /stream?proto=flv HTTP/1.1\r\n"
+    std::string request = "GET /stream?proto=flv&view=" + std::to_string(view_) + " HTTP/1.1\r\n"
                           "User-Agent: Viewer/0.0.1 (agat-aquarius)\r\n"
                           "Accept: */*\r\n"
                           "Accept-Encoding: identity\r\n"

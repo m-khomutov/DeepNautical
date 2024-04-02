@@ -27,6 +27,7 @@ protected:
     baseframe *frame_;
     std::mutex frame_mutex_;
     baseframe::time_point_t store_ts_;
+    size_t viewes_ {1};
 
 private:
     virtual void f_run() = 0;

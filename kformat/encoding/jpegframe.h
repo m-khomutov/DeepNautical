@@ -28,20 +28,20 @@ public:
     jpegframe &operator =( const jpegframe &rhs ) = delete;
     ~jpegframe();
 
-    uint8_t *buffer( int width, int height ) override;
+    uint8_t *buffer( size_t view, int width, int height ) override;
 
 private:
     jpeg_compress_struct cinfo_;
     jpeg_error_mgr jerr_;
 
-    std::vector< uint8_t > jpeg_frame_;
+    std::vector< baseframe::image > jpeg_frame_;
     size_t size_ { 0 };
     bool reverse_;
 
 private:
     void f_load( baseprotocol * proto, float duration ) override;
 
-    void f_compress();
+    void f_compress( size_t view );
 };
 
 #endif /* JPEGFRAME_H */

@@ -70,8 +70,11 @@ void openglscreen::f_store()
     glGetIntegerv( GL_READ_BUFFER, &q );
     glPixelStorei( GL_PACK_ALIGNMENT, 1 );
     //glReadBuffer( GL_FRONT);//COLOR_ATTACHMENT0 );
-    uint8_t *buffer = frame_->buffer( frame_->width(), frame_->height() );
-    glReadPixels( 0, 0, frame_->width(), frame_->height(), GL_RGB, GL_UNSIGNED_BYTE, buffer );
+    for( size_t v(0); v < viewes_; ++v )
+    {
+        uint8_t *buffer = frame_->buffer( v, frame_->width(), frame_->height() );
+        glReadPixels( v * frame_->width(), 0, frame_->width(), frame_->height(), GL_RGB, GL_UNSIGNED_BYTE, buffer );
+    }
 }
 
 void openglscreen::f_load( baseprotocol *proto, float duration )

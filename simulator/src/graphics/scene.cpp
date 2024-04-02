@@ -67,6 +67,9 @@ scene::scene( const std::string &specification )
     glDebugMessageControl( GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE );
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
+    glClearColor( 0.392f, 0.706f, 0.983f, 1.0f );
+    glClearDepth(1.0f);
+
     f_debug_info();
     f_initialize( specification );
 }
@@ -75,12 +78,17 @@ scene::~scene()
 {
 }
 
-void scene::display( GLuint/* width*/, GLuint/* height*/, double currentTime )
+void scene::display( size_t view, GLuint/* width*/, GLuint/* height*/, double currentTime )
 {
-    glClearColor( 0.392f, 0.706f, 0.983f, 1.0f );
-    glClearDepth(1.0f);
-    glClear( GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-    figureset_.draw( currentTime );
+    if( view < figureset_.size() )
+    {
+        if( view == 0 )
+        {
+            glClear( GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+        }
+
+        figureset_[view]->draw( currentTime );
+    }
 }
 
 void scene::f_initialize( const std::string &specification )
@@ -111,18 +119,25 @@ void scene::f_initialize( const std::string &specification )
     }
 
     const std::list< param_t > &environment_params = figures["[Environment]"];
-    for( auto figure : figures )
+    std::vector< glm::vec3 > camera_positions = f_get_camera_positions( environment_params.back() );
+
+    for( auto camera_pos : camera_positions )
     {
-        for( param_t &param : figure.second )
+        figureset_.emplace_back( new figureset() );
+
+        for( auto figure : figures )
         {
-            if( !(environment_params.empty() || figure.first == "[Environment]") )
+            for( param_t &param : figure.second )
             {
-                param.insert( param.end(), environment_params.back().begin(), environment_params.back().end() );
+                if( !(environment_params.empty() || figure.first == "[Environment]") )
+                {
+                    param.insert( param.end(), environment_params.back().begin(), environment_params.back().end() );
+                }
+                f_add_figure( figure.first, param, camera_pos );
             }
-            f_add_figure( figure.first, param );
         }
+        figureset_.back()->initialize();
     }
-    figureset_.initialize();
 }
 
 void scene::f_debug_info()
@@ -151,39 +166,82 @@ void scene::f_debug_error( const debug_message &msg ) const
               << msg.body << std::endl;
 }
 
-void scene::f_add_figure( const std::string &header, const std::vector< std::string > &settings )
+void scene::f_add_figure( const std::string &header, const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
 {
     if( header == "[Horizon]" )
     {
-        f_add_figure< horizon >( settings );
+        f_add_figure< horizon >( settings, camera_pos );
     }
     else if( header == "[Vessel]" )
     {
-        f_add_figure< vessel >( settings );
+        f_add_figure< vessel >( settings, camera_pos );
     }
     else if( header == "[Water]" )
     {
-        f_add_figure< water >( settings );
+        f_add_figure< water >( settings, camera_pos );
     }
     else if( header == "[Sol]" )
     {
-        f_add_figure< sol >( settings );
+        f_add_figure< sol >( settings, camera_pos );
     }
     else if( header == "[Sparklets]" )
     {
-        f_add_figure< sparklets >( settings );
+        f_add_figure< sparklets >( settings, camera_pos );
     }
 }
 
 template< typename Figure >
-void scene::f_add_figure( const std::vector< std::string > &settings )
+void scene::f_add_figure( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
 {
     try
     {
-        figureset_.emplace( new Figure( settings ) );
+        figureset_.back()->emplace( new Figure( settings, camera_pos ) );
     }
     catch( const std::runtime_error &err )
     {
         std::cerr << __PRETTY_FUNCTION__ << " error: " << err.what() <<std::endl;
     }
+}
+
+std::vector< glm::vec3 > scene::f_get_camera_positions( const std::vector< std::string > &settings )
+{
+    std::vector< glm::vec3 > positions;
+
+    for( auto s : settings )
+    {
+        std::pair< std::string, std::string > p;
+        if( utils::str2key( s, &p ) )
+        {
+            if( p.first.find( "camera_position" ) != std::string::npos )
+            {
+                glm::vec3 next_position;
+                size_t p1 = 2, p2 = p.second.find("} {");
+                while( p2 != std::string::npos )
+                {
+                    if( ! utils::str2vec( p.second.substr( p1, p2 - p1 ), &next_position ) )
+                    {
+                        std::cerr << "invalid camera position: " << p.second << "\n";
+                        break;
+                    }
+                    positions.push_back( next_position );
+                    p1 = p2 + 3;
+                    p2 = p.second.find("} {", p1);
+                }
+                p2 = p.second.find("}}", p1 );
+                if( p2 != std::string::npos )
+                {
+                    if( utils::str2vec( p.second.substr( p1, p2 - p1 ), &next_position ) )
+                    {
+                        positions.push_back( next_position );
+                    }
+                }
+            }
+        }
+    }
+    if( positions.empty() )
+    {
+        positions.push_back( glm::vec3( 0.0f, 0.0f, 5.0f ) );
+    }
+
+    return positions;
 }

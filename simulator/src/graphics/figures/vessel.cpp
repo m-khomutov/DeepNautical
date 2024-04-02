@@ -7,8 +7,8 @@
 
 #include "vessel.h"
 
-vessel::vessel( const std::vector< std::string > &settings )
-: figure( settings )
+vessel::vessel( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
+: figure( settings, camera_pos )
 {
     f_check_environment();
     

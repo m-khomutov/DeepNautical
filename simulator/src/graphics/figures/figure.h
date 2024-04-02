@@ -28,7 +28,7 @@ public:
         glm::vec2 wake;
     };
     
-    explicit figure( const std::vector< std::string > &setting );
+    explicit figure( const std::vector< std::string > &setting, const glm::vec3 &camera_pos );
     figure(const figure& orig) = delete;
     figure &operator=(const figure& orig) = delete;
     virtual ~figure();

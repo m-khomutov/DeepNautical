@@ -74,38 +74,43 @@ jpegframe::~jpegframe()
     jpeg_destroy_compress( &cinfo_ );
 }
 
-uint8_t *jpegframe::buffer( int width, int height )
+uint8_t *jpegframe::buffer( size_t view, int width, int height )
 {
     size_t channels { 3 };
     size_t stride = channels * width;
     //stride += (stride % 4) ? (4 - stride % 4) : 0;
     std::vector< uint8_t >::size_type sz = stride * height;
 
-    if( sz != rgb_buffer_.size() )
+    if( view >= rgb_buffer_.size() ) {
+        rgb_buffer_.resize( view + 1 );
+        jpeg_frame_.resize( view + 1 );
+    }
+
+    if( sz != rgb_buffer_[view].size() )
     {
-        rgb_buffer_.resize( sz );
-        jpeg_frame_.resize( sz );
+        rgb_buffer_[view].resize( sz );
+        jpeg_frame_[view].resize( sz );
         cinfo_.image_width = width;
         cinfo_.image_height = height;
         cinfo_.input_components = 3;
         cinfo_.dct_method = JDCT_FASTEST;
     }
 
-    return rgb_buffer_.data();
+    return rgb_buffer_[view].data();
 }
 
-void jpegframe::f_compress()
+void jpegframe::f_compress( size_t view )
 {
     mem_destination_ptr_t dest = mem_destination_ptr_t( cinfo_.dest );
-    dest->buf = jpeg_frame_.data();
-    dest->bufsize  = jpeg_frame_.size();
+    dest->buf = jpeg_frame_[view].data();
+    dest->bufsize  = jpeg_frame_[view].size();
     dest->jpegsize = 0;
 
     jpeg_start_compress( &cinfo_, TRUE );
 
     int stride = cinfo_.image_width * cinfo_.input_components;
     JSAMPROW row_ptr[1];
-    uint8_t * data = rgb_buffer_.data();
+    uint8_t * data = rgb_buffer_[view].data();
     {
         if( reverse_ )
         {
@@ -130,10 +135,10 @@ void jpegframe::f_compress()
 
 void jpegframe::f_load( baseprotocol * proto, float duration )
 {
-    f_compress();
+    f_compress( proto->view() );
 
     if( size_ )
     {
-        proto->send_frame( jpeg_frame_.data(), size_, duration );
+        proto->send_frame( jpeg_frame_[proto->view()].data(), size_, duration );
     }
 }

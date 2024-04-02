@@ -32,12 +32,17 @@ void copy3bytes( uint32_t from, uint8_t *to )
 }
 }  // namespace
 
-flvprotocol::flvprotocol( int b_sock, int flags )
+flvprotocol::flvprotocol( int b_sock, int flags, const std::string &request )
 : baseprotocol( b_sock, flags )
 , http_flv_header_( strlen(status) + 13 )
 {
     ::memcpy( http_flv_header_.data(), status, strlen(status) );
     ::memcpy( http_flv_header_.data() + http_flv_header_.size() - 13, header, sizeof(header) );
+    size_t p = request.find("view=");
+    if( p != std::string::npos && request.size() >= p + 5 && std::isdigit( request[p + 5] ) )
+    {
+        view_ = request[p + 5] - '0';
+    }
 }
 
 flvprotocol::~flvprotocol()

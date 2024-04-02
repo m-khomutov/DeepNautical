@@ -60,10 +60,15 @@ public:
     scene & operator =( const scene & rhs ) = delete;
     ~scene();
 
-    void display( GLuint width, GLuint height, double currentTime );
+    size_t cameras() const
+    {
+        return figureset_.size();
+    }
+
+    void display( size_t view, GLuint width, GLuint height, double currentTime );
     
 private:
-    figureset figureset_;
+    std::vector< std::shared_ptr< figureset > > figureset_;
     
 private:
     static void GLAPIENTRY debugCb( GLenum src,
@@ -77,10 +82,12 @@ private:
     void f_initialize( const std::string &specification );
     void f_debug_info();
     void f_debug_error( const debug_message &msg ) const;
-    void f_add_figure( const std::string &header, const std::vector< std::string > &settings );
+    void f_add_figure( const std::string &header, const std::vector< std::string > &settings, const glm::vec3 &camera_pos );
 
     template< typename Figure >
-    void f_add_figure( const std::vector< std::string > &settings );
+    void f_add_figure( const std::vector< std::string > &settings, const glm::vec3 &camera_pos );
+
+    std::vector< glm::vec3 > f_get_camera_positions( const std::vector< std::string > &settings );
 };
 
 #endif /* SCENE_H */

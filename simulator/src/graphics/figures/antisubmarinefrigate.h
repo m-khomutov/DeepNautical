@@ -12,7 +12,7 @@
 
 class antisubmarinefrigate: public figure {
 public:
-    explicit antisubmarinefrigate( const std::vector< std::string > &settings );
+    explicit antisubmarinefrigate( const std::vector< std::string > &settings, const glm::vec3 &camera_pos );
     antisubmarinefrigate(const antisubmarinefrigate& orig) = delete;
     antisubmarinefrigate &operator=(const antisubmarinefrigate& orig) = delete;
     ~antisubmarinefrigate();

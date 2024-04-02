@@ -31,7 +31,12 @@ public:
     virtual void do_write() = 0;
     virtual void send_frame( const uint8_t * data, int size, float duration ) = 0;
     virtual bool can_send_frame() const = 0;
-    
+
+    virtual size_t view() const
+    {
+        return 0;
+    }
+
 protected:
     int fd_;
     int flags_;
