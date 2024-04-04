@@ -37,6 +37,7 @@ glfwscreen::glfwscreen( baseframe *frame )
     if( glewInit() != GLEW_OK ) {
         throw screen_error("GLEW init error");
     }
+
     int width, height;
     glfwGetFramebufferSize( window_.get(), &width, &height );
     glViewport( 0, 0, width, height );
@@ -50,14 +51,38 @@ glfwscreen::~glfwscreen()
 
 void glfwscreen::f_run()
 {
+    for( int i(0); i < utils::config()["scene_count"]; ++i )
+    {
+        if( scene_iter_ == scenes_.end() )
+        {
+            throw screen_error("not enough scenes to start");
+        }
+        sc_.emplace_back( new scene( std::string(utils::config()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
+        ++scene_iter_;
+    }
+
+    viewes_ = 0;
+    for( auto &s : sc_ )
+    {
+        viewes_ += s->cameras();
+    }
+
+    glfwSetWindowSize( window_.get(), viewes_ * frame_->width(), frame_->height() );
     GLint w, h;
-    sc_.reset(new scene( std::string(utils::config()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
     while( !glfwWindowShouldClose( window_.get() ) )
     {
         f_exec_command();
 
         glfwGetFramebufferSize( window_.get(), &w, &h );
-        sc_->display( w, h, glfwGetTime() * 1000 );
+        for( size_t s(0), view(0); s < sc_.size(); ++s )
+        {
+            for( size_t v( 0 ); v < sc_[s]->cameras(); ++v )
+            {
+                glViewport( view * frame_->width(), 0, frame_->width(), h );
+                sc_[s]->display( v, frame_->width(), h, glfwGetTime() * 1000 );
+                ++view;
+            }
+        }
 
         basescreen::store();
 
