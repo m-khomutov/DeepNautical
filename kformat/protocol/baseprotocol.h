@@ -9,6 +9,7 @@
 #define BASEPROTOCOL_H
 
 #include <stdexcept>
+#include <vector>
 
 
 class protocol_error: public std::runtime_error
@@ -45,6 +46,16 @@ protected:
 
 private:
 
+};
+
+struct http_param
+{
+    std::string field;
+    std::string value;
+
+    http_param( const std::string &requst, size_t begin, size_t end );
+
+    static std::vector< http_param > parse( const std::string &query );
 };
 
 #endif /* BASEPROTOCOL_H */

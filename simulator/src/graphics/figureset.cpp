@@ -70,8 +70,8 @@ void figureset::initialize()
                 std::cerr << typeid(*figures_[i]).name() << " error: " << err.what() <<std::endl;
             }
             glBindBuffer( GL_ARRAY_BUFFER, 0 );
-	    p_vbo ++;
-	}
+            p_vbo ++;
+        }
         glBindVertexArray( 0 );
     }
 }

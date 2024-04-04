@@ -13,7 +13,7 @@
 
 class flvprotocol: public baseprotocol {
 public:
-    explicit flvprotocol( int b_sock, int flags, const std::string& request );
+    explicit flvprotocol( int b_sock, int flags, size_t view );
     flvprotocol(const flvprotocol& orig) = delete;
     flvprotocol & operator =(const flvprotocol& orig) = delete;
     ~flvprotocol();
