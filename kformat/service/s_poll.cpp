@@ -81,6 +81,7 @@ void s_poll::run()
                     continue;
                 }
                 connections_[*conn] = conn;
+                videodev_->start();
             }
             else if( events[i].events & EPOLLIN )
             {
@@ -111,6 +112,10 @@ void s_poll::run()
             {
                 epoll_ctl( fd_, EPOLL_CTL_DEL, events[i].data.fd, nullptr );
                 connections_.erase( events[i].data.fd );
+                if( connections_.empty() )
+                {
+                    videodev_->stop();
+                }
             }
         }
         f_send_frame( &last_ts );

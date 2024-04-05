@@ -52,7 +52,7 @@ void yuyv_to_rgb( uint8_t *yuyv, uint8_t *rgb, int width, int height )
 
 
 videodevice_error::videodevice_error( const std::string &what )
-: std::runtime_error( what + std::string(" failed: ") + std::string(strerror( errno )) )
+: std::runtime_error( what + std::string(": ") + std::string(strerror( errno )) )
 {}
 
 
@@ -67,7 +67,7 @@ videodevice::videodevice( char const *path )
 
     int rc = ::ioctl( fd_, VIDIOC_QUERYCAP, &capabilities_ );
     if( rc < 0 ) {
-        close( fd_ );
+        ::close( fd_ );
         throw videodevice_error( strerror(errno) );
     }
 
@@ -78,7 +78,7 @@ videodevice::videodevice( char const *path )
         f_on();
     }
     catch ( ... ) {
-        close( fd_ );
+        ::close( fd_ );
         throw;
     }
 }
@@ -94,9 +94,19 @@ videodevice::~videodevice()
     ::close( fd_ );
 }
 
+void videodevice::start()
+{
+    started_ = true;
+}
+
+void videodevice::stop()
+{
+    started_ = false;
+}
+
 void videodevice::load( baseprotocol *proto, float duration )
 {
-    if( f_get_frame() )
+    if( started_ && f_get_frame() )
     {
         frame_->load( proto, duration );
     }
@@ -104,7 +114,7 @@ void videodevice::load( baseprotocol *proto, float duration )
 
 float videodevice::frame_duration_passed( baseframe::time_point_t *ts ) const
 {
-    return frame_->duration_passed( ts );
+    return started_ ? frame_->duration_passed( ts ) : -1.f;
 }
 
 void videodevice::f_on()

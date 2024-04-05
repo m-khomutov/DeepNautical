@@ -73,6 +73,8 @@ void glfwscreen::f_run()
     {
         f_exec_command();
 
+        glClear( GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
         glfwGetFramebufferSize( window_.get(), &w, &h );
         for( size_t s(0), view(0); s < sc_.size(); ++s )
         {

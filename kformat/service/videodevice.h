@@ -38,6 +38,9 @@ public:
     void load( baseprotocol *proto, float duration );
     float frame_duration_passed( baseframe::time_point_t *ts ) const;
 
+    void start();
+    void stop();
+
 private:
     std::string filename_;
     int fd_;
@@ -52,6 +55,7 @@ private:
     int sizeimage_;
     int bytesperpixel_;
     void *mmap_ptr_;
+    bool started_ {false};
 
     std::vector< uint8_t > yuyv_;
 
