@@ -61,7 +61,7 @@ void s_poll::run()
 {
     epoll_event events[maxevents];
     uint8_t buffer[0xffff];
-    baseframe::time_point_t last_ts = std::chrono::high_resolution_clock::now();
+    TBaseframe::time_point_t last_ts = std::chrono::high_resolution_clock::now();
     
     while( running_.load() )
     {
@@ -138,7 +138,7 @@ void s_poll::f_add( int sock, uint32_t events )
     }
 }
 
-void s_poll::f_send_frame( baseframe::time_point_t * last_ts )
+void s_poll::f_send_frame( TBaseframe::time_point_t * last_ts )
 {
     float duration = screen_ ? screen_->frame_duration_passed( last_ts ) : videodev_->frame_duration_passed( last_ts );
     if( duration > 0.f )
@@ -149,14 +149,14 @@ void s_poll::f_send_frame( baseframe::time_point_t * last_ts )
             {
                 if( screen_ )
                 {
-                    if( !screen_->load( p.second->protocol(), duration ) && p.second->protocol() )
+                    if( !screen_->load( p.second->protocol() ) && p.second->protocol() )
                     {
                         p.second->protocol()->write_error();
                     }
                 }
                 if( videodev_ )
                 {
-                    videodev_->load( p.second->protocol(), duration );
+                    videodev_->load( p.second->protocol() );
                 }
             }
         }

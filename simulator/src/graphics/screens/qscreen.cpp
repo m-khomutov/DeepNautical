@@ -9,7 +9,7 @@
 #include <QDateTime>
 #include <GL/glew.h>
 
-qscreen::qscreen( baseframe* frame )
+qscreen::qscreen( TBaseframe* frame )
 : openglscreen( frame )
 , QOpenGLWidget(nullptr)
 {
@@ -47,13 +47,13 @@ void qscreen::initializeGL()
     {
         throw screen_error("initialize GL init error");
     }
-    for( int i(0); i < utils::config()["scene_count"]; ++i )
+    for( int i(0); i < NUtils::config()["scene_count"]; ++i )
     {
         if( scene_iter_ == scenes_.end() )
         {
             throw screen_error("not enough scenes to start");
         }
-        sc_.emplace_back( new scene( std::string(utils::config()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
+        sc_.emplace_back( new scene( std::string(NUtils::config()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
         ++scene_iter_;
     }
 

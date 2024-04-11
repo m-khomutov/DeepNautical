@@ -20,13 +20,13 @@ public:
 class texture {
 public:
     explicit texture( char const *filename, char const *alpha = nullptr );
-    explicit texture( utils::image &img );
+    explicit texture( NUtils::image &img );
     texture( GLuint w, GLuint h, uint8_t value );
     texture(const texture& orig) = delete;
     texture &operator =(const texture& orig) = delete;
     ~texture();
     
-    texture &operator =( utils::image &img );
+    texture &operator =( NUtils::image &img );
     
     void activate( uint16_t number = GL_TEXTURE0 ) const;
 

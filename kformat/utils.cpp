@@ -13,35 +13,32 @@
 #include <sys/stat.h>
 #include <fstream>
 
-utils::config::fields_t utils::config::fields_ = utils::config::fields_t();
+NUtils::config::fields_t NUtils::config::fields_ = NUtils::config::fields_t();
 
-utils::config::variant::variant( int v )
+NUtils::config::variant::variant( int v )
 : ivalue_( v )
-{
-}
+{}
 
-utils::config::variant::variant( std::string v )
+NUtils::config::variant::variant( std::string v )
 : svalue_( v )
-{
-}
+{}
 
 
-utils::config::variant::variant( utils::geometry const &v )
+NUtils::config::variant::variant( NUtils::TGeometry const &v )
 : gvalue_( v )
-{
-}
+{}
 
-utils::config::variant::operator int() const
+NUtils::config::variant::operator int() const
 {
     return ivalue_;
 }
 
-utils::config::variant::operator std::string() const
+NUtils::config::variant::operator std::string() const
 {
     return svalue_;
 }
 
-utils::config::variant::operator utils::geometry() const
+NUtils::config::variant::operator NUtils::TGeometry() const
 {
     return gvalue_;
 }
@@ -74,9 +71,9 @@ namespace
         return ::strtol( line, nullptr, 10 );
     }
     template<>
-    utils::geometry str2conf< utils::geometry >( char const *line )
+    NUtils::TGeometry str2conf< NUtils::TGeometry >( char const *line )
     {
-        return utils::geometry( line );
+        return NUtils::TGeometry( line );
     }
     template<>
     bool str2conf< bool >( char const *line )
@@ -89,10 +86,10 @@ namespace
     }
 }  // namespace
 
-utils::config::config( int argc, char * argv[] )
+NUtils::config::config( int argc, char * argv[] )
 {
     config::fields_["port"] = 2232;
-    config::fields_["window"] = utils::geometry();
+    config::fields_["window"] = NUtils::TGeometry();
     config::fields_["quality"] = 80;
     config::fields_["duration"] = 40;
     config::fields_["verify"] = false;
@@ -116,7 +113,7 @@ utils::config::config( int argc, char * argv[] )
               config::fields_["port"] = str2conf< int >( optarg );
               break;
         case 'w':
-              config::fields_["window"] = str2conf< utils::geometry >( optarg );
+              config::fields_["window"] = str2conf< NUtils::TGeometry >( optarg );
               break;
         case 'q':
               config::fields_["quality"] = str2conf< int >( optarg );
@@ -140,7 +137,7 @@ utils::config::config( int argc, char * argv[] )
     }
 }
 
-utils::config::variant &utils::config::operator [](char const *key) const
+NUtils::config::variant &NUtils::config::operator [](char const *key) const
 {
     std::map< std::string, variant >::iterator it = fields_.find( key );
     if( it != fields_.end() )
@@ -150,7 +147,7 @@ utils::config::variant &utils::config::operator [](char const *key) const
     throw std::runtime_error(std::string("config has no key ") + std::string(key) );
 }
 
-void utils::config::f_read_file( char const *fname )
+void NUtils::config::f_read_file( char const *fname )
 {
     read_config( fname, [this]( const std::string &line ){
         std::string::size_type pos;
@@ -168,7 +165,7 @@ void utils::config::f_read_file( char const *fname )
         }
         else if( (pos = line.find( "window=" )) != std::string::npos )
         {
-            config::fields_["window"] = str2conf< utils::geometry >( line.substr( pos + 7 ).c_str() );
+            config::fields_["window"] = str2conf< NUtils::TGeometry >( line.substr( pos + 7 ).c_str() );
         }
         else if( (pos = line.find( "quality=" )) != std::string::npos )
         {
@@ -202,7 +199,7 @@ void utils::config::f_read_file( char const *fname )
 }
 
 
-utils::jpeg_codec::error::error( const std::string &what )
+NUtils::jpeg_codec::error::error( const std::string &what )
 : std::runtime_error( what )
 {}
 
@@ -213,34 +210,34 @@ void on_jpeg_error( j_common_ptr cinfo )
     char buf[JMSG_LENGTH_MAX];
     ( *( cinfo->err->format_message ) ) ( cinfo, buf );
 
-    throw utils::jpeg_codec::error( buf );
+    throw NUtils::jpeg_codec::error( buf );
 }
 }  // namespace
 
-utils::jpeg_codec::jpeg_codec()
+NUtils::jpeg_codec::jpeg_codec()
 {
     cinfo_.err = jpeg_std_error( &jerr_ );
     cinfo_.err->error_exit = on_jpeg_error;
     jpeg_create_decompress( &cinfo_ );
 }
 
-utils::jpeg_codec::~jpeg_codec()
+NUtils::jpeg_codec::~jpeg_codec()
 {
     jpeg_destroy_decompress( &cinfo_ );
 }
 
-bool utils::jpeg_codec::decode( char const *filename, image *img )
+bool NUtils::jpeg_codec::decode( char const *filename, image *img )
 {
     struct stat info;
     if( stat(filename, &info) != 0 )
     {
-        throw utils::jpeg_codec::error( strerror( errno ) );
+        throw NUtils::jpeg_codec::error( strerror( errno ) );
     }
 
     int fd = open( filename, O_RDONLY );
     if( fd < 0 )
     {
-        throw utils::jpeg_codec::error( strerror( errno ) );
+        throw NUtils::jpeg_codec::error( strerror( errno ) );
     }
 
     std::vector< uint8_t > jdata( info.st_size );
@@ -248,12 +245,12 @@ bool utils::jpeg_codec::decode( char const *filename, image *img )
     close(fd);
     if( rc != jdata.size() )
     {
-        throw utils::jpeg_codec::error( "not whole file was read" );
+        throw NUtils::jpeg_codec::error( "not whole file was read" );
     }
     return decode( jdata.data(), jdata.size(), img );
 }
 
-bool utils::jpeg_codec::decode( uint8_t const *data, size_t in_size, image *img )
+bool NUtils::jpeg_codec::decode( uint8_t const *data, size_t in_size, image *img )
 {
     jpeg_mem_src( &cinfo_, data, in_size );
     if( jpeg_read_header( &cinfo_, TRUE ) != 1 )
@@ -283,7 +280,7 @@ bool utils::jpeg_codec::decode( uint8_t const *data, size_t in_size, image *img 
     return true;
 }
 
-bool utils::file_exists( char const *filename )
+bool NUtils::file_exists( char const *filename )
 {
     struct stat info;
     if( stat( filename, &info) == -1 )
@@ -293,7 +290,7 @@ bool utils::file_exists( char const *filename )
     return (info.st_mode & S_IFMT) == S_IFREG || (info.st_mode & S_IFMT) == S_IFLNK;
 }
 
-void utils::read_config( char const *fname, std::function< void( const std::string& ) > foo )
+void NUtils::read_config( char const *fname, std::function< void( const std::string& ) > foo )
 {
     std::ifstream ifile( fname );
     if( !ifile.is_open() )
@@ -313,7 +310,7 @@ void utils::read_config( char const *fname, std::function< void( const std::stri
     ifile.close();
 }
 
-bool utils::str2key( const std::string &s, std::pair< std::string, std::string > *rc )
+bool NUtils::str2key( const std::string &s, std::pair< std::string, std::string > *rc )
 {
     size_t pos;
     if( (pos = s.find( "=" )) != std::string::npos )

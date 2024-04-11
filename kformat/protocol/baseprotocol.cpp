@@ -12,11 +12,11 @@
 #include <cerrno>
 #include <iostream>
 
-protocol_error::protocol_error( const std::string &what )
+TProtocolError::TProtocolError( const std::string &what )
 : std::runtime_error( what + std::string(" failed: ") + std::string(strerror( errno )) )
 {}
 
-baseprotocol *baseprotocol::create( basescreen *screen, const std::string &request, int sock, int flags )
+TBaseprotocol *TBaseprotocol::create( basescreen *screen, const std::string &request, int sock, int flags )
 {
     if( request.find( "\r\n\r\n" ) != std::string::npos )
     {
@@ -50,12 +50,12 @@ baseprotocol *baseprotocol::create( basescreen *screen, const std::string &reque
     return nullptr;
 }
 
-baseprotocol::baseprotocol( int sock, int flags )
+TBaseprotocol::TBaseprotocol( int sock, int flags )
 : fd_( sock )
 , flags_( flags )
 {}
 
-baseprotocol::~baseprotocol()
+TBaseprotocol::~TBaseprotocol()
 {}
 
 

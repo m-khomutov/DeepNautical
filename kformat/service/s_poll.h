@@ -48,7 +48,7 @@ private:
 
 private:
     void f_add( int sock, uint32_t events );
-    void f_send_frame( baseframe::time_point_t *last_ts );
+    void f_send_frame( TBaseframe::time_point_t *last_ts );
 };
 
 #endif /* S_POLL_H */

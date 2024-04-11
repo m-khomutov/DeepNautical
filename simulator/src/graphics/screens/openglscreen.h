@@ -1,5 +1,5 @@
 /* 
- * File:   base.h
+ * File:   openglscreen.h
  * Author: mkh
  *
  * Created on 5 февраля 2023 г., 14:25
@@ -40,7 +40,7 @@ private:
 
 class openglscreen: public basescreen {
 public:
-    openglscreen( baseframe *frame );
+    openglscreen( TBaseframe *frame );
     openglscreen(const openglscreen& orig) = delete;
     openglscreen &operator =(const openglscreen& orig) = delete;
     virtual ~openglscreen();
@@ -59,14 +59,14 @@ protected:
     std::set< std::string > scenes_;
     std::set< std::string >::iterator scene_iter_;
     std::vector< std::shared_ptr< scene > > sc_;
-    utils::safeguard< std::list< command > > commands_;
+    NUtils::safeguard< std::list< command > > commands_;
 
 protected:
     void f_exec_command();
 
 private:
     void f_store() override;
-    bool f_load( baseprotocol *proto, float duration ) override;
+    bool f_load( TBaseprotocol *proto ) override;
 };
 
 #endif /* OPENGLSCREEN_H */

@@ -7,7 +7,7 @@
 
 #include "glfwscreen.h"
 
-glfwscreen::glfwscreen( baseframe *frame )
+glfwscreen::glfwscreen( TBaseframe *frame )
 : openglscreen( frame )
 {
     glfwSetErrorCallback( glfwscreen::error_cb );

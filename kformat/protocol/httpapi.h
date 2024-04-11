@@ -13,7 +13,7 @@
 #include <string>
 #include <vector>
 
-class httpapi:public baseprotocol {
+class httpapi:public TBaseprotocol {
 public:
     class message {
     public:
@@ -36,7 +36,7 @@ public:
 
     void on_data( const uint8_t * data, int size ) override;
     void do_write() override;
-    void send_frame( const uint8_t * data, int size, float duration ) override;
+    void send_frame( const uint8_t * data, int size ) override;
     bool can_send_frame() const override;
     void write_error() override;
 

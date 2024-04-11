@@ -61,9 +61,9 @@ int main(int argc, char** argv)
 {
     try
     {
-        utils::config( argc, argv );
-        utils::config()["shaders"];
-        utils::config()["textures"];
+        NUtils::config( argc, argv );
+        NUtils::config()["shaders"];
+        NUtils::config()["textures"];
     }
     catch( const std::runtime_error &e )
     {
@@ -81,15 +81,15 @@ int main(int argc, char** argv)
 #ifdef QT_CORE_LIB
         QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL, true);
         QApplication a(argc, argv);
-        std::unique_ptr< basescreen > scr( new qscreen( new jpegframe( utils::config()["window"],
-                                                                       utils::config()["quality"],
-                                                                       utils::config()["duration"] ) ) );
-        service.reset( new qservice( scr.get(), utils::config()["port"] ) );
+        std::unique_ptr< basescreen > scr( new qscreen( new jpegframe( NUtils::config()["window"],
+                                                                       NUtils::config()["quality"],
+                                                                       NUtils::config()["duration"] ) ) );
+        service.reset( new qservice( scr.get(), NUtils::config()["port"] ) );
 #else
-        std::unique_ptr< basescreen > scr ( new glfwscreen( new jpegframe( utils::config()["window"],
-                                                                           utils::config()["quality"],
-                                                                           utils::config()["duration"] ) ) );
-        service.reset( new glfwservice( scr.get(), utils::config()["port"] ) );
+        std::unique_ptr< basescreen > scr ( new glfwscreen( new jpegframe( NUtils::config()["window"],
+                                                                           NUtils::config()["quality"],
+                                                                           NUtils::config()["duration"] ) ) );
+        service.reset( new glfwservice( scr.get(), NUtils::config()["port"] ) );
 #endif
 
         std::setlocale( LC_NUMERIC,"C" );

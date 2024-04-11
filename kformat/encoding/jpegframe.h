@@ -21,9 +21,9 @@ extern "C"
 #include <cstdint>
 #include <vector>
 
-class jpegframe: public baseframe {
+class jpegframe: public TBaseframe {
 public:
-    jpegframe( const utils::geometry &geometry, int quality, int duration, bool reverse = true );
+    jpegframe( const NUtils::TGeometry &geometry, int quality, int duration, bool reverse = true );
     jpegframe( const jpegframe& orig ) = delete;
     jpegframe &operator =( const jpegframe &rhs ) = delete;
     ~jpegframe();
@@ -34,12 +34,12 @@ private:
     jpeg_compress_struct cinfo_;
     jpeg_error_mgr jerr_;
 
-    std::vector< baseframe::image > jpeg_frame_;
+    std::vector< TBaseframe::image > jpeg_frame_;
     size_t size_ { 0 };
     bool reverse_;
 
 private:
-    bool f_load( baseprotocol * proto, float duration ) override;
+    bool f_send_buffer( TBaseprotocol * proto ) override;
 
     void f_compress( size_t view );
 };

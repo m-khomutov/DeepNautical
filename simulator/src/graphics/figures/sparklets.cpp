@@ -42,11 +42,11 @@ void sparklets::draw( size_t vbo_number )
 void sparklets::f_check_environment() const
 {
 
-    if( ! (utils::file_exists( (std::string(utils::config()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
-           utils::file_exists( (std::string(utils::config()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
-           utils::file_exists( (std::string(utils::config()["textures"]) + "/"     + spec_.texture_name).c_str()) &&
-           utils::file_exists( (std::string(utils::config()["textures"]) + "/"     + spec_.texture_air).c_str() ) &&
-           utils::file_exists( (std::string(utils::config()["textures"]) + "/"     + spec_.alpha).c_str() )) )
+    if( ! (NUtils::file_exists( (std::string(NUtils::config()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
+           NUtils::file_exists( (std::string(NUtils::config()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
+           NUtils::file_exists( (std::string(NUtils::config()["textures"]) + "/"     + spec_.texture_name).c_str()) &&
+           NUtils::file_exists( (std::string(NUtils::config()["textures"]) + "/"     + spec_.texture_air).c_str() ) &&
+           NUtils::file_exists( (std::string(NUtils::config()["textures"]) + "/"     + spec_.alpha).c_str() )) )
     {
         throw  std::runtime_error( std::string("invalid environment in {") + spec_.shader_name + " " + spec_.texture_name + "}"  );
     }
@@ -79,9 +79,9 @@ void sparklets::f_accept( size_t vbo_number, visitor &p, double )
 
 void sparklets::f_initialize_layout()
 {
-    std::string alpha = std::string(utils::config()["textures"]) + "/" + spec_.alpha;
-    texture_.reset( new texture( (std::string(utils::config()["textures"]) + "/" + spec_.texture_name).c_str(), alpha.c_str() ) );
-    air_texture_.reset( new texture( (std::string(utils::config()["textures"]) + "/" + spec_.texture_air).c_str() ) );
+    std::string alpha = std::string(NUtils::config()["textures"]) + "/" + spec_.alpha;
+    texture_.reset( new texture( (std::string(NUtils::config()["textures"]) + "/" + spec_.texture_name).c_str(), alpha.c_str() ) );
+    air_texture_.reset( new texture( (std::string(NUtils::config()["textures"]) + "/" + spec_.texture_air).c_str() ) );
 
     glBufferData( GL_ARRAY_BUFFER, spec_.viewport.size() * sizeof(float), spec_.viewport.data(), GL_STATIC_DRAW );
     glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices_), indices_, GL_STATIC_DRAW); 

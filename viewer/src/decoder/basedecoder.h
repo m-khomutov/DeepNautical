@@ -32,14 +32,14 @@ public:
     basedecoder &operator =(const basedecoder& orig) = delete;
     virtual ~basedecoder();
 
-    bool load( utils::image *img );
+    bool load( NUtils::image *img );
     void store( uint8_t const *frame, size_t size, uint64_t timestamp );
     
 protected:
     uint64_t timestamp_ { 0ul };
     
 private:
-    virtual void f_load( utils::image *img ) = 0;
+    virtual void f_load( NUtils::image *img ) = 0;
     virtual void f_store( uint8_t const *frame, size_t size, uint64_t timestamp ) = 0;
 
 };

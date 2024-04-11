@@ -11,7 +11,7 @@
 #include "baseprotocol.h"
 #include <vector>
 
-class flvprotocol: public baseprotocol {
+class flvprotocol: public TBaseprotocol {
 public:
     explicit flvprotocol( int b_sock, int flags, size_t view );
     flvprotocol(const flvprotocol& orig) = delete;
@@ -21,7 +21,7 @@ public:
 
     void on_data( const uint8_t * data, int size ) override;
     void do_write() override;
-    void send_frame( const uint8_t * data, int size, float duration ) override;
+    void send_frame( const uint8_t * data, int size ) override;
     bool can_send_frame() const override;
     void write_error() override;
     

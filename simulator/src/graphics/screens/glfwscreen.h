@@ -16,7 +16,7 @@
 
 class glfwscreen: public openglscreen {
 public:
-    explicit glfwscreen( baseframe *frame );
+    explicit glfwscreen( TBaseframe *frame );
     glfwscreen(const glfwscreen& orig) = delete;
     glfwscreen &operator =(const glfwscreen &rhs) = delete;
     ~glfwscreen();

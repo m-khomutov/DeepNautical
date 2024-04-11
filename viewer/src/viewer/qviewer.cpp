@@ -58,7 +58,7 @@ void qspinner::paint( QPainter *painter )
 qviewer::qviewer()
 : QWidget(nullptr)
 {
-    utils::geometry window = utils::config()["window"];
+    NUtils::TGeometry window = NUtils::config()["window"];
     setWindowTitle("ПО управления");
     setMaximumSize(window.width, window.height);
     setMinimumSize(window.width, window.height);

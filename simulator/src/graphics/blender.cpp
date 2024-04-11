@@ -56,16 +56,16 @@ blender::mtlfile::mtlfile( const char* filename )
             switch( line[1] )
             {
             case 'a':
-                utils::str2vec( line.substr( 3 ), &mtls.back().Ka );
+                NUtils::str2vec( line.substr( 3 ), &mtls.back().Ka );
                 break;
             case 'd':
-                utils::str2vec( line.substr( 3 ), &mtls.back().Kd );
+                NUtils::str2vec( line.substr( 3 ), &mtls.back().Kd );
                 break;
             case 's':
-                utils::str2vec( line.substr( 3 ), &mtls.back().Ks );
+                NUtils::str2vec( line.substr( 3 ), &mtls.back().Ks );
                 break;
             case 'e':
-                utils::str2vec( line.substr( 3 ), &mtls.back().Ke );
+                NUtils::str2vec( line.substr( 3 ), &mtls.back().Ke );
                 break;
             }
         }
@@ -79,7 +79,7 @@ blender::mtlfile::mtlfile( const char* filename )
         }
         else if( line.find( "map_Kd " ) == 0 )
         {
-            mtls.back().map_Kd.reset( new texture( (std::string(utils::config()["objs"]) + "/" + line.substr( 7 )).c_str() ) );
+            mtls.back().map_Kd.reset( new texture( (std::string(NUtils::config()["objs"]) + "/" + line.substr( 7 )).c_str() ) );
         }
     }
     for( auto mtl : mtls )
@@ -120,19 +120,19 @@ blender::object::object( char const *fname )
             switch( line[1] )
             {
             case ' ':
-                if( utils::str2vec( line.substr( 2 ), &v3 ) )
+                if( NUtils::str2vec( line.substr( 2 ), &v3 ) )
                 {
                     vertices_.push_back( v3 );
                 }
                 break;
             case 't':
-                if( utils::str2vec( line.substr( 3 ), &v2 ) )
+                if( NUtils::str2vec( line.substr( 3 ), &v2 ) )
                 {
                     texels_.push_back( v2 );
                 }
                 break;
             case 'n':
-                if( utils::str2vec( line.substr( 3 ), &v3 ) )
+                if( NUtils::str2vec( line.substr( 3 ), &v3 ) )
                 {
                     normals_.push_back( v3 );
                 }
@@ -157,7 +157,7 @@ blender::object::object( char const *fname )
         {
             try
             {
-                mltr.reset( new mtlfile( (std::string(utils::config()["objs"]) + "/" + line.substr( 7 )).c_str() ) );
+                mltr.reset( new mtlfile( (std::string(NUtils::config()["objs"]) + "/" + line.substr( 7 )).c_str() ) );
             }
             catch( const std::runtime_error &e )
             {

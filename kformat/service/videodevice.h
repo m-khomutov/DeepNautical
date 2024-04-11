@@ -17,7 +17,7 @@
 #include <stdexcept>
 #include <vector>
 
-class baseprotocol;
+class TBaseprotocol;
 
 class videodevice_error: public std::runtime_error
 {
@@ -35,8 +35,8 @@ public:
         return fd_;
     }
 
-    void load( baseprotocol *proto, float duration );
-    float frame_duration_passed( baseframe::time_point_t *ts ) const;
+    void load( TBaseprotocol *proto );
+    float frame_duration_passed( TBaseframe::time_point_t *ts ) const;
 
     void start();
     void stop();
@@ -59,7 +59,7 @@ private:
 
     std::vector< uint8_t > yuyv_;
 
-    std::unique_ptr< baseframe > frame_;
+    std::unique_ptr< TBaseframe > frame_;
 
 private:
     void f_show_capabilities();

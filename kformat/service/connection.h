@@ -28,7 +28,7 @@ public:
         return fd_;
     }
 
-    baseprotocol * protocol()
+    TBaseprotocol * protocol()
     {
         return proto_.get();
     }
@@ -41,7 +41,7 @@ private:
     int fd_;
     int send_flags_ = MSG_ZEROCOPY;
     sockaddr_in address_;
-    std::unique_ptr< baseprotocol > proto_;
+    std::unique_ptr< TBaseprotocol > proto_;
     std::string request_;
 };
 

@@ -14,7 +14,7 @@
 
 class qscreen: public openglscreen, public QOpenGLWidget {
 public:
-    qscreen( baseframe *frame );
+    qscreen( TBaseframe *frame );
     qscreen(const qscreen& orig) = delete;
     qscreen &operator =(const qscreen& orig) = delete;
     ~qscreen();

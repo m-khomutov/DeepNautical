@@ -74,7 +74,7 @@ receiver::receiver( basedecoder *decoder )
 {
     try
     {
-        std::string url = utils::config()["url"];
+        std::string url = NUtils::config()["url"];
         std::regex r("^([a-z]+)://([0-9\\.\\S]+):([0-9]{4,5})/([0-9])$"); // proto://host:port/context
         std::smatch cm;
 
@@ -236,7 +236,7 @@ size_t receiver::f_receive_body( uint8_t const *data, size_t size )
 {
     if( verify_ )
     {
-        std::cerr << int64_t(utils::now() - timestamp_) << " nsec.\n";
+        std::cerr << int64_t(NUtils::now() - timestamp_) << " nsec.\n";
     }
 
     decoder_->store( data, size, timestamp_ );

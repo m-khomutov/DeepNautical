@@ -31,19 +31,20 @@ extern "C"
 #include <thread>
 #include <vector>
 
-namespace utils
+namespace NUtils
 {
-struct geometry
+struct TGeometry
 {
     int width = 800;
     int height = 600;
-    geometry() = default;
-    geometry( int w, int h)
+
+    TGeometry() = default;
+    TGeometry( int w, int h)
     : width( w )
     , height( h )
-    {
-    }
-    geometry( const char * from )
+    {}
+
+    TGeometry( const char * from )
     {
         char *ptr;
         int w = strtol( from, &ptr, 10 );
@@ -102,16 +103,16 @@ public:
         variant() = default;
         variant( int v );
         variant( std::string v );
-        variant( geometry const &v );
+        variant( TGeometry const &v );
 
         operator int() const;
         operator std::string() const;
-        operator geometry() const;
+        operator TGeometry() const;
 
     private:
         int ivalue_;
         std::string svalue_;
-        geometry gvalue_;
+        TGeometry gvalue_;
     };
     using fields_t = std::map< std::string, variant >;
     
@@ -127,12 +128,12 @@ private:
 struct image
 {
     std::vector< uint8_t > pixels;
-    utils::geometry window;
+    TGeometry window;
     int channels { 3 };
     uint64_t timestamp { 0xff };
 
     image() = default;
-    image( utils::geometry const &win ) : window( win ) {};
+    image( TGeometry const &win ) : window( win ) {};
 };
 
 class jpeg_codec {
@@ -261,6 +262,6 @@ inline uint64_t now()
     return ts.tv_sec * 1000000000 + ts.tv_nsec;
 }
 
-}  // namespace utils
+}  // namespace NUtils
 
 #endif /* UTILS_H */

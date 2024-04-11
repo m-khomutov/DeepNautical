@@ -7,33 +7,32 @@
 
 #include "baseframe.h"
 
-baseframe::baseframe( const utils::geometry &g, int duration )
+TBaseframe::TBaseframe( const NUtils::TGeometry &g, int duration )
 : geometry_( g )
 , duration_( duration )
 {}
 
-baseframe::~baseframe()
+TBaseframe::~TBaseframe()
 {}
 
-bool baseframe::load( baseprotocol * proto, float duration )
+bool TBaseframe::send_buffer( TBaseprotocol * proto )
 {
     if( proto )
     {
-        return f_load( proto, duration );
+        return f_send_buffer( proto );
     }
     return false;
 }
 
-float baseframe::duration_passed( time_point_t *ts ) const
+float TBaseframe::is_duration_passed( time_point_t *ts ) const
 {
     time_point_t now = std::chrono::high_resolution_clock::now();
-    std::chrono::duration< float, std::milli > d(now - *ts);
+    std::chrono::duration< float, std::milli > delta(now - *ts);
 
-    bool ret = std::chrono::duration_cast< std::chrono::milliseconds >(d) >= duration_;
-    if( ret )
+    if( std::chrono::duration_cast< std::chrono::milliseconds >(delta) >= duration_ )  // время кадра истекло
     {
         *ts = now;
-        return d.count();
+        return delta.count();
     }
     return -1.f;
 }

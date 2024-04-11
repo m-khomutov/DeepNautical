@@ -47,7 +47,7 @@ void connection::on_data( basescreen *screen, const uint8_t * data, int size )
     if( !proto_ )
     {
         request_ += std::string((const char*)data, size);
-        baseprotocol *p = baseprotocol::create( screen, request_, fd_, send_flags_ );
+        TBaseprotocol *p = TBaseprotocol::create( screen, request_, fd_, send_flags_ );
         if( p )
         {
             proto_.reset( p );

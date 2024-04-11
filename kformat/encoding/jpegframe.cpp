@@ -46,8 +46,8 @@ METHODDEF(void) term_destination(j_compress_ptr cinfo)
 
 }  // namespace
 
-jpegframe::jpegframe( const utils::geometry &geometry, int quality, int duration, bool reverse )
-: baseframe( geometry, duration )
+jpegframe::jpegframe( const NUtils::TGeometry &geometry, int quality, int duration, bool reverse )
+: TBaseframe( geometry, duration )
 , reverse_( reverse )
 {
     cinfo_.err = jpeg_std_error( &jerr_ );  // errors get written to stderr 
@@ -133,7 +133,7 @@ void jpegframe::f_compress( size_t view )
     }
 }
 
-bool jpegframe::f_load( baseprotocol * proto, float duration )
+bool jpegframe::f_send_buffer( TBaseprotocol * proto )
 {
     if( proto->view() > rgb_buffer_.size() - 1 )
     {
@@ -144,7 +144,7 @@ bool jpegframe::f_load( baseprotocol * proto, float duration )
 
     if( size_ )
     {
-        proto->send_frame( jpeg_frame_[proto->view()].data(), size_, duration );
+        proto->send_frame( jpeg_frame_[proto->view()].data(), size_ );
     }
     return true;
 }

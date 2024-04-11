@@ -104,17 +104,17 @@ void videodevice::stop()
     started_ = false;
 }
 
-void videodevice::load( baseprotocol *proto, float duration )
+void videodevice::load( TBaseprotocol *proto )
 {
     if( started_ && f_get_frame() )
     {
-        frame_->load( proto, duration );
+        frame_->send_buffer( proto );
     }
 }
 
-float videodevice::frame_duration_passed( baseframe::time_point_t *ts ) const
+float videodevice::frame_duration_passed( TBaseframe::time_point_t *ts ) const
 {
-    return started_ ? frame_->duration_passed( ts ) : -1.f;
+    return started_ ? frame_->is_duration_passed( ts ) : -1.f;
 }
 
 void videodevice::f_on()
@@ -319,7 +319,7 @@ void videodevice::f_allocate_buffers()
     printf("allocated buffer at %p of size %d from offset 0x%08lx\n", mmap_ptr_,
                                                                       v4l2_buffer_.length,
                                                                       offset );
-    frame_.reset( new jpegframe( utils::geometry( width_, height_ ), 100, 10, false ) );
+    frame_.reset( new jpegframe( NUtils::TGeometry( width_, height_ ), 100, 10, false ) );
 }
 
 bool videodevice::f_get_frame()

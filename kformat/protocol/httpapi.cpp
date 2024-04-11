@@ -54,7 +54,7 @@ httpapi::message::message( const std::string &data )
 
 
 httpapi::httpapi( int b_sock, int flags, basescreen *screen )
-: baseprotocol( b_sock, flags )
+: TBaseprotocol( b_sock, flags )
 , screen_( screen )
 {
 }
@@ -101,7 +101,7 @@ void httpapi::do_write()
     }
 }
 
-void httpapi::send_frame( const uint8_t *, int, float )
+void httpapi::send_frame( const uint8_t *, int )
 {}
 
 bool httpapi::can_send_frame() const

@@ -33,7 +33,7 @@ protected:
 private:
     basescreen * screen_ { nullptr };
     s_poll poll_;
-    utils::scoped_thread< s_poll > poll_thread_;
+    NUtils::scoped_thread< s_poll > poll_thread_;
 
     virtual void f_run() = 0;
     virtual int f_stop() = 0;

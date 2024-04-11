@@ -12,7 +12,7 @@ vessel::vessel( const std::vector< std::string > &settings, const glm::vec3 &cam
 {
     f_check_environment();
     
-    object_.reset( new blender::object( (std::string(utils::config()["objs"]) + "/" + spec_.obj_name).c_str() ) );
+    object_.reset( new blender::object( (std::string(NUtils::config()["objs"]) + "/" + spec_.obj_name).c_str() ) );
     object_->load_position( &vertices_ );
     
     f_reset();
@@ -78,9 +78,9 @@ const figure::position &vessel::position()
 
 void vessel::f_check_environment() const
 {
-    if( ! (utils::file_exists( (std::string(utils::config()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
-           utils::file_exists( (std::string(utils::config()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
-           utils::file_exists( (std::string(utils::config()["objs"]) + "/" + spec_.obj_name).c_str() )) )
+    if( ! (NUtils::file_exists( (std::string(NUtils::config()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
+           NUtils::file_exists( (std::string(NUtils::config()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
+           NUtils::file_exists( (std::string(NUtils::config()["objs"]) + "/" + spec_.obj_name).c_str() )) )
     {
         throw  std::runtime_error( std::string("invalid environment in {") + spec_.shader_name + " " + spec_.obj_name + "}"  );
     }

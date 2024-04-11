@@ -34,7 +34,7 @@ void copy3bytes( uint32_t from, uint8_t *to )
 }  // namespace
 
 flvprotocol::flvprotocol( int b_sock, int flags, size_t view )
-: baseprotocol( b_sock, flags )
+: TBaseprotocol( b_sock, flags )
 , http_flv_header_( strlen(status) + 13 )
 , view_( view )
 {
@@ -64,7 +64,7 @@ void flvprotocol::do_write()
     }
 }
 
-void flvprotocol::send_frame( const uint8_t * data, int size, float )
+void flvprotocol::send_frame( const uint8_t * data, int size )
 {
     if( sent_from_header_ != http_flv_header_.size() )
     {
@@ -81,7 +81,7 @@ void flvprotocol::send_frame( const uint8_t * data, int size, float )
             copy3bytes( size + 1, tag_header_ + 1 );
             //copy3bytes( timestamp_, tag_header_ + 4 );
             //tag_header_[7] = (timestamp_ >> 24) & 0xff;
-            timestamp_ = htobe64(utils::now());
+            timestamp_ = htobe64(NUtils::now());
             memcpy( tag_header_ + 4, &timestamp_, sizeof(timestamp_) );
     
             //timestamp_ += duration;

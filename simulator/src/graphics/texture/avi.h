@@ -135,7 +135,7 @@ public:
     avi operator =(const avi& orig) = delete;
     ~avi();
 
-    utils::image &next_image();
+    NUtils::image &next_image();
 
     double frame_duration() const
     {
@@ -149,8 +149,8 @@ private:
     frame_t frames_;
     frame_t::iterator frame_iter_; 
     std::vector< uint8_t > jpeg;
-    utils::jpeg_codec codec_;
-    utils::image image_;
+    NUtils::jpeg_codec codec_;
+    NUtils::image image_;
     double frame_duration_ {0.0f };
 };
 

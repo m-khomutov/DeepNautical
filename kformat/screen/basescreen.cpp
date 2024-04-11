@@ -1,6 +1,6 @@
 #include "basescreen.h"
 
-basescreen::basescreen( baseframe *frame )
+basescreen::basescreen( TBaseframe *frame )
 : frame_( frame )
 , store_ts_( std::chrono::high_resolution_clock::now() )
 {}
@@ -22,14 +22,14 @@ void basescreen::store()
     f_store();
 }
 
-bool basescreen::load( baseprotocol *proto, float duration )
+bool basescreen::load( TBaseprotocol *proto )
 {
     std::lock_guard< std::mutex > lk(frame_mutex_);
 
-    return f_load( proto, duration );
+    return f_load( proto );
 }
 
-float basescreen::frame_duration_passed(baseframe::time_point_t *ts) const
+float basescreen::frame_duration_passed( TBaseframe::time_point_t *ts ) const
 {
-    return frame_->duration_passed( ts );
+    return frame_->is_duration_passed( ts );
 }

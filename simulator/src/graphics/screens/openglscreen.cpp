@@ -1,6 +1,6 @@
 
 /* 
- * File:   base.cpp
+ * File:   openglscreen.cpp
  * Author: mkh
  * 
  * Created on 5 февраля 2023 г., 14:25
@@ -13,10 +13,10 @@ screen_error::screen_error( const std::string &what )
 {
 }
 
-openglscreen::openglscreen( baseframe *frame )
+openglscreen::openglscreen( TBaseframe *frame )
 : basescreen( frame )
 {
-    utils::read_directory( utils::config()["scenes"],
+    NUtils::read_directory( NUtils::config()["scenes"],
                            ".scn",
                            [this]( const std::string &name )
                            {
@@ -58,7 +58,7 @@ void openglscreen::f_exec_command()
         switch( cmd.type() )
         {
         case command::set_scene:
-            sc_.back().reset(new scene( std::string(utils::config()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
+            sc_.back().reset(new scene( std::string(NUtils::config()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
             break;
         }
     }
@@ -77,7 +77,7 @@ void openglscreen::f_store()
     }
 }
 
-bool openglscreen::f_load( baseprotocol *proto, float duration )
+bool openglscreen::f_load( TBaseprotocol *proto )
 {
-   return frame_->load( proto, duration );
+   return frame_->send_buffer( proto );
 }
