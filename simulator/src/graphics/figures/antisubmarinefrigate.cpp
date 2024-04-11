@@ -37,9 +37,9 @@ void antisubmarinefrigate::draw( size_t )
 
 void antisubmarinefrigate::f_check_environment() const
 {
-    if( ! (NUtils::file_exists( (std::string(NUtils::config()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
-           NUtils::file_exists( (std::string(NUtils::config()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
-           NUtils::file_exists( (std::string(NUtils::config()["textures"]) + "/" + spec_.texture_name).c_str() )) )
+    if( ! (NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
+           NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
+           NUtils::file_exists( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str() )) )
     {
         throw  std::runtime_error( std::string("invalid environment in {") + spec_.shader_name + " " + spec_.texture_name + "}"  );
     }
@@ -52,7 +52,7 @@ char const *antisubmarinefrigate::f_shader_name() const
 
 void antisubmarinefrigate::f_initialize( size_t )
 {
-    texture_.reset( new texture( (std::string(NUtils::config()["textures"]) + spec_.texture_name).c_str() ) );
+    texture_.reset( new texture( (std::string(NUtils::TConfig()["textures"]) + spec_.texture_name).c_str() ) );
     
     glBufferData( GL_ARRAY_BUFFER, sizeof(position_), position_, GL_STATIC_DRAW );
     glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices_), indices_, GL_STATIC_DRAW); 

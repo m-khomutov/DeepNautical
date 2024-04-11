@@ -29,7 +29,7 @@ std::unique_ptr< baseviewer > baseviewer::make()
 }
 
 baseviewer::baseviewer()
-: frame_(  NUtils::config()["window"] )
+: frame_(  NUtils::TConfig()["window"] )
 , decoder_( new jpegdecoder )
 , receiver_( decoder_.get() )
 , rec_thread_( &receiver_ )

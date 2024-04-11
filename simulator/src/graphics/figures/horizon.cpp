@@ -11,7 +11,7 @@ horizon::horizon( const std::vector< std::string > &settings, const glm::vec3 &c
 : figure( settings, camera_pos )
 {
     f_check_environment();
-    avi_.reset( new avi( (std::string(NUtils::config()["textures"]) + "/" + spec_.texture_name).c_str() ) );
+    avi_.reset( new avi( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str() ) );
 }
 
 horizon::~horizon()
@@ -25,9 +25,9 @@ void horizon::draw( size_t )
 
 void horizon::f_check_environment() const
 {
-    if( ! (NUtils::file_exists( (std::string(NUtils::config()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
-           NUtils::file_exists( (std::string(NUtils::config()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
-           NUtils::file_exists( (std::string(NUtils::config()["textures"]) + "/" + spec_.texture_name).c_str() )) )
+    if( ! (NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
+           NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
+           NUtils::file_exists( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str() )) )
     {
         throw  std::runtime_error( std::string("invalid environment in {") + spec_.shader_name + " " + spec_.texture_name + "}"  );
     }

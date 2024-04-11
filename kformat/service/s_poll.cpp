@@ -81,7 +81,10 @@ void s_poll::run()
                     continue;
                 }
                 connections_[*conn] = conn;
-                videodev_->start();
+                if( videodev_ )
+                {
+                    videodev_->start();
+                }
             }
             else if( events[i].events & EPOLLIN )
             {
@@ -112,7 +115,7 @@ void s_poll::run()
             {
                 epoll_ctl( fd_, EPOLL_CTL_DEL, events[i].data.fd, nullptr );
                 connections_.erase( events[i].data.fd );
-                if( connections_.empty() )
+                if( videodev_ && connections_.empty() )
                 {
                     videodev_->stop();
                 }
@@ -140,7 +143,7 @@ void s_poll::f_add( int sock, uint32_t events )
 
 void s_poll::f_send_frame( TBaseframe::time_point_t * last_ts )
 {
-    float duration = screen_ ? screen_->frame_duration_passed( last_ts ) : videodev_->frame_duration_passed( last_ts );
+    float duration = screen_ ? screen_->frame_duration_passed( last_ts ) : (videodev_ ? videodev_->frame_duration_passed( last_ts ) : -1.f);
     if( duration > 0.f )
     {
         for( auto p : connections_ )

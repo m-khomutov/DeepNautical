@@ -89,7 +89,7 @@ private:
     uint16_t server_port_;
     size_t (receiver::*action)(uint8_t const *, size_t);
     uint64_t timestamp_ { 0ul };
-    bool verify_ { bool(NUtils::config()["verify"]) };
+    bool verify_ { bool(NUtils::TConfig()["verify"]) };
     int reconnect_delay_ { 0 };
 
 private:

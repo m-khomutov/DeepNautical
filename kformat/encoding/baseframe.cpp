@@ -17,11 +17,7 @@ TBaseframe::~TBaseframe()
 
 bool TBaseframe::send_buffer( TBaseprotocol * proto )
 {
-    if( proto )
-    {
-        return f_send_buffer( proto );
-    }
-    return false;
+    return proto ? f_send_buffer( proto ) : false;
 }
 
 float TBaseframe::is_duration_passed( time_point_t *ts ) const

@@ -247,7 +247,7 @@ avi::~avi()
 {
 }
 
-NUtils::image &avi::next_image()
+NUtils::TImage &avi::next_image()
 {
     if( frame_iter_ == frames_.end() )
     {

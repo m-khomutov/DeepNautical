@@ -74,7 +74,7 @@ receiver::receiver( basedecoder *decoder )
 {
     try
     {
-        std::string url = NUtils::config()["url"];
+        std::string url = NUtils::TConfig()["url"];
         std::regex r("^([a-z]+)://([0-9\\.\\S]+):([0-9]{4,5})/([0-9])$"); // proto://host:port/context
         std::smatch cm;
 

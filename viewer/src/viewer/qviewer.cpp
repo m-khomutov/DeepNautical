@@ -38,7 +38,7 @@ void qspinner::paint( QPainter *painter )
 
         painter->rotate( angle_unit_ );
         painter->translate( 0, 20 );
-        painter->drawRoundRect( QRect(-5, 0, 10, 40), 80, 80 );
+        painter->drawRoundedRect( QRect(-5, 0, 10, 40), 80, 80, Qt::RelativeSize );
         painter->translate( 0, -20 );
     }
     painter->restore();
@@ -58,7 +58,7 @@ void qspinner::paint( QPainter *painter )
 qviewer::qviewer()
 : QWidget(nullptr)
 {
-    NUtils::TGeometry window = NUtils::config()["window"];
+    NUtils::TGeometry window = NUtils::TConfig()["window"];
     setWindowTitle("ПО управления");
     setMaximumSize(window.width, window.height);
     setMinimumSize(window.width, window.height);

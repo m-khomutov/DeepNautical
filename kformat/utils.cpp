@@ -13,32 +13,32 @@
 #include <sys/stat.h>
 #include <fstream>
 
-NUtils::config::fields_t NUtils::config::fields_ = NUtils::config::fields_t();
+NUtils::TConfig::fields_t NUtils::TConfig::fields_ = NUtils::TConfig::fields_t();
 
-NUtils::config::variant::variant( int v )
+NUtils::TConfig::TVariant::TVariant( int v )
 : ivalue_( v )
 {}
 
-NUtils::config::variant::variant( std::string v )
+NUtils::TConfig::TVariant::TVariant( std::string v )
 : svalue_( v )
 {}
 
 
-NUtils::config::variant::variant( NUtils::TGeometry const &v )
+NUtils::TConfig::TVariant::TVariant( NUtils::TGeometry const &v )
 : gvalue_( v )
 {}
 
-NUtils::config::variant::operator int() const
+NUtils::TConfig::TVariant::operator int() const
 {
     return ivalue_;
 }
 
-NUtils::config::variant::operator std::string() const
+NUtils::TConfig::TVariant::operator std::string() const
 {
     return svalue_;
 }
 
-NUtils::config::variant::operator NUtils::TGeometry() const
+NUtils::TConfig::TVariant::operator NUtils::TGeometry() const
 {
     return gvalue_;
 }
@@ -86,14 +86,14 @@ namespace
     }
 }  // namespace
 
-NUtils::config::config( int argc, char * argv[] )
+NUtils::TConfig::TConfig( int argc, char * argv[] )
 {
-    config::fields_["port"] = 2232;
-    config::fields_["window"] = NUtils::TGeometry();
-    config::fields_["quality"] = 80;
-    config::fields_["duration"] = 40;
-    config::fields_["verify"] = false;
-    config::fields_["scene_count"] = 1;
+    TConfig::fields_["port"] = 2232;
+    TConfig::fields_["window"] = NUtils::TGeometry();
+    TConfig::fields_["quality"] = 80;
+    TConfig::fields_["duration"] = 40;
+    TConfig::fields_["verify"] = false;
+    TConfig::fields_["scene_count"] = 1;
 
     int c;
     while ((c = getopt (argc, argv, "d:p:q:s:t:u:vw:c:o:h")) != -1)
@@ -101,31 +101,31 @@ NUtils::config::config( int argc, char * argv[] )
         switch (c)
         {
         case 's':
-              config::fields_["shaders"] = str2conf< std::string >( optarg );
+              TConfig::fields_["shaders"] = str2conf< std::string >( optarg );
               break;
         case 't':
-              config::fields_["textures"] = str2conf< std::string >( optarg );
+              TConfig::fields_["textures"] = str2conf< std::string >( optarg );
               break;
         case 'o':
-              config::fields_["objs"] = str2conf< std::string >( optarg );
+              TConfig::fields_["objs"] = str2conf< std::string >( optarg );
               break;
         case 'p':
-              config::fields_["port"] = str2conf< int >( optarg );
+              TConfig::fields_["port"] = str2conf< int >( optarg );
               break;
         case 'w':
-              config::fields_["window"] = str2conf< NUtils::TGeometry >( optarg );
+              TConfig::fields_["window"] = str2conf< NUtils::TGeometry >( optarg );
               break;
         case 'q':
-              config::fields_["quality"] = str2conf< int >( optarg );
+              TConfig::fields_["quality"] = str2conf< int >( optarg );
               break;
         case 'd':
-              config::fields_["duration"] = str2conf< int >( optarg );
+              TConfig::fields_["duration"] = str2conf< int >( optarg );
               break;
         case 'u':
-              config::fields_["url"] = str2conf< std::string >( optarg );
+              TConfig::fields_["url"] = str2conf< std::string >( optarg );
               break;
         case 'v':
-              config::fields_["verify"] = true;
+              TConfig::fields_["verify"] = true;
               break;
         case 'c':
               f_read_file( optarg );
@@ -137,9 +137,9 @@ NUtils::config::config( int argc, char * argv[] )
     }
 }
 
-NUtils::config::variant &NUtils::config::operator [](char const *key) const
+NUtils::TConfig::TVariant &NUtils::TConfig::operator [](char const *key) const
 {
-    std::map< std::string, variant >::iterator it = fields_.find( key );
+    std::map< std::string, TVariant >::iterator it = fields_.find( key );
     if( it != fields_.end() )
     {
         return it->second;
@@ -147,59 +147,59 @@ NUtils::config::variant &NUtils::config::operator [](char const *key) const
     throw std::runtime_error(std::string("config has no key ") + std::string(key) );
 }
 
-void NUtils::config::f_read_file( char const *fname )
+void NUtils::TConfig::f_read_file( char const *fname )
 {
     read_config( fname, [this]( const std::string &line ){
         std::string::size_type pos;
         if( (pos = line.find( "shaders=" )) != std::string::npos )
         {
-            config::fields_["shaders"] = str2conf< std::string >( line.c_str() );
+            TConfig::fields_["shaders"] = str2conf< std::string >( line.c_str() );
         }
         else if( (pos = line.find( "textures=" )) != std::string::npos )
         {
-            config::fields_["textures"] = str2conf< std::string >( line.c_str() );
+            TConfig::fields_["textures"] = str2conf< std::string >( line.c_str() );
         }
         else if( (pos = line.find( "port=" )) != std::string::npos )
         {
-            config::fields_["port"] = str2conf< int >( line.substr( pos + 5 ).c_str() );
+            TConfig::fields_["port"] = str2conf< int >( line.substr( pos + 5 ).c_str() );
         }
         else if( (pos = line.find( "window=" )) != std::string::npos )
         {
-            config::fields_["window"] = str2conf< NUtils::TGeometry >( line.substr( pos + 7 ).c_str() );
+            TConfig::fields_["window"] = str2conf< NUtils::TGeometry >( line.substr( pos + 7 ).c_str() );
         }
         else if( (pos = line.find( "quality=" )) != std::string::npos )
         {
-            config::fields_["quality"] = str2conf< int >( line.substr( pos + 8 ).c_str() );
+            TConfig::fields_["quality"] = str2conf< int >( line.substr( pos + 8 ).c_str() );
         }
         else if( (pos = line.find( "duration=" )) != std::string::npos )
         {
-            config::fields_["duration"] = str2conf< int >( line.substr( pos + 9 ).c_str() );
+            TConfig::fields_["duration"] = str2conf< int >( line.substr( pos + 9 ).c_str() );
         }
         else if( (pos = line.find( "url=" )) != std::string::npos )
         {
-            config::fields_["url"] = str2conf< std::string >( line.c_str() );
+            TConfig::fields_["url"] = str2conf< std::string >( line.c_str() );
         }
         else if( (pos = line.find( "verify=" )) != std::string::npos )
         {
-            config::fields_["verify"] = str2conf< bool >( line.substr( pos +7 ).c_str() );
+            TConfig::fields_["verify"] = str2conf< bool >( line.substr( pos +7 ).c_str() );
         }
         else if( (pos = line.find( "objs=" )) != std::string::npos )
         {
-            config::fields_["objs"] = str2conf< std::string >( line.c_str() );
+            TConfig::fields_["objs"] = str2conf< std::string >( line.c_str() );
         }
         else if( (pos = line.find( "scenes=" )) != std::string::npos )
         {
-            config::fields_["scenes"] = str2conf< std::string >( line.c_str() );
+            TConfig::fields_["scenes"] = str2conf< std::string >( line.c_str() );
         }   
         else if( (pos = line.find( "scene_count=" )) != std::string::npos )
         {
-            config::fields_["scene_count"] = str2conf< int >( line.substr( pos + 12 ).c_str() );
+            TConfig::fields_["scene_count"] = str2conf< int >( line.substr( pos + 12 ).c_str() );
         }
     });
 }
 
 
-NUtils::jpeg_codec::error::error( const std::string &what )
+NUtils::TJpegCodec::TError::TError( const std::string &what )
 : std::runtime_error( what )
 {}
 
@@ -210,34 +210,34 @@ void on_jpeg_error( j_common_ptr cinfo )
     char buf[JMSG_LENGTH_MAX];
     ( *( cinfo->err->format_message ) ) ( cinfo, buf );
 
-    throw NUtils::jpeg_codec::error( buf );
+    throw NUtils::TJpegCodec::TError( buf );
 }
 }  // namespace
 
-NUtils::jpeg_codec::jpeg_codec()
+NUtils::TJpegCodec::TJpegCodec()
 {
     cinfo_.err = jpeg_std_error( &jerr_ );
     cinfo_.err->error_exit = on_jpeg_error;
     jpeg_create_decompress( &cinfo_ );
 }
 
-NUtils::jpeg_codec::~jpeg_codec()
+NUtils::TJpegCodec::~TJpegCodec()
 {
     jpeg_destroy_decompress( &cinfo_ );
 }
 
-bool NUtils::jpeg_codec::decode( char const *filename, image *img )
+bool NUtils::TJpegCodec::decode( char const *filename, TImage *img )
 {
     struct stat info;
     if( stat(filename, &info) != 0 )
     {
-        throw NUtils::jpeg_codec::error( strerror( errno ) );
+        throw NUtils::TJpegCodec::TError( strerror( errno ) );
     }
 
     int fd = open( filename, O_RDONLY );
     if( fd < 0 )
     {
-        throw NUtils::jpeg_codec::error( strerror( errno ) );
+        throw NUtils::TJpegCodec::TError( strerror( errno ) );
     }
 
     std::vector< uint8_t > jdata( info.st_size );
@@ -245,12 +245,12 @@ bool NUtils::jpeg_codec::decode( char const *filename, image *img )
     close(fd);
     if( rc != jdata.size() )
     {
-        throw NUtils::jpeg_codec::error( "not whole file was read" );
+        throw NUtils::TJpegCodec::TError( "not whole file was read" );
     }
     return decode( jdata.data(), jdata.size(), img );
 }
 
-bool NUtils::jpeg_codec::decode( uint8_t const *data, size_t in_size, image *img )
+bool NUtils::TJpegCodec::decode( uint8_t const *data, size_t in_size, TImage *img )
 {
     jpeg_mem_src( &cinfo_, data, in_size );
     if( jpeg_read_header( &cinfo_, TRUE ) != 1 )

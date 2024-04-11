@@ -20,12 +20,12 @@ public:
     ~jpegdecoder() = default;
 
 private:
-    NUtils::jpeg_codec codec_;
+    NUtils::TJpegCodec codec_;
     std::vector< uint8_t > frame_[2];
     std::mutex mutex_;
 
 private:
-    void f_load( NUtils::image *img ) override;
+    void f_load( NUtils::TImage *img ) override;
     void f_store( uint8_t const *frame, size_t size, uint64_t timestamp ) override;
 };
 

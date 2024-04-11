@@ -28,7 +28,7 @@ basedecoder::~basedecoder()
 }
 
 
-bool basedecoder::load( NUtils::image *img )
+bool basedecoder::load( NUtils::TImage *img )
 {
     try
     {

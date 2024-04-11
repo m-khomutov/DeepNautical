@@ -36,7 +36,7 @@ program::program( char const *filter )
 {
     try
     {
-        std::string dir = NUtils::config()["shaders"];
+        std::string dir = NUtils::TConfig()["shaders"];
         NUtils::read_directory( dir, filter, [&]( const std::string &name ){ f_emplace_shader( dir + "/" + name ); } );
     }
     catch( const std::runtime_error & err )

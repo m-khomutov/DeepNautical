@@ -16,7 +16,7 @@ screen_error::screen_error( const std::string &what )
 openglscreen::openglscreen( TBaseframe *frame )
 : basescreen( frame )
 {
-    NUtils::read_directory( NUtils::config()["scenes"],
+    NUtils::read_directory( NUtils::TConfig()["scenes"],
                            ".scn",
                            [this]( const std::string &name )
                            {
@@ -58,7 +58,7 @@ void openglscreen::f_exec_command()
         switch( cmd.type() )
         {
         case command::set_scene:
-            sc_.back().reset(new scene( std::string(NUtils::config()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
+            sc_.back().reset(new scene( std::string(NUtils::TConfig()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
             break;
         }
     }
@@ -74,6 +74,7 @@ void openglscreen::f_store()
     {
         uint8_t *buffer = frame_->buffer( v, frame_->width(), frame_->height() );
         glReadPixels( v * frame_->width(), 0, frame_->width(), frame_->height(), GL_RGB, GL_UNSIGNED_BYTE, buffer );
+        frame_->prepare_buffer( v );
     }
 }
 

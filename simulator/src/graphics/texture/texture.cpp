@@ -17,8 +17,8 @@ texture::texture( char const *filename, char const *alpha )
 {
     GLenum format { GL_RGB };
     
-    NUtils::image img;
-    NUtils::jpeg_codec codec;
+    NUtils::TImage img;
+    NUtils::TJpegCodec codec;
     if( !codec.decode( filename, &img ) )
     {
         throw texture_error( std::string("invalid file: ") + std::string(filename) );
@@ -26,7 +26,7 @@ texture::texture( char const *filename, char const *alpha )
     
     if( alpha )
     {
-        NUtils::image a_img;
+        NUtils::TImage a_img;
         if( !codec.decode( alpha, &a_img ) || a_img.pixels.size() * 3 != img.pixels.size() )
         {
             throw texture_error( std::string("invalid alpha file: ") + std::string(alpha) );
@@ -52,7 +52,7 @@ texture::texture( char const *filename, char const *alpha )
     glBindTexture( GL_TEXTURE_2D, 0 );
 }
 
-texture::texture( NUtils::image &img )
+texture::texture( NUtils::TImage &img )
 {
     glGenTextures( 1, &id_ );
     glBindTexture( GL_TEXTURE_2D, id_ );
@@ -79,7 +79,7 @@ texture::~texture()
     glDeleteTextures( 1, &id_ );
 }
 
-texture &texture::operator =( NUtils::image &img )
+texture &texture::operator =( NUtils::TImage &img )
 {
     glBindTexture( GL_TEXTURE_2D, id_ );
     glTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, img.window.width, img.window.height, GL_RGB, GL_UNSIGNED_BYTE, img.pixels.data() );

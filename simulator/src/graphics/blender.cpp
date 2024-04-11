@@ -79,7 +79,7 @@ blender::mtlfile::mtlfile( const char* filename )
         }
         else if( line.find( "map_Kd " ) == 0 )
         {
-            mtls.back().map_Kd.reset( new texture( (std::string(NUtils::config()["objs"]) + "/" + line.substr( 7 )).c_str() ) );
+            mtls.back().map_Kd.reset( new texture( (std::string(NUtils::TConfig()["objs"]) + "/" + line.substr( 7 )).c_str() ) );
         }
     }
     for( auto mtl : mtls )
@@ -157,7 +157,7 @@ blender::object::object( char const *fname )
         {
             try
             {
-                mltr.reset( new mtlfile( (std::string(NUtils::config()["objs"]) + "/" + line.substr( 7 )).c_str() ) );
+                mltr.reset( new mtlfile( (std::string(NUtils::TConfig()["objs"]) + "/" + line.substr( 7 )).c_str() ) );
             }
             catch( const std::runtime_error &e )
             {

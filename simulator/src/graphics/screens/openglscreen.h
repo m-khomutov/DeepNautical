@@ -59,7 +59,7 @@ protected:
     std::set< std::string > scenes_;
     std::set< std::string >::iterator scene_iter_;
     std::vector< std::shared_ptr< scene > > sc_;
-    NUtils::safeguard< std::list< command > > commands_;
+    NUtils::TSafeguard< std::list< command > > commands_;
 
 protected:
     void f_exec_command();

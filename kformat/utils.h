@@ -61,18 +61,18 @@ struct TGeometry
 };
 
 template< typename T >
-class scoped_thread
+class TScopedThread
 {
  public:
-     scoped_thread() = default;
-     explicit scoped_thread( T *obj )
+     TScopedThread() = default;
+     explicit TScopedThread( T *obj )
      : object_( obj )
      , t_( [this](){ try { object_->run(); } catch ( const std::exception &e ) { std::cerr << e.what() <<std::endl; } } )
      {
      }
-     scoped_thread( scoped_thread const &orig ) = delete;
-     scoped_thread &operator =( scoped_thread const &rhs ) = delete;
-     ~scoped_thread()
+     TScopedThread( TScopedThread const &orig ) = delete;
+     TScopedThread &operator =( TScopedThread const &rhs ) = delete;
+     ~TScopedThread()
      {
          if( object_ )
          {
@@ -89,21 +89,21 @@ private:
     std::thread t_;
 };
 
-class config
+class TConfig
 {
 public:
-    config() = default;
-    config( int argc, char * argv[] );
-    config( config const &orig) = delete;
-    config &operator =( config const &rhs ) = delete;
+    TConfig() = default;
+    TConfig( int argc, char * argv[] );
+    TConfig( TConfig const &orig) = delete;
+    TConfig &operator =( TConfig const &rhs ) = delete;
 
-    class variant
+    class TVariant
     {
     public:
-        variant() = default;
-        variant( int v );
-        variant( std::string v );
-        variant( TGeometry const &v );
+        TVariant() = default;
+        TVariant( int v );
+        TVariant( std::string v );
+        TVariant( TGeometry const &v );
 
         operator int() const;
         operator std::string() const;
@@ -114,9 +114,9 @@ public:
         std::string svalue_;
         TGeometry gvalue_;
     };
-    using fields_t = std::map< std::string, variant >;
+    using fields_t = std::map< std::string, TVariant >;
     
-    variant &operator [](char const *key) const;
+    TVariant &operator [](char const *key) const;
     
 private:
     static fields_t fields_;
@@ -125,31 +125,31 @@ private:
     void f_read_file( char const *name );
 };
 
-struct image
+struct TImage
 {
     std::vector< uint8_t > pixels;
     TGeometry window;
     int channels { 3 };
     uint64_t timestamp { 0xff };
 
-    image() = default;
-    image( TGeometry const &win ) : window( win ) {};
+    TImage() = default;
+    TImage( TGeometry const &win ) : window( win ) {};
 };
 
-class jpeg_codec {
+class TJpegCodec {
 public:
-    class error: public std::runtime_error {
+    class TError: public std::runtime_error {
     public:
-        error(const std::string & what);
+        TError(const std::string & what);
     };
     
-    jpeg_codec();
-    jpeg_codec(const jpeg_codec& orig) = delete;
-    jpeg_codec &operator =(const jpeg_codec& orig) = delete;
-    ~jpeg_codec();
+    TJpegCodec();
+    TJpegCodec(const TJpegCodec& orig) = delete;
+    TJpegCodec &operator =(const TJpegCodec& orig) = delete;
+    ~TJpegCodec();
     
-    bool decode( uint8_t const *data, size_t size, image *img );
-    bool decode( char const *filename, image *img );
+    bool decode( uint8_t const *data, size_t size, TImage *img );
+    bool decode( char const *filename, TImage *img );
 
 private:
     jpeg_decompress_struct cinfo_;
@@ -157,9 +157,9 @@ private:
 };
 
 template< typename T >
-class safeguard {
+class TSafeguard {
 public:
-    class guard {
+    class TGuard {
     public:
         T& operator *()
         {
@@ -170,13 +170,13 @@ public:
             return value_;
         }
 
-        guard( guard && rhs )
+        TGuard( TGuard && rhs )
         : m_( std::move( rhs.m_ ) )
         , value_( rhs.value_ )
         {}
 
     private:
-        guard( std::mutex *m, T *v )
+        TGuard( std::mutex *m, T *v )
         : m_( m, []( std::mutex *m_p ){ m_p->unlock(); } )
         , value_( v )
         {
@@ -186,19 +186,19 @@ public:
     private:
         std::shared_ptr< std::mutex > m_;
         T *value_;
-        friend class safeguard;
+        friend class TSafeguard;
     };
 
 public:
-    safeguard()
+    TSafeguard()
     : value_( new T )
     {}
-    safeguard(const safeguard& orig) = delete;
-    safeguard &operator =(const safeguard& orig) = delete;
+    TSafeguard( const TSafeguard& orig ) = delete;
+    TSafeguard &operator =( const TSafeguard& orig ) = delete;
 
-    guard get()
+    TGuard get()
     {
-        return guard( &mutex_, value_.get() );
+        return TGuard( &mutex_, value_.get() );
     }
 
 private:

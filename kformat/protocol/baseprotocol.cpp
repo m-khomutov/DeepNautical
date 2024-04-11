@@ -20,21 +20,22 @@ TBaseprotocol *TBaseprotocol::create( basescreen *screen, const std::string &req
 {
     if( request.find( "\r\n\r\n" ) != std::string::npos )
     {
-        auto params = http_param::parse( request );
+        auto params = THttpParameter::parse( request );
 
-        if( request.find( "GET /stream?" ) != std::string::npos )
+        if( request.find( "GET /stream?" ) != std::string::npos ) // запрос на выдачу видеоконтента
         {
+            // в параметрах должно быть имя протокола и номер точки обзора
             const std::string *proto = nullptr;
             size_t view = 0;
             for( const auto &p : params )
             {
                 if( p.field == "proto" )
                 {
-                    proto = &p.value;
+                    proto = &p.value;  // имя протокола
                 }
                 else if( p.field == "view" && std::isdigit( p.value[0] ) )
                 {
-                    view = p.value[0] - '0';
+                    view = p.value[0] - '0'; // номер точки обзора
                 }
             }
             if( proto && *proto == "flv" )
@@ -42,12 +43,12 @@ TBaseprotocol *TBaseprotocol::create( basescreen *screen, const std::string &req
                 return new flvprotocol( sock, flags, view );
             }
         }
-        if( request.find( "GET /scene?" ) != std::string::npos )
+        if( request.find( "GET /scene?" ) != std::string::npos ) // запрос на смену сцены
         {
             return new httpapi( sock, flags, screen );
         }
     }
-    return nullptr;
+    return nullptr; // неизвестный запрос
 }
 
 TBaseprotocol::TBaseprotocol( int sock, int flags )
@@ -60,31 +61,31 @@ TBaseprotocol::~TBaseprotocol()
 
 
 
-http_param::http_param( const std::string &request, size_t begin, size_t end )
+THttpParameter::THttpParameter( const std::string &request, size_t begin, size_t end )
 {
     size_t eq = request.find( '=', begin );
-    if( eq != std::string::npos )
+    if( eq != std::string::npos ) // вид параметра в строке: имя=значение
     {
         field.assign( request, begin, eq - begin );
         value.assign( request, eq + 1, (end - (eq + 1) ) );
     }
-    else
+    else // вид параметра в строке: имя
     {
         field.assign( request, begin, end - begin );
     }
 }
 
-std::vector< http_param > http_param::parse( const std::string &request )
+std::vector< THttpParameter > THttpParameter::parse( const std::string &request )
 {
-    std::vector< http_param > params;
+    std::vector< THttpParameter > params;
 
-    size_t begin = request.find( '?' );
+    size_t begin = request.find( '?' ); // начало списка параметров
     if( begin != std::string::npos )
     {
         ++begin;
 
         size_t end = std::string::npos;
-        while( (end = request.find( '&', begin )) != std::string::npos )
+        while( (end = request.find( '&', begin )) != std::string::npos ) // разделитель
         {
             params.emplace_back( request, begin, end );
             begin = end + 1;

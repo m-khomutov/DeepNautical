@@ -35,10 +35,10 @@ public:
     int stop();
 
 protected:
-    NUtils::image frame_;
+    NUtils::TImage frame_;
     std::unique_ptr< basedecoder > decoder_;
     receiver receiver_;
-    NUtils::scoped_thread< receiver > rec_thread_;
+    NUtils::TScopedThread< receiver > rec_thread_;
     int update_tag_ { -1 }; 
 
 private:

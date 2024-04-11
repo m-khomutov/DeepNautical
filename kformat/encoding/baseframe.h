@@ -7,6 +7,14 @@
      Данный файл содержит в себе состояние базового класса представления видеокадра, объявление его интерфейсов.
  */
 
+#ifndef BASEFRAME_H
+#define BASEFRAME_H
+
+#include "../utils.h"
+#include <chrono>
+
+class TBaseprotocol;
+
 /*!
      \class TBaseframe
      \brief Базовый класс представления видеокадра.
@@ -26,15 +34,6 @@
 
       Виртуальный защищенный интерфейс объявляет метод выгрузки буфера хранения пикселов кадра в соответствии с протоколом передачи видео.
  */
-
-#ifndef BASEFRAME_H
-#define BASEFRAME_H
-
-#include "../utils.h"
-#include <chrono>
-
-class TBaseprotocol;
-
 class TBaseframe {
 public:
     /// алиас типа данных временной метки
@@ -50,7 +49,7 @@ public:
     TBaseframe( const NUtils::TGeometry &geometry, int duration );
     /*!
        \brief Запрещенный конструктор копии.
-     * \param orig Копируемый объект
+       \param orig Копируемый объект
      */
     TBaseframe( const TBaseframe& orig ) = delete;
     /*!
@@ -75,6 +74,11 @@ public:
         \return указатель на буфер хранения пиксельной информации кадра
      */
     virtual uint8_t *buffer( size_t view, int width, int height ) = 0;
+    /*!
+        \brief Выполнить действия, подготовительные к передаче кадра абоненту, специфичные к формату кадра.
+        \param view Номер точки обзора (сцена или камера в сцене)
+     */
+    virtual void prepare_buffer( size_t view ) = 0;
     /*!
        \brief Выгружает в сеть буфер пикселей видеокадра.
 
@@ -112,9 +116,9 @@ protected:
     /// алиас, представляющий память хранения буфера пиксельной информации.
     using image = std::vector< uint8_t >;
 
-    NUtils::TGeometry geometry_;            ///< размеры кадра (ширина, высота)
-    std::chrono::milliseconds duration_;  ///< длительность кадра (в миллисекундах)
-    std::vector< image > rgb_buffer_;     ///< буферы хранения пиксельной информации кадра (по количеству задействованных точек обзора)
+    NUtils::TGeometry geometry_;           ///< размеры кадра (ширина, высота)
+    std::chrono::milliseconds duration_;   ///< длительность кадра (в миллисекундах)
+    std::vector< image > rgb_buffers_;     ///< буферы хранения пиксельной информации кадра (по количеству задействованных точек обзора)
 
 private:
     /*!

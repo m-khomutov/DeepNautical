@@ -319,7 +319,7 @@ void videodevice::f_allocate_buffers()
     printf("allocated buffer at %p of size %d from offset 0x%08lx\n", mmap_ptr_,
                                                                       v4l2_buffer_.length,
                                                                       offset );
-    frame_.reset( new jpegframe( NUtils::TGeometry( width_, height_ ), 100, 10, false ) );
+    frame_.reset( new TJpegframe( NUtils::TGeometry( width_, height_ ), 100, 10, false ) );
 }
 
 bool videodevice::f_get_frame()

@@ -20,7 +20,7 @@ void copyimage( const T from, T *to )
 }
 }  // namespace
 
-void jpegdecoder::f_load( NUtils::image *img )
+void jpegdecoder::f_load( NUtils::TImage *img )
 {
     {
         std::lock_guard< std::mutex > lk( mutex_ );

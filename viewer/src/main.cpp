@@ -49,8 +49,8 @@ int main(int argc, char** argv)
 {
     try
     {
-        NUtils::config( argc, argv );
-        NUtils::config()["url"];
+        NUtils::TConfig( argc, argv );
+        NUtils::TConfig()["url"];
     }
     catch( const std::runtime_error &e )
     {

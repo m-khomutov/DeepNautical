@@ -44,7 +44,7 @@ g_viewer::g_viewer()
     layout_ = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
     allocation_.reset( g_new(GtkAllocation, 1) );
 
-    utils::geometry window = utils::config()["window"];
+    utils::geometry window = utils::TConfig()["window"];
     gtk_window_set_title( GTK_WINDOW(window_), "ПО управления" );
     gtk_window_set_default_size( GTK_WINDOW(window_), window.width, window.height );
     gtk_window_set_position( GTK_WINDOW(window_), GTK_WIN_POS_CENTER );
