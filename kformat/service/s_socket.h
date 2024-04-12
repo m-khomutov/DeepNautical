@@ -1,10 +1,11 @@
-/* 
- * File:   socket.h
- * Author: mkh
- *
- * Created on 25 января 2023 г., 9:24
- */
+/*!
+     \file s_socket.h
+     \author mkh
+     \date 25 января 2023 г.
+     \brief Заголовочный файл класса сокета сетевого соединения с абонентом.
 
+     Данный файл содержит в себе состояние класса сокета сетевого соединения с абонентом, объявление его интерфейсов.
+ */
 #ifndef S_SOCKET_H
 #define S_SOCKET_H
 
@@ -15,24 +16,63 @@
 
 #include <stdexcept>
 
-class s_socket_error: public std::runtime_error
+/*!
+   \class TSocketError
+   \brief Класс ошибки сокета, принимающего tcp запросы на создание сетевого соединения
+
+   Производный от std::runtime_error. Собственного состояния и методов не содержит
+ */
+class TSsocketError: public std::runtime_error
 {
 public:
-    s_socket_error( const std::string & what );
+    /*!
+     * \brief Конструктор класса ошибки сокета, принимающего tcp запросы на создание сетевого соединения
+     * \param what строковое описание ошибки
+     */
+    TSsocketError( const std::string & what );
 };
 
-class s_socket {
-public:
-    explicit s_socket( uint16_t b_port );
-    s_socket(const s_socket& orig) = delete;
-    s_socket &operator =(const s_socket& orig) = delete;
-    ~s_socket();
+/*!
+     \class TSsocket
+     \brief Класс сокета, принимающего tcp запросы на создание сетевого соединения с абонентом.
 
+      Состояние класса хранит файловый дескриптор (сокет), принимающий запросы на создание соединения с абонентом
+
+      Реальный публичный интерфейс определяет метод предоставления файлового дескриптора (сокета).
+ */
+class TSsocket {
+public:
+    /*!
+     * \brief Конструктор класса сокета приема запросов на создание сетевых соединений с абонентом
+     * \param b_port сетевой порт ожидания запросов от абонентов
+     */
+    explicit TSsocket( uint16_t b_port );
+    /*!
+       \brief Запрещенный конструктор копии.
+       \param orig Копируемый объект
+     */
+    TSsocket( const TSsocket& orig ) = delete;
+    /*!
+       \brief Запрещенный оператор присваивания.
+       \param orig Копируемый объект
+       \return Собственный объект
+     */
+    TSsocket &operator =( const TSsocket& orig ) = delete;
+    /*!
+       \brief Деструктор класса сокета приема запросов на создание сетевых соединений с абонентом.
+     */
+    ~TSsocket();
+
+    /*!
+       \brief предоставляет файловый дескриптор (сокет) приема запросов на создание сетевых соединений
+       \return файловый дескриптор (сокет) приема запросов на создание сетевых соединений
+     */
     operator int() const {
         return fd_;
     }
     
 private:
+    //! файловый дескриптор (сокет), принимающий запросы на создание соединения с абонентом
     int fd_;
 
 };
