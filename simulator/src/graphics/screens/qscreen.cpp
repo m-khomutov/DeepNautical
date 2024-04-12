@@ -19,13 +19,13 @@ qscreen::qscreen( TBaseframe* frame )
 qscreen::~qscreen()
 {}
 
-void qscreen::f_run()
+void qscreen::f_run_scene_display()
 {
     show();
     update_id_ = startTimer(0);
 }
 
-void qscreen::f_stop()
+void qscreen::f_stop_scene_display()
 {
     if(update_id_ != -1)
     {
@@ -57,13 +57,13 @@ void qscreen::initializeGL()
         ++scene_iter_;
     }
 
-    viewes_ = 0;
+    view_count_ = 0;
     for( auto &s : sc_ )
     {
-        viewes_ += s->cameras();
+        view_count_ += s->cameras();
     }
 
-    resize( viewes_ * frame_->width(), frame_->height() );
+    resize( view_count_ * frame_->width(), frame_->height() );
 }
 
 void qscreen::paintGL()
@@ -82,9 +82,9 @@ void qscreen::paintGL()
         }
     }
 
-    if( frame_duration_passed( &store_ts_ ) > 0.f )
+    if( is_frame_duration_passed( &store_ts_ ) > 0.f )
     {
-        basescreen::store();
+        TBasescreen::store_scene_frame();
     }
 }
 

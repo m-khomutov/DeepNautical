@@ -38,14 +38,14 @@ private:
     command_type t_;
 };
 
-class openglscreen: public basescreen {
+class openglscreen: public TBasescreen {
 public:
     openglscreen( TBaseframe *frame );
     openglscreen(const openglscreen& orig) = delete;
     openglscreen &operator =(const openglscreen& orig) = delete;
     virtual ~openglscreen();
 
-    const std::set< std::string > &scenes() const override
+    const std::set< std::string > &get_scenes() const override
     {
         return scenes_;
     }
@@ -65,8 +65,8 @@ protected:
     void f_exec_command();
 
 private:
-    void f_store() override;
-    bool f_load( TBaseprotocol *proto ) override;
+    void f_store_scene_frame() override;
+    bool f_send_stored_scene_frame( TBaseprotocol *proto ) override;
 };
 
 #endif /* OPENGLSCREEN_H */

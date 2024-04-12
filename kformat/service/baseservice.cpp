@@ -8,7 +8,7 @@
 #include "baseservice.h"
 #include "screen/basescreen.h"
 
-baseservice::baseservice( basescreen *screen, uint16_t port )
+baseservice::baseservice( TBasescreen *screen, uint16_t port )
 : screen_( screen )
 , poll_( screen, port )
 , poll_thread_( &poll_ )
@@ -25,7 +25,7 @@ void baseservice::run()
 {
     if( screen_ )
     {
-        screen_->run();
+        screen_->run_scene_display();
     }
     else
     {
@@ -38,7 +38,7 @@ int baseservice::stop()
 {
     if( screen_ )
     {
-        screen_->stop();
+        screen_->stop_scene_display();
     }
     else
     {

@@ -16,7 +16,7 @@ TProtocolError::TProtocolError( const std::string &what )
 : std::runtime_error( what + std::string(" failed: ") + std::string(strerror( errno )) )
 {}
 
-TBaseprotocol *TBaseprotocol::create( basescreen *screen, const std::string &request, int sock, int flags )
+TBaseprotocol *TBaseprotocol::create( TBasescreen *screen, const std::string &request, int sock, int flags )
 {
     if( request.find( "\r\n\r\n" ) != std::string::npos )
     {
@@ -40,12 +40,12 @@ TBaseprotocol *TBaseprotocol::create( basescreen *screen, const std::string &req
             }
             if( proto && *proto == "flv" )
             {
-                return new flvprotocol( sock, flags, view );
+                return new TFLVprotocol( sock, flags, view );
             }
         }
         if( request.find( "GET /scene?" ) != std::string::npos ) // запрос на смену сцены
         {
-            return new httpapi( sock, flags, screen );
+            return new THTTPapi( sock, flags, screen );
         }
     }
     return nullptr; // неизвестный запрос

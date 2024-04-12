@@ -81,12 +81,12 @@ int main(int argc, char** argv)
 #ifdef QT_CORE_LIB
         QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL, true);
         QApplication a(argc, argv);
-        std::unique_ptr< basescreen > scr( new qscreen( new TJpegframe( NUtils::TConfig()["window"],
+        std::unique_ptr< TBasescreen > scr( new qscreen( new TJpegframe( NUtils::TConfig()["window"],
                                                                         NUtils::TConfig()["quality"],
                                                                         NUtils::TConfig()["duration"] ) ) );
         service.reset( new qservice( scr.get(), NUtils::TConfig()["port"] ) );
 #else
-        std::unique_ptr< basescreen > scr ( new glfwscreen( new TJpegframe( NUtils::TConfig()["window"],
+        std::unique_ptr< TBasescreen > scr ( new glfwscreen( new TJpegframe( NUtils::TConfig()["window"],
                                                                             NUtils::TConfig()["quality"],
                                                                             NUtils::TConfig()["duration"] ) ) );
         service.reset( new glfwservice( scr.get(), NUtils::TConfig()["port"] ) );

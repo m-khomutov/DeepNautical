@@ -22,26 +22,26 @@ const char status_200[] = "HTTP/1.1 200 OK\r\nAccess-Control-Allow-Origin: *\r\n
 const char status_404[] = "HTTP/1.1 404 Not Found\r\nAccess-Control-Allow-Origin: *\r\n\r\n";
 } // namespace
 
-httpapi::message::message( const std::string &data )
+THTTPapi::TRequest::TRequest( const std::string &data )
 : origin( data )
 {
     std::istringstream iss( origin );
     std::string s;
-    while( std::getline( iss, s, '\n') )
+    while( std::getline( iss, s, '\n') ) // построчный разбор
     {
-        if( method.empty() )
+        if( method.empty() ) // метод не определен - это стартовая строка
         {
             std::istringstream is( s );
             std::vector<std::string> rc( std::istream_iterator<std::string>({ is }),
                                          std::istream_iterator<std::string>());
-            if( rc.size() == 3 )
+            if( rc.size() == 3 ) // формат стартовой строки: 'метод ури версия'
             {
                 method = rc[0];
                 uri = rc[1];
                 version = rc[2];
             }
         }
-        else
+        else // последующие строки - заголовочные формата: 'имя: значение'
         {
             size_t p = s.find( ":" );
             if( p != std::string::npos )
@@ -53,27 +53,25 @@ httpapi::message::message( const std::string &data )
 }
 
 
-httpapi::httpapi( int b_sock, int flags, basescreen *screen )
+THTTPapi::THTTPapi( int b_sock, int flags, TBasescreen *screen )
 : TBaseprotocol( b_sock, flags )
 , screen_( screen )
-{
-}
+{}
 
-httpapi::~httpapi()
-{
-}
+THTTPapi::~THTTPapi()
+{}
 
-void httpapi::on_data( const uint8_t * data, int size )
+void THTTPapi::on_data( const uint8_t * data, int size )
 {
-    message request( std::string((const char*)data, size) );
+    TRequest request( std::string((const char*)data, size) );
     std::cerr << request.origin << std::endl;
 
-    if( !screen_ )
+    if( !screen_ ) // нет объекта хранения сцен - нет возможности ответить
     {
         f_set_reply( (uint8_t const *)status_404, strlen( status_404 ) );
         f_reply();
     }
-
+    // обработать контрольный запрос
     if( request.uri == "/scene?list" )
     {
         f_send_scene_list();
@@ -86,58 +84,62 @@ void httpapi::on_data( const uint8_t * data, int size )
     {
         f_set_current_scene( request.uri.substr( 11 ) );
     }
-    else
+    else // неизвестный запрос
     {
         f_set_reply( (uint8_t const *)status_404, strlen( status_404 ) );
         f_reply();
     }
 }
 
-void httpapi::do_write()
+void THTTPapi::do_write()
 {
+    // если что не доотправилось - доотправить
     if( sent_ < reply_.size() )
     {
         f_reply();
     }
 }
 
-void httpapi::send_frame( const uint8_t *, int )
+void THTTPapi::send_frame( const uint8_t *, int )
 {}
 
-bool httpapi::can_send_frame() const
+bool THTTPapi::can_send_frame() const
 {
     return false;
 }
 
-void httpapi::write_error()
+void THTTPapi::write_error()
 {
     f_set_reply( (uint8_t const *)status_404, strlen( status_404 ) );
     f_reply();
 }
 
-void httpapi::f_send_scene_list()
+void THTTPapi::f_send_scene_list()
 {
     std::string body = "{\"success\":true,\"scenes\":[";
-    for( auto sc : screen_->scenes() )
+    for( auto sc : screen_->get_scenes() )
     {
         body += "\"" + sc + "\",";
     }
     body.pop_back();
     body += "]}";
+
     std::string reply = std::string(status_200) + "Content-Length: " + std::to_string( body.size() ) + "\r\n\r\n" + body;
+
     f_set_reply( (uint8_t const *)reply.data(), reply.size() );
     f_reply();
 }
 
-void httpapi::f_send_current_scene()
+void THTTPapi::f_send_current_scene()
 {
     std::string body = "{\"success\":true,\"scene\":\"" + screen_->current_scene() + "\"}";
     std::string reply = std::string(status_200) + "Content-Length: " + std::to_string( body.size() ) + "\r\n\r\n" + body;
+
     f_set_reply( (uint8_t const *)reply.data(), reply.size() );
     f_reply();
 }
 
-void httpapi::f_set_current_scene( const std::string &scene )
+void THTTPapi::f_set_current_scene( const std::string &scene )
 {
     try
     {
@@ -147,19 +149,22 @@ void httpapi::f_set_current_scene( const std::string &scene )
     catch( const std::runtime_error &err )
     {
         std::cerr << "set scene " << scene << " error: " << err.what() << std::endl;
+
         f_set_reply( (uint8_t const *)status_404, strlen( status_404 ) );
         f_reply();
     }
 }
 
-void httpapi::f_set_reply( uint8_t const * data, size_t size )
+void THTTPapi::f_set_reply( uint8_t const * data, size_t size )
 {
+    // собрать ответ
     reply_.resize( size );
     ::memcpy( reply_.data(), data, size );
+    // пометить начало передачи
     sent_ = 0;
 }
 
-void httpapi::f_reply()
+void THTTPapi::f_reply()
 {
     int rc = ::send( fd_, reply_.data() + sent_, reply_.size() - sent_, flags_ );
     if( rc > 0 )

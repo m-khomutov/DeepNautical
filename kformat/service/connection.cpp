@@ -42,7 +42,7 @@ connection::~connection()
     std::cerr << "[-] connection " << saddr2str(address_) << ":" << ntohs(address_.sin_port) << " closed\n";
 }
 
-void connection::on_data( basescreen *screen, const uint8_t * data, int size )
+void connection::on_data( TBasescreen *screen, const uint8_t * data, int size )
 {
     if( !proto_ )
     {

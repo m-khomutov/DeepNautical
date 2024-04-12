@@ -49,7 +49,7 @@ glfwscreen::glfwscreen( TBaseframe *frame )
 glfwscreen::~glfwscreen()
 {}
 
-void glfwscreen::f_run()
+void glfwscreen::f_run_scene_frame()
 {
     for( int i(0); i < utils::config()["scene_count"]; ++i )
     {
@@ -61,13 +61,13 @@ void glfwscreen::f_run()
         ++scene_iter_;
     }
 
-    viewes_ = 0;
+    view_count_ = 0;
     for( auto &s : sc_ )
     {
-        viewes_ += s->cameras();
+        view_count_ += s->cameras();
     }
 
-    glfwSetWindowSize( window_.get(), viewes_ * frame_->width(), frame_->height() );
+    glfwSetWindowSize( window_.get(), view_count_ * frame_->width(), frame_->height() );
     GLint w, h;
     while( !glfwWindowShouldClose( window_.get() ) )
     {
@@ -93,7 +93,7 @@ void glfwscreen::f_run()
     }
 }
 
-void glfwscreen::f_stop()
+void glfwscreen::f_stop_scene_frame()
 {
     glfwSetWindowShouldClose( window_.get(), GL_TRUE );
 }

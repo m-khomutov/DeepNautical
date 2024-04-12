@@ -14,7 +14,7 @@ screen_error::screen_error( const std::string &what )
 }
 
 openglscreen::openglscreen( TBaseframe *frame )
-: basescreen( frame )
+: TBasescreen( frame )
 {
     NUtils::read_directory( NUtils::TConfig()["scenes"],
                            ".scn",
@@ -64,13 +64,13 @@ void openglscreen::f_exec_command()
     }
 }
 
-void openglscreen::f_store()
+void openglscreen::f_store_scene_frame()
 {
     int q;
     glGetIntegerv( GL_READ_BUFFER, &q );
     glPixelStorei( GL_PACK_ALIGNMENT, 1 );
     //glReadBuffer( GL_FRONT);//COLOR_ATTACHMENT0 );
-    for( size_t v(0); v < viewes_; ++v )
+    for( size_t v(0); v < view_count_; ++v )
     {
         uint8_t *buffer = frame_->buffer( v, frame_->width(), frame_->height() );
         glReadPixels( v * frame_->width(), 0, frame_->width(), frame_->height(), GL_RGB, GL_UNSIGNED_BYTE, buffer );
@@ -78,7 +78,7 @@ void openglscreen::f_store()
     }
 }
 
-bool openglscreen::f_load( TBaseprotocol *proto )
+bool openglscreen::f_send_stored_scene_frame( TBaseprotocol *proto )
 {
    return frame_->send_buffer( proto );
 }

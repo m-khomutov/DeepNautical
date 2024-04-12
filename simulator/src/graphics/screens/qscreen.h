@@ -30,8 +30,8 @@ private:
     int update_id_ { -1 };
 
 private:
-    void f_run() override;
-    void f_stop() override;
+    void f_run_scene_display() override;
+    void f_stop_scene_display() override;
 };
 
 #endif /* QSCREEN_H */

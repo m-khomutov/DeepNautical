@@ -12,7 +12,7 @@
 
 class qservice: public baseservice {
 public:
-    qservice( basescreen *screen, uint16_t port );
+    qservice( TBasescreen *screen, uint16_t port );
 
     qservice(const qservice& orig) = delete;
     qservice operator =(const qservice& orig) = delete;

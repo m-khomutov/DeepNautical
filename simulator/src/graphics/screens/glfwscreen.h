@@ -28,8 +28,8 @@ private:
 private:
     static void error_cb( int error, const GLchar * description );
 
-    void f_run() override;
-    void f_stop() override;
+    void f_run_scene_display() override;
+    void f_stop_scene_display() override;
 };
 
 #endif /* GLFWSCREEN_H */

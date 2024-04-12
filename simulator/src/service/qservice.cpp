@@ -9,7 +9,7 @@
 #include <QApplication>
 #include <QSurfaceFormat>
 
-qservice::qservice( basescreen *screen, uint16_t port )
+qservice::qservice( TBasescreen *screen, uint16_t port )
 : baseservice( screen, port )
 {
     QSurfaceFormat format;

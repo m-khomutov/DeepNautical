@@ -11,11 +11,11 @@
 #include "s_poll.h"
 #include "../utils.h"
 
-class basescreen;
+class TBasescreen;
 
 class baseservice {
 public:
-    baseservice( basescreen *screen, uint16_t port );
+    baseservice( TBasescreen *screen, uint16_t port );
     baseservice( char const *videodevname, uint16_t port );
 
     baseservice(const baseservice& orig) = delete;
@@ -31,7 +31,7 @@ protected:
     int result_ { EXIT_SUCCESS };
     
 private:
-    basescreen * screen_ { nullptr };
+    TBasescreen * screen_ { nullptr };
     s_poll poll_;
     NUtils::TScopedThread< s_poll > poll_thread_;
 

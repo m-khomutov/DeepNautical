@@ -1,3 +1,11 @@
+/*!
+     \file basescreen.h
+     \author mkh
+     \date 25 января 2023 г.
+     \brief Заголовочный файл базового класса экрана отображения сцен.
+
+     Данный файл содержит в себе состояние базового класса экрана отображения сцен, объявление его интерфейсов.
+ */
 #ifndef BASESCREEN_H
 #define BASESCREEN_H
 
@@ -5,35 +13,129 @@
 #include <mutex>
 #include <set>
 
-class basescreen
+/*!
+     \class TBasescreen
+     \brief Базовый класс экрана отображения сцен.
+
+      Состояние класса хранит:
+      - указатель на объект представления видеокадра;
+      - мьютекс обеспечения потокобезопасной работы с объектом представления видеокадра;
+      - временная метка сохранения видеокадра в объекте представления видеокадра;
+      - количество точек обзора, отображаемых на экране
+
+      Реальный публичный интерфейс определяет методы:
+      - запуска отображения сцен;
+      - остановки отображения сцен;
+      - сохранения текущего кадра сцены;
+      - отправки сохраненного кадра сцены абоненту по определенному сетевому протоколу;
+      - проверки кадра на превышение длительности.
+
+      Виртуальный публичный интерфейс объявляет методы:
+      - получения списка сцен;
+      - получения названия текущей сцены;
+      - запуска заданной сцены.
+
+      Виртуальный защищенный интерфейс объявляет методы:
+      - запуска отображения сцен;
+      - остановки отображения сцен;
+      - сохранения текущего кадра сцены;
+      - отправки сохраненного кадра сцены абоненту по определенному сетевому протоколу.
+
+ */
+class TBasescreen
 {
 public:
-    basescreen( TBaseframe *frame );
-    basescreen(const basescreen& orig) = delete;
-    basescreen &operator =(const basescreen& orig) = delete;
-    virtual ~basescreen() = default;
+    /*!
+       \brief Базовый класс экрана отображения сцен.
+       \param frame указатель на объект представления видеокадра
+     */
+    TBasescreen( TBaseframe *frame );
+    /*!
+       \brief Запрещенный конструктор копии.
+       \param orig Копируемый объект
+     */
+    TBasescreen( const TBasescreen& orig ) = delete;
+    /*!
+       \brief Запрещенный оператор присваивания.
+       \param orig Копируемый объект
+       \return Собственный объект
+     */
+    TBasescreen &operator =( const TBasescreen& orig ) = delete;
+    /*!
+       \brief Виртуальный деструктор базового класса экрана отображения сцен.
+     */
+    virtual ~TBasescreen() = default;
 
-    void run();
-    void stop();
-    void store();
-    bool load( TBaseprotocol *proto );
-    float frame_duration_passed( TBaseframe::time_point_t *ts ) const;
+    /*!
+     * \brief запускает отображение сцен
+     */
+    void run_scene_display();
+    /*!
+     * \brief останавливает отображение сцен
+     */
+    void stop_scene_display();
+    /*!
+     * \brief сохраняет текущий кадр сцены
+     */
+    void store_scene_frame();
+    /*!
+       \brief отправляет сохраненный кадр сцены абоненту по определенному сетевому протоколу
+       \param proto сетевой протокол выдачи видеопотока абоненту
+       \return результат отправки (удалось/не удалось)
+     */
+    bool send_stored_scene_frame( TBaseprotocol *proto );
+    /*!
+       \brief проверяет кадр на превышение длительности
+       \param ts указатель на переменную, хранящую время начала кадра. При превышении длительности в переменную сохраняется начало нового кадра
+       \return Текущая длительность кадра, при превышении заданной, либо -1.0
+     */
+    float is_frame_duration_passed( TBaseframe::time_point_t *ts ) const;
 
-    virtual const std::set< std::string > &scenes() const = 0;
+    /*!
+       \brief возвращает список имеющихся сцен
+       \return список сцен
+     */
+    virtual const std::set< std::string > &get_scenes() const = 0;
+    /*!
+       \brief возвращает имя отображаемой сцены
+       \return имя сцены
+     */
     virtual const std::string &current_scene() const = 0;
+    /*!
+       \brief запускает задаваемую названием сцены
+       \param scene название сцены
+     */
     virtual void set_scene( const std::string &scene ) = 0;
 
 protected:
+    //! указатель на объект представления видеокадра;
     TBaseframe *frame_;
+    //! мьютекс обеспечения потокобезопасной работы с объектом представления видеокадра;
     std::mutex frame_mutex_;
+    //! временная метка сохранения видеокадра в объекте представления видеокадра;
     TBaseframe::time_point_t store_ts_;
-    size_t viewes_ {1};
+    //! количество точек обзора, отображаемых на экране
+    size_t view_count_ {1};
 
 private:
-    virtual void f_run() = 0;
-    virtual void f_stop() = 0;
-    virtual void f_store() = 0;
-    virtual bool f_load( TBaseprotocol *proto ) = 0;
+    /*!
+       \brief Объявление функции запуска отображения сцен. Реализуется в производных классах.
+     */
+    virtual void f_run_scene_display() = 0;
+    /*!
+     * \brief Объявление функции остановки отображения сцен. Реализуется в производных классах.
+     */
+    virtual void f_stop_scene_display() = 0;
+    /*!
+     * \brief Объявление функции сохранения текущего кадра сцены. Реализуется в производных классах.
+     */
+    virtual void f_store_scene_frame() = 0;
+    /*!
+     * \brief Объявление функции отправки сохраненного кадра сцены абоненту по определенному сетевому протоколу. Реализуется в производных классах.
+     * \param proto сетевой протокол выдачи видеопотока абоненту
+     * \return результат отправки (удалось/не удалось)
+     */
+    virtual bool f_send_stored_scene_frame( TBaseprotocol *proto ) = 0;
 };
 
 #endif // BASESCREEN_H
