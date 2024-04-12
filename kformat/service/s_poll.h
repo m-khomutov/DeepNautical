@@ -17,7 +17,7 @@
 #include <map>
 
 class TBasescreen;
-class connection;
+class TConnection;
 
 class s_poll_error: public std::runtime_error
 {
@@ -44,7 +44,7 @@ private:
     int fd_;
     TBasescreen *screen_ { nullptr };
     std::unique_ptr< videodevice > videodev_;
-    std::map< int, std::shared_ptr< connection > > connections_;
+    std::map< int, std::shared_ptr< TConnection > > connections_;
 
 private:
     void f_add( int sock, uint32_t events );

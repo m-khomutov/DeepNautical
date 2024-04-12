@@ -70,7 +70,7 @@ void s_poll::run()
         {
             if( events[i].data.fd == p_socket_ )
             {
-                std::shared_ptr< connection > conn( new connection( events[i].data.fd ) );
+                std::shared_ptr< TConnection > conn( new TConnection( events[i].data.fd ) );
                 try
                 {
                     f_add( *conn, EPOLLIN | EPOLLOUT | EPOLLET | EPOLLRDHUP | EPOLLHUP );

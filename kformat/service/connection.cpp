@@ -14,6 +14,7 @@
 
 namespace
 {
+// cетевой адрес в строковый вид
 std::string saddr2str( const sockaddr_in & addr )
 {
     char buf[64];
@@ -22,9 +23,10 @@ std::string saddr2str( const sockaddr_in & addr )
 }
 }  // namespace
 
-connection::connection( int b_sock )
+TConnection::TConnection( int b_sock )
 : fd_( accept( b_sock, (struct sockaddr *)&address_, &socklen_ ) )
 {
+    // все соединения неблокирующие
     fcntl( fd_, F_SETFD, fcntl( fd_, F_GETFD, 0) | O_NONBLOCK );
     long one;
     if( setsockopt( fd_, SOL_SOCKET, SO_ZEROCOPY, &one, sizeof(one)) )
@@ -36,17 +38,22 @@ connection::connection( int b_sock )
     std::cerr << "[+] connected with " << saddr2str(address_) << ":" << ntohs(address_.sin_port) << "\n";
 }
 
-connection::~connection()
+TConnection::~TConnection()
 {
+    // RAII
     close( fd_ );
     std::cerr << "[-] connection " << saddr2str(address_) << ":" << ntohs(address_.sin_port) << " closed\n";
 }
 
-void connection::on_data( TBasescreen *screen, const uint8_t * data, int size )
+// что-то принято из сети
+void TConnection::on_data( TBasescreen *screen, const uint8_t * data, int size )
 {
-    if( !proto_ )
+    if( !proto_ ) // не определен протокол - начало соединения.
     {
+        // может так случиться, что не весь запрос сразу приходит. Поэтому аккумулируем
         request_ += std::string((const char*)data, size);
+
+        // По запросу фабричный метод определит протокол
         TBaseprotocol *p = TBaseprotocol::create( screen, request_, fd_, send_flags_ );
         if( p )
         {
@@ -59,7 +66,8 @@ void connection::on_data( TBasescreen *screen, const uint8_t * data, int size )
     }
 }
 
-void connection::on_ready_to_write()
+// сеть готова к передаче. Передать, если есть что
+void TConnection::on_ready_to_write()
 {
     if( proto_ )
     {
