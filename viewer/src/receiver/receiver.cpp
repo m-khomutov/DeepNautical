@@ -93,10 +93,9 @@ receiver::receiver( basedecoder *decoder )
 }
 
 receiver::~receiver()
-{
-}
+{}
 
-void receiver::run()
+void receiver::start_listening_network()
 {
     f_start_connection();
     receiver::action = &receiver::f_receive_tag;
@@ -142,7 +141,7 @@ void receiver::run()
     }
 }
 
-void receiver::stop()
+void receiver::stop_listening_network()
 {
     running_.store( false );
 }

@@ -67,16 +67,22 @@ class TScopedThread
      TScopedThread() = default;
      explicit TScopedThread( T *obj )
      : object_( obj )
-     , t_( [this](){ try { object_->run(); } catch ( const std::exception &e ) { std::cerr << e.what() <<std::endl; } } )
-     {
-     }
+     , t_( [this](){
+         try {
+             object_->start_listening_network();
+         }
+         catch ( const std::exception &e ) {
+             std::cerr << e.what() <<std::endl;
+         }
+       })
+     {}
      TScopedThread( TScopedThread const &orig ) = delete;
      TScopedThread &operator =( TScopedThread const &rhs ) = delete;
      ~TScopedThread()
      {
          if( object_ )
          {
-             object_->stop();
+             object_->stop_listening_network();
              if( t_.joinable() )
              {
                  t_.join();

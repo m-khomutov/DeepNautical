@@ -45,10 +45,10 @@ int TBaseservice::stop_screen()
 void TBaseservice::start_vdev_capture()
 {
     // poll владеет объектом работы с файлом видеозахвата.
-    poll_.run();
+    poll_.start_listening_network();
 }
 
 void TBaseservice::stop_vdev_capture()
 {
-    poll_.stop();
+    poll_.stop_listening_network();
 }

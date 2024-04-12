@@ -77,8 +77,8 @@ public:
     receiver &operator =(const receiver& orig) = delete;
     ~receiver();
 
-    void run();
-    void stop();
+    void start_listening_network();
+    void stop_listening_network();
 
 private:
     size_t view_ {0};

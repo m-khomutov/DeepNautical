@@ -1,8 +1,10 @@
-/* 
- * File:   s_poll.h
- * Author: mkh
- *
- * Created on 25 января 2023 г., 10:06
+/*!
+     \file s_poll.h
+     \author mkh
+     \date 25 января 2023 г.
+     \brief Заголовочный файл класса создания сетевых соединений с абонентом.
+
+     Данный файл содержит в себе состояние класса создания сетевых соединений с абонентом, объявление его интерфейсов.
  */
 
 #ifndef S_POLL_H
@@ -19,35 +21,105 @@
 class TBasescreen;
 class TConnection;
 
-class s_poll_error: public std::runtime_error
+/*!
+   \class TSpollError
+   \brief Класс ошибки создания сетевого соединения
+
+   Производный от std::runtime_error. Собственного состояния и методов не содержит
+ */
+class TSpollError: public std::runtime_error
 {
 public:
-    s_poll_error( const std::string & what );
+    /*!
+     * \brief Конструктор класса ошибки создания сетевого соединения
+     * \param what строковое описание ошибки
+     */
+    TSpollError( const std::string & what );
 };
 
-class s_poll {
-public:
-    s_poll( TBasescreen *screen, uint16_t port );
-    s_poll( char const *videodevname, uint16_t port );
-    s_poll(const s_poll& orig) = delete;
-    s_poll &operator =(const s_poll& orig) = delete;
-    ~s_poll();
+/*!
+     \class TSpoll
+     \brief Класс создания сетевых соединений с абонентом.
 
-    void run();
-    void stop();
+      Состояние класса хранит:
+      - флаг нахождения в рабочем состоянии приема сетевых соединений
+      - объект сокета, принимающего сетевые запросы на соединение от абонентов
+      - файловый дескриптор (сокет) объекта epoll
+      - указатель на объект экрана отображения сцен
+      - объект получения кадров от платы видеозахвата
+      - набор обрабатываемых сетевых соединений. Ключем являются файловые дескрипторы соединений
+
+      Реальный публичный интерфейс определяет методы:
+      - начать прием сетевых соединений;
+      - завершить прием сетевых соединений;
+ */
+class TSpoll {
+public:
+    /*!
+     * \brief Конструктор класса создания сетевых соединений с абонентом для выдачи кадров сцены
+     * \param screen указатель на объект экрана отображения сцен
+     * \param port сетевой порт ожидания запросов от абонентов
+     */
+    TSpoll( TBasescreen *screen, uint16_t port );
+    /*!
+     * \brief Конструктор класса создания сетевых соединений с абонентом для выдачи кадров с платы видеозахвата
+     * \param videodevname имя символьного файла взаимодействия с платой видеозахвата
+     * \param port сетевой порт ожидания запросов от абонентов
+     */
+    TSpoll( char const *videodevname, uint16_t port );
+    /*!
+       \brief Запрещенный конструктор копии.
+       \param orig Копируемый объект
+     */
+    TSpoll( const TSpoll& orig) = delete;
+    /*!
+       \brief Запрещенный оператор присваивания.
+       \param orig Копируемый объект
+       \return Собственный объект
+     */
+    TSpoll &operator =( const TSpoll& orig ) = delete;
+    /*!
+       \brief Деструктор класса создания сетевых соединений с абонентом.
+     */
+    ~TSpoll();
+
+    /*!
+       \brief запускает прием сетевых соединений
+     */
+    void start_listening_network();
+    /*!
+       \brief завершает прием сетевых соединений
+     */
+    void stop_listening_network();
 
 private:
+    //! Максимальное количество одновременно обрабатываемых событий
     enum { maxevents = 32 };
     
+    //! флаг нахождения в рабочем состоянии приема сетевых соединений
     std::atomic< bool > running_ { true };
+    //! объект сокета, принимающего сетевые запросы на соединение от абонентов
     s_socket p_socket_;
+    //! файловый дескриптор (сокет) объекта epoll
     int fd_;
+    //! указатель на объект экрана отображения сцен
     TBasescreen *screen_ { nullptr };
+    //! объект получения кадров от платы видеозахвата
     std::unique_ptr< videodevice > videodev_;
+    //! набор обрабатываемых сетевых соединений. Ключем являются файловые дескрипторы соединений
     std::map< int, std::shared_ptr< TConnection > > connections_;
 
 private:
-    void f_add( int sock, uint32_t events );
+    /*!
+     * \brief добавляет сокет принятого сетевого соединения в структуру управления
+     * \param sock файловый дескриптор (сокет) сетевого соединения
+     * \param events набор событий, отслеживаемых на файловом дескрипторе (сокете) сетевого соединения
+     */
+    void f_add_socket( int sock, uint32_t events );
+    /*!
+     * \brief в случае превышения заданной длительности отправляет видеокадр сетевым абонентам
+     * \param last_ts временная метка последнего отправленного видеокадра
+     */
     void f_send_frame( TBaseframe::time_point_t *last_ts );
 };
 

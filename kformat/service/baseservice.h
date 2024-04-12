@@ -98,9 +98,9 @@ private:
     //! указатель на объект экрана отображения сцен;
     TBasescreen * screen_ { nullptr };
     //! объект сетевого взаимодействия с абонентами;
-    s_poll poll_;
+    TSpoll poll_;
     //! объект потока сетевого взаимодействия с абонентами;
-    NUtils::TScopedThread< s_poll > poll_thread_;
+    NUtils::TScopedThread< TSpoll > poll_thread_;
 
 private:
     /*!
