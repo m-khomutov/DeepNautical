@@ -7,18 +7,17 @@
 
 #include "glfwservice.h"
 
-glfwservice::glfwservice( basescreen *screen, uint16_t port )
-: baseservice( screen, port )
+glfwservice::glfwservice( TBasescreen *screen, uint16_t port )
+: TBaseservice( screen, port )
 {}
 
 void glfwservice::onsignal( int )
 {
-    baseservice::stop();
+    TBaseservice::stop();
 }
 
 void glfwservice::f_run()
 {
-    ;
 }
 
 int glfwservice::f_stop()

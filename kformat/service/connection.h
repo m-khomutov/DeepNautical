@@ -24,7 +24,8 @@ public:
     connection &operator =(const connection& orig) = delete;
     ~connection();
 
-    operator int() const {
+    operator int() const
+    {
         return fd_;
     }
 

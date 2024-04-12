@@ -10,7 +10,7 @@
 
 #include "kformat/service/baseservice.h"
 
-class qservice: public baseservice {
+class qservice: public TBaseservice {
 public:
     qservice( TBasescreen *screen, uint16_t port );
 
@@ -22,8 +22,8 @@ public:
     void onsignal( int ) override;
 
 private:
-    void f_run() override;
-    int f_stop() override;
+    void f_start_screen() override;
+    int f_stop_screen() override;
 };
 
 #endif /* QSERVICE_H */

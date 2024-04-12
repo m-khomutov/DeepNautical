@@ -10,7 +10,7 @@
 #include <QSurfaceFormat>
 
 qservice::qservice( TBasescreen *screen, uint16_t port )
-: baseservice( screen, port )
+: TBaseservice( screen, port )
 {
     QSurfaceFormat format;
     format.setDepthBufferSize(24);
@@ -22,12 +22,12 @@ qservice::qservice( TBasescreen *screen, uint16_t port )
     QApplication::setAttribute(Qt::AA_ForceRasterWidgets, false);
 }
 
-void qservice::f_run()
+void qservice::f_start_screen()
 {
     result_ = qApp->exec();
 }
 
-int qservice::f_stop()
+int qservice::f_stop_screen()
 {
     return result_;
 }

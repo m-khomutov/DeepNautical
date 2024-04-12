@@ -4,7 +4,7 @@
 
 #include <kformat.h>
 
-class service: public baseservice
+class service: public TBaseservice
 {
 public:
     service( char const *vdevname, uint16_t port );
@@ -14,14 +14,6 @@ public:
 
     void onsignal( int ) override
     {}
-
-private:
-    void f_run() override
-    {}
-    int f_stop() override
-    {
-        return 0;
-    }
 };
 
 #endif // SERVICE_H

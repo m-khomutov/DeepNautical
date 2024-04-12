@@ -30,7 +30,7 @@
 namespace
 {
 
-static std::unique_ptr< baseservice > service;
+static std::unique_ptr< TBaseservice > service;
 void signal_handler( int s )
 {
     if( service)
@@ -94,9 +94,9 @@ int main(int argc, char** argv)
 
         std::setlocale( LC_NUMERIC,"C" );
 
-        service->run();
+        service->start_screen();
 
-        return service->stop();
+        return service->stop_screen();
     }
     catch( const std::runtime_error &err )
     {

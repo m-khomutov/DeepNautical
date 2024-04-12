@@ -8,13 +8,13 @@
 
 namespace {
 
-    std::unique_ptr< baseservice > srv;
+    std::unique_ptr< TBaseservice > srv;
 
     void signal_handler( int )
     {
         if( srv )
         {
-            srv->stop();
+            srv->stop_vdev_capture();
         }
     }
 
@@ -92,7 +92,7 @@ int main( int argc, char *argv [] )
     try
     {
         srv.reset( new service( vdevname, port ) );
-        srv->run();
+        srv->start_vdev_capture();
     }
     catch( const std::exception &err )
     {

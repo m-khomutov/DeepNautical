@@ -8,41 +8,47 @@
 #include "baseservice.h"
 #include "screen/basescreen.h"
 
-baseservice::baseservice( TBasescreen *screen, uint16_t port )
+TBaseservice::TBaseservice( TBasescreen *screen, uint16_t port )
 : screen_( screen )
 , poll_( screen, port )
-, poll_thread_( &poll_ )
+, poll_thread_( &poll_ ) // поток работы с сетью стартует автоматом
 {}
 
-baseservice::baseservice( char const *videodevname, uint16_t port )
+// поток работы с сетью автоматом не стартует. Надо запускать функцией start_vdev_capture
+TBaseservice::TBaseservice( char const *videodevname, uint16_t port )
 : poll_( videodevname, port )
 {}
 
-baseservice::~baseservice()
+TBaseservice::~TBaseservice()
 {}
 
-void baseservice::run()
+void TBaseservice::start_screen()
 {
     if( screen_ )
     {
         screen_->run_scene_display();
+
+        f_start_screen();
     }
-    else
-    {
-        poll_.run();
-    }
-    f_run();
 }
 
-int baseservice::stop()
+int TBaseservice::stop_screen()
 {
     if( screen_ )
     {
         screen_->stop_scene_display();
     }
-    else
-    {
-        poll_.stop();
-    }
-    return f_stop();
+
+    return f_stop_screen();
+}
+
+void TBaseservice::start_vdev_capture()
+{
+    // poll владеет объектом работы с файлом видеозахвата.
+    poll_.run();
+}
+
+void TBaseservice::stop_vdev_capture()
+{
+    poll_.stop();
 }

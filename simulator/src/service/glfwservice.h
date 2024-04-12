@@ -10,9 +10,9 @@
 
 #include "kformat/service/baseservice.h"
 
-class glfwservice: public baseservice {
+class glfwservice: public TBaseservice {
 public:
-    glfwservice( basescreen *screen, uint16_t port );
+    glfwservice( TBasescreen *screen, uint16_t port );
 
     glfwservice( glfwservice const &orig ) = delete;
     glfwservice &operator =( glfwservice const &orig ) = delete;
