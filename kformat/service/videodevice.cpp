@@ -7,19 +7,13 @@
 
 namespace {
 
+// ограничивает значение диапазоном 0 - 255
 int clip( int val )
 {
-    if( val < 0 )
-    {
-        return 0;
-    }
-    if( val > 255 )
-    {
-        return 255;
-    }
-    return val;
+    return val < 0 ? 0 : (val > 255 ? 255 : val);
 }
 
+// перевод пиксела из YUV формата цвета в RGB
 void yuv_to_rgb_pixel( int y, int u, int v, uint8_t *rgb )
 {
     float r = y + 1.4065 * (v - 128);
@@ -31,12 +25,14 @@ void yuv_to_rgb_pixel( int y, int u, int v, uint8_t *rgb )
     rgb[2] = uint8_t(clip( b ));
 }
 
+// перевод пиксела из YVUV формата цвета в RGB
 void yuyv_to_rgb_pixel(unsigned char *yuyv, unsigned char *rgb)
 {
     yuv_to_rgb_pixel( yuyv[0], yuyv[1], yuyv[3], &rgb[0] ); //first pixel
     yuv_to_rgb_pixel( yuyv[1], yuyv[2], yuyv[3], &rgb[3] ); //second pixel
 }
 
+// перевод кадра из YVUV формата цвета в RGB
 void yuyv_to_rgb( uint8_t *yuyv, uint8_t *rgb, int width, int height )
 {
     long yuv_size = width * height * 2;
@@ -51,24 +47,26 @@ void yuyv_to_rgb( uint8_t *yuyv, uint8_t *rgb, int width, int height )
 }  // namespace
 
 
-videodevice_error::videodevice_error( const std::string &what )
+TVideodeviceError::TVideodeviceError( const std::string &what )
 : std::runtime_error( what + std::string(": ") + std::string(strerror( errno )) )
 {}
 
 
 
-videodevice::videodevice( char const *path )
+TVideodevice::TVideodevice( char const *path )
 : filename_( path )
 , fd_( open( path, O_RDWR ) )
 {
     if( fd_ < 0 ) {
-        throw videodevice_error( strerror(errno) );
+        throw TVideodeviceError( strerror(errno) );
     }
+
+    // далее настройка драйвера устройства видеозахвата
 
     int rc = ::ioctl( fd_, VIDIOC_QUERYCAP, &capabilities_ );
     if( rc < 0 ) {
         ::close( fd_ );
-        throw videodevice_error( strerror(errno) );
+        throw TVideodeviceError( strerror(errno) );
     }
 
     f_show_capabilities();
@@ -83,7 +81,7 @@ videodevice::videodevice( char const *path )
     }
 }
 
-videodevice::~videodevice()
+TVideodevice::~TVideodevice()
 {
     try {
         f_off();
@@ -94,17 +92,17 @@ videodevice::~videodevice()
     ::close( fd_ );
 }
 
-void videodevice::start()
+void TVideodevice::start_capture()
 {
     started_ = true;
 }
 
-void videodevice::stop()
+void TVideodevice::stop_capture()
 {
     started_ = false;
 }
 
-void videodevice::load( TBaseprotocol *proto )
+void TVideodevice::send_frame( TBaseprotocol *proto )
 {
     if( started_ && f_get_frame() )
     {
@@ -112,24 +110,24 @@ void videodevice::load( TBaseprotocol *proto )
     }
 }
 
-float videodevice::frame_duration_passed( TBaseframe::time_point_t *ts ) const
+float TVideodevice::is_frame_duration_passed( TBaseframe::time_point_t *ts ) const
 {
     return started_ ? frame_->is_duration_passed( ts ) : -1.f;
 }
 
-void videodevice::f_on()
+void TVideodevice::f_on()
 {
   if( ioctl( fd_, VIDIOC_STREAMON, &v4l2_format_.type ) < 0 )
-      throw videodevice_error( std::string("VIDIOC_STREAMON error: ") + strerror(errno) );
+      throw TVideodeviceError( std::string("VIDIOC_STREAMON error: ") + strerror(errno) );
 }
 
-void videodevice::f_off()
+void TVideodevice::f_off()
 {
     if( ioctl( fd_, VIDIOC_STREAMOFF, &v4l2_format_.type ) < 0 )
-        throw videodevice_error( std::string("VIDIOC_STREAMOFF error: ") + strerror(errno) );
+        throw TVideodeviceError( std::string("VIDIOC_STREAMOFF error: ") + strerror(errno) );
 }
 
-void videodevice::f_show_capabilities()
+void TVideodevice::f_show_capabilities()
 {
     fprintf( stderr, "\t%s:\n\n", filename_.c_str() );
     fprintf( stderr, "Driver: %s\n", capabilities_.driver );
@@ -254,7 +252,7 @@ void videodevice::f_show_capabilities()
     }
 }
 
-void videodevice::f_set_pixel_format()
+void TVideodevice::f_set_pixel_format()
 {
     int width = 720;
     int height = 576;
@@ -270,7 +268,7 @@ void videodevice::f_set_pixel_format()
 
     if( ioctl( fd_, VIDIOC_S_FMT, &v4l2_format_ ) < 0 )
     {
-        throw videodevice_error( std::string("ioctl(VIDIOC_S_FMT) returned ") + strerror(errno) );
+        throw TVideodeviceError( std::string("ioctl(VIDIOC_S_FMT) returned ") + strerror(errno) );
     }
 
     pixelformat_ = v4l2_format_.fmt.pix.pixelformat;
@@ -289,7 +287,7 @@ void videodevice::f_set_pixel_format()
     fprintf( stderr, "Captured format: %s, %d x %d\n", (char *) &text, width_, height_ );
 }
 
-void videodevice::f_allocate_buffers()
+void TVideodevice::f_allocate_buffers()
 {
     struct v4l2_requestbuffers request {};
 
@@ -297,7 +295,7 @@ void videodevice::f_allocate_buffers()
     request.memory = V4L2_MEMORY_MMAP;
     request.count = 1;
     if( ioctl( fd_, VIDIOC_REQBUFS, &request ) < 0 ) {
-        throw videodevice_error( std::string("ioctl(VIDIOC_REQBUFS): ") + strerror(errno) );
+        throw TVideodeviceError( std::string("ioctl(VIDIOC_REQBUFS): ") + strerror(errno) );
     }
 
     memset( &v4l2_buffer_, 0, sizeof(v4l2_buffer_) );
@@ -306,14 +304,14 @@ void videodevice::f_allocate_buffers()
     v4l2_buffer_.index = 0;
 
     if( ioctl( fd_, VIDIOC_QUERYBUF, &v4l2_buffer_ ) < 0 )
-        throw videodevice_error( std::string("ioctl(VIDIOC_QUERYBUF): ") + strerror(errno) );
+        throw TVideodeviceError( std::string("ioctl(VIDIOC_QUERYBUF): ") + strerror(errno) );
 
     long offset = v4l2_buffer_.m.offset;
     mmap_ptr_ = mmap( NULL, v4l2_buffer_.length, PROT_READ | PROT_WRITE, MAP_SHARED, fd_, offset );
 
     if( mmap_ptr_ == MAP_FAILED )
     {
-        throw videodevice_error( std::string("mmap: ") + strerror(errno) );
+        throw TVideodeviceError( std::string("mmap: ") + strerror(errno) );
     }
 
     printf("allocated buffer at %p of size %d from offset 0x%08lx\n", mmap_ptr_,
@@ -322,7 +320,7 @@ void videodevice::f_allocate_buffers()
     frame_.reset( new TJpegframe( NUtils::TGeometry( width_, height_ ), 100, 10, false ) );
 }
 
-bool videodevice::f_get_frame()
+bool TVideodevice::f_get_frame()
 {
     if( ioctl( fd_, VIDIOC_QBUF, &v4l2_buffer_ ) < 0 ) {
         perror("Could not queue buffer, VIDIOC_QBUF");
@@ -340,8 +338,11 @@ bool videodevice::f_get_frame()
 
         yuyv_to_rgb( yuyv_.data(), frame_->buffer( 0, width_, height_ ), width_, height_ );
     }
-    else if( pixelformat_ == V4L2_PIX_FMT_RGB24 ) {
+    else if( pixelformat_ == V4L2_PIX_FMT_RGB24 )
+    {
         ::memcpy( frame_->buffer( 0, width_, height_ ), (uint8_t*)mmap_ptr_, v4l2_buffer_.bytesused );
     }
+    frame_->prepare_buffer( 0 );
+
     return true;
 }

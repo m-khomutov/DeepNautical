@@ -23,7 +23,7 @@ TSpollError::TSpollError( const std::string &what )
 TSpoll::TSpoll( char const *videodevname, uint16_t port )
 : p_socket_( port )
 , fd_( epoll_create( 1 ) )
-, videodev_( new videodevice( videodevname ) )
+, videodev_( new TVideodevice( videodevname ) )
 {
     try
     {
@@ -89,7 +89,7 @@ void TSpoll::start_listening_network()
                 connections_[*conn] = conn;
                 if( videodev_ ) // если кадры с платы захвата, можно начинать их читать - есть абонент получения
                 {
-                    videodev_->start();
+                    videodev_->start_capture();
                 }
             }
             else if( events[i].events & EPOLLIN ) // запрос на прием созданном соединении
@@ -123,7 +123,7 @@ void TSpoll::start_listening_network()
                 connections_.erase( events[i].data.fd );
                 if( videodev_ && connections_.empty() ) // если нет абонентов получать кадры с платы не для кого
                 {
-                    videodev_->stop();
+                    videodev_->stop_capture();
                 }
             }
         }
@@ -152,7 +152,7 @@ void TSpoll::f_add_socket( int sock, uint32_t events )
 void TSpoll::f_send_frame( TBaseframe::time_point_t * last_ts )
 {
     // длтельность кадра хранится в объекте экрана сцен или в объекте работы с платой видеозахвата
-    float duration = screen_ ? screen_->is_frame_duration_passed( last_ts ) : (videodev_ ? videodev_->frame_duration_passed( last_ts ) : -1.f);
+    float duration = screen_ ? screen_->is_frame_duration_passed( last_ts ) : (videodev_ ? videodev_->is_frame_duration_passed( last_ts ) : -1.f);
 
     if( duration > 0.f ) // длительность предыдущего кадра превышена
     {
@@ -170,7 +170,7 @@ void TSpoll::f_send_frame( TBaseframe::time_point_t * last_ts )
                 }
                 if( videodev_ )
                 {
-                    videodev_->load( p.second->protocol() );
+                    videodev_->send_frame( p.second->protocol() );
                 }
             }
         }

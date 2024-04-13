@@ -105,7 +105,7 @@ private:
     //! указатель на объект экрана отображения сцен
     TBasescreen *screen_ { nullptr };
     //! объект получения кадров от платы видеозахвата
-    std::unique_ptr< videodevice > videodev_;
+    std::unique_ptr< TVideodevice > videodev_;
     //! набор обрабатываемых сетевых соединений. Ключем являются файловые дескрипторы соединений
     std::map< int, std::shared_ptr< TConnection > > connections_;
 
