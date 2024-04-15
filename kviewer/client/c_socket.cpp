@@ -14,22 +14,24 @@
 
 TCsocketError::TCsocketError( const std::string &what )
 : std::runtime_error( what + std::string(" failed: ") + std::string(strerror( errno )) )
-{
-}
+{}
 
 TCsocket::TCsocket( std::string const &addr, uint16_t port )
 : fd_( ::socket( AF_INET, SOCK_STREAM, 0) )
 {
+    // разрешить переиспользование
     long yes { 0 };
     setsockopt( fd_, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof( int ) );
 
+    // сделать сокет неблокирующим
     fcntl( fd_, F_SETFL, fcntl(fd_, F_GETFL, 0) | O_NONBLOCK );
 
+    // соединиться с удаленным сервером
     sockaddr_in ca = { AF_INET, htons(port), { f_resolve_host( addr ) }, { 0 } };
     int rc = connect( fd_, (sockaddr*)&ca, sizeof(sockaddr_in) );
     if( rc == -1 )
     {
-        if( errno != EINPROGRESS )
+        if( errno != EINPROGRESS )  // неудача
         {
             throw TCsocketError( "connect" );
         }

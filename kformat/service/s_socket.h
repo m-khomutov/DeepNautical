@@ -17,7 +17,7 @@
 #include <stdexcept>
 
 /*!
-   \class TSocketError
+   \class TSsocketError
    \brief Класс ошибки сокета, принимающего tcp запросы на создание сетевого соединения
 
    Производный от std::runtime_error. Собственного состояния и методов не содержит
@@ -26,8 +26,8 @@ class TSsocketError: public std::runtime_error
 {
 public:
     /*!
-     * \brief Конструктор класса ошибки сокета, принимающего tcp запросы на создание сетевого соединения
-     * \param what строковое описание ошибки
+       \brief Конструктор класса ошибки сокета, принимающего tcp запросы на создание сетевого соединения
+       \param what строковое описание ошибки
      */
     TSsocketError( const std::string & what );
 };
