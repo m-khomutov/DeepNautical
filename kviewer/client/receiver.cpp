@@ -10,10 +10,9 @@
 #include <unistd.h>
 #include <regex>
 
-receiver_error::receiver_error( const std::string &what )
+TReceiverError::TReceiverError( const std::string &what )
 : std::runtime_error( what )
-{
-}
+{}
 
 namespace
 {
@@ -30,7 +29,7 @@ uint32_t from3bytes( uint8_t const *from )
 }
 }  // namespace
 
-flv_header::flv_header( uint8_t const* data )
+TFLVheader::TFLVheader( uint8_t const* data )
 {
     memcpy( signature_, data, 3 );
     version_ = data[3];
@@ -40,7 +39,7 @@ flv_header::flv_header( uint8_t const* data )
     data_offset_ = be32toh( data_offset_ );
 }
 
-bool flv_header::valid() const
+bool TFLVheader::valid() const
 {
     return signature_[0] == 'F' && 
            signature_[1] == 'L' &&
@@ -51,25 +50,27 @@ bool flv_header::valid() const
 }
 
 
-flv_tag::flv_tag( uint8_t const *data )
+TFLVtag::TFLVtag( uint8_t const *data )
 {
-    type_ = tag_type( data[0] );
+    type_ = ETagType( data[0] );
     data_size_ = from3bytes( &data[1] );
-    //timestamp_ = (data[7] << 24) | (from3bytes( &data[4] ));
+    /* Реально в спецификации так
+       timestamp_ = (data[7] << 24) | (from3bytes( &data[4] ));
+       stream_id_ = from3bytes( &data[8] );
+     */
     ::memcpy( &timestamp_, &data[4], sizeof(timestamp_) );
     timestamp_ = be64toh(timestamp_);
-    //stream_id_ = from3bytes( &data[8] );
     frame_type_ = (data[12] >> 4) & 0x0f;
-    codec_id_ = codec_id( (data[12]) & 0x0f );
+    codec_id_ = ECodecID( (data[12]) & 0x0f );
 }
 
-bool flv_tag::valid() const
+bool TFLVtag::valid() const
 {
-    return type_ == tag_type::video && data_size_ != 0 && codec_id_ == codec_id::jpeg;    
+    return type_ == ETagType::video && data_size_ != 0 && codec_id_ == ECodecID::jpeg;
 }
 
 
-receiver::receiver( basedecoder *decoder )
+TReceiver::TReceiver( basedecoder *decoder )
 : decoder_( decoder )
 {
     try
@@ -80,7 +81,7 @@ receiver::receiver( basedecoder *decoder )
 
         if( !(std::regex_match( url, cm, r )) || cm.size() != 5 )
         {
-            throw receiver_error( std::string("invalid url ") + url );
+            throw TReceiverError( std::string("invalid url ") + url );
         }
         server_host_ = cm[2].str();
         server_port_ = std::stoi( cm[3].str() );
@@ -88,20 +89,20 @@ receiver::receiver( basedecoder *decoder )
     }
     catch (const std::regex_error &e)
     {
-        throw receiver_error( e.what() );
+        throw TReceiverError( e.what() );
     }
 }
 
-receiver::~receiver()
+TReceiver::~TReceiver()
 {}
 
-void receiver::start_listening_network()
+void TReceiver::start_listening_network()
 {
     f_start_connection();
-    receiver::action = &receiver::f_receive_tag;
+    TReceiver::action = &TReceiver::f_receive_tag;
     
-    std::vector< uint8_t > buffer( flv_tag::size );
-    size_t expected = flv_tag::size, received = 0;
+    std::vector< uint8_t > buffer( TFLVtag::size );
+    size_t expected = TFLVtag::size, received = 0;
     while( running_.load() )
     {
         if( reconnect_delay_ < 100 )
@@ -117,8 +118,8 @@ void receiver::start_listening_network()
         else if( reconnect_delay_ >= 100 )
         {
             f_start_connection();
-            receiver::action = &receiver::f_receive_tag;
-            expected = flv_tag::size;
+            TReceiver::action = &TReceiver::f_receive_tag;
+            expected = TFLVtag::size;
         }
         if( expected == 0 )
         {
@@ -129,8 +130,8 @@ void receiver::start_listening_network()
             catch( const std::runtime_error &e )
             {
                 f_start_connection();
-                receiver::action = &receiver::f_receive_tag;
-                expected = flv_tag::size;
+                TReceiver::action = &TReceiver::f_receive_tag;
+                expected = TFLVtag::size;
             }
             if( buffer.size() < expected )
             {
@@ -141,12 +142,12 @@ void receiver::start_listening_network()
     }
 }
 
-void receiver::stop_listening_network()
+void TReceiver::stop_listening_network()
 {
     running_.store( false );
 }
 
-void receiver::f_start_connection()
+void TReceiver::f_start_connection()
 {
     while( running_.load() )
     {
@@ -162,7 +163,7 @@ void receiver::f_start_connection()
     }
     if( !connection_ )
     {
-        throw receiver_error( "invalid connection" );
+        throw TReceiverError( "invalid connection" );
     }
     std::string request = "GET /stream?proto=flv&view=" + std::to_string(view_) + " HTTP/1.1\r\n"
                           "User-Agent: Viewer/0.0.1 (agat-aquarius)\r\n"
@@ -205,32 +206,32 @@ void receiver::f_start_connection()
             rc += bs;
         }
     }
-    if( !flv_header( buffer ).valid() )
+    if( !TFLVheader( buffer ).valid() )
     {
-        throw receiver_error( "invalid flv_header" );
+        throw TReceiverError( "invalid flv_header" );
     }
 }
 
-size_t receiver::f_receive_tag( uint8_t const *data, size_t size )
+size_t TReceiver::f_receive_tag( uint8_t const *data, size_t size )
 {
-    if( size != flv_tag::size )
+    if( size != TFLVtag::size )
     {
-        throw receiver_error( "invalid tag size" );
+        throw TReceiverError( "invalid tag size" );
     }
 
-    flv_tag tag( data );
+    TFLVtag tag( data );
     if( !tag.valid() )
     {
-        throw receiver_error( "tag invalid" );
+        throw TReceiverError( "tag invalid" );
     }
 
     timestamp_ = tag.timestamp();
-    receiver::action = &receiver::f_receive_body;
+    TReceiver::action = &TReceiver::f_receive_body;
     
     return tag.data_size() - 1;
 }
 
-size_t receiver::f_receive_body( uint8_t const *data, size_t size )
+size_t TReceiver::f_receive_body( uint8_t const *data, size_t size )
 {
     if( verify_ )
     {
@@ -238,17 +239,17 @@ size_t receiver::f_receive_body( uint8_t const *data, size_t size )
     }
 
     decoder_->store( data, size, timestamp_ );
-    receiver::action = &receiver::f_receive_size;
+    TReceiver::action = &TReceiver::f_receive_size;
     return sizeof( uint32_t );
 }
 
-size_t receiver::f_receive_size( uint8_t const *, size_t size )
+size_t TReceiver::f_receive_size( uint8_t const *, size_t size )
 {
     if( size != sizeof(uint32_t) )
     {
-        throw receiver_error( "invalid size" );
+        throw TReceiverError( "invalid size" );
     }
 
-    receiver::action = &receiver::f_receive_tag;
-    return flv_tag::size;
+    TReceiver::action = &TReceiver::f_receive_tag;
+    return TFLVtag::size;
 }
