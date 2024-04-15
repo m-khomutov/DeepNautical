@@ -9,8 +9,10 @@
 #define QVIEWER_H
 
 #include "baseviewer.h"
+
 #include <QWidget>
 #include <QImage>
+#include <QDebug>
 
 class qspinner {
 public:
