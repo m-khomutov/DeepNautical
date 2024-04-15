@@ -12,12 +12,12 @@
 #include <fcntl.h>
 
 
-c_socket_error::c_socket_error( const std::string &what )
+TCsocketError::TCsocketError( const std::string &what )
 : std::runtime_error( what + std::string(" failed: ") + std::string(strerror( errno )) )
 {
 }
 
-c_socket::c_socket( std::string const &addr, uint16_t port )
+TCsocket::TCsocket( std::string const &addr, uint16_t port )
 : fd_( ::socket( AF_INET, SOCK_STREAM, 0) )
 {
     long yes { 0 };
@@ -31,7 +31,7 @@ c_socket::c_socket( std::string const &addr, uint16_t port )
     {
         if( errno != EINPROGRESS )
         {
-            throw c_socket_error( "connect" );
+            throw TCsocketError( "connect" );
         }
         fd_set wfds;
         timeval tv = { 5, 0 };
@@ -39,7 +39,7 @@ c_socket::c_socket( std::string const &addr, uint16_t port )
         FD_SET( fd_, &wfds );
         if( (rc = select( fd_ + 1, nullptr, &wfds, nullptr, &tv )) < 0 && errno != EINTR )
         {
-            throw c_socket_error( "connect" );
+            throw TCsocketError( "connect" );
         }
         else if( (rc > 0 ) )
         {
@@ -47,18 +47,18 @@ c_socket::c_socket( std::string const &addr, uint16_t port )
             int nok;
             if( getsockopt( fd_, SOL_SOCKET, SO_ERROR, (void*)(&nok), &slen ) < 0 || nok )
             {
-                throw c_socket_error( "check connection" );
+                throw TCsocketError( "check connection" );
             }
         }
     }
 }
 
-c_socket::~c_socket()
+TCsocket::~TCsocket()
 {
     close( fd_ );
 }
 
-ssize_t c_socket::send( uint8_t const * buf, size_t size )
+ssize_t TCsocket::send( uint8_t const * buf, size_t size )
 {
     size_t rc { 0 };
     while( rc < size )
@@ -72,14 +72,14 @@ ssize_t c_socket::send( uint8_t const * buf, size_t size )
         {
             if( !(errno == EAGAIN || errno == EINPROGRESS) )
             {
-                throw c_socket_error( "send" );
+                throw TCsocketError( "send" );
             }
         }
     }
     return rc;
 }
 
-ssize_t c_socket::receive( uint8_t *buffer, size_t size )
+ssize_t TCsocket::receive( uint8_t *buffer, size_t size )
 {
     timeval tv = { 1, 500 };
     fd_set rfds;
@@ -92,7 +92,7 @@ ssize_t c_socket::receive( uint8_t *buffer, size_t size )
     return ::recv( fd_, buffer, size, 0 );
 }
 
-in_addr_t c_socket::f_resolve_host( std::string const &host )
+in_addr_t TCsocket::f_resolve_host( std::string const &host )
 {
     hostent *hp = gethostbyname( host.c_str() );
     if (hp) {
@@ -103,5 +103,5 @@ in_addr_t c_socket::f_resolve_host( std::string const &host )
             ++ i;
         }
     }
-    throw c_socket_error( std::string("invalid host: ") + host );
+    throw TCsocketError( std::string("invalid host: ") + host );
 }

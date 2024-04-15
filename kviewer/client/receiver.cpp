@@ -6,7 +6,7 @@
  */
 
 #include "receiver.h"
-#include "../decoder/basedecoder.h"
+#include "decoder/basedecoder.h"
 #include <unistd.h>
 #include <regex>
 
@@ -152,7 +152,7 @@ void receiver::f_start_connection()
     {
         try
         {
-            connection_.reset( new c_socket( server_host_, server_port_ ) );
+            connection_.reset( new TCsocket( server_host_, server_port_ ) );
             break;
         }
         catch( const std::runtime_error &e )

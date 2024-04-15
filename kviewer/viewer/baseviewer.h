@@ -8,8 +8,8 @@
 #ifndef BASEVIEWER_H
 #define BASEVIEWER_H
 
-#include "../receiver/receiver.h"
-#include "../decoder/basedecoder.h"
+#include "client/receiver.h"
+#include "decoder/basedecoder.h"
 #include "utils.h"
 
 class basedecoder;
@@ -22,8 +22,6 @@ public:
 
 class baseviewer {
 public:
-    static std::unique_ptr< baseviewer > make();
-
     baseviewer();
     baseviewer(const baseviewer& orig) = delete;
     baseviewer &operator =(const baseviewer& orig) = delete;

@@ -24,21 +24,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
-    src/decoder/basedecoder.cpp \
-    src/decoder/jpegdecoder.cpp \
-    src/receiver/c_socket.cpp \
-    src/receiver/receiver.cpp \
-    src/main.cpp \
-    src/viewer/baseviewer.cpp \
-    src/viewer/qviewer.cpp
+    src/viewer/qviewer.cpp \
+    src/main.cpp
 
 HEADERS += \
-    src/decoder/basedecoder.h \
-    src/decoder/jpegdecoder.h \
-    src/receiver/c_socket.h \
-    src/receiver/receiver.h \
-    src/viewer/baseviewer.h \
     src/viewer/qviewer.h
 
 INCLUDEPATH += ../kformat
-LIBS += ../build/kformat/lib/libkformat.a -ljpeg
+LIBS += ../build/kformat/lib/libkformat.a ../build/kviewer/lib/libkviewer.a -lGLEW -lGLU -ljpeg

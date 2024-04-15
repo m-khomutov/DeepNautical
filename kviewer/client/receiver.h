@@ -91,7 +91,7 @@ private:
     size_t view_ {0};
     basedecoder *decoder_;
     std::atomic< bool > running_ { true };
-    std::unique_ptr< c_socket > connection_;
+    std::unique_ptr< TCsocket > connection_;
     std::string server_host_;
     uint16_t server_port_;
     size_t (receiver::*action)(uint8_t const *, size_t);

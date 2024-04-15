@@ -16,18 +16,18 @@
 #include <string>
 #include <stdexcept>
 
-class c_socket_error: public std::runtime_error
+class TCsocketError: public std::runtime_error
 {
 public:
-    c_socket_error( const std::string & what );
+    TCsocketError( const std::string & what );
 };
 
-class c_socket {
+class TCsocket {
 public:
-    c_socket( std::string const &addr, uint16_t port );
-    c_socket(const c_socket& orig) = delete;
-    c_socket &operator =(const c_socket& orig) = delete;
-    ~c_socket();
+    TCsocket( std::string const &addr, uint16_t port );
+    TCsocket( const TCsocket& orig) = delete;
+    TCsocket &operator =( const TCsocket& orig ) = delete;
+    ~TCsocket();
 
     operator int() const
     {

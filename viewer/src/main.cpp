@@ -12,6 +12,7 @@
 #include <signal.h>
 #ifdef QT_CORE_LIB
 # include <QApplication>
+# include "viewer/qviewer.h"
 #else
 #include <gtk/gtk.h>
 #endif
@@ -70,7 +71,7 @@ int main(int argc, char** argv)
 #endif
     try
     {
-        main_viewer = baseviewer::make();
+        main_viewer.reset( new qviewer );
         main_viewer->run();
         return main_viewer->stop();
     }
