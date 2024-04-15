@@ -18,5 +18,3 @@ add_library(kformat STATIC utils.cpp
         protocol/httpapi.cpp)
 
 target_include_directories(kformat PRIVATE ${PROJECT_SOURCE_DIR})
-
-#target_link_libraries(videodev v4l2)

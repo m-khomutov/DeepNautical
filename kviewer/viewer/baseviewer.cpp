@@ -24,17 +24,17 @@ baseviewer::baseviewer()
 baseviewer::~baseviewer()
 {}
 
-void baseviewer::run()
+void baseviewer::start_stream()
 {
     std::string ex = rec_thread_.exception();
     if( !ex.empty() )
     {
         throw std::logic_error( ex );
     }
-    f_run();
+    f_start_stream();
 }
 
-int baseviewer::stop()
+int baseviewer::stop_stream()
 {
-    return f_stop();
+    return f_stop_stream();
 }

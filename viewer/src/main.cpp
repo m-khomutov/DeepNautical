@@ -60,9 +60,9 @@ int main(int argc, char** argv)
     try
     {
         main_viewer.reset( new qviewer );
-        main_viewer->run();
+        main_viewer->start_stream();
 
-        return main_viewer->stop();
+        return main_viewer->stop_stream();
     }
     catch( const std::runtime_error &err )
     {

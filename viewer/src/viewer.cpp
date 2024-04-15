@@ -16,8 +16,7 @@ qspinner::qspinner( const QRect &rect, int lines, int speed_factor_ )
 , angle_unit_( 360.0 / lines )
 , fade_unit_ ( 1.0 / lines )
 , speed_factor_( speed_factor_ )
-{
-}
+{}
 
 void qspinner::paint( QPainter *painter )
 {
@@ -67,23 +66,22 @@ qviewer::qviewer()
 }
 
 qviewer::~qviewer()
-{
-}
+{}
 
 void qviewer::onsignal( int )
 {
-    f_stop();
+    f_stop_stream();
     QWidget::close();
 }
 
-void qviewer::f_run()
+void qviewer::f_start_stream()
 {
     show();
     update_tag_ = startTimer(40);
     result_ = qApp->exec();
 }
 
-int qviewer::f_stop()
+int qviewer::f_stop_stream()
 {
     if(update_tag_ != -1)
     {

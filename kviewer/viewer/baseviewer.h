@@ -29,8 +29,8 @@ public:
 
     virtual void onsignal( int ) = 0;
 
-    void run();
-    int stop();
+    void start_stream();
+    int stop_stream();
 
 protected:
     NUtils::TImage frame_;
@@ -40,8 +40,8 @@ protected:
     int update_tag_ { -1 }; 
 
 private:
-    virtual void f_run() = 0;
-    virtual int f_stop() = 0;
+    virtual void f_start_stream() = 0;
+    virtual int f_stop_stream() = 0;
 
 };
 

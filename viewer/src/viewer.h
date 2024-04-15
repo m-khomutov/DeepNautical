@@ -41,8 +41,8 @@ public:
     void onsignal( int ) override;
 
 private:
-    void f_run() override;
-    int f_stop() override;
+    void f_start_stream() override;
+    int f_stop_stream() override;
     
     void paintEvent(QPaintEvent*);
     void timerEvent(QTimerEvent*);
