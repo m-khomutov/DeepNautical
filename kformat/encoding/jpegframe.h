@@ -93,11 +93,6 @@ private:
         size_t size_ { 0 };         /// длина данных JPEG кадра
     };
 
-    /*!
-     * \brief Перечисление количества цветовых каналов в кадре
-     */
-    enum EColorComponents { Monochrome = 1, RGB = 3 };
-
     //! контекст сжатия кадра в формат JPEG
     jpeg_compress_struct cinfo_;
     //! контекст ошибок сжатия кадра в формат JPEG

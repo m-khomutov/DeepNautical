@@ -146,7 +146,6 @@ void receiver::stop_listening_network()
     running_.store( false );
 }
 
-
 void receiver::f_start_connection()
 {
     while( running_.load() )

@@ -42,6 +42,11 @@ baseviewer::~baseviewer()
 
 void baseviewer::run()
 {
+    std::string ex = rec_thread_.exception();
+    if( !ex.empty() )
+    {
+        throw std::logic_error( ex );
+    }
     f_run();
 }
 

@@ -77,8 +77,15 @@ public:
     receiver &operator =(const receiver& orig) = delete;
     ~receiver();
 
+    /*!
+       \brief запускает получение видеопотока с сетевого соединения
+     */
     void start_listening_network();
+    /*!
+       \brief Останавливает получение видеопотока с сетевого соединения
+     */
     void stop_listening_network();
+
 
 private:
     size_t view_ {0};

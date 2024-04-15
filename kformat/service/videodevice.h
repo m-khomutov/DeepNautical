@@ -108,6 +108,7 @@ private:
     struct v4l2_format v4l2_format_;
     //! структура буфера устройства видеозахвата
     struct v4l2_buffer v4l2_buffer_;
+    //! формат пикселя, поддерживаемый платой видеозахвата (YVUV или RGB)
     int pixelformat_;
     //!  ширина кадра
     int width_;

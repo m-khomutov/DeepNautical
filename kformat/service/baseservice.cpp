@@ -24,6 +24,14 @@ TBaseservice::~TBaseservice()
 
 void TBaseservice::start_screen()
 {
+    // проверить, может запуск потока с прослушкой сети не сработал
+    std::string what = poll_thread_.exception();
+    if( !what.empty() )
+    {
+        throw std::runtime_error( what );
+    }
+
+    // вроде норм. Стартуем экран отображения
     if( screen_ )
     {
         screen_->run_scene_display();

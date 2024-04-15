@@ -44,13 +44,13 @@ void openglscreen::set_scene( const std::string &scene )
     }
     scene_iter_ = it;
 
-    auto g = commands_.get();
+    auto g = commands_.value_guard();
     g->emplace_back( command::set_scene );
 }
 
 void openglscreen::f_exec_command()
 {
-    auto g = commands_.get();
+    auto g = commands_.value_guard();
     if( ! g->empty() )
     {
         command cmd = g->front();

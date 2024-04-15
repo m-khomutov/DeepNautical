@@ -88,6 +88,7 @@ namespace
 
 NUtils::TConfig::TConfig( int argc, char * argv[] )
 {
+    // значения папметров по умолчанию, если не предлагаются другие значения
     TConfig::fields_["port"] = 2232;
     TConfig::fields_["window"] = NUtils::TGeometry();
     TConfig::fields_["quality"] = 80;
@@ -95,39 +96,40 @@ NUtils::TConfig::TConfig( int argc, char * argv[] )
     TConfig::fields_["verify"] = false;
     TConfig::fields_["scene_count"] = 1;
 
+    // параметры командной строки
     int c;
     while ((c = getopt (argc, argv, "d:p:q:s:t:u:vw:c:o:h")) != -1)
     {
         switch (c)
         {
-        case 's':
+        case 's': // путь к каталогу шейдеров
               TConfig::fields_["shaders"] = str2conf< std::string >( optarg );
               break;
-        case 't':
+        case 't': // путь к каталогу текстур
               TConfig::fields_["textures"] = str2conf< std::string >( optarg );
               break;
-        case 'o':
+        case 'o': // путь к каталогу объектных файлов blender
               TConfig::fields_["objs"] = str2conf< std::string >( optarg );
               break;
-        case 'p':
+        case 'p': // сетевой порт получения зпросов от абонентов
               TConfig::fields_["port"] = str2conf< int >( optarg );
               break;
-        case 'w':
+        case 'w': // размеры кадра
               TConfig::fields_["window"] = str2conf< NUtils::TGeometry >( optarg );
               break;
-        case 'q':
+        case 'q': // качество сжатия JPEG
               TConfig::fields_["quality"] = str2conf< int >( optarg );
               break;
-        case 'd':
+        case 'd': // длительность кадра
               TConfig::fields_["duration"] = str2conf< int >( optarg );
               break;
-        case 'u':
+        case 'u': // урл до сервиса выдачи видеокадров (абонентская настройка)
               TConfig::fields_["url"] = str2conf< std::string >( optarg );
               break;
-        case 'v':
+        case 'v': // вывод информации о задержке доставки кадра (абонентская настройка)
               TConfig::fields_["verify"] = true;
               break;
-        case 'c':
+        case 'c':  // получить конфигурацию из файла)
               f_read_file( optarg );
               break;
         case 'h':
@@ -295,8 +297,7 @@ void NUtils::read_config( char const *fname, std::function< void( const std::str
     std::ifstream ifile( fname );
     if( !ifile.is_open() )
     {
-        std::cerr<< fname << " error: " << strerror(errno) << std::endl;
-        return;
+        throw std::runtime_error( std::string(fname) + " error: " + strerror(errno) );
     }
     std::string line;
     while( std::getline( ifile, line ) )

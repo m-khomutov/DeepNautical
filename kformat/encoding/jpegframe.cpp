@@ -56,7 +56,7 @@ TJpegframe::TJpegframe( const NUtils::TGeometry &geometry, int quality, int dura
 
     cinfo_.image_width = geometry_.width;
     cinfo_.image_height = geometry_.height;
-    cinfo_.input_components = EColorComponents::RGB;
+    cinfo_.input_components = NUtils::TImage::EColor::RGB;
     cinfo_.in_color_space = JCS_RGB;
     jpeg_set_defaults( &cinfo_ );
     jpeg_set_quality( &cinfo_, quality, TRUE );
@@ -77,7 +77,7 @@ TJpegframe::~TJpegframe()
 
 uint8_t *TJpegframe::buffer( size_t view, int width, int height )
 {
-    std::vector< uint8_t >::size_type sz = EColorComponents::RGB * width * height;
+    std::vector< uint8_t >::size_type sz = NUtils::TImage::EColor::RGB * width * height;
 
     if( view >= rgb_buffers_.size() ) // выделить место под буфер точки обзора
     {
@@ -113,7 +113,7 @@ void TJpegframe::f_compress( size_t view )
 
     cinfo_.image_width = jpeg_frames_[view].geometry.width;
     cinfo_.image_height = jpeg_frames_[view].geometry.height;
-    cinfo_.input_components = EColorComponents::RGB;
+    cinfo_.input_components = NUtils::TImage::EColor::RGB;
     cinfo_.dct_method = JDCT_FASTEST;
 
     jpeg_start_compress( &cinfo_, TRUE );
