@@ -5,7 +5,7 @@
  * Created on 6 февраля 2023 г., 16:31
  */
 
-#include "qviewer.h"
+#include "viewer.h"
 #include <QApplication>
 #include <QPainter>
 

@@ -23,9 +23,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 
-SOURCES += src/qviewer.cpp src/main.cpp
+SOURCES += src/viewer.cpp src/main.cpp
 
-HEADERS += src/qviewer.h
+HEADERS += src/viewer.h
 
 INCLUDEPATH += ../kformat ../kviewer ../kviewer/viewer
 LIBS += ../build/kformat/lib/libkformat.a ../build/kviewer/lib/libkviewer.a -lGLEW -lGLU -ljpeg

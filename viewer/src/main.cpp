@@ -5,7 +5,7 @@
  * Created on 25 января 2023 г., 17:24
  */
 
-#include "qviewer.h"
+#include "viewer.h"
 #include "utils.h"
 
 #include <getopt.h>
