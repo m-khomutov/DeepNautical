@@ -7,20 +7,8 @@
 
 #include "jpegdecoder.h"
 
-namespace
-{
-template< typename T >
-void copyimage( const T from, T *to )
-{
-    if( to->size() != from.size() )
-    {
-        to->resize( from.size() );
-    }
-    to->assign( from.begin(), from.end() );   
-}
-}  // namespace
-
-void jpegdecoder::f_copy_frame( NUtils::TImage *img )
+// потокобезопасно копирует принятый фрейм в буфер обработки и декодирует его там
+void TJpegdecoder::f_copy_frame( NUtils::TImage *img )
 {
     {
         std::lock_guard< std::mutex > lk( mutex_ );
@@ -29,13 +17,16 @@ void jpegdecoder::f_copy_frame( NUtils::TImage *img )
         {
             throw TBasedecoderNodata();
         }
-        copyimage( frame_[0], &frame_[1] );
+        //  cохранить - своп данных и временную метку
+        std::swap( frame_[0], frame_[1] );
         img->timestamp = timestamp_;
     }
+    // декодируем из JPEG-a
     codec_.decode( frame_[1].data(), frame_[1].size(), img );
 }
 
-void jpegdecoder::f_save_frame( uint8_t const *frame, size_t size, uint64_t timestamp )
+// потокобезопасно сохраняет кадр данных, принятый из сети
+void TJpegdecoder::f_save_frame( uint8_t const *frame, size_t size, uint64_t timestamp )
 {
     std::lock_guard< std::mutex > lk( mutex_ );
     if( frame_[0].size() != size )

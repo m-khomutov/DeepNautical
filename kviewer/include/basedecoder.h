@@ -1,10 +1,3 @@
-/* 
- * File:   basedecoder.h
- * Author: mkh
- *
- * Created on 26 января 2023 г., 16:40
- */
-
 /*!
      \file basedecoder.h
      \author mkh
