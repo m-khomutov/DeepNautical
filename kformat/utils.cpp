@@ -95,10 +95,11 @@ NUtils::TConfig::TConfig( int argc, char * argv[] )
     TConfig::fields_["duration"] = 40;
     TConfig::fields_["verify"] = false;
     TConfig::fields_["scene_count"] = 1;
+    TConfig::fields_["bide"] = 2000;
 
     // параметры командной строки
     int c;
-    while ((c = getopt (argc, argv, "d:p:q:s:t:u:vw:c:o:h")) != -1)
+    while ((c = getopt (argc, argv, "d:p:q:s:t:u:vb:w:c:o:h")) != -1)
     {
         switch (c)
         {
@@ -111,7 +112,7 @@ NUtils::TConfig::TConfig( int argc, char * argv[] )
         case 'o': // путь к каталогу объектных файлов blender
               TConfig::fields_["objs"] = str2conf< std::string >( optarg );
               break;
-        case 'p': // сетевой порт получения зпросов от абонентов
+        case 'p': // сетевой порт получения запросов от абонентов
               TConfig::fields_["port"] = str2conf< int >( optarg );
               break;
         case 'w': // размеры кадра
@@ -128,6 +129,9 @@ NUtils::TConfig::TConfig( int argc, char * argv[] )
               break;
         case 'v': // вывод информации о задержке доставки кадра (абонентская настройка)
               TConfig::fields_["verify"] = true;
+              break;
+        case 'b': // ожидание соединения
+              TConfig::fields_["bide"] = str2conf< int >( optarg );
               break;
         case 'c':  // получить конфигурацию из файла)
               f_read_file( optarg );
