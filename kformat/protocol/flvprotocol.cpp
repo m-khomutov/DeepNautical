@@ -6,7 +6,7 @@
  */
 
 #include "flvprotocol.h"
-#include "../utils.h"
+#include "utils.h"
 
 #include <sys/types.h>
 #include <sys/socket.h>

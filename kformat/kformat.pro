@@ -6,7 +6,7 @@ DESTDIR += $$OBJECTS_DIR/lib
 CONFIG += 14
 
 HEADERS = kformat.h \
-    utils.h \
+    ../common/utils.h \
     screen/basescreen.h \
     service/s_socket.h \
     service/videodevice.h \
@@ -21,7 +21,7 @@ HEADERS = kformat.h \
 
 
 SOURCES = \
-        utils.cpp \
+        ../common/utils.cpp \
         screen/basescreen.cpp \
         service/s_socket.cpp \
         service/videodevice.cpp \
@@ -35,5 +35,5 @@ SOURCES = \
         protocol/httpapi.cpp
 
 
-INCLUDEPATH += $$PWD
+INCLUDEPATH += $$PWD $$PWD/../common
 LIBS = -ljpeg

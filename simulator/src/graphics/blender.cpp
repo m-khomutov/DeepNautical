@@ -6,7 +6,7 @@
  */
 
 #include "blender.h"
-#include "kformat/utils.h"
+#include "utils.h"
 #include <cstring>
 #include <fstream>
 

@@ -4,7 +4,8 @@ project(kformat)
 set(CMAKE_CXX_STANDARD 14)
 
 
-add_library(kformat STATIC utils.cpp
+add_library(kformat STATIC
+        ../common/utils.cpp
         screen/basescreen.cpp
         service/s_socket.cpp
         service/videodevice.cpp
@@ -17,4 +18,4 @@ add_library(kformat STATIC utils.cpp
         protocol/flvprotocol.cpp
         protocol/httpapi.cpp)
 
-target_include_directories(kformat PRIVATE ${PROJECT_SOURCE_DIR})
+target_include_directories(kformat PRIVATE ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/../common)

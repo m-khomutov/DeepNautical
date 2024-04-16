@@ -6,7 +6,7 @@
  */
 
 #include "specification.h"
-#include "kformat/utils.h"
+#include "utils.h"
 #include <iostream>
 
 specification::specification( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )

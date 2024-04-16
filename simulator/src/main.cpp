@@ -7,7 +7,7 @@
 
 #include "kformat/service/baseservice.h"
 #include "kformat/encoding/jpegframe.h"
-#include "kformat/utils.h"
+#include "utils.h"
 #ifdef QT_CORE_LIB
 # include <QApplication>
 # include "service/qservice.h"
@@ -22,10 +22,6 @@
 #include <getopt.h>
 
 #include <iostream>
-
-/*
- * 
- */
 
 namespace
 {

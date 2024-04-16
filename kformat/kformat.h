@@ -10,7 +10,6 @@
 #ifndef KFORMAT_H
 #define KFORMAT_H
 
-#include "utils.h"
 #include "screen/basescreen.h"
 #include "service/baseservice.h"
 #include "encoding/jpegframe.h"

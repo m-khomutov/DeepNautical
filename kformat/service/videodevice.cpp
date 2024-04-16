@@ -1,6 +1,6 @@
 #include "videodevice.h"
 #include "../encoding/jpegframe.h"
-#include "../utils.h"
+#include "utils.h"
 
 #include <sys/mman.h>
 

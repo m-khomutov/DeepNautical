@@ -8,6 +8,6 @@ add_executable(videodevice
         src/main.cpp
         )
 
-target_include_directories(videodevice PRIVATE ${PROJECT_SOURCE_DIR}/../kformat)
+target_include_directories(videodevice PRIVATE ${PROJECT_SOURCE_DIR}/../kformat  ${PROJECT_SOURCE_DIR}/../common)
 link_directories(${CMAKE_BINARY_DIR}/kformat)
 target_link_libraries(videodevice kformat jpeg)

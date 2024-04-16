@@ -12,5 +12,5 @@ SOURCES += \
 HEADERS += \
     src/service.h
 
-INCLUDEPATH += ../kformat
+INCLUDEPATH += ../kformat ../common
 LIBS += ../build/kformat/lib/libkformat.a -ljpeg

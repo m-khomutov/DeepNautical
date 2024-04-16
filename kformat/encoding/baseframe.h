@@ -10,7 +10,7 @@
 #ifndef BASEFRAME_H
 #define BASEFRAME_H
 
-#include "../utils.h"
+#include "utils.h"
 #include <chrono>
 
 class TBaseprotocol;

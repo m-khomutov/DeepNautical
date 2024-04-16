@@ -12,7 +12,7 @@
 #include "../visitor.h"
 #include "../texture/texture.h"
 #include "../program.h"
-#include "kformat/utils.h"
+#include "utils.h"
 #include <GL/glew.h>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
