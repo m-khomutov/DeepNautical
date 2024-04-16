@@ -10,6 +10,7 @@
 #define RECEIVER_H
 
 #include "c_socket.h"
+
 #include "utils.h"
 #include <atomic>
 #include <memory>
@@ -133,7 +134,7 @@ private:
     uint8_t codec_id_ { ECodecID::jpeg };
 };
 
-class basedecoder;
+class TBasedecoder;
 
 /*!
    \class TReceiver
@@ -151,7 +152,7 @@ public:
        \brief Конструктор класса клиента сетевого соединения с tcp сервером
        \param decoder Указатель на переменную объекта декодирования принятых данных
      */
-    explicit TReceiver( basedecoder *decoder );
+    explicit TReceiver( TBasedecoder *decoder );
     /*!
        \brief Запрещенный конструктор копии.
        \param orig Копируемый объект
@@ -186,7 +187,7 @@ private:
     //! Запрашиваемая точка обзора
     size_t view_ {0};
     //! Указатель на переменную объекта декодирования принятых данных
-    basedecoder *decoder_;
+    TBasedecoder *decoder_;
     //! функция вывода сетевой временной задержки
     verify_callback_t verify_callback_ {nullptr};
     //! Флаг поддержки соединения с сервером

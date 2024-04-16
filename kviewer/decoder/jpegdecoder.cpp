@@ -20,14 +20,14 @@ void copyimage( const T from, T *to )
 }
 }  // namespace
 
-void jpegdecoder::f_load( NUtils::TImage *img )
+void jpegdecoder::f_copy_frame( NUtils::TImage *img )
 {
     {
         std::lock_guard< std::mutex > lk( mutex_ );
         
         if( frame_[0].empty() || img->timestamp == timestamp_ )
         {
-            throw basedecoder_nodata();
+            throw TBasedecoderNodata();
         }
         copyimage( frame_[0], &frame_[1] );
         img->timestamp = timestamp_;
@@ -35,7 +35,7 @@ void jpegdecoder::f_load( NUtils::TImage *img )
     codec_.decode( frame_[1].data(), frame_[1].size(), img );
 }
 
-void jpegdecoder::f_store( uint8_t const *frame, size_t size, uint64_t timestamp )
+void jpegdecoder::f_save_frame( uint8_t const *frame, size_t size, uint64_t timestamp )
 {
     std::lock_guard< std::mutex > lk( mutex_ );
     if( frame_[0].size() != size )

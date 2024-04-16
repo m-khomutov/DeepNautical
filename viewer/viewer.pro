@@ -27,5 +27,5 @@ SOURCES += src/viewer.cpp src/main.cpp
 
 HEADERS += src/viewer.h
 
-INCLUDEPATH += ../kformat ../kviewer ../kviewer/viewer
+INCLUDEPATH += ../kformat ../kviewer/include
 LIBS += ../build/kformat/lib/libkformat.a ../build/kviewer/lib/libkviewer.a -lGLEW -lGLU -ljpeg

@@ -97,20 +97,31 @@ void qviewer::paintEvent(QPaintEvent *)
         ++noimage_counter_;
 
     QPainter painter(this);
-    if( decoder_->load( &frame_ ) )
+    try
     {
-        img_ = QImage(frame_.pixels.data(),
-                      frame_.window.width,
-                      frame_.window.height,
-                      QImage::Format_RGB888);
-        noimage_counter_ = 0;
+        if( decoder_->copy_frame( &frame_ ) )
+        {
+            img_ = QImage(frame_.pixels.data(),
+                          frame_.window.width,
+                          frame_.window.height,
+                          QImage::Format_RGB888);
+            noimage_counter_ = 0;
+        }
+        else if( noimage_counter_ >= 50 )
+        {
+            spinner_->paint( &painter );
+            return;
+        }
+        painter.drawImage(rect(), img_, img_.rect());
     }
-    else if( noimage_counter_ >= 50 )
+    catch( const std::exception &e )
     {
-        spinner_->paint( &painter );
-        return;
+        qDebug() << "copy frame error: " << e.what();
+        if( noimage_counter_ >= 50 )
+        {
+            spinner_->paint( &painter );
+        }
     }
-    painter.drawImage(rect(), img_, img_.rect());
 }
 
 void qviewer::timerEvent(QTimerEvent *)

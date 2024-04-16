@@ -6,7 +6,7 @@
  */
 
 #include "baseviewer.h"
-#include "decoder/jpegdecoder.h"
+#include "jpegdecoder.h"
 
 
 viewer_error::viewer_error( const std::string &what )

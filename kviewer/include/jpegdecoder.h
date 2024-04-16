@@ -12,7 +12,7 @@
 
 #include <mutex>
 
-class jpegdecoder: public basedecoder {
+class jpegdecoder: public TBasedecoder {
 public:
     jpegdecoder() = default;
     jpegdecoder(const jpegdecoder& orig) = delete;
@@ -25,8 +25,8 @@ private:
     std::mutex mutex_;
 
 private:
-    void f_load( NUtils::TImage *img ) override;
-    void f_store( uint8_t const *frame, size_t size, uint64_t timestamp ) override;
+    void f_copy_frame( NUtils::TImage *img ) override;
+    void f_save_frame( uint8_t const *frame, size_t size, uint64_t timestamp ) override;
 };
 
 #endif /* JPEGDECODER_H */

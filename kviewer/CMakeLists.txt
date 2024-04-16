@@ -11,4 +11,4 @@ add_library(kviewer STATIC
         decoder/jpegdecoder.cpp
         viewer/baseviewer.cpp)
 
-target_include_directories(kviewer PRIVATE ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/../kformat)
+target_include_directories(kviewer PRIVATE ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/../kformat)

@@ -8,11 +8,11 @@
 #ifndef BASEVIEWER_H
 #define BASEVIEWER_H
 
-#include "client/receiver.h"
-#include "decoder/basedecoder.h"
+#include "receiver.h"
+#include "basedecoder.h"
 #include "utils.h"
 
-class basedecoder;
+class TBasedecoder;
 
 class viewer_error: public std::runtime_error
 {
@@ -39,7 +39,7 @@ public:
 
 protected:
     NUtils::TImage frame_;
-    std::unique_ptr< basedecoder > decoder_;
+    std::unique_ptr< TBasedecoder > decoder_;
     TReceiver receiver_;
     NUtils::TScopedThread< TReceiver > rec_thread_;
     int update_tag_ { -1 }; 

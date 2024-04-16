@@ -6,7 +6,8 @@
  */
 
 #include "receiver.h"
-#include "decoder/basedecoder.h"
+#include "basedecoder.h"
+
 #include <unistd.h>
 #include <regex>
 
@@ -71,7 +72,7 @@ bool TFLVtag::valid() const
 }
 
 
-TReceiver::TReceiver( basedecoder *decoder )
+TReceiver::TReceiver( TBasedecoder *decoder )
 : decoder_( decoder )
 {
     // серверный урл из строки конфигурации
@@ -252,8 +253,8 @@ size_t TReceiver::f_receive_body( uint8_t const *data, size_t size )
         verify_callback_( timestamp_ );
     }
 
-    decoder_->store( data, size, timestamp_ );
-    TReceiver::action = &TReceiver::f_receive_size;
+    decoder_->save_frame( data, size, timestamp_ );
+    TReceiver::action = &TReceiver::f_receive_size; // изменить действие автомата
     return sizeof( uint32_t );
 }
 
@@ -265,6 +266,6 @@ size_t TReceiver::f_receive_size( uint8_t const *, size_t size )
         throw TReceiverError( "invalid size" );
     }
 
-    TReceiver::action = &TReceiver::f_receive_tag;
+    TReceiver::action = &TReceiver::f_receive_tag; // изменить действие автомата
     return TFLVtag::size;
 }

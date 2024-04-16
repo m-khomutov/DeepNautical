@@ -6,11 +6,11 @@ DESTDIR += $$OBJECTS_DIR/lib
 CONFIG += 14
 
 HEADERS = \
-    client/c_socket.h \
-    client/receiver.h \
-    decoder/basedecoder.h \
-    decoder/jpegdecoder.cpp \
-    viewer/baseviewer.h
+    include/c_socket.h \
+    include/receiver.h \
+    include/basedecoder.h \
+    include/jpegdecoder.cpp \
+    include/baseviewer.h
 
 
 SOURCES = \
@@ -21,5 +21,5 @@ SOURCES = \
     viewer/baseviewer.cpp
 
 
-INCLUDEPATH += $$PWD ../kformat
+INCLUDEPATH += $$PWD/include ../kformat
 LIBS = -ljpeg
