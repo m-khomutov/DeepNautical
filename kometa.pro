@@ -1,7 +1,6 @@
 TEMPLATE = subdirs
 
-# SUBDIRS = kformat kviewer simulator viewer videodevice
-SUBDIRS = kviewer
+SUBDIRS = kformat kviewer simulator viewer videodevice
 
 kformat.files = $$PWD/kformat/kformat.pro
 kviewer.files = $$PWD/kviewer/kviewer.pro

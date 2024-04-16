@@ -9,6 +9,7 @@ add_library(kviewer STATIC
         client/receiver.cpp
         decoder/basedecoder.cpp
         decoder/jpegdecoder.cpp
-        viewer/baseviewer.cpp)
+        viewer/baseviewer.cpp
+        viewer/qviewer.cpp)
 
 target_include_directories(kviewer PRIVATE ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/../common)

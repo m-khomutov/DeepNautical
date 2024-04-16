@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets
+QT += core gui widgets
 
 TARGET = viewer
 TEMPLATE = app
@@ -23,9 +23,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 
-SOURCES += src/viewer.cpp src/main.cpp
-
-HEADERS += src/viewer.h
+SOURCES += src/main.cpp
 
 INCLUDEPATH += ../common ../kviewer/include
 LIBS += ../build/kviewer/lib/libkviewer.a -lGLEW -lGLU -ljpeg

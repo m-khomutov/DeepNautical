@@ -1,5 +1,5 @@
 /*!
-     \file viewer.h
+     \file qviewer.h
      \author mkh
      \date 6 февраля 2023 г.
      \brief Заголовочный файл класса Qt проектора принятого потока видеокадров.

@@ -1,3 +1,5 @@
+QT += core gui widgets
+
 TEMPLATE = lib
 CONFIG += staticlib
 
@@ -11,6 +13,7 @@ HEADERS = \
     include/basedecoder.h \
     include/jpegdecoder.h \
     include/baseviewer.h \
+    include/qviewer.h \
     ../common/utils.h
 
 
@@ -20,6 +23,7 @@ SOURCES = \
     decoder/basedecoder.cpp \
     decoder/jpegdecoder.cpp \
     viewer/baseviewer.cpp \
+    viewer/qviewer.cpp \
     ../common/utils.cpp
 
 
@@ -37,7 +41,6 @@ buildpackage.commands = @mkdir -p $$OBJECTS_DIR/libkviewer-dev/DEBIAN; \
                          echo "Description: статическая библиотека функционала просмотра видеопотока" >> $$OBJECTS_DIR/libkviewer-dev/DEBIAN/control;\
                          dpkg-deb --build $$OBJECTS_DIR/libkviewer-dev; \
                          rm -Rf $$OBJECTS_DIR/libkviewer-dev;
-
 all.depends = buildpackage
 
 INCLUDEPATH += $$PWD/include $$PWD/../common
