@@ -38,3 +38,8 @@ int baseviewer::stop_stream()
 {
     return f_stop_stream();
 }
+
+void baseviewer::register_verify_callback( TReceiver::verify_callback_t cb )
+{
+    receiver_.register_verify_callback( cb );
+}

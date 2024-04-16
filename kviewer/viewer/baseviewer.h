@@ -31,6 +31,11 @@ public:
 
     void start_stream();
     int stop_stream();
+    /*!
+       \brief Регистрирует обработчик вывода сетевой задержки
+       \param cb регистрируемый обработчик
+     */
+    void register_verify_callback( TReceiver::verify_callback_t cb );
 
 protected:
     NUtils::TImage frame_;

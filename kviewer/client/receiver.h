@@ -142,6 +142,12 @@ class basedecoder;
 class TReceiver {
 public:
     /*!
+       \brief алиас типа колбэка, обрабатывающего вывод временной задержки
+       \param временная метка, принятая в кадре FLV
+     */
+    using verify_callback_t = std::function< void(uint64_t) >;
+
+    /*!
        \brief Конструктор класса клиента сетевого соединения с tcp сервером
        \param decoder Указатель на переменную объекта декодирования принятых данных
      */
@@ -170,13 +176,20 @@ public:
        \brief Останавливает получение видеопотока с сетевого соединения
      */
     void stop_listening_network();
+    /*!
+       \brief Регистрирует обработчик вывода сетевой задержки
+       \param cb регистрируемый обработчик
+     */
+    void register_verify_callback( verify_callback_t cb );
 
 private:
     //! Запрашиваемая точка обзора
     size_t view_ {0};
     //! Указатель на переменную объекта декодирования принятых данных
     basedecoder *decoder_;
-    //! Флаг поддержжки соединения с сервером
+    //! функция вывода сетевой временной задержки
+    verify_callback_t verify_callback_ {nullptr};
+    //! Флаг поддержки соединения с сервером
     std::atomic< bool > running_ { true };
     //! Умный указатель на сокет сетевого соединения с сервером
     std::unique_ptr< TCsocket > connection_;
@@ -188,8 +201,6 @@ private:
     size_t (TReceiver::*action)(uint8_t const *, size_t);
     //! Временная метка принятого кадра
     uint64_t timestamp_ { 0ul };
-    //! Флаг необходимости оценки и вывода временной задержки доставки кадра
-    bool verify_ { bool(NUtils::TConfig()["verify"]) };
     //! Значение периода ожидания при попытках повторного соединения с сервером
     int reconnect_delay_ { 0 };
 

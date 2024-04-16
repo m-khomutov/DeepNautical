@@ -60,6 +60,12 @@ int main(int argc, char** argv)
     try
     {
         main_viewer.reset( new qviewer );
+        if( NUtils::TConfig()["verify"] )
+        {
+            main_viewer->register_verify_callback( []( uint64_t ts ) {
+                qDebug() << int64_t(NUtils::now() - ts) << "nsec";
+            } );
+        }
         main_viewer->start_stream();
 
         return main_viewer->stop_stream();

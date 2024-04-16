@@ -16,6 +16,7 @@ TReceiverError::TReceiverError( const std::string &what )
 
 namespace
 {
+// 3-х байтовую перменную из big-endian
 uint32_t from3bytes( uint8_t const *from )
 {
     union
@@ -73,6 +74,7 @@ bool TFLVtag::valid() const
 TReceiver::TReceiver( basedecoder *decoder )
 : decoder_( decoder )
 {
+    // серверный урл из строки конфигурации
     try
     {
         std::string url = NUtils::TConfig()["url"];
@@ -98,30 +100,30 @@ TReceiver::~TReceiver()
 
 void TReceiver::start_listening_network()
 {
-    f_start_connection();
-    TReceiver::action = &TReceiver::f_receive_tag;
+    f_start_connection(); // отправляется запрос на стримминг
+    TReceiver::action = &TReceiver::f_receive_tag; // начальное действие автомата - принять тэг
     
     std::vector< uint8_t > buffer( TFLVtag::size );
-    size_t expected = TFLVtag::size, received = 0;
+    size_t expected = TFLVtag::size, received = 0; // размеры ожидаемый, принятый
     while( running_.load() )
     {
         if( reconnect_delay_ < 100 )
             ++reconnect_delay_;
 
         ssize_t rc = connection_->receive( buffer.data() + received, expected );
-        if( rc > 0 )
+        if( rc > 0 ) // приняли данных из сети
         {
-            expected -= rc;
-            received += rc;
-            reconnect_delay_ = 0;
+            expected -= rc; // ждем поменьше
+            received += rc; // приняли побольше
+            reconnect_delay_ = 0; // ожидание ожидаемо обнуляется
         }
-        else if( reconnect_delay_ >= 100 )
+        else if( reconnect_delay_ >= 100 ) // долго ждем, похоже на проблемы. Надо реконнектиться
         {
             f_start_connection();
             TReceiver::action = &TReceiver::f_receive_tag;
             expected = TFLVtag::size;
         }
-        if( expected == 0 )
+        if( expected == 0 ) // все пришло. Обрабатываем текущей командой автомата.
         {
             try
             {
@@ -129,6 +131,7 @@ void TReceiver::start_listening_network()
             }
             catch( const std::runtime_error &e )
             {
+                // если что-то пошло не так, реконнектимся
                 f_start_connection();
                 TReceiver::action = &TReceiver::f_receive_tag;
                 expected = TFLVtag::size;
@@ -147,12 +150,18 @@ void TReceiver::stop_listening_network()
     running_.store( false );
 }
 
+void TReceiver::register_verify_callback( verify_callback_t cb )
+{
+    verify_callback_ = cb;
+}
+
 void TReceiver::f_start_connection()
 {
     while( running_.load() )
     {
         try
         {
+            // физическое соединение
             connection_.reset( new TCsocket( server_host_, server_port_ ) );
             break;
         }
@@ -165,6 +174,8 @@ void TReceiver::f_start_connection()
     {
         throw TReceiverError( "invalid connection" );
     }
+
+    // запрос на выдачу контента
     std::string request = "GET /stream?proto=flv&view=" + std::to_string(view_) + " HTTP/1.1\r\n"
                           "User-Agent: Viewer/0.0.1 (agat-aquarius)\r\n"
                           "Accept: */*\r\n"
@@ -173,6 +184,7 @@ void TReceiver::f_start_connection()
                           "Connection: Keep-Alive\r\n\r\n";
     connection_->send( (uint8_t const *)request.data(), request.size() );   
 
+    // прием контента
     std::string reply;
     int eol_count = 0;
     while( running_.load() )
@@ -212,6 +224,7 @@ void TReceiver::f_start_connection()
     }
 }
 
+// команда автомата принять FLV тег
 size_t TReceiver::f_receive_tag( uint8_t const *data, size_t size )
 {
     if( size != TFLVtag::size )
@@ -231,11 +244,12 @@ size_t TReceiver::f_receive_tag( uint8_t const *data, size_t size )
     return tag.data_size() - 1;
 }
 
+// команда автомата принять тело FLV кадра
 size_t TReceiver::f_receive_body( uint8_t const *data, size_t size )
 {
-    if( verify_ )
+    if( verify_callback_ ) // вызвать колбэк вывода временной задержки, если он зарегистрирован
     {
-        std::cerr << int64_t(NUtils::now() - timestamp_) << " nsec.\n";
+        verify_callback_( timestamp_ );
     }
 
     decoder_->store( data, size, timestamp_ );
@@ -243,6 +257,7 @@ size_t TReceiver::f_receive_body( uint8_t const *data, size_t size )
     return sizeof( uint32_t );
 }
 
+// команда автомата принять тело FLV кадра
 size_t TReceiver::f_receive_size( uint8_t const *, size_t size )
 {
     if( size != sizeof(uint32_t) )
