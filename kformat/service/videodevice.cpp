@@ -1,5 +1,5 @@
 #include "videodevice.h"
-#include "../encoding/jpegframe.h"
+#include "jpegframe.h"
 #include "utils.h"
 
 #include <sys/mman.h>

@@ -9,7 +9,7 @@
 #ifndef BASESCREEN_H
 #define BASESCREEN_H
 
-#include "../encoding/baseframe.h"
+#include "baseframe.h"
 #include <mutex>
 #include <set>
 

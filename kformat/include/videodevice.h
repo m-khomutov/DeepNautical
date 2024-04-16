@@ -17,7 +17,7 @@
 #include <sys/stat.h>
 #include <linux/videodev2.h>
 
-#include "../encoding/baseframe.h"
+#include "baseframe.h"
 
 #include <cstring>
 #include <iostream>

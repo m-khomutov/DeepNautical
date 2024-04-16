@@ -6,7 +6,7 @@
  */
 
 #include "baseservice.h"
-#include "screen/basescreen.h"
+#include "basescreen.h"
 
 TBaseservice::TBaseservice( TBasescreen *screen, uint16_t port )
 : screen_( screen )

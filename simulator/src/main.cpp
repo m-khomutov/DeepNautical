@@ -5,8 +5,8 @@
  * Created on 23 января 2023 г., 18:31
  */
 
-#include "kformat/service/baseservice.h"
-#include "kformat/encoding/jpegframe.h"
+#include "baseservice.h"
+#include "jpegframe.h"
 #include "utils.h"
 #ifdef QT_CORE_LIB
 # include <QApplication>

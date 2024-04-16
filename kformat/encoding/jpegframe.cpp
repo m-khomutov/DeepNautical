@@ -6,7 +6,7 @@
  */
 
 #include "jpegframe.h"
-#include "protocol/baseprotocol.h"
+#include "baseprotocol.h"
 #include <unistd.h>
 
 namespace  // Содержит стафф, связанный с определение контекста сжатия кадра в JPEG
