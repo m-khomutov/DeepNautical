@@ -18,4 +18,4 @@ add_library(kformat STATIC
         protocol/flvprotocol.cpp
         protocol/httpapi.cpp)
 
-target_include_directories(kformat PRIVATE ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/../common)
+target_include_directories(kformat PRIVATE ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/../common)

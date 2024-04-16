@@ -12,4 +12,7 @@ add_library(kviewer STATIC
         viewer/baseviewer.cpp
         viewer/qviewer.cpp)
 
-target_include_directories(kviewer PRIVATE ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/../common)
+find_package(Qt5Widgets)
+
+target_include_directories(kviewer PRIVATE ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/../common ${Qt5Widgets_INCLUDES})
+target_link_libraries(kviewer ${Qt5Widgets_LIBRARIES})
