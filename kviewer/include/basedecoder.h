@@ -78,7 +78,7 @@ public:
      */
     TBasedecoder &operator =( const TBasedecoder& orig ) = delete;
     /*!
-       Деструктор класса. Вирутальный для обеспечения наследования
+       \brief Деструктор класса. Виртуальный для обеспечения наследования
      */
     virtual ~TBasedecoder() = default;
 

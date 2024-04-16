@@ -145,7 +145,7 @@ void TJpegframe::f_compress( size_t view )
 
 bool TJpegframe::f_send_buffer( TBaseprotocol * proto )
 {
-    if( !proto )
+    if( !proto || jpeg_frames_.empty() )
     {
         return false;
     }

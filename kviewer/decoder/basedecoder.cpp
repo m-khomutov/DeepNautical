@@ -16,6 +16,7 @@ TBasedecoderNodata::TBasedecoderNodata()
 : std::runtime_error( "" )
 {}
 
+// может сгенерировать TBasedecoderError и TBasedecoderNodata. Первый случай пропускаем. Обрабатывается во вьювере
 bool TBasedecoder::copy_frame( NUtils::TImage *img )
 {
     try

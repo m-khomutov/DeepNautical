@@ -190,6 +190,7 @@ void TReceiver::f_start_connection()
     int eol_count = 0;
     while( running_.load() )
     {
+        // принимаем по символу пака не встретим \r\n\r\n
         char c;
         if( connection_->receive( (uint8_t *)&c, 1) == 1 )
         {
@@ -209,6 +210,7 @@ void TReceiver::f_start_connection()
             }
         }
     }
+    // пошел видеопоток
     uint8_t buffer[13];
     size_t rc = 0;
     while( running_.load() && rc < sizeof(buffer) )

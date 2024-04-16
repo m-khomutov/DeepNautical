@@ -18,7 +18,7 @@
 
 namespace
 {
-std::unique_ptr< baseviewer > main_viewer;
+std::unique_ptr< TBaseviewer > main_viewer;
 
 void signal_handler( int s )
 {

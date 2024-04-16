@@ -31,7 +31,7 @@ private:
     int speed_ { 0 };
 };
 
-class qviewer: public baseviewer, public QWidget {
+class qviewer: public TBaseviewer, public QWidget {
 public:
     qviewer();
     qviewer(const qviewer& orig) = delete;
@@ -52,6 +52,7 @@ private:
     std::unique_ptr< qspinner > spinner_;
     int result_ { EXIT_FAILURE };
     int noimage_counter_ { 0 };
+    int update_tag_ { -1 };
 };
 
 #endif /* QVIEWER_H */
