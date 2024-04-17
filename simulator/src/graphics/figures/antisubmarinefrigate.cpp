@@ -7,21 +7,19 @@
 
 #include "antisubmarinefrigate.h"
 
-antisubmarinefrigate::antisubmarinefrigate( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
-: figure( settings, camera_pos )
+TAntisubmarinefrigate::TAntisubmarinefrigate( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
+: TFigure( settings, camera_pos )
 {
     f_set_model();
 }
 
-antisubmarinefrigate::~antisubmarinefrigate()
+void TAntisubmarinefrigate::draw( size_t )
 {
-}
-
-void antisubmarinefrigate::draw( size_t )
-{
+    // передаем униформные переменные
     set_uniform( "Texture", GLuint(0) );
     set_uniform( "Offset", offset_ );
     set_uniform( "Waterline", waterline_ );
+    // настраиваем местоположение на сцене
     if( scene_position_ < -1.5 || scene_position_ > 1.5 )
     {
         offset_.x = 0.0f;
@@ -31,12 +29,14 @@ void antisubmarinefrigate::draw( size_t )
     }
     scene_position_ += spec_.speed.x * direction_;
     offset_.x -= spec_.speed.x;
-    
+
+    // рисуем
     glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );   
 }
 
-void antisubmarinefrigate::f_check_environment() const
+void TAntisubmarinefrigate::f_check_environment() const
 {
+    // проверяем наличие файлов, указанных в конфигурации
     if( ! (NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
            NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
            NUtils::file_exists( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str() )) )
@@ -45,28 +45,33 @@ void antisubmarinefrigate::f_check_environment() const
     }
 }
 
-char const *antisubmarinefrigate::f_shader_name() const
+char const *TAntisubmarinefrigate::f_shader_name() const
 {
     return spec_.shader_name.c_str(); 
 }
 
-void antisubmarinefrigate::f_initialize( size_t )
+void TAntisubmarinefrigate::f_initialize( size_t )
 {
+    // создаем текстуру
     texture_.reset( new texture( (std::string(NUtils::TConfig()["textures"]) + spec_.texture_name).c_str() ) );
-    
+
+    // ыделяем память под данные
     glBufferData( GL_ARRAY_BUFFER, sizeof(position_), position_, GL_STATIC_DRAW );
     glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices_), indices_, GL_STATIC_DRAW); 
+    // настраиваем атрибуты
     set_attribute( "Position", 3, 5, 0 );
     set_attribute( "Texcoord", 2, 5, 3 );
 }
 
-void antisubmarinefrigate::f_accept( size_t vbo_number, visitor &p, double )
+void TAntisubmarinefrigate::f_accept( size_t vbo_number, visitor &p, double )
 {
+    // передаем посетителю указатель на себя. Запустит нашу отрисовку когда надо
     p.visit( vbo_number, this );
 }
 
-void antisubmarinefrigate::f_set_model()
+void TAntisubmarinefrigate::f_set_model()
 {
+    // местоположение на сцене в пространстве
     GLfloat y = angle_.x == 0.0f ? -0.08f : -0.38f;
     glm::vec3 factor = angle_.x == 0.0f ? glm::vec3( 0.7f ) : glm::vec3( 1.0f );
     model_ = glm::mat4( glm::scale(

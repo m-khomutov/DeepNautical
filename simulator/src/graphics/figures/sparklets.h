@@ -11,7 +11,7 @@
 #include "figure.h"
 #include "../blender.h"
 
-class sparklets: public figure {
+class sparklets: public TFigure {
 public:
     explicit sparklets( const std::vector< std::string > &settings, const glm::vec3 &camera_pos );
     sparklets(const vessel& orig) = delete;

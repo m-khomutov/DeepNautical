@@ -10,7 +10,7 @@
 
 #include "figure.h"
 
-class water: public figure {
+class water: public TFigure {
 public:
     explicit water( const std::vector< std::string > &settings, const glm::vec3 &camera_pos );
     water( water const &orig ) = delete;
@@ -18,7 +18,7 @@ public:
     ~water();
 
     void draw( size_t vbo_number );
-    void set_wake_position( const std::vector< figure::position > &pos );
+    void set_wake_position( const std::vector< TFigure::TPosition > &pos );
     
 private:
     static const uint32_t resolution = 64;
@@ -27,7 +27,7 @@ private:
     float phase_ { 0.0f };
     std::unique_ptr< texture > air_texture_;    
     std::unique_ptr< texture > foam_texture_;
-    std::vector< figure::position > wake_position_;
+    std::vector< TFigure::TPosition > wake_position_;
 
 private:
     void f_check_environment() const override;

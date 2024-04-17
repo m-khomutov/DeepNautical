@@ -11,7 +11,7 @@
 #include "figure.h"
 #include "../blender.h"
 
-class vessel: public figure {
+class vessel: public TFigure {
 public:
     explicit vessel( const std::vector< std::string > &settings, const glm::vec3 &camera_pos );
     vessel(const vessel& orig) = delete;
@@ -19,7 +19,7 @@ public:
     ~vessel();
 
     void draw( size_t vbo_number );
-    const figure::position &position();
+    const TFigure::TPosition &position();
 
 private:
     std::unique_ptr< blender::object > object_;
@@ -27,7 +27,7 @@ private:
     glm::vec3 factor_;
     GLfloat pitching_angle_ = 0.0f;
     std::shared_ptr< texture > empty_texture_;
-    figure::position position_;
+    TFigure::TPosition position_;
 
 private:
     void f_check_environment() const override;

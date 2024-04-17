@@ -18,12 +18,12 @@
 
 namespace
 {
-std::unique_ptr< TBaseviewer > main_viewer; // окно просмотра
+std::unique_ptr< TBaseviewer > viewer; // окно просмотра
 
 // обработать Ctrl+C
 void signal_handler( int s )
 {
-    main_viewer->onsignal( s );
+    viewer->onsignal( s );
 }
 
 void show_options_and_exit( const char *prog, int rc )
@@ -63,17 +63,17 @@ int main(int argc, char** argv)
     try
     {
         // параметры - период обновления окна и период, после которого начинает крутиться спиннер (мсек)
-        main_viewer.reset( new QViewer(NUtils::TConfig()["duration"], NUtils::TConfig()["bide"]) );
+        viewer.reset( new QViewer(NUtils::TConfig()["duration"], NUtils::TConfig()["bide"]) );
         // если надо смотреть сетевую задержку, регистрируем колбэк просмотра
         if( NUtils::TConfig()["verify"] )
         {
-            main_viewer->register_verify_callback( []( uint64_t ts ) {
+            viewer->register_verify_callback( []( uint64_t ts ) {
                 qDebug() << int64_t(NUtils::now() - ts) << "nsec";
             } );
         }
-        main_viewer->start_stream(); // стартуем прием
+        viewer->start_stream(); // стартуем прием
 
-        return main_viewer->stop_stream(); // программа завершается. Останавливаем прием
+        return viewer->stop_stream(); // программа завершается. Останавливаем прием
     }
     catch( const std::runtime_error &err )
     {

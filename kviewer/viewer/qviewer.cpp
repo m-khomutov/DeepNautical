@@ -9,6 +9,7 @@
 #include <QApplication>
 #include <QPainter>
 
+// спиннер ожидания (крутящаяся палочка)
 QSpinner::QSpinner( const QRect &rect, int lines, int speed_factor_ )
 : window_( rect )
 , center_( rect.width() / 2, rect.height() / 2 )
@@ -77,7 +78,7 @@ void QViewer::onsignal( int )
 void QViewer::f_start_stream()
 {
     show();
-
+    // таймер обновления
     update_tag_ = startTimer( update_period_ms_ );
     result_ = qApp->exec();
 }
@@ -95,13 +96,14 @@ int QViewer::f_stop_stream()
 
 void QViewer::paintEvent(QPaintEvent *)
 {
+    // увеличить счетчик ожидания изображения. если изображение есть, обнулится.
     if( noimage_counter_ < frame_wait_threshold_ )
         ++noimage_counter_;
 
     QPainter painter(this);
     try
     {
-        if( decoder_->copy_frame( &frame_ ) )
+        if( decoder_->copy_frame( &frame_ ) ) // есть изображения
         {
             img_ = QImage(frame_.pixels.data(),
                           frame_.window.width,
@@ -109,18 +111,20 @@ void QViewer::paintEvent(QPaintEvent *)
                           QImage::Format_RGB888);
             noimage_counter_ = 0;
         }
-        else if( noimage_counter_ >= frame_wait_threshold_ )
+        else if( noimage_counter_ >= frame_wait_threshold_ ) // нет изображения
         {
+            // превышен порог ожидания изображения. Надо спиннер крутить
             spinner_->paint( &painter );
             return;
         }
-        painter.drawImage(rect(), img_, img_.rect());
+        painter.drawImage(rect(), img_, img_.rect()); // рисуем кадр
     }
     catch( const std::exception &e )
     {
-        qDebug() << "copy frame error: " << e.what();
+        qDebug() << "copy frame error: " << e.what();  // посмотреть ошибку
         if( noimage_counter_ >= frame_wait_threshold_ )
         {
+            // превышен порог ожидания изображения. Надо спиннер крутить
             spinner_->paint( &painter );
         }
     }

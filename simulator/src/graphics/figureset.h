@@ -17,20 +17,20 @@ class scene;
 
 class figureset: public visitor {
 public:
-    using figure_t =  std::vector< std::shared_ptr< figure > >;
+    using figure_t =  std::vector< std::shared_ptr< TFigure > >;
 
     figureset();
     figureset(const figureset& orig) = delete;
     figureset &operator =( const figureset &rhs ) = delete;
     ~figureset();
     
-    void emplace( figure *fig );
-    figure *back();
+    void emplace( TFigure *fig );
+    TFigure *back();
     
     void initialize();
     void draw( double currentTime );
     
-    void visit( size_t vbo_number, antisubmarinefrigate *fig ) override;
+    void visit( size_t vbo_number, TAntisubmarinefrigate *fig ) override;
     void visit( size_t vbo_number, sol *fig ) override;
     void visit( size_t vbo_number, water *fig ) override;
     void visit( size_t vbo_number, horizon *fig ) override;
@@ -44,7 +44,7 @@ private:
     size_t vbo_count_ { 0 };
 
     figure_t figures_;
-    std::vector< figure::position > vessel_positions_; 
+    std::vector< TFigure::TPosition > vessel_positions_;
 };
 
 #endif /* FIGURESET_H */

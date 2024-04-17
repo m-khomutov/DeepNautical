@@ -9,9 +9,10 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-figure::figure( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
+TFigure::TFigure( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
 : spec_( settings, camera_pos )
 {
+    // настроить обзор и перспективу
     NUtils::TGeometry win { NUtils::TConfig()["window"] };
     projection_ = glm::perspective( glm::radians( 26.5f ), (GLfloat)win.width / (GLfloat)win.height, 0.1f, 100.0f );
     view_ = glm::lookAt( spec_.camera_position,
@@ -19,20 +20,19 @@ figure::figure( const std::vector< std::string > &settings, const glm::vec3 &cam
                          glm::vec3(0.0f, 1.0f, 0.0f) );
 }
 
-figure::~figure()
+void TFigure::initialize( size_t vbo_number )
 {
-}
-
-void figure::initialize( size_t vbo_number )
-{
+    // создать GL программу и проинициализировать объект производного класса
     program_.reset( new program( f_shader_name() ) );
     f_initialize( vbo_number );    
     valid_ = true;
 }
 
-void figure::accept( size_t vbo_number, visitor &p, double currentTime )
+void TFigure::accept( size_t vbo_number, visitor &p, double currentTime )
 {
+    // выбрать GL программу
     glUseProgram( *program_ );
+    // настроить унифирмные переменные
     set_uniform( "Model", model_ );
     set_uniform( "View", view_ );
     set_uniform( "Projection", projection_ );
@@ -41,10 +41,11 @@ void figure::accept( size_t vbo_number, visitor &p, double currentTime )
         set_uniform( "Texture", GLuint(0) );
         texture_->activate();
     }
+    // в объекте производного класса передать посетителю куказатель на себя
     f_accept( vbo_number, p, currentTime );    
 }
 
-void figure::set_uniform( const GLchar *name, float value )
+void TFigure::set_uniform( const GLchar *name, float value )
 {
     try {
         glProgramUniform1f ( *program_, program_->uniform_index( name ), value );
@@ -56,7 +57,7 @@ void figure::set_uniform( const GLchar *name, float value )
     }
 }
 
-void figure::set_uniform( const GLchar *name, GLuint value ) {
+void TFigure::set_uniform( const GLchar *name, GLuint value ) {
     try {
         glProgramUniform1i ( *program_, program_->uniform_index( name ), value );
     }
@@ -67,7 +68,7 @@ void figure::set_uniform( const GLchar *name, GLuint value ) {
     }
 }
 
-void figure::set_uniform( const GLchar *name, glm::vec2 value ) {
+void TFigure::set_uniform( const GLchar *name, glm::vec2 value ) {
     try {
         glProgramUniform2f( *program_, program_->uniform_index( name ), value.x, value.y );
     }
@@ -78,7 +79,7 @@ void figure::set_uniform( const GLchar *name, glm::vec2 value ) {
     }
 }
 
-void figure::set_uniform( const GLchar *name, GLsizei count, glm::vec2 *value ) {
+void TFigure::set_uniform( const GLchar *name, GLsizei count, glm::vec2 *value ) {
     std::vector< GLfloat > v( 2 *count );
     GLsizei it {0};
     for( GLsizei i(0); i < count; ++i ) {
@@ -96,7 +97,7 @@ void figure::set_uniform( const GLchar *name, GLsizei count, glm::vec2 *value ) 
     }
 }
 
-void figure::set_uniform( const GLchar *name, glm::vec3 value ) {
+void TFigure::set_uniform( const GLchar *name, glm::vec3 value ) {
     try {
         glProgramUniform3f( *program_, program_->uniform_index( name ), value.x, value.y, value.z );
     }
@@ -107,7 +108,7 @@ void figure::set_uniform( const GLchar *name, glm::vec3 value ) {
     }
 }
 
-void figure::set_uniform( const GLchar *name, glm::vec4 value ) {
+void TFigure::set_uniform( const GLchar *name, glm::vec4 value ) {
     try {
         glProgramUniform4f( *program_, program_->uniform_index( name ), value.x, value.y, value.z, value.w );
     }
@@ -119,7 +120,7 @@ void figure::set_uniform( const GLchar *name, glm::vec4 value ) {
     }
 }
 
-void figure::set_uniform( const GLchar *name, glm::mat3 value ) {
+void TFigure::set_uniform( const GLchar *name, glm::mat3 value ) {
     try {
         glUniformMatrix3fv( program_->uniform_index( name ), 1, GL_FALSE, glm::value_ptr( value ) );
     }
@@ -130,7 +131,7 @@ void figure::set_uniform( const GLchar *name, glm::mat3 value ) {
     }
 }
 
-void figure::set_uniform( const GLchar *name, glm::mat4 value ) {
+void TFigure::set_uniform( const GLchar *name, glm::mat4 value ) {
     try {
         glUniformMatrix4fv( program_->uniform_index( name ), 1, GL_FALSE, glm::value_ptr( value ) );
     }
@@ -141,7 +142,7 @@ void figure::set_uniform( const GLchar *name, glm::mat4 value ) {
     }
 }
 
-void figure::set_subroutine( const GLchar *uniform_name, const GLchar * subroutine_name, GLenum shader_type ) {
+void TFigure::set_subroutine( const GLchar *uniform_name, const GLchar * subroutine_name, GLenum shader_type ) {
     int num;
     glGetProgramStageiv( *program_, shader_type, GL_ACTIVE_SUBROUTINES, &num );
     if( num <= 0 )
@@ -163,7 +164,7 @@ void figure::set_subroutine( const GLchar *uniform_name, const GLchar * subrouti
     glUniformSubroutinesuiv( shader_type, n, indices.data() );
 }
 
-void figure::set_attribute( char const *name, GLuint size, GLuint step, GLuint off )
+void TFigure::set_attribute( char const *name, GLuint size, GLuint step, GLuint off )
 {
     try
     {

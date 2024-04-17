@@ -15,8 +15,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 figureset::figureset()
-{
-}
+{}
 
 figureset::~figureset()
 {
@@ -28,13 +27,13 @@ figureset::~figureset()
     }
 }
 
-void figureset::emplace( figure *fig )
+void figureset::emplace( TFigure *fig )
 {
     figures_.emplace_back( fig );
     vbo_count_ += fig->vbo_count();
 }
 
-figure *figureset::back()
+TFigure *figureset::back()
 {
     return figures_.back().get();
 }
@@ -96,7 +95,7 @@ void figureset::draw( double currentTime )
     }
 }
 
-void figureset::visit( size_t vbo_number, antisubmarinefrigate *frigate )
+void figureset::visit( size_t vbo_number, TAntisubmarinefrigate *frigate )
 {
     frigate->draw( vbo_number );
 }

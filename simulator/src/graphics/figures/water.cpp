@@ -31,7 +31,7 @@ GLfloat wakeGen( GLfloat x, GLfloat z, GLfloat t, const glm::vec2 &params )
 }  // namespace
 
 water::water( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
-: figure( settings, camera_pos )
+: TFigure( settings, camera_pos )
 {
     f_check_environment();
     model_ = glm::rotate( 
@@ -71,7 +71,7 @@ void water::draw( size_t )
     //glDisable(GL_BLEND);  
 }
 
-void water::set_wake_position( const std::vector< figure::position > &pos )
+void water::set_wake_position( const std::vector< TFigure::TPosition > &pos )
 {
     wake_position_ = pos;   
 }

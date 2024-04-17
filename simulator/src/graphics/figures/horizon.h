@@ -11,7 +11,7 @@
 #include "figure.h"
 #include "../texture/avi.h"
 
-class horizon: public figure {
+class horizon: public TFigure {
 public:
     explicit horizon( const std::vector< std::string > &settings, const glm::vec3 &camera_pos );
     horizon(const horizon& orig) = delete;

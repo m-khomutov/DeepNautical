@@ -10,7 +10,7 @@
 
 #include "figure.h"
 
-class sol: public figure {
+class sol: public TFigure {
 public:
     explicit sol( const std::vector< std::string > &settings, const glm::vec3 &camera_pos );
     sol(sol const& orig) = delete;

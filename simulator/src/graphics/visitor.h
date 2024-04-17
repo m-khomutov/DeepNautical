@@ -10,7 +10,7 @@
 
 #include <cstddef>
 
-class antisubmarinefrigate;
+class TAntisubmarinefrigate;
 class sol;
 class water;
 class horizon;
@@ -24,7 +24,7 @@ public:
     visitor &operator =(const visitor& orig) = delete;
     virtual ~visitor();
 
-    virtual void visit( size_t vbo_number, antisubmarinefrigate * ) = 0;
+    virtual void visit( size_t vbo_number, TAntisubmarinefrigate * ) = 0;
     virtual void visit( size_t vbo_number, sol * ) = 0;
     virtual void visit( size_t vbo_number, water * ) = 0;
     virtual void visit( size_t vbo_number, horizon * ) = 0;

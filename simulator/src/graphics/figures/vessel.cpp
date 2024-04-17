@@ -8,7 +8,7 @@
 #include "vessel.h"
 
 vessel::vessel( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
-: figure( settings, camera_pos )
+: TFigure( settings, camera_pos )
 {
     f_check_environment();
     
@@ -71,7 +71,7 @@ void vessel::draw( size_t )
     }
 }
 
-const figure::position &vessel::position()
+const TFigure::TPosition &vessel::position()
 {
     return position_;
 }
