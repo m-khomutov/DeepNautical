@@ -16,6 +16,7 @@ add_library(kformat STATIC
         encoding/jpegframe.cpp
         protocol/baseprotocol.cpp
         protocol/flvprotocol.cpp
+        protocol/mjpegprotocol.cpp
         protocol/httpapi.cpp)
 
 target_include_directories(kformat PRIVATE ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/../common)

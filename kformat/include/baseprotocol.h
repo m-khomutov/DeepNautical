@@ -79,7 +79,7 @@ public:
     /*!
        \brief Виртуальный деструктор базового класса сетевого протокола трансляции видеокадров.
      */
-    virtual ~TBaseprotocol();
+    virtual ~TBaseprotocol() = default;
     /*!
        \brief Вызывается при получении данных из сети.
        \param data Указатель на буфер данных, принятые из сети
@@ -109,16 +109,23 @@ public:
      * \brief Выдает номер точки обзора, соответствующей протоколу
      * \return номер точки обзора
      */
-    virtual size_t view() const
+    size_t view() const
     {
-        return 0;
+        return view_;
     }
 
 protected:
+    //! http-сообщение статуса 200 (success)
+    static const char * status_200;
+    //! http-сообщение статуса 404 (not found)
+    static const char * status_404;
+
     //! файловый дескриптор (сокет) сетевого соединения с абонентом;
     int fd_;
     //! флаги, выставляемые при выдаче видеокадров в сеть;
     int flags_;
+    //! номер точки обзора, данные с которой передаются абонент
+    size_t view_ {0};
 };
 
 /*!

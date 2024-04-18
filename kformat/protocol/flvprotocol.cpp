@@ -19,7 +19,6 @@ namespace
 {
 const char http_ok_status[] = "HTTP/1.1 200 OK\r\nAccess-Control-Allow-Origin: *\r\nContent-Type: video/x-flv\r\n\r\n";
 const uint8_t flv_header[13] = { 'F', 'L', 'V', 0x01, 0x01, 0x00, 0x00, 0x00, 0x09, 0x00, 0x00, 0x0, 0x00 };
-const char http_not_found_status[] = "HTTP/1.1 404 Stream Not Found\r\nContent-Type: text/plain\r\nContent-Length: 0\r\n\r\n";
 
 // копирует 3 байта в порядке big-endian
 void copy3bytes( uint32_t from, uint8_t *to )
@@ -37,14 +36,12 @@ void copy3bytes( uint32_t from, uint8_t *to )
 TFLVprotocol::TFLVprotocol( int b_sock, int flags, size_t view )
 : TBaseprotocol( b_sock, flags )
 , http_flv_header_( strlen(http_ok_status) + 13 )
-, view_( view )
 {
+    view_ = view;
+
     ::memcpy( http_flv_header_.data(), http_ok_status, strlen(http_ok_status) );
     ::memcpy( http_flv_header_.data() + http_flv_header_.size() - 13, flv_header, sizeof(flv_header) );
 }
-
-TFLVprotocol::~TFLVprotocol()
-{}
 
 void TFLVprotocol::on_data( const uint8_t * data, int size )
 {
@@ -118,7 +115,7 @@ bool TFLVprotocol::can_send_frame() const
 
 void TFLVprotocol::write_error()
 {
-    ::send( fd_, http_not_found_status, strlen(http_not_found_status), flags_ );
+    ::send( fd_, TBaseprotocol::status_404, strlen(TBaseprotocol::status_404), flags_ );
 }
 
 void TFLVprotocol::f_send_header()

@@ -7,6 +7,7 @@
 
 #include "baseprotocol.h"
 #include "flvprotocol.h"
+#include "mjpegprotocol.h"
 #include "httpapi.h"
 #include <cstring>
 #include <cerrno>
@@ -38,9 +39,16 @@ TBaseprotocol *TBaseprotocol::create( TBasescreen *screen, const std::string &re
                     view = p.value[0] - '0'; // номер точки обзора
                 }
             }
-            if( proto && *proto == "flv" )
+            if( proto )
             {
-                return new TFLVprotocol( sock, flags, view );
+                if( *proto == "flv" )
+                {
+                    return new TFLVprotocol( sock, flags, view );
+                }
+                else if( *proto == "mjpeg" )
+                {
+                    return new TMjpegprotocol( sock, flags, view );
+                }
             }
         }
         if( request.find( "GET /scene?" ) != std::string::npos ) // запрос на смену сцены
@@ -51,12 +59,14 @@ TBaseprotocol *TBaseprotocol::create( TBasescreen *screen, const std::string &re
     return nullptr; // неизвестный запрос
 }
 
+
+const char * TBaseprotocol::status_200 = "HTTP/1.1 200 OK\r\nAccess-Control-Allow-Origin: *\r\nContent-Type: application/json\r\n";
+const char * TBaseprotocol::status_404 = "HTTP/1.1 404 Not Found\r\nAccess-Control-Allow-Origin: *\r\n\r\n";
+
+
 TBaseprotocol::TBaseprotocol( int sock, int flags )
 : fd_( sock )
 , flags_( flags )
-{}
-
-TBaseprotocol::~TBaseprotocol()
 {}
 
 

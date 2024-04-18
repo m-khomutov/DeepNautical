@@ -100,7 +100,7 @@ void figureset::visit( size_t vbo_number, TAntisubmarinefrigate *frigate )
     frigate->draw( vbo_number );
 }
 
-void figureset::visit( size_t vbo_number, sol *_sol )
+void figureset::visit( size_t vbo_number, TSol *_sol )
 {
     _sol->draw( vbo_number );
 }
@@ -112,7 +112,7 @@ void figureset::visit( size_t vbo_number, water *_water )
     vessel_positions_.clear();
 }
 
-void figureset::visit( size_t vbo_number, horizon *_horizon )
+void figureset::visit( size_t vbo_number, THorizon *_horizon )
 {
     _horizon->draw( vbo_number );
 }

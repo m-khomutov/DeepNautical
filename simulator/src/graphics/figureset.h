@@ -31,9 +31,9 @@ public:
     void draw( double currentTime );
     
     void visit( size_t vbo_number, TAntisubmarinefrigate *fig ) override;
-    void visit( size_t vbo_number, sol *fig ) override;
+    void visit( size_t vbo_number, TSol *fig ) override;
     void visit( size_t vbo_number, water *fig ) override;
-    void visit( size_t vbo_number, horizon *fig ) override;
+    void visit( size_t vbo_number, THorizon *fig ) override;
     void visit( size_t vbo_number, vessel *fig ) override;
     void visit( size_t vbo_number, sparklets *fig ) override;
 

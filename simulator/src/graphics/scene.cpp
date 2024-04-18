@@ -9,7 +9,6 @@
 #include "figures/sol.h"
 #include "figures/water.h"
 #include "figures/horizon.h"
-#include "figures/sol.h"
 #include "figures/vessel.h"
 #include "figures/sparklets.h"
 #include <cstring>
@@ -165,7 +164,7 @@ void scene::f_add_figure( const std::string &header, const std::vector< std::str
 {
     if( header == "[Horizon]" )
     {
-        f_add_figure< horizon >( settings, camera_pos );
+        f_add_figure< THorizon >( settings, camera_pos );
     }
     else if( header == "[Vessel]" )
     {
@@ -177,7 +176,7 @@ void scene::f_add_figure( const std::string &header, const std::vector< std::str
     }
     else if( header == "[Sol]" )
     {
-        f_add_figure< sol >( settings, camera_pos );
+        f_add_figure< TSol >( settings, camera_pos );
     }
     else if( header == "[Sparklets]" )
     {

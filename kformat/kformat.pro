@@ -17,6 +17,7 @@ HEADERS = kformat.h \
     include/jpegframe.h \
     include/baseprotocol.h \
     include/flvprotocol.h \
+    include/mjpegprotocol.h \
     include/httpapi.h
 
 
@@ -32,6 +33,7 @@ SOURCES = \
         encoding/jpegframe.cpp \
         protocol/baseprotocol.cpp \
         protocol/flvprotocol.cpp \
+        protocol/mjpegprotocol.cpp \
         protocol/httpapi.cpp
 
 QMAKE_EXTRA_TARGETS += all buildpackage
