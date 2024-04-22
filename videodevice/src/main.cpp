@@ -91,7 +91,7 @@ int main( int argc, char *argv [] )
 
     try
     {
-        srv.reset( new service( vdevname, port ) );
+        srv.reset( new TCaptureservice( vdevname, port ) );
         srv->start_vdev_capture();
     }
     catch( const std::exception &err )
