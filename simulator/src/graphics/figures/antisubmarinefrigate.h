@@ -40,8 +40,8 @@ public:
     ~TAntisubmarinefrigate() = default;
 
     /*!
-     * \brief настраивает переменные GL и отправляет GL команду на отрисовку
-     * \param vbo_number номер используемого VBO (Vertex Buffer Object). Может не использоваться при наличии одного VBO
+       \brief настраивает переменные GL и отправляет GL команду на отрисовку
+       \param vbo_number номер используемого VBO (Vertex Buffer Object). Может не использоваться при наличии одного VBO
      */
     void draw( size_t vbo_number );
 

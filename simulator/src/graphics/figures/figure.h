@@ -102,7 +102,7 @@ public:
 
 protected:
     //! спецификация геометрического объекта (набор параметров конфигурации)
-    specification spec_;
+    TSpecification spec_;
     //! умный указатель на GL программу
     std::unique_ptr< program > program_;
     //! умный указатель на текстуру объекта

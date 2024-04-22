@@ -32,10 +32,10 @@ public:
     
     void visit( size_t vbo_number, TAntisubmarinefrigate *fig ) override;
     void visit( size_t vbo_number, TSol *fig ) override;
-    void visit( size_t vbo_number, water *fig ) override;
+    void visit( size_t vbo_number, TWater *fig ) override;
     void visit( size_t vbo_number, THorizon *fig ) override;
-    void visit( size_t vbo_number, vessel *fig ) override;
-    void visit( size_t vbo_number, sparklets *fig ) override;
+    void visit( size_t vbo_number, TVessel *fig ) override;
+    void visit( size_t vbo_number, TSparklets *fig ) override;
 
 private:
     std::vector< GLuint > vao_;

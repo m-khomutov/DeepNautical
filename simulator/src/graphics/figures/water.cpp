@@ -30,27 +30,22 @@ GLfloat wakeGen( GLfloat x, GLfloat z, GLfloat t, const glm::vec2 &params )
 }
 }  // namespace
 
-water::water( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
+TWater::TWater( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
 : TFigure( settings, camera_pos )
 {
+    // проверить настройки
     f_check_environment();
-    model_ = glm::rotate( 
+    // сгенерировать геометрическую модель
+    model_ = glm::rotate(
                  glm::rotate( 
                      glm::translate( model_, glm::vec3( 0.0f, -0.1f, 0.0f ) ),
                      glm::radians( 15.0f ), glm::vec3(0.0f, 1.0f, 0.0f) ),
                  glm::radians( 10.0f ), glm::vec3(1.0f, 0.0f, 0.0f) );
 }
 
-water::~water()
+void TWater::draw( size_t )
 {
-}
-
-void water::draw( size_t )
-{
-    //glEnable(GL_BLEND);  
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE); 
-    //glPolygonMode (GL_FRONT_AND_BACK, GL_LINE);
+    // настроить униформные переменные шейдера
     set_uniform( "Offset", offset_ );
     set_uniform( "LightPosition", spec_.light_position );
     set_uniform( "LightColor", spec_.light_color );
@@ -63,20 +58,20 @@ void water::draw( size_t )
     set_uniform( "FoamTexture", GLuint(2) );
     foam_texture_->activate( GL_TEXTURE2 );
 
+    // отрисовать поверхность
     uint32_t len = 2 * (resolution + 1);
     for( uint32_t i(0); i < resolution; i++ )
     {
         glDrawArrays( GL_TRIANGLE_STRIP, i * len, len );
     }
-    //glDisable(GL_BLEND);  
 }
 
-void water::set_wake_position( const std::vector< TFigure::TPosition > &pos )
+void TWater::set_wake_position( const std::vector< TFigure::TPosition > &pos )
 {
     wake_position_ = pos;   
 }
 
-void water::f_check_environment() const
+void TWater::f_check_environment() const
 {
     if( ! (NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
            NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
@@ -88,12 +83,12 @@ void water::f_check_environment() const
     }
 }
 
-char const *water::f_shader_name() const
+char const *TWater::f_shader_name() const
 {
     return spec_.shader_name.c_str(); 
 }
 
-void water::f_initialize( size_t )
+void TWater::f_initialize( size_t )
 {
     std::string alpha = spec_.alpha.empty() ? "" : std::string(NUtils::TConfig()["textures"]) + "/" + spec_.alpha;
     texture_.reset( new texture( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str(), alpha.empty() ? nullptr : alpha.c_str() ) );
@@ -106,18 +101,18 @@ void water::f_initialize( size_t )
     set_attribute( "Normals", 3, 3, sizeof(surface_) / sizeof(GLfloat) );
 }
 
-void water::f_accept( size_t vbo_number, visitor &p, double currentTime )
+void TWater::f_accept( size_t vbo_number, visitor &p, double currentTime )
 {
     f_load_surface( currentTime );
-
     p.visit( vbo_number, this );
 }
 
-void water::f_load_surface( double )
+void TWater::f_load_surface( double )
 {
     phase_ += 0.01f;
     if( phase_ >= 360.0f )/*2 * glm::pi< GLfloat >() )*/ phase_ = 0.0f;
-    
+
+    // сгенерить координаты точек поверхности
     const float delta = 2.7f / resolution;
     for( uint32_t z(0); z < resolution; ++z )
     {
@@ -144,7 +139,7 @@ void water::f_load_surface( double )
                 surface_[idx + 2] = z_coord;
             }
 
-            // Normals
+            // и их нормали
             int n_idx = 6 * (x + z * (resolution + 1));
             glm::vec3 a = glm::vec3( surface_[idx + 4], surface_[idx + 5],  surface_[idx + 6] );
             glm::vec3 b = glm::vec3( surface_[idx + 4], surface_[idx + 1],  surface_[idx + 2] );
@@ -181,11 +176,12 @@ void water::f_load_surface( double )
             }
         }
     }
+    // загрузить в шейдер
     glBufferSubData( GL_ARRAY_BUFFER, 0, sizeof(surface_), surface_ );
     glBufferSubData( GL_ARRAY_BUFFER, sizeof(surface_), sizeof(normals_), normals_ );
 }
 
-GLfloat water::f_generate_surface(GLfloat x, GLfloat z, GLfloat *in_wake)
+GLfloat TWater::f_generate_surface(GLfloat x, GLfloat z, GLfloat *in_wake)
 {
     if( in_wake )
     {

@@ -9,9 +9,10 @@
 #include "utils.h"
 #include <iostream>
 
-specification::specification( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
-: camera_position( camera_pos )
+TSpecification::TSpecification( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
+: camera_position( camera_pos ) // позиция камеры читается раньше для определения количества камер на сцене
 {
+    // построчно
     for( auto s : settings )
     {
         std::pair< std::string, std::string > p;
@@ -157,8 +158,9 @@ specification::specification( const std::vector< std::string > &settings, const 
     }
 }
 
-void specification::f_read_viewport( const std::string& config )
+void TSpecification::f_read_viewport( const std::string& config )
 {
+    // координаты сцены дополнительно содержат индексы итрисовки для удобства копирования в шейдер
     std::vector< float > rc( 20 );
     rc[3] = 0.0f; rc[4] = 0.0f;
     rc[8] = 1.0f; rc[9] = 0.0f;
@@ -193,7 +195,7 @@ void specification::f_read_viewport( const std::string& config )
     std::swap( viewport, rc );
 }
 
-void specification::f_read_surge( const std::string& config )
+void TSpecification::f_read_surge( const std::string& config )
 {
     size_t off { 0 };
     size_t p1 = 2, p2 = config.find("} {");

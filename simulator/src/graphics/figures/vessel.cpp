@@ -7,24 +7,24 @@
 
 #include "vessel.h"
 
-vessel::vessel( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
+TVessel::TVessel( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
 : TFigure( settings, camera_pos )
 {
+    // проверить настройки
     f_check_environment();
-    
+
+    // создать объект геометрической фигуры (координаты сетки фигуры)
     object_.reset( new blender::object( (std::string(NUtils::TConfig()["objs"]) + "/" + spec_.obj_name).c_str() ) );
     object_->load_position( &vertices_ );
-    
+
+    // dscnfdbnm d yfxfkj ldb;tybz
     f_reset();
 }
 
-vessel::~vessel()
-{
-}
-
-void vessel::draw( size_t )
+void TVessel::draw( size_t )
 {
     glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+    // настроить общие униформные переменные в шейдере
     set_uniform( "NormalMatrix", glm::transpose( glm::inverse( glm::mat3(view_ * model_) ) ) );
     set_uniform( "LightPosition", spec_.light_position );
     set_uniform( "LightColor", spec_.light_color );
@@ -32,11 +32,12 @@ void vessel::draw( size_t )
     set_uniform( "fog.color", spec_.fog_color );
     set_uniform( "fog.density", spec_.fog_density );
 
-    GLuint first = 0;
+    GLuint first = 0; // счетчик поверхностей фигуры. За один роход рисуется одна поверхность
     for( auto mtl : object_->materials() )
     {
         try
         {
+            // униформные переменные мателиала фигуры
             program_->uniform_block("Material" )["Ka"].set( mtl.Ka );
             program_->uniform_block("Material" )["Kd"].set( mtl.Kd );
             program_->uniform_block("Material" )["Ks"].set( mtl.Ks );
@@ -52,6 +53,7 @@ void vessel::draw( size_t )
         }
         try
         {
+            // текстура фигуры
             if( mtl.map_Kd )
             {
                 mtl.map_Kd->activate();
@@ -66,17 +68,18 @@ void vessel::draw( size_t )
         {
             std::cerr << "Texture error: " << e.what() << std::endl;
         }
+        // нарисовать фигуру на сцене
         glDrawArrays( GL_TRIANGLES, first, mtl.faces.size() * 3 );
         first += mtl.faces.size() * 3;
     }
 }
 
-const TFigure::TPosition &vessel::position()
+const TFigure::TPosition &TVessel::position()
 {
     return position_;
 }
 
-void vessel::f_check_environment() const
+void TVessel::f_check_environment() const
 {
     if( ! (NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
            NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
@@ -86,13 +89,14 @@ void vessel::f_check_environment() const
     }
 }
 
-char const *vessel::f_shader_name() const
+char const *TVessel::f_shader_name() const
 {
     return spec_.shader_name.c_str(); 
 }
 
-void vessel::f_initialize( size_t )
+void TVessel::f_initialize( size_t )
 {
+    // пустая текстура. Если объект не будет иметь своей, будем пользовать эту
     empty_texture_.reset( new texture(1, 1, 255) );
     glBufferData( GL_ARRAY_BUFFER, vertices_.size() * sizeof(GLfloat), vertices_.data(), GL_STATIC_DRAW );
     try
@@ -107,19 +111,21 @@ void vessel::f_initialize( size_t )
     }
 }
 
-void vessel::f_accept( size_t vbo_number, visitor &p, double )
+void TVessel::f_accept( size_t vbo_number, visitor &p, double )
 {
     f_set_model();
     p.visit( vbo_number, this );
 }
 
-void vessel::f_set_model()
+void TVessel::f_set_model()
 {
+    // Качнуть фигуру
     pitching_angle_ += spec_.pitching;
     if( pitching_angle_ < spec_.pitching_range[0] || pitching_angle_ > spec_.pitching_range[1] )
     {
         spec_.pitching *= -1;
     }
+    // установить фигуру на сцене
     model_ = glm::mat4( glm::scale(
                             glm::translate(
                                 glm::rotate(
@@ -135,6 +141,7 @@ void vessel::f_set_model()
                             factor_ ) );
     if( ! f_full_trajectory() )
     {
+        // изменить следующее положение и скорость
         offset_ += spec_.speed;
         factor_ += spec_.factor_gain;
         position_.current.x +=  spec_.speed.x;
@@ -145,11 +152,12 @@ void vessel::f_set_model()
     {
         f_reset();
     }
+    // изменить следующий угол крена
     angle_ += spec_.angle_gain;
     angle_.x += spec_.pitching;
 }
 
-bool vessel::f_full_trajectory()
+bool TVessel::f_full_trajectory()
 {
     if( spec_.speed.x < 0.0f )
     {
@@ -158,7 +166,7 @@ bool vessel::f_full_trajectory()
     return offset_.x - spec_.start_position.x >= spec_.trajectory;
 }
 
-void vessel::f_reset()
+void TVessel::f_reset()
 {
     offset_ = spec_.start_position; 
     factor_ = spec_.start_factor;

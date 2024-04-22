@@ -168,11 +168,11 @@ void scene::f_add_figure( const std::string &header, const std::vector< std::str
     }
     else if( header == "[Vessel]" )
     {
-        f_add_figure< vessel >( settings, camera_pos );
+        f_add_figure< TVessel >( settings, camera_pos );
     }
     else if( header == "[Water]" )
     {
-        f_add_figure< water >( settings, camera_pos );
+        f_add_figure< TWater >( settings, camera_pos );
     }
     else if( header == "[Sol]" )
     {
@@ -180,7 +180,7 @@ void scene::f_add_figure( const std::string &header, const std::vector< std::str
     }
     else if( header == "[Sparklets]" )
     {
-        f_add_figure< sparklets >( settings, camera_pos );
+        f_add_figure< TSparklets >( settings, camera_pos );
     }
 }
 

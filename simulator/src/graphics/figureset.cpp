@@ -105,7 +105,7 @@ void figureset::visit( size_t vbo_number, TSol *_sol )
     _sol->draw( vbo_number );
 }
 
-void figureset::visit( size_t vbo_number, water *_water )
+void figureset::visit( size_t vbo_number, TWater *_water )
 {
     _water->set_wake_position( vessel_positions_ );
     _water->draw( vbo_number );
@@ -117,14 +117,14 @@ void figureset::visit( size_t vbo_number, THorizon *_horizon )
     _horizon->draw( vbo_number );
 }
 
-void figureset::visit( size_t vbo_number, vessel *_vessel )
+void figureset::visit( size_t vbo_number, TVessel *_vessel )
 {
     _vessel->draw( vbo_number );
     vessel_positions_.push_back( _vessel->position() );
 }
 
 
-void figureset::visit( size_t vbo_number, sparklets *_sparklets )
+void figureset::visit( size_t vbo_number, TSparklets *_sparklets )
 {
     _sparklets->draw( vbo_number );
 }

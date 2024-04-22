@@ -12,10 +12,10 @@
 
 class TAntisubmarinefrigate;
 class TSol;
-class water;
+class TWater;
 class THorizon;
-class vessel;
-class sparklets;
+class TVessel;
+class TSparklets;
 
 class visitor {
 public:
@@ -26,10 +26,10 @@ public:
 
     virtual void visit( size_t vbo_number, TAntisubmarinefrigate * ) = 0;
     virtual void visit( size_t vbo_number, TSol * ) = 0;
-    virtual void visit( size_t vbo_number, water * ) = 0;
+    virtual void visit( size_t vbo_number, TWater * ) = 0;
     virtual void visit( size_t vbo_number, THorizon * ) = 0;
-    virtual void visit( size_t vbo_number, vessel * ) = 0;
-    virtual void visit( size_t vbo_number, sparklets * ) = 0;
+    virtual void visit( size_t vbo_number, TVessel * ) = 0;
+    virtual void visit( size_t vbo_number, TSparklets * ) = 0;
 
 private:
 
