@@ -9,7 +9,7 @@
 #include <QApplication>
 #include <QSurfaceFormat>
 
-qservice::qservice( TBasescreen *screen, uint16_t port )
+TQService::TQService( TBasescreen *screen, uint16_t port )
 : TBaseservice( screen, port )
 {
     QSurfaceFormat format;
@@ -22,17 +22,17 @@ qservice::qservice( TBasescreen *screen, uint16_t port )
     QApplication::setAttribute(Qt::AA_ForceRasterWidgets, false);
 }
 
-void qservice::f_start_screen()
+void TQService::f_start_screen()
 {
     result_ = qApp->exec();
 }
 
-int qservice::f_stop_screen()
+int TQService::f_stop_screen()
 {
     return result_;
 }
 
-void qservice::onsignal( int )
+void TQService::onsignal( int )
 {
     qApp->quit();
 }

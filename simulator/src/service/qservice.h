@@ -1,28 +1,59 @@
-/* 
- * File:   qservice.h
- * Author: mkh
- *
- * Created on 5 февраля 2023 г., 16:47
- */
+/*!
+     \file qservice.h
+     \author mkh
+     \date 5 февраля 2023 г.
+     \brief Заголовочный файл класса сервиса отображения сцен, видеозахвата и обработки запросов абонентов.
 
+     Данный файл содержит в себе состояние класса сервиса отображения сцен, видеозахвата и обработки запросов абонентов, объявление его интерфейсов.
+ */
 #ifndef QSERVICE_H
 #define QSERVICE_H
 
 #include "baseservice.h"
 
-class qservice: public TBaseservice {
+/*!
+   \class TQService
+   \brief Класс сервиса отображения сцен, видеозахвата и обработки запросов абонентов
+ */
+class TQService: public TBaseservice {
 public:
-    qservice( TBasescreen *screen, uint16_t port );
+    /*!
+     * \brief Конструктор класса. Инициализирует формат Qt
+     * \param screen объект экрана отображения сцен
+     * \param port сетевой порт ожидания запросов от абонентов
+     */
+    TQService( TBasescreen *screen, uint16_t port );
 
-    qservice(const qservice& orig) = delete;
-    qservice operator =(const qservice& orig) = delete;
+    /*!
+       \brief Запрещенный конструктор копии.
+       \param orig Копируемый объект
+     */
+    TQService( const TQService& orig ) = delete;
+    /*!
+       \brief Запрещенный оператор присваивания.
+       \param orig Копируемый объект
+       \return Собственный объект
+     */
+    TQService operator =( const TQService& orig ) = delete;
+    /*!
+       \brief Деструктор класса
+     */
+    ~TQService() = default;
 
-    ~qservice() = default;
-    
+    /*!
+       \brief реализация функции реакции на системный сигнал
+     */
     void onsignal( int ) override;
 
 private:
+    /*!
+       \brief реализация функции запуска экрана отображения сцен
+     */
     void f_start_screen() override;
+    /*!
+       \brief реализация функции остановки экрана отображения сцен
+       \return результат выполнения программы, передаваемый в систему
+     */
     int f_stop_screen() override;
 };
 

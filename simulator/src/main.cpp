@@ -8,14 +8,10 @@
 #include "baseservice.h"
 #include "jpegframe.h"
 #include "utils.h"
-#ifdef QT_CORE_LIB
-# include <QApplication>
-# include "service/qservice.h"
-# include "graphics/screens/qscreen.h"
-#else
-# include "service/glfwservice.h"
-# include "graphics/screens/glfwscreen.h"
-#endif
+
+#include <QApplication>
+#include "service/qservice.h"
+#include "graphics/screens/qscreen.h"
 
 #include <stdlib.h>
 #include <signal.h>
@@ -74,25 +70,18 @@ int main(int argc, char** argv)
     
     try
     {
-#ifdef QT_CORE_LIB
         QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL, true);
         QApplication a(argc, argv);
         std::unique_ptr< TBasescreen > scr( new qscreen( new TJpegframe( NUtils::TConfig()["window"],
                                                                         NUtils::TConfig()["quality"],
                                                                         NUtils::TConfig()["duration"] ) ) );
-        service.reset( new qservice( scr.get(), NUtils::TConfig()["port"] ) );
-#else
-        std::unique_ptr< TBasescreen > scr ( new glfwscreen( new TJpegframe( NUtils::TConfig()["window"],
-                                                                            NUtils::TConfig()["quality"],
-                                                                            NUtils::TConfig()["duration"] ) ) );
-        service.reset( new glfwservice( scr.get(), NUtils::TConfig()["port"] ) );
-#endif
+        service.reset( new TQService( scr.get(), NUtils::TConfig()["port"] ) );
 
         std::setlocale( LC_NUMERIC,"C" );
 
         service->start_screen();
 
-        return service->stop_screen();
+        service->stop_screen();
     }
     catch( const std::runtime_error &err )
     {
