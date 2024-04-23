@@ -12,6 +12,7 @@
 #include "baseframe.h"
 #include <mutex>
 #include <set>
+#include <vector>
 
 /*!
      \class TBasescreen
@@ -97,15 +98,16 @@ public:
      */
     virtual const std::set< std::string > &get_scenes() const = 0;
     /*!
-       \brief возвращает имя отображаемой сцены
-       \return имя сцены
+       \brief возвращает имена отображаемых сцен
+       \return вектор имен сцен
      */
-    virtual const std::string &current_scene() const = 0;
+    virtual std::vector< std::string > current_scenes() = 0;
     /*!
        \brief запускает задаваемую названием сцены
        \param scene название сцены
+       \param position место позиционирования сцены
      */
-    virtual void set_scene( const std::string &scene ) = 0;
+    virtual void set_scene( const std::string &scene, size_t position ) = 0;
 
 protected:
     //! указатель на объект представления видеокадра;
@@ -123,17 +125,17 @@ private:
      */
     virtual void f_run_scene_display() = 0;
     /*!
-     * \brief Объявление функции остановки отображения сцен. Реализуется в производных классах.
+       \brief Объявление функции остановки отображения сцен. Реализуется в производных классах.
      */
     virtual void f_stop_scene_display() = 0;
     /*!
-     * \brief Объявление функции сохранения текущего кадра сцены. Реализуется в производных классах.
+       \brief Объявление функции сохранения текущего кадра сцены. Реализуется в производных классах.
      */
     virtual void f_store_scene_frame() = 0;
     /*!
-     * \brief Объявление функции отправки сохраненного кадра сцены абоненту по определенному сетевому протоколу. Реализуется в производных классах.
-     * \param proto сетевой протокол выдачи видеопотока абоненту
-     * \return результат отправки (удалось/не удалось)
+       \brief Объявление функции отправки сохраненного кадра сцены абоненту по определенному сетевому протоколу. Реализуется в производных классах.
+       \param proto сетевой протокол выдачи видеопотока абоненту
+       \return результат отправки (удалось/не удалось)
      */
     virtual bool f_send_stored_scene_frame( TBaseprotocol *proto ) = 0;
 };

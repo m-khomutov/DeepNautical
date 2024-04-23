@@ -133,14 +133,14 @@ private:
      */
     void f_send_scene_list();
     /*!
-      \brief возвращает абоненту текущую сцену
+      \brief возвращает абоненту вектор текущих сцен
      */
-    void f_send_current_scene();
+    void f_send_current_scenes();
     /*!
       \brief выставляет текущую сцену по запросу абонента
-      \param scene название сцены для запуска
+      \param query запрос на изменение. Содержит название сцены для запуска и номер точки обзора
      */
-    void f_set_current_scene( const std::string &scene );
+    void f_set_current_scene( const std::string &query );
     /*!
      * \brief генерирует ответ на контрольный запрос
      * \param data данные ответа на контрольный запрос

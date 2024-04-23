@@ -54,7 +54,8 @@ scene::debugCb( GLenum src,
                                                                         .set_body( msg, sz  ) );
 }
 
-scene::scene( const std::string &specification )
+scene::scene( const std::string &name, const std::string &specification )
+: name_( name )
 {
     glEnable( GL_DEBUG_OUTPUT );
     glEnable( GL_DEPTH_TEST );

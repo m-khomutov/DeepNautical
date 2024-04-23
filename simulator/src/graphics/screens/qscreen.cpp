@@ -10,7 +10,7 @@
 #include <GL/glew.h>
 
 qscreen::qscreen( TBaseframe* frame )
-: openglscreen( frame )
+: TGLscreen( frame )
 , QOpenGLWidget(nullptr)
 {
     resize( frame_->width(), frame_->height() );
@@ -37,7 +37,9 @@ void qscreen::f_stop_scene_display()
 void qscreen::timerEvent(QTimerEvent *)
 {
     if( update_id_ != -1 )
-    update();
+    {
+        update();
+    }
 }
 
 void qscreen::initializeGL()
@@ -45,15 +47,15 @@ void qscreen::initializeGL()
     glewExperimental = GL_TRUE;
     if( glewInit() != GLEW_OK )
     {
-        throw screen_error("initialize GL init error");
+        throw TGLscreenError("initialize GL init error");
     }
     for( int i(0); i < NUtils::TConfig()["scene_count"]; ++i )
     {
         if( scene_iter_ == scenes_.end() )
         {
-            throw screen_error("not enough scenes to start");
+            throw TGLscreenError("not enough scenes to start");
         }
-        sc_.emplace_back( new scene( std::string(NUtils::TConfig()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
+        sc_.emplace_back( new scene( *scene_iter_, std::string(NUtils::TConfig()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
         ++scene_iter_;
     }
 
@@ -96,5 +98,5 @@ void qscreen::resizeGL(int w, int h)
 void qscreen::error_cb( int error, const GLchar * description )
 {
     Q_UNUSED( error );
-    throw screen_error( std::string(description) );
+    throw TGLscreenError( std::string(description) );
 }

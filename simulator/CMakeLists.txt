@@ -17,8 +17,7 @@ add_executable(simulator
         src/graphics/program.cpp
         src/graphics/scene.cpp
         src/graphics/blender.cpp
-        src/graphics/screens/openglscreen.cpp
-        src/graphics/screens/glfwscreen.cpp
+        src/graphics/screens/glscreen.cpp
         src/graphics/shader.cpp
         src/graphics/texture/texture.cpp
         src/graphics/texture/avi.cpp

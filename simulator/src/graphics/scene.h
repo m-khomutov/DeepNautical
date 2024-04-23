@@ -55,7 +55,7 @@ struct debug_message {
 
 class scene {
 public:
-    explicit scene( const std::string &specification );
+    explicit scene( const std::string &name, const std::string &specification );
     scene(const scene& orig) = delete;
     scene & operator =( const scene & rhs ) = delete;
     ~scene();
@@ -65,9 +65,15 @@ public:
         return figureset_.size();
     }
 
+    const std::string name() const
+    {
+        return name_;
+    }
+
     void display( size_t view, GLuint width, GLuint height, double currentTime );
     
 private:
+    std::string name_;
     std::vector< std::shared_ptr< figureset > > figureset_;
     
 private:
