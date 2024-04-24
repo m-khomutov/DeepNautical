@@ -8,13 +8,13 @@
 #include "avi.h"
 #include <iostream>
 
-avi_error::avi_error( const std::string &what )
+TAviError::TAviError( const std::string &what )
 : std::runtime_error( what )
-{
-}
+{}
 
 namespace
 {
+    // прочесть из файла sizeof(T) байтов. Вернуть как переменную типа T
     template< typename T = uint32_t >
     T intfromfile( FILE *f )
     {
@@ -26,9 +26,10 @@ namespace
         {
             return u.value;
         }
-        throw avi_error( "not enough data to read int" );
+        throw TAviError( "not enough data to read int" );
     }
     
+    // прочесть из файла 4 байта. Вернуть как код FOURCC
     uint32_t atomfromfile( FILE *f )
     {
         union {
@@ -39,13 +40,15 @@ namespace
         {
             for( size_t i(0); i < sizeof(u.buf); ++i )
             {
-                if( !isascii( u.buf[ i ] ) )
-                    throw avi_error( "invalid type: " + std::to_string(u.value) );
+                if( !isascii( u.buf[ i ] ) ) // код FOURCC - 4 ascii символа
+                    throw TAviError( "invalid type: " + std::to_string(u.value) );
             }
             return u.value;
         }
-        throw avi_error( "not enough data to read atom" );
+        throw TAviError( "not enough data to read atom" );
     }
+
+    // вернуть строковое представление тега
     std::string atom2str( uint32_t a )
     {
         union {
@@ -55,64 +58,64 @@ namespace
         u.value = a;
         return std::string(u.buf, sizeof(u.buf));
     }
-    /*std::ostream &operator <<( std::ostream& out, const avi::atom &a )
-    {
-        out << a.to_str();
-        return out;
-    }*/
 }  // namespace
 
 
-avi::frame::frame( FILE *f )
+TAviTexture::TFrame::TFrame( FILE *f )
 {
+    // заполнить поля из файла
     size = intfromfile( f );
     begin = ftell( f );
     fseek( f, size, SEEK_CUR );
 }
 
-bool avi::frame::valid( FILE *f ) const
+bool TAviTexture::TFrame::valid( FILE *f ) const
 {
+    // прочесть 2 байта из начала кадра
     size_t pos = ftell( f );
     fseek( f, begin, SEEK_SET );
     uint8_t buf[2];
     if( fread( (char*)buf, 1, sizeof(buf), f ) != sizeof(buf) )
     {
-        throw avi_error( "not enough data to check validness" );
+        throw TAviError( "not enough data to check validness" );
     }
     fseek( f, pos, SEEK_SET );
     
-    return buf[0] == 0xff && buf[1] == 0xd8;
+    return buf[0] == 0xff && buf[1] == 0xd8; // должен быть JPEG тег 0xD8
 }
 
 
-std::unique_ptr< avi::atom > avi::atom::make( FILE *f, frame_t *frames )
+std::unique_ptr< TAviTexture::TAtom > TAviTexture::TAtom::make( FILE *f, frame_t *frames )
 {
+    // код FOURCC тега
     uint32_t t = atomfromfile( f );
-    switch( t )
+    switch( t ) // FOURCC определяет создаваемый тег
     {
-    case atom::type::riff:
-    case atom::type::lst:
-        return std::unique_ptr< atom >( new avi::list( atom::type(t), f, frames ) );
-    case atom::avih:
-        return std::unique_ptr< avi::atom >( new avi::avih( f, frames ) );
-    case atom::strh:
-        return std::unique_ptr< avi::atom >( new avi::strh( f ) );
-    case atom::strf:
-        return std::unique_ptr< avi::atom >( new avi::strf( f ) );
+    case EType::riff:
+    case EType::lst:
+        return std::unique_ptr< TAtom >( new Tlist( EType(t), f, frames ) );
+    case EType::avih:
+        return std::unique_ptr< TAtom >( new Tavih( f, frames ) );
+    case EType::strh:
+        return std::unique_ptr< TAtom >( new Tstrh( f ) );
+    case EType::strf:
+        return std::unique_ptr< TAtom >( new Tstrf( f ) );
     }
     
     fseek( f, intfromfile( f ), SEEK_CUR );
-    return std::unique_ptr< avi::atom >( new atom( t ) );
+    return std::unique_ptr< TAtom >( new TAtom( t ) );
 }
 
-std::string avi::atom::to_str() const
+std::string TAviTexture::TAtom::to_str() const
 {
     return atom2str(fourcc_);
 }
 
-avi::avih::avih( FILE *f, frame_t *frames )
-: atom( atom::type::avih )
+
+TAviTexture::Tavih::Tavih( FILE *f, frame_t *frames )
+: TAtom( TAtom::EType::avih )
 {
+    // заполнить поля из файла
     size_ = intfromfile( f );
     framerate_mcs = intfromfile( f );
     transferrate = intfromfile( f );
@@ -130,9 +133,10 @@ avi::avih::avih( FILE *f, frame_t *frames )
 }
 
 
-avi::strh::strh( FILE *f )
-: atom( atom::type::strh )
+TAviTexture::Tstrh::Tstrh( FILE *f )
+: TAtom( TAtom::EType::strh )
 {
+    // заполнить поля из файла
     size_ = intfromfile( f );
     fcc_type = intfromfile( f );
     fcc_handler = intfromfile( f );
@@ -153,46 +157,54 @@ avi::strh::strh( FILE *f )
     }
 }
 
-avi::strf::strf( FILE *f )
-: atom( atom::type::strf )
+
+TAviTexture::Tstrf::Tstrf( FILE *f )
+: TAtom( TAtom::EType::strf )
 {
+    // заполнить поля из файла
     size_ = intfromfile( f );
     bisize = intfromfile( f ); 
-    width = intfromfile( f ); //LONG
-    height = intfromfile( f ); //LONG
+    width = intfromfile( f );
+    height = intfromfile( f );
     planes = intfromfile< uint16_t >( f ); 
     bitcount = intfromfile< uint16_t >( f ); 
     compression = intfromfile( f ); 
     sizeimage = intfromfile( f ); 
-    xppm = intfromfile( f ); //LONG
-    yppm = intfromfile( f ); //LONG
+    xppm = intfromfile( f );
+    yppm = intfromfile( f );
     clrused = intfromfile( f ); 
     clrimportant = intfromfile( f ); 
 };
 
-avi::list::list( atom::type type, FILE *f, frame_t *frames )
-: atom( type )
+
+TAviTexture::Tlist::Tlist( TAtom::EType type, FILE *f, frame_t *frames )
+: TAtom( type )
 , type_( type )
 {
+    // заполнить поля из файла
     size_ = intfromfile( f );
     fourcc_ = atomfromfile( f );
-    if( fourcc_ == atom::movi )
+    if( fourcc_ == TAtom::movi )
     {
         while( !feof( f ) )
         {
+            // прочесть код FOURCC.
             char buf[4];
             if( fread( buf, 1, sizeof(buf), f ) != sizeof(buf) )
             {
-                throw avi_error( "not enough data to get next list atom" );
-	    }
+                throw TAviError( "not enough data to get next list atom" );
+            }
+            // если '00dc' - это кадр
             if( buf[0] == '0' && buf[1] == '0' && buf[2] == 'd' && buf[3] == 'c' )
             {
-                frames->emplace_back( frame( f ) );
-                if( ! frames->back().valid( f ) )
+                frames->emplace_back( TFrame( f ) );
+                if( !frames->back().valid( f ) )
                 {
                     frames->pop_back();   
                 }
-                while( !feof( f ) && fgetc( f ) != '0' ) ;
+                // далее до следующего '0' не особо интересно
+                while( !feof( f ) && fgetc( f ) != '0' )
+                    ;
                 fseek( f, -1, SEEK_CUR );
                 continue;
             }
@@ -206,25 +218,27 @@ avi::list::list( atom::type type, FILE *f, frame_t *frames )
 }
 
 
-avi::avi( char const *filename )
-: ifile_ ( fopen( filename, "r" ) )
+TAviTexture::TAviTexture( char const *filename )
+: ifile_ ( fopen( filename, "r" ) )  // открыть
 {
     if( !ifile_ ) {
-        throw avi_error( std::string("failed to open ") + filename );
+        throw TAviError( std::string("failed to open ") + filename );
     }
+    // получить размер файла
     fseek( ifile_.get(), 0, SEEK_END ); 
     long filesize = ftell( ifile_.get() );
     fseek( ifile_.get(), 0, SEEK_SET ); 
 
+    // прочесть теги из файла
     while( ! feof( ifile_.get() ) )
     {
         try
         {
-            std::unique_ptr< atom > a( atom::make( ifile_.get(), &frames_ ) );
-            strh *hdr;
-            if( a->fourcc() == atom::strh && (hdr = dynamic_cast< strh* >(a.get())) )
+            std::unique_ptr< TAtom > a( TAtom::make( ifile_.get(), &frames_ ) );
+            Tstrh *hdr;
+            if( a->fourcc() == TAtom::strh && (hdr = dynamic_cast< Tstrh* >(a.get())) )
             {
-                frame_duration_ = 1000.0d / hdr->scale;
+                frame_duration_ = 1000.0 / hdr->scale;
             }
         }
         catch( const std::runtime_error &e)
@@ -236,23 +250,23 @@ avi::avi( char const *filename )
            break;
         }
     }
+    // нет кадров - нечем текстурировать
     if( frames_.empty() )
     {
-        throw avi_error( std::string(filename) + " has no frames" );
+        throw TAviError( std::string(filename) + " has no frames" );
     }
+    // настроить итератор по кадрам
     frame_iter_ = frames_.begin();
 }
 
-avi::~avi()
+NUtils::TImage &TAviTexture::next_image()
 {
-}
-
-NUtils::TImage &avi::next_image()
-{
+    // закольцевать
     if( frame_iter_ == frames_.end() )
     {
         frame_iter_ = frames_.begin();
     }
+    // прочесть следующий кадр
     if( jpeg.size() < frame_iter_->size )
     {
         jpeg.resize( frame_iter_->size );
@@ -262,6 +276,7 @@ NUtils::TImage &avi::next_image()
     {
         try
         {
+            // декодировать из JPEG-a
             codec_.decode( jpeg.data(), frame_iter_->size, &image_ );
             ++ frame_iter_;
         }

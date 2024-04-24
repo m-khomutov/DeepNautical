@@ -26,8 +26,8 @@
 class TGLscreenError: public std::runtime_error {
 public:
     /*!
-     * \brief Конструктор класса ошибки создания сетевого соединения
-     * \param what строковое описание ошибки
+       \brief Конструктор класса ошибки создания сетевого соединения
+       \param what строковое описание ошибки
      */
     TGLscreenError(const std::string & what);
 };

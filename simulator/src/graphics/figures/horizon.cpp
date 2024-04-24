@@ -12,7 +12,7 @@ THorizon::THorizon( const std::vector< std::string > &settings, const glm::vec3 
 {
     f_check_environment();  // проверить настройки
     // создать объект кадров формата AVI
-    avi_.reset( new avi( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str() ) );
+    avi_.reset( new TAviTexture( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str() ) );
 }
 
 void THorizon::draw( size_t )

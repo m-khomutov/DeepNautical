@@ -56,7 +56,7 @@ private:
     //! индексы очередности отрисовки координат
     GLuint indices_[6] = { 0, 3, 1, 1, 3, 2 };
     //! умный указатель на объект кадров формата AVI
-    std::unique_ptr< avi > avi_;
+    std::unique_ptr< TAviTexture > avi_;
     //! Временноая метка последней отрисовки
     double last_frame_time_ { 0.0f };
 
