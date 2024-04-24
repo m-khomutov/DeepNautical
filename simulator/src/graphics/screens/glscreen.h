@@ -1,9 +1,3 @@
-/* 
- * File:   openglscreen.h
- * Author: mkh
- *
- * Created on 5 февраля 2023 г., 14:25
- */
 /*!
      \file glscreen.h
      \author mkh

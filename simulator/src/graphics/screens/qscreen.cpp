@@ -9,73 +9,82 @@
 #include <QDateTime>
 #include <GL/glew.h>
 
-qscreen::qscreen( TBaseframe* frame )
+TQscreen::TQscreen( TBaseframe* frame )
 : TGLscreen( frame )
 , QOpenGLWidget(nullptr)
 {
+    // выставить размеры окна по размерам кадра
     resize( frame_->width(), frame_->height() );
 }
 
-qscreen::~qscreen()
-{}
-
-void qscreen::f_run_scene_display()
+void TQscreen::f_run_scene_display()
 {
+    // отобразить окно на дисплее
     show();
-    update_id_ = startTimer(0);
+    // запустить таймер
+    timer_id_ = startTimer(0);
 }
 
-void qscreen::f_stop_scene_display()
+void TQscreen::f_stop_scene_display()
 {
-    if(update_id_ != -1)
+    // остановить таймер
+    if( timer_id_ != -1 )
     {
-        killTimer(update_id_);
+        killTimer( timer_id_ );
     }
-    update_id_ = -1;
+    timer_id_ = -1;
 }
 
-void qscreen::timerEvent(QTimerEvent *)
+// Обработка события таймера
+void TQscreen::timerEvent(QTimerEvent *)
 {
-    if( update_id_ != -1 )
+    if( timer_id_ != -1 )
     {
-        update();
+        update(); // запустить отрисовку окна
     }
 }
 
-void qscreen::initializeGL()
+void TQscreen::initializeGL()
 {
+    // проинициализировать контекст GL
     glewExperimental = GL_TRUE;
     if( glewInit() != GLEW_OK )
     {
         throw TGLscreenError("initialize GL init error");
     }
+    // создать сцены (количество = scene_count из конфигурации), отображаемые экраном
     for( int i(0); i < NUtils::TConfig()["scene_count"]; ++i )
     {
+        // контролировать наличие запрошенного количества
         if( scene_iter_ == scenes_.end() )
         {
             throw TGLscreenError("not enough scenes to start");
         }
+        // добавить сцену
         sc_.emplace_back( new scene( *scene_iter_, std::string(NUtils::TConfig()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
         ++scene_iter_;
     }
 
+    // посчитать количество точек обзора (сумма камер на всем сценах)
     view_count_ = 0;
     for( auto &s : sc_ )
     {
         view_count_ += s->cameras();
     }
-
+    // изменить размер окна с учетом количества точек обзора
     resize( view_count_ * frame_->width(), frame_->height() );
 }
 
-void qscreen::paintGL()
+void TQscreen::paintGL()
 {
+    // выполнить команды, если есть
     f_exec_command();
-
+    // очистить GL  контекст
     glClear( GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
+    // отрисовать все сцены
     for( size_t s(0), view(0); s < sc_.size(); ++s )
     {
+        // со всех точек обзора
         for( size_t v( 0 ); v < sc_[s]->cameras(); ++v )
         {
             glViewport( view * frame_->width(), 0, frame_->width(), height() );
@@ -83,20 +92,15 @@ void qscreen::paintGL()
             ++view;
         }
     }
-
+    // сохранить кадр, если время подошло
     if( is_frame_duration_passed( &store_ts_ ) > 0.f )
     {
         TBasescreen::store_scene_frame();
     }
 }
 
-void qscreen::resizeGL(int w, int h)
+void TQscreen::resizeGL(int w, int h)
 {
+    // размеры окна изменились. Надо изменить GL вьюпорт
     glViewport( 0, 0, w, h);
-}
-
-void qscreen::error_cb( int error, const GLchar * description )
-{
-    Q_UNUSED( error );
-    throw TGLscreenError( std::string(description) );
 }
