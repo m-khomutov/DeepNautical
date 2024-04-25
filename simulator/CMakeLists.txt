@@ -19,7 +19,7 @@ add_executable(simulator
         src/graphics/blender.cpp
         src/graphics/screens/glscreen.cpp
         src/graphics/shader.cpp
-        src/graphics/texture/texture.cpp
+        src/graphics/texture/jpeg.cpp
         src/graphics/texture/avi.cpp
         src/graphics/uniformblock.cpp
         src/service/glfwservice.cpp

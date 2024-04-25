@@ -97,7 +97,7 @@ char const *TVessel::f_shader_name() const
 void TVessel::f_initialize( size_t )
 {
     // пустая текстура. Если объект не будет иметь своей, будем пользовать эту
-    empty_texture_.reset( new texture(1, 1, 255) );
+    empty_texture_.reset( new TJpegTexture(1, 1, 255) );
     glBufferData( GL_ARRAY_BUFFER, vertices_.size() * sizeof(GLfloat), vertices_.data(), GL_STATIC_DRAW );
     try
     {

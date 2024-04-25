@@ -66,7 +66,7 @@ private:
     //! временная метка последней отрисовки
     double last_frame_time_ { 0.0f };
     //! умный указатель на объект текстуры воздушной среды
-    std::unique_ptr< texture > air_texture_;    
+    std::unique_ptr< TJpegTexture > air_texture_;
     
 private:
     /*!

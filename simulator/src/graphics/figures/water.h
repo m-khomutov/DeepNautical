@@ -60,9 +60,9 @@ private:
     //! фаза отрисовки волны на поверхности
     float phase_ { 0.0f };
     //! умный указатель на объект текстуры отражения неба на водной поверхности
-    std::unique_ptr< texture > air_texture_;
+    std::unique_ptr< TJpegTexture > air_texture_;
     //! умный указатель на объект текстуры кильватерного следа на водной поверхности
-    std::unique_ptr< texture > foam_texture_;
+    std::unique_ptr< TJpegTexture > foam_texture_;
     //! вектор геометрических координат кильватерных следов на водной поверхности
     std::vector< TFigure::TPosition > wake_position_;
 

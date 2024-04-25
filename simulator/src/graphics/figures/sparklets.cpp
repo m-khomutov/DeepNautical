@@ -81,8 +81,8 @@ void TSparklets::f_initialize_layout()
 {
     // создать текстуру
     std::string alpha = std::string(NUtils::TConfig()["textures"]) + "/" + spec_.alpha;
-    texture_.reset( new texture( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str(), alpha.c_str() ) );
-    air_texture_.reset( new texture( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_air).c_str() ) );
+    texture_.reset( new TJpegTexture( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str(), alpha.c_str() ) );
+    air_texture_.reset( new TJpegTexture( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_air).c_str() ) );
 
     // скопировать в шейдер индексы подложжки
     glBufferData( GL_ARRAY_BUFFER, spec_.viewport.size() * sizeof(float), spec_.viewport.data(), GL_STATIC_DRAW );

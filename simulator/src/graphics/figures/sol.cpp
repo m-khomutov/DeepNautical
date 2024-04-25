@@ -47,7 +47,7 @@ char const *TSol::f_shader_name() const
 void TSol::f_initialize( size_t )
 {
     // создать текстуру
-    texture_.reset( new texture( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str() ) );
+    texture_.reset( new TJpegTexture( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str() ) );
 
     // выделить память под атрибуты в шейдере
     glBufferData( GL_ARRAY_BUFFER, spec_.viewport.size() * sizeof(float), spec_.viewport.data(), GL_STATIC_DRAW );

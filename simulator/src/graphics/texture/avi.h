@@ -16,18 +16,18 @@
 #include <vector>
 
 /*!
-   \class TAviError
+   \class TAviTextureError
    \brief Класс ошибки текстуры AVI формата
 
    Производный от std::runtime_error. Собственного состояния и методов не содержит
  */
-class TAviError: public std::runtime_error {
+class TAviTextureError: public std::runtime_error {
 public:
     /*!
        \brief Конструктор класса ошибки текстуры AVI формата
        \param what строковое описание ошибки
      */
-    TAviError(const std::string & what);
+    TAviTextureError(const std::string & what);
 };
 
 /*!

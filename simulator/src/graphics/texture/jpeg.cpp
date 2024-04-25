@@ -5,32 +5,34 @@
  * Created on 30 января 2023 г., 10:46
  */
 
-#include "texture.h"
+#include "jpeg.h"
 
-texture_error::texture_error( const std::string &what )
+TJpegTextureError::TJpegTextureError( const std::string &what )
 : std::runtime_error( what )
-{
-}
+{}
 
 
-texture::texture( char const *filename, char const *alpha )
+TJpegTexture::TJpegTexture( char const *filename, char const *alpha )
 {
     GLenum format { GL_RGB };
-    
+
     NUtils::TImage img;
     NUtils::TJpegCodec codec;
+    // получить данные из файла в декодорованном виде
     if( !codec.decode( filename, &img ) )
     {
-        throw texture_error( std::string("invalid file: ") + std::string(filename) );
+        throw TJpegTextureError( std::string("invalid file: ") + std::string(filename) );
     }
-    
+
     if( alpha )
     {
+        // получить данные alpha-канала из файла в декодорованном виде
         NUtils::TImage a_img;
         if( !codec.decode( alpha, &a_img ) || a_img.pixels.size() * 3 != img.pixels.size() )
         {
-            throw texture_error( std::string("invalid alpha file: ") + std::string(alpha) );
+            throw TJpegTextureError( std::string("invalid alpha file: ") + std::string(alpha) );
         }
+        // добавить alpha-канал к цветовым каналам текстуры
         std::vector< uint8_t > tex( img.pixels.size() + a_img.pixels.size() );
         for( size_t i(0); i < a_img.pixels.size(); ++i )
         {
@@ -40,7 +42,8 @@ texture::texture( char const *filename, char const *alpha )
         std::swap( img.pixels, tex );
         format = GL_RGBA;
     }
-    
+
+    // сгенерировать текстуру
     glGenTextures( 1, &id_ );
     glBindTexture( GL_TEXTURE_2D, id_ );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
@@ -52,7 +55,7 @@ texture::texture( char const *filename, char const *alpha )
     glBindTexture( GL_TEXTURE_2D, 0 );
 }
 
-texture::texture( NUtils::TImage &img )
+TJpegTexture::TJpegTexture( NUtils::TImage &img )
 {
     glGenTextures( 1, &id_ );
     glBindTexture( GL_TEXTURE_2D, id_ );
@@ -62,7 +65,7 @@ texture::texture( NUtils::TImage &img )
     glBindTexture( GL_TEXTURE_2D, 0 );
 }
 
-texture::texture( GLuint w, GLuint h, uint8_t value )
+TJpegTexture::TJpegTexture( GLuint w, GLuint h, uint8_t value )
 {
     std::vector< uint8_t > data( 3 * w * h, value );
 
@@ -74,19 +77,19 @@ texture::texture( GLuint w, GLuint h, uint8_t value )
     glBindTexture( GL_TEXTURE_2D, 0 );
 }
 
-texture::~texture()
+TJpegTexture::~TJpegTexture()
 {
     glDeleteTextures( 1, &id_ );
 }
 
-texture &texture::operator =( NUtils::TImage &img )
+TJpegTexture &TJpegTexture::operator =( NUtils::TImage &img )
 {
     glBindTexture( GL_TEXTURE_2D, id_ );
     glTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, img.window.width, img.window.height, GL_RGB, GL_UNSIGNED_BYTE, img.pixels.data() );
     return *this;   
 }
 
-void texture::activate( uint16_t number ) const
+void TJpegTexture::activate( uint16_t number ) const
 {
     glActiveTexture( number );
     glBindTexture( GL_TEXTURE_2D, id_ );

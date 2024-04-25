@@ -91,9 +91,9 @@ char const *TWater::f_shader_name() const
 void TWater::f_initialize( size_t )
 {
     std::string alpha = spec_.alpha.empty() ? "" : std::string(NUtils::TConfig()["textures"]) + "/" + spec_.alpha;
-    texture_.reset( new texture( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str(), alpha.empty() ? nullptr : alpha.c_str() ) );
-    air_texture_.reset( new texture( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_air).c_str() ) );
-    foam_texture_.reset( new texture( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_foam).c_str() ) );
+    texture_.reset( new TJpegTexture( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str(), alpha.empty() ? nullptr : alpha.c_str() ) );
+    air_texture_.reset( new TJpegTexture( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_air).c_str() ) );
+    foam_texture_.reset( new TJpegTexture( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_foam).c_str() ) );
 
     glBufferData( GL_ARRAY_BUFFER, sizeof(surface_) + sizeof(normals_), NULL, GL_STREAM_DRAW );
     

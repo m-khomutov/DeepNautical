@@ -11,7 +11,7 @@
 
 #include "specification.h"
 #include "../visitor.h"
-#include "../texture/texture.h"
+#include "../texture/jpeg.h"
 #include "../program.h"
 #include "utils.h"
 #include <GL/glew.h>
@@ -106,7 +106,7 @@ protected:
     //! умный указатель на GL программу
     std::unique_ptr< program > program_;
     //! умный указатель на текстуру объекта
-    std::unique_ptr< texture > texture_;
+    std::unique_ptr< TJpegTexture > texture_;
     //! координаты объекта в его системе координат
     glm::mat4 model_ { glm::rotate( glm::mat4(1.0f), glm::radians( 0.0f ), glm::vec3(1.0f, 0.0f, 0.0f) ) };
     //! координаты для перевода объекта из его системы координат в систему координат камеры

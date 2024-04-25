@@ -8,7 +8,7 @@
 #ifndef BLENDER_H
 #define BLENDER_H
 
-#include "texture/texture.h"
+#include "texture/jpeg.h"
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
@@ -34,7 +34,7 @@ public:
         float Ni;
         float d;
         int illum;
-        std::shared_ptr< texture > map_Kd;
+        std::shared_ptr< TJpegTexture > map_Kd;
 
         std::vector< face_t > faces;
     };

@@ -41,7 +41,7 @@ SOURCES += \
     src/graphics/screens/glscreen.cpp \
     src/graphics/screens/qscreen.cpp \
     src/graphics/shader.cpp \
-    src/graphics/texture/texture.cpp \
+    src/graphics/texture/jpeg.cpp \
     src/graphics/texture/avi.cpp \
     src/graphics/uniformblock.cpp \
     src/service/qservice.cpp \
@@ -64,7 +64,7 @@ HEADERS += \
     src/graphics/screens/glscreen.h \
     src/graphics/screens/qscreen.h \
     src/graphics/shader.h \
-    src/graphics/texture/texture.h \
+    src/graphics/texture/jpeg.h \
     src/graphics/texture/avi.h \
     src/graphics/uniformblock.h \
     src/service/qservice.h

@@ -8,7 +8,7 @@
 #include "avi.h"
 #include <iostream>
 
-TAviError::TAviError( const std::string &what )
+TAviTextureError::TAviTextureError( const std::string &what )
 : std::runtime_error( what )
 {}
 
@@ -26,7 +26,7 @@ namespace
         {
             return u.value;
         }
-        throw TAviError( "not enough data to read int" );
+        throw TAviTextureError( "not enough data to read int" );
     }
     
     // прочесть из файла 4 байта. Вернуть как код FOURCC
@@ -41,11 +41,11 @@ namespace
             for( size_t i(0); i < sizeof(u.buf); ++i )
             {
                 if( !isascii( u.buf[ i ] ) ) // код FOURCC - 4 ascii символа
-                    throw TAviError( "invalid type: " + std::to_string(u.value) );
+                    throw TAviTextureError( "invalid type: " + std::to_string(u.value) );
             }
             return u.value;
         }
-        throw TAviError( "not enough data to read atom" );
+        throw TAviTextureError( "not enough data to read atom" );
     }
 
     // вернуть строковое представление тега
@@ -77,7 +77,7 @@ bool TAviTexture::TFrame::valid( FILE *f ) const
     uint8_t buf[2];
     if( fread( (char*)buf, 1, sizeof(buf), f ) != sizeof(buf) )
     {
-        throw TAviError( "not enough data to check validness" );
+        throw TAviTextureError( "not enough data to check validness" );
     }
     fseek( f, pos, SEEK_SET );
     
@@ -192,7 +192,7 @@ TAviTexture::Tlist::Tlist( TAtom::EType type, FILE *f, frame_t *frames )
             char buf[4];
             if( fread( buf, 1, sizeof(buf), f ) != sizeof(buf) )
             {
-                throw TAviError( "not enough data to get next list atom" );
+                throw TAviTextureError( "not enough data to get next list atom" );
             }
             // если '00dc' - это кадр
             if( buf[0] == '0' && buf[1] == '0' && buf[2] == 'd' && buf[3] == 'c' )
@@ -222,7 +222,7 @@ TAviTexture::TAviTexture( char const *filename )
 : ifile_ ( fopen( filename, "r" ) )  // открыть
 {
     if( !ifile_ ) {
-        throw TAviError( std::string("failed to open ") + filename );
+        throw TAviTextureError( std::string("failed to open ") + filename );
     }
     // получить размер файла
     fseek( ifile_.get(), 0, SEEK_END ); 
@@ -253,7 +253,7 @@ TAviTexture::TAviTexture( char const *filename )
     // нет кадров - нечем текстурировать
     if( frames_.empty() )
     {
-        throw TAviError( std::string(filename) + " has no frames" );
+        throw TAviTextureError( std::string(filename) + " has no frames" );
     }
     // настроить итератор по кадрам
     frame_iter_ = frames_.begin();

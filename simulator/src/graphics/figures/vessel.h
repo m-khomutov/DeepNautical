@@ -67,7 +67,7 @@ private:
     //! угол крена фигуры при раскачивании
     GLfloat pitching_angle_ = 0.0f;
     //! умный указатель на пустую текстуру. Используется как вспомогательная, если объект координат не представляет своей
-    std::shared_ptr< texture > empty_texture_;
+    std::shared_ptr< TJpegTexture > empty_texture_;
     //! объект текуще позиции фигуры на сцене
     TFigure::TPosition position_;
 

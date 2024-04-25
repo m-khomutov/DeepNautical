@@ -53,7 +53,7 @@ char const *TAntisubmarinefrigate::f_shader_name() const
 void TAntisubmarinefrigate::f_initialize( size_t )
 {
     // создаем текстуру
-    texture_.reset( new texture( (std::string(NUtils::TConfig()["textures"]) + spec_.texture_name).c_str() ) );
+    texture_.reset( new TJpegTexture( (std::string(NUtils::TConfig()["textures"]) + spec_.texture_name).c_str() ) );
 
     // ыделяем память под данные
     glBufferData( GL_ARRAY_BUFFER, sizeof(position_), position_, GL_STATIC_DRAW );

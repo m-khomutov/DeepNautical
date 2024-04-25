@@ -38,7 +38,7 @@ char const *THorizon::f_shader_name() const
 void THorizon::f_initialize( size_t )
 {
     // создать текстуру
-    texture_.reset( new texture( avi_->next_image() ) );
+    texture_.reset( new TJpegTexture( avi_->next_image() ) );
     // выделить память под данные атрибутов в шейдере
     glBufferData( GL_ARRAY_BUFFER, spec_.viewport.size() * sizeof(float), spec_.viewport.data(), GL_STATIC_DRAW );
     glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices_), indices_, GL_STATIC_DRAW);

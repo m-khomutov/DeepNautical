@@ -79,7 +79,7 @@ blender::mtlfile::mtlfile( const char* filename )
         }
         else if( line.find( "map_Kd " ) == 0 )
         {
-            mtls.back().map_Kd.reset( new texture( (std::string(NUtils::TConfig()["objs"]) + "/" + line.substr( 7 )).c_str() ) );
+            mtls.back().map_Kd.reset( new TJpegTexture( (std::string(NUtils::TConfig()["objs"]) + "/" + line.substr( 7 )).c_str() ) );
         }
     }
     for( auto mtl : mtls )
