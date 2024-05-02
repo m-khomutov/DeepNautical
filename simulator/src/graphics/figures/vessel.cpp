@@ -14,7 +14,7 @@ TVessel::TVessel( const std::vector< std::string > &settings, const glm::vec3 &c
     f_check_environment();
 
     // создать объект геометрической фигуры (координаты сетки фигуры)
-    object_.reset( new blender::object( (std::string(NUtils::TConfig()["objs"]) + "/" + spec_.obj_name).c_str() ) );
+    object_.reset( new NBlender::TObject( (std::string(NUtils::TConfig()["objs"]) + "/" + spec_.obj_name).c_str() ) );
     object_->load_position( &vertices_ );
 
     // dscnfdbnm d yfxfkj ldb;tybz

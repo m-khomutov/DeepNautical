@@ -59,7 +59,7 @@ public:
 
 private:
     //! Умный указатель на объект сетки геометрических координат фигуры
-    std::unique_ptr< blender::object > object_;
+    std::unique_ptr< NBlender::TObject > object_;
     //! вектор геометрических координат, копируемых в шейдер
     std::vector< GLfloat > vertices_;
     //! 3-х мерный коэффициент ускорения движения фигуры по сцене

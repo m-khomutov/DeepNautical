@@ -12,8 +12,8 @@
 
 namespace
 {
-   
-    bool str2face( const std::string &s, blender::mtlfile::face_t *rc )
+    // читает строку файла .obj, представляющую поверхность (матрица 3х3)
+    bool str2face( const std::string &s, NBlender::TMTLfile::face_t *rc )
     {
         return sscanf( s.c_str(), "f %u/%u/%u %u/%u/%u %u/%u/%u",
                        &((*rc)[0][0]), &((*rc)[0][1]), &((*rc)[0][2]),
@@ -22,7 +22,7 @@ namespace
     }
 }  //namespace
 
-blender::mtlfile::mtlfile( const char* filename )
+NBlender::TMTLfile::TMTLfile( const char* filename )
 {
     std::ifstream ifile( filename );
     if( !ifile.is_open() )
@@ -30,13 +30,13 @@ blender::mtlfile::mtlfile( const char* filename )
         throw std::runtime_error( std::string(filename) + " error: " + strerror(errno) );
     }
 
-    std::vector< material > mtls;
+    std::vector< TMaterial > mtls;
     std::string line;
     while( std::getline( ifile, line ) )
     {
-        if( line[ 0 ] == 'n' && line.find( "newmtl " ) == 0 )
+        if( line[ 0 ] == 'n' && line.find( "newmtl " ) == 0 ) // получить материал
         {
-            mtls.emplace_back( material() );
+            mtls.emplace_back( TMaterial() );
             mtls.back().name = line.substr( 7 );
         }
         else if( line[ 0 ] == 'N' )
@@ -44,10 +44,10 @@ blender::mtlfile::mtlfile( const char* filename )
             switch( line[1] )
             {
             case 's':
-                mtls.back().Ns = std::stof( line.substr( 3 ) );
+                mtls.back().Ns = std::stof( line.substr( 3 ) ); // коэффициент фокусировки блика
                 break;
             case 'i':
-                mtls.back().Ni = std::stof( line.substr( 3 ) );
+                mtls.back().Ni = std::stof( line.substr( 3 ) ); // коэффициент преломления
                 break;
             }
         }
@@ -56,28 +56,28 @@ blender::mtlfile::mtlfile( const char* filename )
             switch( line[1] )
             {
             case 'a':
-                NUtils::str2vec( line.substr( 3 ), &mtls.back().Ka );
+                NUtils::str2vec( line.substr( 3 ), &mtls.back().Ka ); // коэффициент фонового освещения
                 break;
             case 'd':
-                NUtils::str2vec( line.substr( 3 ), &mtls.back().Kd );
+                NUtils::str2vec( line.substr( 3 ), &mtls.back().Kd ); // коэффициент рассеянного освещения
                 break;
             case 's':
-                NUtils::str2vec( line.substr( 3 ), &mtls.back().Ks );
+                NUtils::str2vec( line.substr( 3 ), &mtls.back().Ks ); // коэффициент бликового освещения
                 break;
             case 'e':
-                NUtils::str2vec( line.substr( 3 ), &mtls.back().Ke );
+                NUtils::str2vec( line.substr( 3 ), &mtls.back().Ke ); // коэффициент зеркального блика
                 break;
             }
         }
         else if( line[ 0 ] == 'd' )
         {
-            mtls.back().d = std::stof( line.substr( 2 ) );
+            mtls.back().d = std::stof( line.substr( 2 ) ); // коэффициент прозрачности
         }
         else if( line[0] == 'i' && line.find( "illum " ) == 0 )
         {
-            mtls.back().illum = std::stof( line.substr( 6 ) );
+            mtls.back().illum = std::stof( line.substr( 6 ) ); // номер модели освещенности
         }
-        else if( line.find( "map_Kd " ) == 0 )
+        else if( line.find( "map_Kd " ) == 0 ) // текстура объекта
         {
             mtls.back().map_Kd.reset( new TJpegTexture( (std::string(NUtils::TConfig()["objs"]) + "/" + line.substr( 7 )).c_str() ) );
         }
@@ -88,7 +88,7 @@ blender::mtlfile::mtlfile( const char* filename )
     }
 }
 
-blender::mtlfile::material const &blender::mtlfile::operator []( std::string const &name ) const
+NBlender::TMTLfile::TMaterial const &NBlender::TMTLfile::operator []( std::string const &name ) const
 {
     auto p = materials_.find( name );
     if( p != materials_.end() )
@@ -100,7 +100,7 @@ blender::mtlfile::material const &blender::mtlfile::operator []( std::string con
 
 
 
-blender::object::object( char const *fname )
+NBlender::TObject::TObject( char const *fname )
 {
     std::ifstream ifile( fname );
     if( !ifile.is_open() )
@@ -108,30 +108,30 @@ blender::object::object( char const *fname )
         throw std::runtime_error( std::string(fname) +" error: " +strerror(errno) );
     }
     
-    std::unique_ptr< mtlfile > mltr;
+    std::unique_ptr< TMTLfile > mltr;
 
     glm::vec3 v3;
     glm::vec2 v2;
     std::string line;
     while( std::getline( ifile, line ) )
     {
-        if( line[ 0 ] == 'v' )
+        if( line[ 0 ] == 'v' ) // вершины
         {
             switch( line[1] )
             {
-            case ' ':
+            case ' ': // геометрические вершины
                 if( NUtils::str2vec( line.substr( 2 ), &v3 ) )
                 {
                     vertices_.push_back( v3 );
                 }
                 break;
-            case 't':
+            case 't': // текстурные вершины
                 if( NUtils::str2vec( line.substr( 3 ), &v2 ) )
                 {
                     texels_.push_back( v2 );
                 }
                 break;
-            case 'n':
+            case 'n': // нормали к геометрическим вершинам
                 if( NUtils::str2vec( line.substr( 3 ), &v3 ) )
                 {
                     normals_.push_back( v3 );
@@ -139,25 +139,25 @@ blender::object::object( char const *fname )
                 break;
             }
         }
-        else if( line[ 0 ] == 'f' )
+        else if( line[ 0 ] == 'f' ) // поверхности
         {
-            mtlfile::face_t face;
+            TMTLfile::face_t face;
             if( str2face( line, &face ) && !materials_.empty() )
             {
                 materials_.back().faces.push_back( face );
                 ++facecount_;
             }
         }
-        else if( line.find( "usemtl " ) == 0 )
+        else if( line.find( "usemtl " ) == 0 ) // название материала
         {
-            materials_.push_back( mtlfile::material() );
+            materials_.push_back( TMTLfile::TMaterial() );
             materials_.back().name = line.substr( 7 );
         }
-        else if( line.find( "mtllib " ) == 0 )
+        else if( line.find( "mtllib " ) == 0 ) //  файл материала
         {
             try
             {
-                mltr.reset( new mtlfile( (std::string(NUtils::TConfig()["objs"]) + "/" + line.substr( 7 )).c_str() ) );
+                mltr.reset( new TMTLfile( (std::string(NUtils::TConfig()["objs"]) + "/" + line.substr( 7 )).c_str() ) );
             }
             catch( const std::runtime_error &e )
             {
@@ -167,11 +167,12 @@ blender::object::object( char const *fname )
     }
     if( mltr )
     {
-        for( mtlfile::material &mtl : materials_ )
+        // заполнить полученные значения материалов
+        for( TMTLfile::TMaterial &mtl : materials_ )
         {
             try
             {
-                mtlfile::material const &m = (*mltr)[mtl.name];
+                TMTLfile::TMaterial const &m = (*mltr)[mtl.name];
                 mtl.Ns = m.Ns;
                 mtl.Ka = m.Ka;
                 mtl.Kd = m.Kd;
@@ -190,9 +191,10 @@ blender::object::object( char const *fname )
     }
 }
 
-void blender::object::load_position( std::vector< float > *pos )
+void NBlender::TObject::load_position( std::vector< float > *pos )
 {
-    for( mtlfile::material const &mtl : materials_ )
+    // заполнить вектор значениями, которые будут переданы в шейдер для отрисовки
+    for( TMTLfile::TMaterial const &mtl : materials_ )
     {
         for( auto f : mtl.faces )
         {
