@@ -73,15 +73,15 @@ public:
      */
     void initialize( size_t vbo_number );
     /*!
-       \brief управляет взаимодействие с посетителем
+       \brief управляет взаимодействием с посетителем
        \param vbo_number номер используемого VBO (Vertex Buffer Object)
-       \param p посетитель. Объект обобщающий поведение всех графических объектов на сцене
+       \param p посетитель. Объект, обобщающий поведение всех графических объектов на сцене
        \param currentTime текущая временная метка
 
        Устанавливает используемую GL программу,
        настраивает униформные переменные и передает выполнение производному классу, для передачи указателя на себя посетителю
      */
-    void accept( size_t vbo_number, visitor &p, double currentTime );
+    void accept( size_t vbo_number, IVisitor &p, double currentTime );
 
     /*!
        \brief подтверждает выполнение настроек программы
@@ -214,7 +214,7 @@ private:
        \param p посетитель. Объект обобщающий поведение всех графических объектов на сцене
        \param currentTime текущая временная метка
      */
-    virtual void f_accept( size_t vbo_number, visitor &p, double currentTime ) = 0;
+    virtual void f_accept( size_t vbo_number, IVisitor &p, double currentTime ) = 0;
 };
 
 #endif /* FIGURE_H */

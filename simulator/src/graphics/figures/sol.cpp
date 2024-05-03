@@ -68,7 +68,7 @@ void TSol::f_initialize( size_t )
     program_->uniform_block("CircleParams").copy();
 }
 
-void TSol::f_accept( size_t vbo_number, visitor &p, double )
+void TSol::f_accept( size_t vbo_number, IVisitor &p, double )
 {
     // передать посетителю указатель на себя
     p.visit( vbo_number, this );

@@ -71,7 +71,7 @@ void TSparklets::f_initialize( size_t vbo_number )
     }
 }
 
-void TSparklets::f_accept( size_t vbo_number, visitor &p, double )
+void TSparklets::f_accept( size_t vbo_number, IVisitor &p, double )
 {
     last_frame_time_ += spec_.speed.x;
     p.visit( vbo_number, this );

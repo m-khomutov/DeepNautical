@@ -101,7 +101,7 @@ void TWater::f_initialize( size_t )
     set_attribute( "Normals", 3, 3, sizeof(surface_) / sizeof(GLfloat) );
 }
 
-void TWater::f_accept( size_t vbo_number, visitor &p, double currentTime )
+void TWater::f_accept( size_t vbo_number, IVisitor &p, double currentTime )
 {
     f_load_surface( currentTime );
     p.visit( vbo_number, this );

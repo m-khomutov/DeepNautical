@@ -81,7 +81,7 @@ private:
        \param p посетитель. Объект обобщающий поведение всех графических объектов на сцене
        \param currentTime текущая временная метка
      */
-    void f_accept( size_t vbo_number, visitor &p, double current_time ) override;
+    void f_accept( size_t vbo_number, IVisitor &p, double current_time ) override;
 };
 
 #endif /* HORIZON_H */

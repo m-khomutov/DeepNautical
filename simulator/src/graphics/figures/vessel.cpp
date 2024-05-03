@@ -111,7 +111,7 @@ void TVessel::f_initialize( size_t )
     }
 }
 
-void TVessel::f_accept( size_t vbo_number, visitor &p, double )
+void TVessel::f_accept( size_t vbo_number, IVisitor &p, double )
 {
     f_set_model();
     p.visit( vbo_number, this );

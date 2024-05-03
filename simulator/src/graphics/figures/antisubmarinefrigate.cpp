@@ -63,7 +63,7 @@ void TAntisubmarinefrigate::f_initialize( size_t )
     set_attribute( "Texcoord", 2, 5, 3 );
 }
 
-void TAntisubmarinefrigate::f_accept( size_t vbo_number, visitor &p, double )
+void TAntisubmarinefrigate::f_accept( size_t vbo_number, IVisitor &p, double )
 {
     // передаем посетителю указатель на себя. Запустит нашу отрисовку когда надо
     p.visit( vbo_number, this );

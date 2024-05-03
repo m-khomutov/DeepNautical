@@ -28,7 +28,7 @@ void TFigure::initialize( size_t vbo_number )
     valid_ = true;
 }
 
-void TFigure::accept( size_t vbo_number, visitor &p, double currentTime )
+void TFigure::accept( size_t vbo_number, IVisitor &p, double currentTime )
 {
     // выбрать GL программу
     glUseProgram( *program_ );

@@ -118,7 +118,7 @@ void scene::f_initialize( const std::string &specification )
 
     for( auto camera_pos : camera_positions )
     {
-        figureset_.emplace_back( new figureset() );
+        figureset_.emplace_back( new TFigureset() );
 
         for( auto figure : figures )
         {

@@ -74,7 +74,7 @@ public:
     
 private:
     std::string name_;
-    std::vector< std::shared_ptr< figureset > > figureset_;
+    std::vector< std::shared_ptr< TFigureset > > figureset_;
     
 private:
     static void GLAPIENTRY debugCb( GLenum src,

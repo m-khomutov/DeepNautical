@@ -47,7 +47,7 @@ void THorizon::f_initialize( size_t )
     set_attribute( "Texcoord", 2, 5, 3 );
 }
 
-void THorizon::f_accept( size_t vbo_number, visitor &p, double current_time )
+void THorizon::f_accept( size_t vbo_number, IVisitor &p, double current_time )
 {
     if( last_frame_time_ < 0.01f )
     {

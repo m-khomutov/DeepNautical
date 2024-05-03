@@ -14,12 +14,9 @@
 #include "figures/sparklets.h"
 #include <glm/gtc/type_ptr.hpp>
 
-figureset::figureset()
-{}
-
-figureset::~figureset()
+TFigureset::~TFigureset()
 {
-    if( ! figures_.empty() )
+    if( !figures_.empty() )
     {
         glDeleteVertexArrays( vao_.size(), vao_.data() );
         glDeleteBuffers( vbo_.size(), vbo_.data() );
@@ -27,23 +24,26 @@ figureset::~figureset()
     }
 }
 
-void figureset::emplace( TFigure *fig )
+void TFigureset::emplace( TFigure *fig )
 {
+    //добавить фигуру
     figures_.emplace_back( fig );
+    // посчитать используемые ею VBO
     vbo_count_ += fig->vbo_count();
 }
 
-TFigure *figureset::back()
+TFigure *TFigureset::back()
 {
     return figures_.back().get();
 }
 
-void figureset::initialize()
+void TFigureset::initialize()
 {
     if( figures_.empty() )
     {
         return;
     }
+    // выделить ресурсы под буферы взаимодействия с шейдерами
     vao_.resize( figures_.size() );
     vbo_.resize( vbo_count_ );
     ebo_.resize( figures_.size() );
@@ -52,9 +52,11 @@ void figureset::initialize()
     glGenVertexArrays( vao_.size(), vao_.data() );
     glGenBuffers( vbo_.size(), vbo_.data() );
     glGenBuffers( ebo_.size(), ebo_.data() );
-    
+
+    // проинициализировать объекты фигур
     GLuint *p_vbo = vbo_.data();
     for( figure_t::size_type i(0); i < figures_.size(); ++i ) {
+        // у каждой фигуры свои буферы
         glBindVertexArray( vao_[i] );
         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ebo_[i] );
         for( size_t bc(0); bc < figures_[i]->vbo_count(); ++bc )
@@ -75,17 +77,19 @@ void figureset::initialize()
     }
 }
 
-void figureset::draw( double currentTime )
+void TFigureset::draw( double currentTime )
 {
     GLuint *p_vbo = vbo_.data();
     for( figure_t::size_type i(0); i < figures_.size(); ++i )
     {
         if( figures_[i]->valid() )
         {
+            // привязать нужные буферы работы с шейдерами
             glBindVertexArray( vao_[i] );
             for( size_t bc(0); bc < figures_[i]->vbo_count(); ++bc )
             {
                 glBindBuffer( GL_ARRAY_BUFFER, *p_vbo );
+                // запустить метод принятия посетителя (себя)
                 figures_[i]->accept( bc, *this, currentTime );
                 glBindBuffer( GL_ARRAY_BUFFER, 0 );
                 p_vbo ++;
@@ -95,36 +99,36 @@ void figureset::draw( double currentTime )
     }
 }
 
-void figureset::visit( size_t vbo_number, TAntisubmarinefrigate *frigate )
+void TFigureset::visit( size_t vbo_number, TAntisubmarinefrigate *frigate )
 {
     frigate->draw( vbo_number );
 }
 
-void figureset::visit( size_t vbo_number, TSol *_sol )
+void TFigureset::visit( size_t vbo_number, TSol *_sol )
 {
     _sol->draw( vbo_number );
 }
 
-void figureset::visit( size_t vbo_number, TWater *_water )
+void TFigureset::visit( size_t vbo_number, TWater *_water )
 {
     _water->set_wake_position( vessel_positions_ );
     _water->draw( vbo_number );
     vessel_positions_.clear();
 }
 
-void figureset::visit( size_t vbo_number, THorizon *_horizon )
+void TFigureset::visit( size_t vbo_number, THorizon *_horizon )
 {
     _horizon->draw( vbo_number );
 }
 
-void figureset::visit( size_t vbo_number, TVessel *_vessel )
+void TFigureset::visit( size_t vbo_number, TVessel *_vessel )
 {
     _vessel->draw( vbo_number );
     vessel_positions_.push_back( _vessel->position() );
 }
 
 
-void figureset::visit( size_t vbo_number, TSparklets *_sparklets )
+void TFigureset::visit( size_t vbo_number, TSparklets *_sparklets )
 {
     _sparklets->draw( vbo_number );
 }
