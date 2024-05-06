@@ -32,11 +32,6 @@ void TFigureset::emplace( TFigure *fig )
     vbo_count_ += fig->vbo_count();
 }
 
-TFigure *TFigureset::back()
-{
-    return figures_.back().get();
-}
-
 void TFigureset::initialize()
 {
     if( figures_.empty() )

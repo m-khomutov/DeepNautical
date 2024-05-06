@@ -17,6 +17,7 @@
 #include <list>
 
 namespace {
+    // текстовое представление серьезности ошибки в системе GL
     std::string severity2str( GLuint severity ) {
         switch( severity ) {
             case GL_DEBUG_SEVERITY_HIGH:
@@ -33,28 +34,28 @@ namespace {
 }
 
 
-scene_error::scene_error( const std::string &what )
+TSceneError::TSceneError( const std::string &what )
 : std::runtime_error( what )
-{
-}
+{}
 
+// регистрируется в GL для вывода отладки. Переадресует информацию в объект сцены
 void GLAPIENTRY
-scene::debugCb( GLenum src,
-                GLenum type,
-                GLuint id,
-                GLenum severity,
-                GLsizei sz,
-                const GLchar * msg,
-                const void * p )
+TScene::debugCb( GLenum src,
+                 GLenum type,
+                 GLuint id,
+                 GLenum severity,
+                 GLsizei sz,
+                 const GLchar * msg,
+                 const void * p )
 {
-    reinterpret_cast< const scene * >(p)->f_debug_error( debug_message().set_source( src )
-                                                                        .set_type( type )
-                                                                        .set_id( id )
-                                                                        .set_severity( severity )
-                                                                        .set_body( msg, sz  ) );
+    reinterpret_cast< const TScene * >(p)->f_debug_error( TDebugMessage().set_source( src )
+                                                                         .set_type( type )
+                                                                         .set_id( id )
+                                                                         .set_severity( severity )
+                                                                         .set_body( msg, sz  ) );
 }
 
-scene::scene( const std::string &name, const std::string &specification )
+TScene::TScene( const std::string &name, const std::string &specification )
 : name_( name )
 {
     glEnable( GL_DEBUG_OUTPUT );
@@ -63,7 +64,7 @@ scene::scene( const std::string &name, const std::string &specification )
     glDepthMask( GL_TRUE );
     glDepthFunc( GL_LEQUAL );
     glDepthRange( 0.0f, 1.0f );
-    glDebugMessageCallback( scene::debugCb, this );
+    glDebugMessageCallback( TScene::debugCb, this );
     glDebugMessageControl( GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE );
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
@@ -74,11 +75,7 @@ scene::scene( const std::string &name, const std::string &specification )
     f_initialize( specification );
 }
 
-scene::~scene()
-{
-}
-
-void scene::display( size_t view, GLuint/* width*/, GLuint/* height*/, double currentTime )
+void TScene::display( size_t view, GLuint/* width*/, GLuint/* height*/, double currentTime )
 {
     if( view < figureset_.size() )
     {
@@ -86,17 +83,19 @@ void scene::display( size_t view, GLuint/* width*/, GLuint/* height*/, double cu
     }
 }
 
-void scene::f_initialize( const std::string &specification )
+void TScene::f_initialize( const std::string &specification )
 {
     using param_t = std::vector< std::string >;
 
+    // фигура - тип (хедер) + набор параметров
     std::map< std::string/*header*/, std::list< param_t > > figures;
     param_t settings;
     std::string header;
+    // читаем спецификацию
     NUtils::read_config( specification.c_str(), [&]( const std::string &line ) {
-        if( line[ 0 ] == '[' )
+        if( line[ 0 ] == '[' ) // новый блок
         {
-            if( !header.empty() )
+            if( !header.empty() ) // уже не первый - есть прочитанная фигура
             {
                 figures[header].push_back( settings );
                 settings.clear();
@@ -113,12 +112,15 @@ void scene::f_initialize( const std::string &specification )
         figures[header].push_back( settings );
     }
 
+    // данные из блока Environment расшариваются по всем фигурам
     const std::list< param_t > &environment_params = figures["[Environment]"];
+    // получаем координаты камер на сцене
     std::vector< glm::vec3 > camera_positions = f_get_camera_positions( environment_params.back() );
 
+    // создаем сами фигуры
     for( auto camera_pos : camera_positions )
     {
-        figureset_.emplace_back( new TFigureset() );
+        figureset_.emplace_back( new TFigureset() ); // каждой точке обзора свой контейнер объектов
 
         for( auto figure : figures )
         {
@@ -126,17 +128,21 @@ void scene::f_initialize( const std::string &specification )
             {
                 if( !(environment_params.empty() || figure.first == "[Environment]") )
                 {
+                    // добавить параметры Environment, которые для всех фигур
                     param.insert( param.end(), environment_params.back().begin(), environment_params.back().end() );
                 }
+                // следующая фигура в контейнер
                 f_add_figure( figure.first, param, camera_pos );
             }
         }
+        // инициализируем фигуры в контейнере
         figureset_.back()->initialize();
     }
 }
 
-void scene::f_debug_info()
+void TScene::f_debug_info()
 {
+    // информация по системе GL
     GLint major, minor;
     glGetIntegerv(GL_MAJOR_VERSION, &major);
     glGetIntegerv(GL_MINOR_VERSION, &minor);
@@ -152,8 +158,9 @@ void scene::f_debug_info()
     std::cerr << "]\n}" << std::endl;   
 }
 
-void scene::f_debug_error( const debug_message &msg ) const
+void TScene::f_debug_error( const TDebugMessage &msg ) const
 {
+    // информация из сообщения системы GL
     std::cerr << msg.source << ":"
               << msg.type << "["
               << severity2str( msg.severity ) << "]("
@@ -161,8 +168,9 @@ void scene::f_debug_error( const debug_message &msg ) const
               << msg.body << std::endl;
 }
 
-void scene::f_add_figure( const std::string &header, const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
+void TScene::f_add_figure( const std::string &header, const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
 {
+    // строка хедера определяет тип фигуры
     if( header == "[Horizon]" )
     {
         f_add_figure< THorizon >( settings, camera_pos );
@@ -186,7 +194,7 @@ void scene::f_add_figure( const std::string &header, const std::vector< std::str
 }
 
 template< typename Figure >
-void scene::f_add_figure( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
+void TScene::f_add_figure( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
 {
     try
     {
@@ -198,10 +206,11 @@ void scene::f_add_figure( const std::vector< std::string > &settings, const glm:
     }
 }
 
-std::vector< glm::vec3 > scene::f_get_camera_positions( const std::vector< std::string > &settings )
+std::vector< glm::vec3 > TScene::f_get_camera_positions( const std::vector< std::string > &settings )
 {
     std::vector< glm::vec3 > positions;
 
+    // найти поле camera_position и распарсить содержимое
     for( auto s : settings )
     {
         std::pair< std::string, std::string > p;
@@ -233,6 +242,7 @@ std::vector< glm::vec3 > scene::f_get_camera_positions( const std::vector< std::
             }
         }
     }
+    // нету камер с спеке. Ну пусть одна такая будет. Совсем без камер нельзя
     if( positions.empty() )
     {
         positions.push_back( glm::vec3( 0.0f, 0.0f, 5.0f ) );

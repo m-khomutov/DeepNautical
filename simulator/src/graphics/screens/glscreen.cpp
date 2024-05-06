@@ -83,7 +83,7 @@ void TGLscreen::f_exec_command()
         case TScreenCommand::kSetScene:
             if( cmd.position() < sc_.size() )
             {
-                sc_[cmd.position()].reset( new scene( *scene_iter_, std::string(NUtils::TConfig()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
+                sc_[cmd.position()].reset( new TScene( *scene_iter_, std::string(NUtils::TConfig()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
             }
             break;
         }

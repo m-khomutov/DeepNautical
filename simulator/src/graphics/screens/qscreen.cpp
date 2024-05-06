@@ -61,7 +61,7 @@ void TQscreen::initializeGL()
             throw TGLscreenError("not enough scenes to start");
         }
         // добавить сцену
-        sc_.emplace_back( new scene( *scene_iter_, std::string(NUtils::TConfig()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
+        sc_.emplace_back( new TScene( *scene_iter_, std::string(NUtils::TConfig()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
         ++scene_iter_;
     }
 

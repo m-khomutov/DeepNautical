@@ -130,7 +130,7 @@ protected:
     //! итератор по сценам, настроенный на текущую сцену
     std::set< std::string >::iterator scene_iter_;
     //! вектор умных указателей на сцены, выполняемые на экране
-    std::vector< std::shared_ptr< scene > > sc_;
+    std::vector< std::shared_ptr< TScene > > sc_;
     //! Очередь команд, передаваемых экрану для выполнения
     NUtils::TSafeguard< std::list< TScreenCommand > > commands_;
 
