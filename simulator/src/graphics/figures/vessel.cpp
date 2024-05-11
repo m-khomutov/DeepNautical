@@ -7,8 +7,8 @@
 
 #include "vessel.h"
 
-TVessel::TVessel( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
-: TFigure( settings, camera_pos )
+TVessel::TVessel( const std::vector< std::string > &settings )
+: TFigure( settings )
 {
     // проверить настройки
     f_check_environment();

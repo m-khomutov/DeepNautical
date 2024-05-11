@@ -26,9 +26,8 @@ public:
     /*!
        \brief Конструктор класса. Настраивает геометрическую модель отображения
        \param settings конфигурация класса
-       \param camera_pos позиция камеры на сцене
      */
-    explicit TSol( const std::vector< std::string > &settings, const glm::vec3 &camera_pos );
+    explicit TSol( const std::vector< std::string > &settings );
     /*!
        \brief Запрещенный конструктор копии.
        \param orig Копируемый объект
@@ -43,7 +42,7 @@ public:
     /*!
        \brief Деструктор класса
      */
-    ~TSol() = default;
+    ~TSol();
 
     /*!
      * \brief настраивает переменные GL и отправляет GL команду на отрисовку
@@ -52,15 +51,10 @@ public:
     void draw( size_t vbo_number );
 
 private:
+    //! координаты вершин
+    QVector<QVector4D> vertices_;
     //! текстурные координаты
-    GLfloat position_[20] = {
-           -2.0f,  1.0f, -1.0f,   1.0f, 0.0f,
-            2.5f,  1.0f, -1.0f,   1.0f, 1.0f,
-            2.5f,  0.0f, -1.0f,   0.0f, 1.0f,
-           -2.0f,  0.0f, -1.0f,   0.0f, 0.0f,
-    };
-    //! индексы очередности отрисовки
-    GLuint indices_[6] = { 0, 3, 1, 1, 3, 2 };
+    QVector<QVector2D> texels_;
 
 private:
     /*!

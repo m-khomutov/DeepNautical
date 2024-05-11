@@ -9,7 +9,7 @@
 #ifndef BLENDER_H
 #define BLENDER_H
 
-#include "texture/jpeg.h"
+//#include "texture/jpeg.h"
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
@@ -57,7 +57,7 @@ public:
         //! номер модели освещенности (0, 1, 2)
         int illum;
         //! текстура объекта
-        std::shared_ptr< TJpegTexture > map_Kd;
+        //std::shared_ptr< TJpegTexture > map_Kd;
 
         //! набор точек, определяющих сетку объекта
         std::vector< face_t > faces;

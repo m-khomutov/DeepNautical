@@ -116,8 +116,6 @@ protected:
     std::mutex frame_mutex_;
     //! временная метка сохранения видеокадра в объекте представления видеокадра;
     TBaseframe::time_point_t store_ts_;
-    //! количество точек обзора, отображаемых на экране
-    size_t view_count_ {1};
 
 private:
     /*!

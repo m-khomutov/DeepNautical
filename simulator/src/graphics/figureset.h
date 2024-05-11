@@ -11,6 +11,9 @@
 
 #include "figures/figure.h"
 #include "visitor.h"
+
+#include <QGLWidget>
+
 #include <vector>
 
 /*!
@@ -49,7 +52,12 @@ public:
        \brief добавляет новую фигуру в набор фигур
        \param fig указатель на объект фигуры, помещаемой в набор
      */
-    void emplace( TFigure *fig );
+    void emplace( TFigure * );
+
+    /*!
+       \brief удаляет все фигуры из набора
+     */
+    void clear();
 
     /*!
        \brief выделяет ресурсы буферам взаимодействия с шейдерам. нициализирует объекты фигур в наборе фигур
@@ -69,7 +77,7 @@ public:
        \param vbo_number номер связанного VBO
        \param fig посещаемый элемент
      */
-    void visit( size_t vbo_number, TAntisubmarinefrigate *fig ) override;
+    //void visit( size_t vbo_number, TAntisubmarinefrigate *fig ) override;
     /*!
        \brief реализация метода посещения элемента класса TSol
        \param vbo_number номер связанного VBO
@@ -87,19 +95,19 @@ public:
        \param vbo_number номер связанного VBO
        \param fig посещаемый элемент
      */
-    void visit( size_t vbo_number, THorizon *fig ) override;
+    //void visit( size_t vbo_number, THorizon *fig ) override;
     /*!
        \brief реализация метода посещения элемента класса TVessel
        \param vbo_number номер связанного VBO
        \param fig посещаемый элемент
      */
-    void visit( size_t vbo_number, TVessel *fig ) override;
+    //void visit( size_t vbo_number, TVessel *fig ) override;
     /*!
        \brief реализация метода посещения элемента класса TSparklets
        \param vbo_number номер связанного VBO
        \param fig посещаемый элемент
      */
-    void visit( size_t vbo_number, TSparklets *fig ) override;
+    //void visit( size_t vbo_number, TSparklets *fig ) override;
 
 private:
     //! буфер загрузки данных в шейдер.

@@ -6,27 +6,48 @@
  */
 
 #include "sol.h"
-#include <glm/gtx/transform.hpp>
 
-
-TSol::TSol( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
-: TFigure( settings, camera_pos )
+TSol::TSol( const std::vector< std::string > &settings )
+: TFigure( settings )
 {
     // настраиваем местоположение и геометрическую модель объекта
-    offset_ = glm::vec3( -2.5f, 2.0f, 0.0f );
-    model_ = glm::mat4( glm::scale( 
-                            glm::rotate(
-                                glm::translate( glm::vec3(0.0f, 0.0f, -1.0f) ),
-                                glm::radians( 50.0f ), glm::vec3(1.0f, 0.0f, 0.0f) ),
-                            glm::vec3( 0.3f ) ) );
+    offset_ = QVector4D( -2.5f, 2.0f, 0.0f, 1.f );
+
+    model_.setToIdentity();
+    model_.translate( QVector3D(0.0f, 0.0f, -1.0f) );
+    model_.rotate( 50.f, QVector3D(1.0f, 0.0f, 0.0) );
+    model_.scale( QVector3D(0.3f, 0.3f, 0.3f) );
+
+    float *ptr = spec_.viewport.data();
+    for( size_t i(0); i < spec_.viewport.size(); i += 5 )
+    {
+        vertices_ << QVector4D(ptr[i], ptr[i+1], ptr[i+2], 1.f);
+        texels_ << QVector2D(ptr[i+3], ptr[i+4]);
+    }
+}
+
+TSol::~TSol()
+{
+    shader_program_.disableAttributeArray("Texcoord");
+    shader_program_.disableAttributeArray("Position");
 }
 
 void TSol::draw( size_t )
 {
+    shader_program_.setAttributeArray("Position", vertices_.constData());
+    shader_program_.enableAttributeArray("Position");
+    shader_program_.setAttributeArray("Texcoord", texels_.constData());
+    shader_program_.enableAttributeArray("Texcoord");
+
     // настроить переменную положения в шейдере
-    set_uniform( "Offset", offset_ );
+    shader_program_.setUniformValue( "Offset", offset_ );
+    shader_program_.setUniformValue( "Fog.color", spec_.fog_color );
+    shader_program_.setUniformValue( "Fog.density", spec_.fog_density );
     // отрисовать объект
-    glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
+    glDrawArrays( GL_TRIANGLE_FAN, 0, vertices_.size() );
+
+    shader_program_.disableAttributeArray("Texcoord");
+    shader_program_.disableAttributeArray("Position");
 }
 
 void TSol::f_check_environment() const
@@ -47,25 +68,7 @@ char const *TSol::f_shader_name() const
 void TSol::f_initialize( size_t )
 {
     // создать текстуру
-    texture_.reset( new TJpegTexture( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str() ) );
-
-    // выделить память под атрибуты в шейдере
-    glBufferData( GL_ARRAY_BUFFER, spec_.viewport.size() * sizeof(float), spec_.viewport.data(), GL_STATIC_DRAW );
-    glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices_), indices_, GL_STATIC_DRAW);
-    // настроить атрибуты
-    set_attribute( "Position", 3, 5, 0 );
-    set_attribute( "Texcoord", 2, 5, 3 );
-    // выставить униформные переменные
-    set_uniform( "CameraPosition", spec_.camera_position );
-    set_uniform( "Fog.color", spec_.fog_color );
-    set_uniform( "Fog.density", spec_.fog_density );
-
-    program_->uniform_block("CircleParams")["OuterColor"].set( glm::vec3(0.392f, 0.706f, 0.983f) );
-    program_->uniform_block("CircleParams")["InnerColor"].set( glm::vec3(1.0f, 1.0f, 0.75f) );
-    program_->uniform_block("CircleParams")["OuterColor"].set( glm::vec3(0.392f, 0.706f, 0.983f) );
-    program_->uniform_block("CircleParams")["InnerRadius"].set( 0.25f );
-    program_->uniform_block("CircleParams")["OuterRadius"].set( 0.45f );
-    program_->uniform_block("CircleParams").copy();
+    texture_.reset( new QOpenGLTexture( QImage(std::string(std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str() ) ) );
 }
 
 void TSol::f_accept( size_t vbo_number, IVisitor &p, double )

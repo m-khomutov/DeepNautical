@@ -11,12 +11,12 @@
 
 #include <cstddef>
 
-class TAntisubmarinefrigate;
 class TSol;
 class TWater;
+/*class TAntisubmarinefrigate;
 class THorizon;
 class TVessel;
-class TSparklets;
+class TSparklets;*/
 
 /*!
    \interface IVisitor
@@ -36,7 +36,7 @@ public:
        \param vbo_number номер связанного VBO
        \param fig посещаемый элемент
      */
-    virtual void visit( size_t vbo_number, TAntisubmarinefrigate * ) = 0;
+    //virtual void visit( size_t vbo_number, TAntisubmarinefrigate * ) = 0;
     /*!
        \brief объявление метода посещения элемента класса TSol
        \param vbo_number номер связанного VBO
@@ -54,19 +54,19 @@ public:
        \param vbo_number номер связанного VBO
        \param fig посещаемый элемент
      */
-    virtual void visit( size_t vbo_number, THorizon * ) = 0;
+    //virtual void visit( size_t vbo_number, THorizon * ) = 0;
     /*!
        \brief объявление метода посещения элемента класса TVessel
        \param vbo_number номер связанного VBO
        \param fig посещаемый элемент
      */
-    virtual void visit( size_t vbo_number, TVessel * ) = 0;
+    //virtual void visit( size_t vbo_number, TVessel * ) = 0;
     /*!
        \brief объявление метода посещения элемента класса TSparklets
        \param vbo_number номер связанного VBO
        \param fig посещаемый элемент
      */
-    virtual void visit( size_t vbo_number, TSparklets * ) = 0;
+    //virtual void visit( size_t vbo_number, TSparklets * ) = 0;
 };
 
 #endif /* VISITOR_H */

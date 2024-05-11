@@ -62,7 +62,7 @@
 
 
 [Environment]
-camera_position={{0.0 0.0 3.0}}
+camera_position={0.0 0.0 3.0}
 light_color={1.0 1.0 0.75}
 light_position={0.0 1.0 -3.0}
 fog_color={0.892, 0.892, 0.872 1.0}
@@ -73,6 +73,12 @@ fog_density=0.3
 #texture="56118_Peaceful_ocean_background_HD_BG.avi"
 #viewport={{-1.5 1.0 -1.0} {1.5 1.0 -1.0} {1.5 -1.0 1.55} {-1.5 -1.0 1.55}} # {topleft topright bottomright bottomleft}
 
+[Sol]
+shader="sol.glsl"
+texture="air.jpg"
+#viewport={{-8.5 13.0 1.7} {13.5 13.0 1.7} {25.3 -4.0 -2.0} {-20.5 -4.0 -2.0}} # {topleft topright bottomright bottomleft}
+viewport={{-8.5 13.0 1.7} {-20.5 -4.0 -2.0} {25.3 -4.0 -2.0} {13.5 13.0 1.7}} # {topleft bottomleft bottmright bottomright topright}
+
 [Water]
 shader="water.glsl"
 texture="reflection.jpg"
@@ -81,11 +87,6 @@ air="air.jpg"
 foam="foam.jpg"
 wave={10.0 2.0}
 wake={20.0 4.0}
-
-[Sol]
-shader="sol.glsl"
-texture="air.jpg"
-viewport={{-5.0 3.5 1.7} {9.9 3.5 1.7} {9.9 -4.0 -2.0} {-5.0 -4.0 -2.0}} # {topleft topright bottomright bottomleft}
 
 # буксир в более-менее центре экрана
 [Vessel]

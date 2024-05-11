@@ -83,7 +83,7 @@ void TGLscreen::f_exec_command()
         case TScreenCommand::kSetScene:
             if( cmd.position() < sc_.size() )
             {
-                sc_[cmd.position()].reset( new TScene( *scene_iter_, std::string(NUtils::TConfig()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
+                //sc_[cmd.position()].reset( new TScene( *scene_iter_, std::string(NUtils::TConfig()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
             }
             break;
         }
@@ -96,7 +96,7 @@ void TGLscreen::f_store_scene_frame()
     int q;
     glGetIntegerv( GL_READ_BUFFER, &q );
     glPixelStorei( GL_PACK_ALIGNMENT, 1 );
-    for( size_t v(0); v < view_count_; ++v )
+    for( size_t v(0); v < sc_.size(); ++v )
     {
         // получить указатель на буфер кадра. Явное нарушение инкапсуляции. На что не пойдешь ради оптимизации
         uint8_t *buffer = frame_->buffer( v, frame_->width(), frame_->height() );

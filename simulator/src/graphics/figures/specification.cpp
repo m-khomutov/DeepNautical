@@ -9,8 +9,7 @@
 #include "utils.h"
 #include <iostream>
 
-TSpecification::TSpecification( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
-: camera_position( camera_pos ) // позиция камеры читается раньше для определения количества камер на сцене
+TSpecification::TSpecification( const std::vector< std::string > &settings )
 {
     // построчно
     for( auto s : settings )
@@ -100,6 +99,13 @@ TSpecification::TSpecification( const std::vector< std::string > &settings, cons
             {
                 f_read_viewport( p.second );
             }
+            else if( p.first.find( "camera_position" ) != std::string::npos )
+            {
+                if( !NUtils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &camera_position ) )
+                {
+                    std::cerr << "camera error: invalid camera position\n";
+                }
+            }
             else if( p.first.find( "light_color" ) != std::string::npos )
             {
                 if( !NUtils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &light_color ) )
@@ -160,7 +166,7 @@ TSpecification::TSpecification( const std::vector< std::string > &settings, cons
 
 void TSpecification::f_read_viewport( const std::string& config )
 {
-    // координаты сцены дополнительно содержат индексы итрисовки для удобства копирования в шейдер
+    // координаты сцены дополнительно содержат индексы отрисовки для удобства копирования в шейдер
     std::vector< float > rc( 20 );
     rc[3] = 0.0f; rc[4] = 0.0f;
     rc[8] = 1.0f; rc[9] = 0.0f;
@@ -168,7 +174,7 @@ void TSpecification::f_read_viewport( const std::string& config )
     rc[18] = 0.0f; rc[19] = 1.0f;
 
     size_t off { 0 };
-    glm::vec3 point;
+    QVector3D point;
     size_t p1 = 2, p2 = config.find("} {");
     while( p2 != std::string::npos )
     {

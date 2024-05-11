@@ -79,7 +79,7 @@ NBlender::TMTLfile::TMTLfile( const char* filename )
         }
         else if( line.find( "map_Kd " ) == 0 ) // текстура объекта
         {
-            mtls.back().map_Kd.reset( new TJpegTexture( (std::string(NUtils::TConfig()["objs"]) + "/" + line.substr( 7 )).c_str() ) );
+            //mtls.back().map_Kd.reset( new TJpegTexture( (std::string(NUtils::TConfig()["objs"]) + "/" + line.substr( 7 )).c_str() ) );
         }
     }
     for( auto mtl : mtls )
@@ -181,7 +181,7 @@ NBlender::TObject::TObject( char const *fname )
                 mtl.Ni = m.Ni;
                 mtl.d = m.d;
                 mtl.illum = m.illum;
-                mtl.map_Kd = m.map_Kd;
+                //mtl.map_Kd = m.map_Kd;
             }
             catch( const std::runtime_error &e )
             {

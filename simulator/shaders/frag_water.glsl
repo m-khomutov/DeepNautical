@@ -17,7 +17,7 @@ in VS_OUT {
 
 layout (location = 0) out vec4 Color;
 
-uniform vec3 LightColor;
+uniform vec4 LightColor;
 uniform sampler2D Texture;
 uniform sampler2D AirTexture;
 uniform sampler2D FoamTexture;
@@ -48,7 +48,7 @@ vec4 Diffuse() {
     float Id = 0.9;
     vec3 Kd = vec3(0.392, 0.706, 0.983);
     float diff = max(dot(fs_in.N, fs_in.L), 0.0) * Id;
-    return vec4(diff * Kd * LightColor, 0.0);
+    return vec4(diff * Kd * LightColor.rgb, 0.0);
 }
 
 vec4 Specular() {
@@ -59,7 +59,7 @@ vec4 Specular() {
         vec3 Ks = vec3(1.0, 1.0, 1.0);
         vec3 R = reflect(-fs_in.L, fs_in.N);
         float spec = pow(max(dot(R, fs_in.V), 0.0), 128) * Is;
-        specular += vec4(spec * Ks * LightColor, 0.0);
+        specular += vec4(spec * Ks * LightColor.rgb, 0.0);
     }
     return Ambient() + specular;
 }

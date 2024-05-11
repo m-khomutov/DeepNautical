@@ -10,7 +10,7 @@
 #define TEXTURE_H
 
 #include "utils.h"
-#include <GL/glew.h>
+#include <GL/gl.h>
 #include <stdexcept>
 
 /*!

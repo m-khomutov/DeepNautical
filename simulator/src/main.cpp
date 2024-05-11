@@ -72,16 +72,21 @@ int main(int argc, char** argv)
     {
         QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL, true);
         QApplication a(argc, argv);
+
+        std::setlocale( LC_NUMERIC, "C" );
+
         std::unique_ptr< TBasescreen > scr( new TQscreen( new TJpegframe( NUtils::TConfig()["window"],
                                                                           NUtils::TConfig()["quality"],
                                                                           NUtils::TConfig()["duration"] ) ) );
         service.reset( new TQService( scr.get(), NUtils::TConfig()["port"] ) );
 
-        std::setlocale( LC_NUMERIC,"C" );
-
         service->start_screen();
 
         service->stop_screen();
+
+        service.reset();
+
+        return (EXIT_SUCCESS);
     }
     catch( const std::runtime_error &err )
     {

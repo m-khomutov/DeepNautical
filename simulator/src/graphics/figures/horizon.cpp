@@ -7,8 +7,8 @@
 
 #include "horizon.h"
 
-THorizon::THorizon( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
-: TFigure( settings, camera_pos )
+THorizon::THorizon( const std::vector< std::string > &settings )
+: TFigure( settings )
 {
     f_check_environment();  // проверить настройки
     // создать объект кадров формата AVI

@@ -9,15 +9,13 @@
 #ifndef FIGURE_H
 #define FIGURE_H
 
-#include "specification.h"
 #include "../visitor.h"
-#include "../texture/jpeg.h"
-#include "../program.h"
+#include "specification.h"
 #include "utils.h"
-#include <GL/glew.h>
-#include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+
+#include <QGLShaderProgram>
+#include <QOpenGLTexture>
+
 #include <memory>
 
 /*!
@@ -38,19 +36,18 @@ public:
     struct TPosition
     {
         //! курс - направление
-        glm::vec3 course;
+        QVector3D course;
         //! геометрия
-        glm::vec3 current;
+        QVector3D current;
         //! след (кильватерный)
-        glm::vec2 wake;
+        QVector2D wake;
     };
 
     /*!
        \brief Конструктор класса. Настраивает матрицу обзора и матрицу перспективы
        \param setting конфигурация объекта
-       \param camera_pos позиция камеры на сцене
      */
-    explicit TFigure( const std::vector< std::string > &setting, const glm::vec3 &camera_pos );
+    explicit TFigure( const std::vector< std::string > &setting );
     /*!
        \brief Запрещенный конструктор копии.
        \param orig Копируемый объект
@@ -65,7 +62,7 @@ public:
     /*!
        \brief Деструктор класса. Виртуальный для обеспечения наследования
      */
-    virtual ~TFigure() = default;
+    virtual ~TFigure();
 
     /*!
        \brief создает объект GL программы. Запускает процесс инициализации, специфичный для производного класса геометрической фигуры
@@ -103,95 +100,27 @@ public:
 protected:
     //! спецификация геометрического объекта (набор параметров конфигурации)
     TSpecification spec_;
-    //! умный указатель на GL программу
-    std::unique_ptr< program > program_;
+    //! GL программа
+    QGLShaderProgram shader_program_;
     //! умный указатель на текстуру объекта
-    std::unique_ptr< TJpegTexture > texture_;
+    std::shared_ptr< QOpenGLTexture > texture_;
     //! координаты объекта в его системе координат
-    glm::mat4 model_ { glm::rotate( glm::mat4(1.0f), glm::radians( 0.0f ), glm::vec3(1.0f, 0.0f, 0.0f) ) };
+    QMatrix4x4 model_;
     //! координаты для перевода объекта из его системы координат в систему координат камеры
-    glm::mat4 view_ { glm::lookAt( glm::vec3(0.0f, 0.0f, 3.0f),
-                                   glm::vec3(0.0f, 0.0f, 0.0f),
-                                   glm::vec3(0.0f, 1.0f, 0.0f) ) };
+    QMatrix4x4 view_;
     //! координаты для перевода объекта в проекционную систему координат
-    glm::mat4 projection_;
+    QMatrix4x4 projection_;
     //! угол движения объекта относительно оси абсцисс
-    glm::vec3 angle_ = glm::vec3( 0.0f, 0.0f, 0.0f );
+    QVector3D angle_ { 0.0f, 0.0f, 0.0f };
     //! позиция объекта на сцене
     float scene_position_ { 0.0f };
     //! направление движения объекта
     float direction_ { -1.0f };
     //! смещение координат объекта от центра сцены
-    glm::vec3 offset_ { 0.0f, 0.0f, 0.0f };
+    QVector4D offset_ { 0.f, 0.f, 0.f, 1.f };
 
     //! флаг готовности объекта к функционированию
     bool valid_ { false };
-
-protected:
-    /*!
-       \brief настроить униформную переменную типа float
-       \param name имя переменной в шейдере
-       \param value значение, присваиваемое переменной
-     */
-    void set_uniform( const GLchar * name, float value );
-    /*!
-       \brief настроить униформную целочисленную переменную
-       \param name имя переменной в шейдере
-       \param value значение, присваиваемое переменной
-     */
-    void set_uniform( const GLchar * name, GLuint value );
-    /*!
-       \brief настроить униформную переменную типа массива 2-х float
-       \param name имя переменной в шейдере
-       \param value значение, присваиваемое переменной
-     */
-    void set_uniform( const GLchar * name, glm::vec2 );
-    /*!
-       \brief настроить униформную переменную типа массива массивов 2-х float
-       \param name имя переменной в шейдере
-       \param count размер настраиваемого массива
-       \param value значение, присваиваемое переменной
-     */
-    void set_uniform( const GLchar *name, GLsizei count, glm::vec2 *value );
-    /*!
-       \brief настроить униформную переменную типа массива 3-х float
-       \param name имя переменной в шейдере
-       \param value значение, присваиваемое переменной
-     */
-    void set_uniform( const GLchar * name, glm::vec3 );
-    /*!
-       \brief настроить униформную переменную типа массива 4-х float
-       \param name имя переменной в шейдере
-       \param value значение, присваиваемое переменной
-     */
-    void set_uniform( const GLchar * name, glm::vec4 );
-    /*!
-       \brief настроить униформную переменную типа матрицы 3х3 float
-       \param name имя переменной в шейдере
-       \param value значение, присваиваемое переменной
-     */
-    void set_uniform( const GLchar * name, glm::mat3 );
-    /*!
-       \brief настроить униформную переменную типа матрицы 4х4 float
-       \param name имя переменной в шейдере
-       \param value значение, присваиваемое переменной
-     */
-    void set_uniform( const GLchar * name, glm::mat4 );
-    /*!
-       \brief выбрать функцию выполнения в шейдера
-       \param uniform_name имя униформной переменной, задающей тип функции
-       \param subroutine_name имя функции выполнения в шейдере
-       \param shader_type тип шейдера (вершинный|фрагментный)
-     */
-    void set_subroutine( const GLchar * uniform_name, const GLchar * subroutine_name, GLenum shader_type );
-    /*!
-       \brief скопировать значения атрибута в шейдер
-       \param name имя атрибута
-       \param size размер атрибута
-       \param step шаг чередования атрибутов в массиве передачи
-       \param off смещение атрибута в массиве передачи
-     */
-    void set_attribute( char const *name, GLuint size, GLuint step, GLuint off );
 
 private:
     /*!

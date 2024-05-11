@@ -10,7 +10,7 @@
 #define QSCREEN_H
 
 #include "glscreen.h"
-#include <QOpenGLWidget>
+#include <QWidget>
 #include <memory>
 
 /*!
@@ -18,7 +18,7 @@
 
    Создает окно и настраивает его размер
  */
-class TQscreen: public TGLscreen, public QOpenGLWidget {
+class TQscreen: public TGLscreen, public QWidget {
 public:
     /*!
        \brief Qt класс экрана отображения сцен.
@@ -46,22 +46,13 @@ public:
        \param e событие срабатывания таймера
      */
     void timerEvent( QTimerEvent *e );
-    /*!
-       \brief инициализирует контекст GL. Создает текущие сцены экрана
-     */
-    void initializeGL() override;
-    /*!
-       \brief отрисовывает контекст GL
 
-       При наличии команд экрану, выполняет их. запускает отрисовку сцен. При необходимости сохраняет текущий кадр
-     */
-    void paintGL() override;
+protected:
     /*!
-       \brief Настраивает GL вьюпорт при изменении размеров окна
-       \param w новая ширина окна
-       \param h новая высота окна
+     * \brief closeEvent обработчик события закрытия окна
+     * \param event событие закрытия окна
      */
-    void resizeGL(int w, int h) override;
+    void closeEvent( QCloseEvent *event ) override;
 
 private:
     //! идентификатор запущенного таймера

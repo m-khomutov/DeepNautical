@@ -7,8 +7,8 @@
 
 #include "antisubmarinefrigate.h"
 
-TAntisubmarinefrigate::TAntisubmarinefrigate( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
-: TFigure( settings, camera_pos )
+TAntisubmarinefrigate::TAntisubmarinefrigate( const std::vector< std::string > &settings )
+: TFigure( settings )
 {
     f_set_model();
 }

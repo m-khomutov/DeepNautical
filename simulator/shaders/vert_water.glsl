@@ -1,6 +1,6 @@
 #version 330
 
-layout (location=0) in vec4 Position;
+layout (location=0) in vec4 Surface;
 layout (location=1) in vec3 Normals;
 
 out VS_OUT {
@@ -13,28 +13,28 @@ out VS_OUT {
 } vs_out;
 
 
-uniform vec3 Offset;
+uniform vec4 Offset;
 uniform mat4 Model;
 uniform mat4 View;
 uniform mat4 Projection;
-uniform vec3 LightPosition;
+uniform vec4 LightPosition;
 uniform vec3 CameraPosition;
 
 void main() {
     // distance from camera
-    vs_out.distance = View * Model * vec4(Position.xyz, 1.0);
+    vs_out.distance = View * Model * vec4(Surface.xyz, 1.0);
     // vertex in world coords
-    vec3 worldcoords = (View * Model * vec4(Position.xyz, 1.0)).xyz;
+    vec3 worldcoords = (View * Model * vec4(Surface.xyz, 1.0)).xyz;
     // normal in world coords
     vs_out.N = normalize((inverse(transpose(Model)) * vec4(Normals, 1.0)).xyz);
     // diffuse 
-    vs_out.L = normalize(LightPosition - worldcoords);
+    vs_out.L = normalize(LightPosition.xyz - worldcoords);
     // specular 
     vs_out.V = normalize(-worldcoords);
     // wave amplitude
-    vs_out.amplitude = Position.y;
+    vs_out.amplitude = Surface.y;
     // wake position
-    vs_out.wake = Position.w;
+    vs_out.wake = Surface.w;
 
-    gl_Position = Projection * View * Model * vec4(Position.xyz + Offset, 1.0);
+    gl_Position = Projection * View * Model * (Surface + Offset);
 }

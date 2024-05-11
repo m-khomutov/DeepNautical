@@ -7,6 +7,7 @@ CONFIG += 14
 
 HEADERS = kformat.h \
     ../common/utils.h \
+    ../common/json.h \
     include/basescreen.h \
     include/s_socket.h \
     include/videodevice.h \
@@ -23,6 +24,7 @@ HEADERS = kformat.h \
 
 SOURCES = \
         ../common/utils.cpp \
+        ../common/json.cpp \
         screen/basescreen.cpp \
         service/s_socket.cpp \
         service/videodevice.cpp \

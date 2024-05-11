@@ -84,6 +84,7 @@ namespace
         }
         return false;
     }
+
 }  // namespace
 
 NUtils::TConfig::TConfig( int argc, char * argv[] )
@@ -94,12 +95,12 @@ NUtils::TConfig::TConfig( int argc, char * argv[] )
     TConfig::fields_["quality"] = 80;
     TConfig::fields_["duration"] = 40;
     TConfig::fields_["verify"] = false;
-    TConfig::fields_["scene_count"] = 1;
+    TConfig::fields_["screen_layout"] = std::string();
     TConfig::fields_["bide"] = 2000;
 
     // параметры командной строки
     int c;
-    while ((c = getopt (argc, argv, "d:p:q:s:t:u:vb:w:c:o:h")) != -1)
+    while ((c = getopt (argc, argv, "d:p:q:s:t:u:l:vb:w:c:o:h")) != -1)
     {
         switch (c)
         {
@@ -126,6 +127,9 @@ NUtils::TConfig::TConfig( int argc, char * argv[] )
               break;
         case 'u': // урл до сервиса выдачи видеокадров (абонентская настройка)
               TConfig::fields_["url"] = str2conf< std::string >( optarg );
+              break;
+        case 'l':
+              TConfig::fields_["screen_layout"] = str2conf< std::string >( optarg );
               break;
         case 'v': // вывод информации о задержке доставки кадра (абонентская настройка)
               TConfig::fields_["verify"] = true;
@@ -197,9 +201,9 @@ void NUtils::TConfig::f_read_file( char const *fname )
         {
             TConfig::fields_["scenes"] = str2conf< std::string >( line.c_str() );
         }   
-        else if( (pos = line.find( "scene_count=" )) != std::string::npos )
+        else if( (pos = line.find( "screen_layout=" )) != std::string::npos )
         {
-            TConfig::fields_["scene_count"] = str2conf< int >( line.substr( pos + 12 ).c_str() );
+            TConfig::fields_["screen_layout"] = str2conf< std::string >( line.c_str() );
         }
     });
 }

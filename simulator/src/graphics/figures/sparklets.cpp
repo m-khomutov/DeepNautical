@@ -7,8 +7,8 @@
 
 #include "sparklets.h"
 
-TSparklets::TSparklets( const std::vector< std::string > &settings, const glm::vec3 &camera_pos )
-: TFigure( settings, camera_pos )
+TSparklets::TSparklets( const std::vector< std::string > &settings )
+: TFigure( settings )
 {
     // проверить настройки
     f_check_environment();
@@ -84,7 +84,7 @@ void TSparklets::f_initialize_layout()
     texture_.reset( new TJpegTexture( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str(), alpha.c_str() ) );
     air_texture_.reset( new TJpegTexture( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_air).c_str() ) );
 
-    // скопировать в шейдер индексы подложжки
+    // скопировать в шейдер индексы подложки
     glBufferData( GL_ARRAY_BUFFER, spec_.viewport.size() * sizeof(float), spec_.viewport.data(), GL_STATIC_DRAW );
     glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices_), indices_, GL_STATIC_DRAW); 
     // настроить атрибуты
@@ -101,7 +101,7 @@ void TSparklets::f_initialize_layout()
 
 void TSparklets::f_initialize_sparklets()
 {
-    // скопитьвать точки в шейдер
+    // скопировать точки в шейдер
     size_t whole_size = (points_.size() + colors_.size()) * sizeof(GLfloat);
     glBufferData(GL_ARRAY_BUFFER, whole_size, NULL, GL_STREAM_DRAW);
     

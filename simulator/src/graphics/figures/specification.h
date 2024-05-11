@@ -9,9 +9,10 @@
 #ifndef SPECIFICATION_H
 #define SPECIFICATION_H
 
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
+#include <QVector2D>
+#include <QVector3D>
+#include <QVector4D>
+
 #include <string>
 #include <vector>
 
@@ -30,7 +31,7 @@ public:
        \param settings конфигурация класса
        \param camera_pos позиция камеры на сцене
      */
-    explicit TSpecification( const std::vector< std::string > &settings, const glm::vec3 &camera_pos );
+    explicit TSpecification( const std::vector< std::string > &settings );
     /*!
        \brief Запрещенный конструктор копии.
        \param orig Копируемый объект
@@ -61,22 +62,22 @@ public:
     std::string alpha;
 
     //! координаты скорости перемещения фигуры по сцене
-    glm::vec3 speed { 0.001f, 0.0f, 0.0f };
+    QVector3D speed { 0.001f, 0.0f, 0.0f };
     //! начальные координаты фигуры на сцене
-    glm::vec3 start_position = glm::vec3( 0.0f, 0.0f, 0.0f );
+    QVector3D start_position { 0.0f, 0.0f, 0.0f };
     //! координаты направления движения фигуры по сцене
-    glm::vec3 course = glm::vec3( 0.0f, 0.0f, 0.0f );
+    QVector3D course { 0.0f, 0.0f, 0.0f };
     //! коэффициент траектории движения фигуры по сцене
     float trajectory = 1.0f;
     //! координаты раскачивания фигуры
-    glm::vec2 pitching_range{ 0.0f, 0.0f };
+    QVector2D pitching_range { 0.0f, 0.0f };
     //! коэффициент раскачивания фигуры
     float pitching = 0.0f;
     //! координаты углового пририщения при движении фигуры по сцене
-    glm::vec3 angle_gain { 0.0f, 0.0f, 0.0f };
+    QVector3D angle_gain { 0.0f, 0.0f, 0.0f };
 
     //! координаты начальных скоростей фигуры
-    glm::vec3 start_factor = glm::vec3( 1.0f, 1.0f, 1.0f );
+    QVector3D start_factor { 1.0f, 1.0f, 1.0f };
     //! коэффициент скорости движения фигуры
     float factor_gain = 0.0f;
 
@@ -84,27 +85,27 @@ public:
     std::vector< float > viewport;
 
     //! позиция камеры на сцене
-    glm::vec3 camera_position;
+    QVector3D camera_position;
 
     //! цвет источника света на сцене
-    glm::vec3 light_color = glm::vec3( 1.0f, 1.0f, 1.0f );
+    QVector3D light_color { 1.0f, 1.0f, 1.0f };
     //! позиция источника света на сцене
-    glm::vec3 light_position = glm::vec3( 0.0f, 1.0f, -3.0f ); 
+    QVector3D light_position { 0.0f, 1.0f, -3.0f };
 
     //! модель волны - амплитуда, скорость
-    glm::vec2 wave = { 10.0f, 0.2f };
+    QVector2D wave { 10.0f, 0.2f };
     //! модель кильватерной струи - амплитуда, скорость
-    glm::vec2 wake = { 20.0f, 2.0f };
+    QVector2D wake { 20.0f, 2.0f };
 
     //! вектор цвета тумана на сцене
-    glm::vec4 fog_color = {1.0f, 1.0f, 1.0f, 1.0f};
+    QVector4D fog_color = {1.0f, 1.0f, 1.0f, 1.0f};
     //! коэффициент плотности тумана на сцене
     float fog_density = 0.0f;
 
     //! координаты ширины кильватерной струи
-    glm::vec2 wake_width = {0.3f, 0.3f};
+    QVector2D wake_width {0.3f, 0.3f};
     //! координаты изменения кильватерной струи
-    glm::vec2 surge[2] = { glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f) };
+    QVector2D surge[2] = { QVector2D(0.0f, 0.0f), QVector2D(0.0f, 0.0f) };
     //! скорость движения фигуры по сцене
     float step = 0.01;
 

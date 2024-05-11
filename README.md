@@ -90,15 +90,15 @@ $ viewer -h
 ```
 # Файл конфигурации эмулятора вида на море
 
-shaders="/opt/agat-a/shaders"   # каталог шейдеров
-textures="/opt/agat-a/textures" # каталог текстур 
-objs="/opt/agat-a/objs"         # каталог объектов, выгруженных из blender-a в формате OBJ
-scenes="/opt/agat-a/scenes"     # каталог сцен
-scene_count=2                   # количество воспроизводимых сцен
-port=2232                       # порт приема запросов на трансляцию стрима
-window=800x600                  # размеры окна
-quality=80                      # качество сжатия %
-duration=40                     # длительность кадра мсек.
+shaders="/opt/agat-a/shaders"               # каталог шейдеров
+textures="/opt/agat-a/textures"             # каталог текстур 
+objs="/opt/agat-a/objs"                     # каталог объектов, выгруженных из blender-a в формате OBJ
+scenes="/opt/agat-a/scenes"                 # каталог сцен
+screen_layout="/opt/agat-a/etc/layout.json" # расположение воспроизводимых сцен
+port=2232                                   # порт приема запросов на трансляцию стрима
+window=800x600                              # размеры окна
+quality=80                                  # качество сжатия %
+duration=40                                 # длительность кадра мсек.
 ```
   
 **Каталог сцен**  

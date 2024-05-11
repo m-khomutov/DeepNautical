@@ -26,4 +26,4 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += src/main.cpp
 
 INCLUDEPATH += ../common ../kviewer/include
-LIBS += ../build/kviewer/lib/libkviewer.a -lGLEW -lGLU -ljpeg
+LIBS += ../build/kviewer/lib/libkviewer.a -ljpeg

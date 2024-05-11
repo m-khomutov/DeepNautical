@@ -11,6 +11,22 @@
 
 #include "figure.h"
 
+class Perlin
+{
+public:
+    Perlin();
+
+    double noise( double x, double y, double z );
+
+private:
+    int p[512];
+
+private:
+    double f_fade( double t );
+    double f_lerp( double t, double a, double b );
+    double f_grad( int hash, double x, double y, double z );
+};
+
 /*!
   \class TWater
   \brief Класс водной поверхности
@@ -20,9 +36,8 @@ public:
     /*!
        \brief Конструктор класса. Настраивает геометрическую модель отображения
        \param settings конфигурация класса
-       \param camera_pos позиция камеры на сцене
      */
-    explicit TWater( const std::vector< std::string > &settings, const glm::vec3 &camera_pos );
+    explicit TWater( const std::vector< std::string > &settings );
     /*!
        \brief Запрещенный конструктор копии.
        \param orig Копируемый объект
@@ -37,7 +52,7 @@ public:
     /*!
        \brief Деструктор класса
      */
-    ~TWater() = default;
+    ~TWater();
 
     /*!
        \brief настраивает переменные GL и отправляет GL команду на отрисовку
@@ -60,11 +75,13 @@ private:
     //! фаза отрисовки волны на поверхности
     float phase_ { 0.0f };
     //! умный указатель на объект текстуры отражения неба на водной поверхности
-    std::unique_ptr< TJpegTexture > air_texture_;
+    std::shared_ptr< QOpenGLTexture > air_texture_;
     //! умный указатель на объект текстуры кильватерного следа на водной поверхности
-    std::unique_ptr< TJpegTexture > foam_texture_;
+    std::shared_ptr< QOpenGLTexture > foam_texture_;
     //! вектор геометрических координат кильватерных следов на водной поверхности
     std::vector< TFigure::TPosition > wake_position_;
+    //! объект генерации шума Перлина
+    Perlin perlin_;
 
 private:
     /*!
