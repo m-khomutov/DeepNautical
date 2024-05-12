@@ -6,38 +6,38 @@
 
      Данный файл содержит в себе состояние класса солнечных бликов, реализацию его интерфейсов.
  */
-#ifndef SPARKLETS_H
-#define SPARKLETS_H
+#ifndef SURGE_H
+#define SURGE_H
 
 #include "figure.h"
 #include "../blender.h"
 
 /*!
-   \class Sparklets
-   \brief Класс солнечных бликов на водной поверхности
+   \class Surge
+   \brief Класс водной поверхности с бликами
  */
-class TSparklets: public TFigure {
+class TSurge: public TFigure {
 public:
     /*!
        \brief Конструктор класса. Настраивает геометрическую модель отображения
        \param settings конфигурация класса
      */
-    explicit TSparklets( const std::vector< std::string > &settings );
+    explicit TSurge( const std::vector< std::string > &settings );
     /*!
        \brief Запрещенный конструктор копии.
        \param orig Копируемый объект
      */
-    TSparklets( const TSparklets& orig ) = delete;
+    TSurge( const TSurge& orig ) = delete;
     /*!
        \brief Запрещенный оператор присваивания.
        \param orig Копируемый объект
        \return Собственный объект
      */
-    TSparklets &operator =( const TSparklets& orig ) = delete;
+    TSurge &operator =( const TSurge& orig ) = delete;
     /*!
        \brief Деструктор класса
      */
-    ~TSparklets() = default;
+    ~TSurge() = default;
 
     /*!
      * \brief возвращает количество используемых Vertex Buffer Object (VBO)
@@ -45,7 +45,7 @@ public:
      */
     size_t vbo_count() const override
     {
-        return 2;
+        return 1;
     }
 
     /*!
@@ -60,12 +60,14 @@ private:
     //! Набор цветов, соответствующих бликам
     std::vector< GLfloat > colors_;
 
-    //! индексы очередности отрисовки
-    GLuint indices_[6] = { 0, 3, 1, 1, 3, 2 };
+    //! координаты вершин
+    QVector<QVector4D> layout_;
+    //! текстурные координаты
+    QVector<QVector2D> texels_;
     //! временная метка последней отрисовки
     double last_frame_time_ { 0.0f };
     //! умный указатель на объект текстуры воздушной среды
-    std::unique_ptr< TJpegTexture > air_texture_;
+    std::unique_ptr< QOpenGLTexture > air_texture_;
     
 private:
     /*!
@@ -96,12 +98,6 @@ private:
        Создает объект текстуры воздушной среды, выделяет память под атрибуты в шейдере, настраивает арибуты
      */
     void f_initialize_layout();
-    /*!
-       \brief инициализирует точки, представляющие блики.
-
-       Выделяет память под атрибуты в шейдере, настраивает арибуты
-     */
-    void f_initialize_sparklets();
 
     /*!
        \brief Настраивает униформные переменные, отдает команду на отрисовку подложки
@@ -122,5 +118,5 @@ private:
     void f_reset_points();
 };
 
-#endif /* SPARKLETS_H */
+#endif /* SURGE_H */
 

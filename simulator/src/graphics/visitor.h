@@ -13,10 +13,10 @@
 
 class TSol;
 class TWater;
+class TSurge;
 /*class TAntisubmarinefrigate;
 class THorizon;
-class TVessel;
-class TSparklets;*/
+class TVessel;*/
 
 /*!
    \interface IVisitor
@@ -66,8 +66,7 @@ public:
        \param vbo_number номер связанного VBO
        \param fig посещаемый элемент
      */
-    //virtual void visit( size_t vbo_number, TSparklets * ) = 0;
+    virtual void visit( size_t vbo_number, TSurge * ) = 0;
 };
 
 #endif /* VISITOR_H */
-

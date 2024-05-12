@@ -8,10 +8,10 @@
 #include "figureset.h"
 #include "figures/sol.h"
 #include "figures/water.h"
+#include "figures/surge.h"
 /*#include "figures/antisubmarinefrigate.h"
 #include "figures/horizon.h"
-#include "figures/vessel.h"
-#include "figures/sparklets.h"*/
+#include "figures/vessel.h"*/
 #include <glm/gtc/type_ptr.hpp>
 
 TFigureset::~TFigureset()
@@ -112,6 +112,11 @@ void TFigureset::visit( size_t vbo_number, TWater *_water )
     vessel_positions_.clear();
 }
 
+void TFigureset::visit( size_t vbo_number, TSurge *_surge )
+{
+    _surge->draw( vbo_number );
+}
+
 /*void TFigureset::visit( size_t vbo_number, TAntisubmarinefrigate *frigate )
 {
     frigate->draw( vbo_number );
@@ -126,11 +131,5 @@ void TFigureset::visit( size_t vbo_number, TVessel *_vessel )
 {
     _vessel->draw( vbo_number );
     vessel_positions_.push_back( _vessel->position() );
-}
-
-
-void TFigureset::visit( size_t vbo_number, TSparklets *_sparklets )
-{
-    _sparklets->draw( vbo_number );
 }
 */

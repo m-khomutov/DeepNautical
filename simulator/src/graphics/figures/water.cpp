@@ -138,12 +138,12 @@ void TWater::draw( size_t )
     if( air_texture_ )
     {
         shader_program_.setUniformValue( "AirTexture", GLuint(1) );
-        air_texture_->bind();
+        air_texture_->bind(1);
     }
     if( foam_texture_ )
     {
         shader_program_.setUniformValue( "FoamTexture", GLuint(2) );
-        foam_texture_->bind();
+        foam_texture_->bind(2);
     }
 
     // отрисовать поверхность

@@ -27,6 +27,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     src/graphics/figures/sol.cpp \
     src/graphics/figures/water.cpp \
+    src/graphics/figures/surge.cpp \
     src/graphics/figures/figure.cpp \
     src/graphics/figures/specification.cpp \
     src/graphics/visitor.cpp \
@@ -40,7 +41,6 @@ SOURCES += \
 #    src/graphics/figures/horizon.cpp \
 #    src/graphics/figures/antisubmarinefrigate.cpp \
 #    src/graphics/figures/vessel.cpp \
-#    src/graphics/figures/sparklets.cpp \
 #    src/graphics/program.cpp \
 #    src/graphics/texture/jpeg.cpp \
 #    src/graphics/texture/avi.cpp \
@@ -50,6 +50,7 @@ SOURCES += \
 HEADERS += \
     src/graphics/figures/sol.h \
     src/graphics/figures/water.h \
+    src/graphics/figures/surge.h \
     src/graphics/figures/figure.h \
     src/graphics/figures/specification.h \
     src/graphics/visitor.h \
@@ -62,7 +63,6 @@ HEADERS += \
 #    src/graphics/figures/horizon.h \
 #    src/graphics/figures/antisubmarinefrigate.h \
 #    src/graphics/figures/vessel.h \
-#    src/graphics/figures/sparklets.h \
 #    src/graphics/program.h \
 #    src/graphics/texture/jpeg.h \
 #    src/graphics/texture/avi.h \

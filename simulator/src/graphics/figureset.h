@@ -103,11 +103,11 @@ public:
      */
     //void visit( size_t vbo_number, TVessel *fig ) override;
     /*!
-       \brief реализация метода посещения элемента класса TSparklets
+       \brief реализация метода посещения элемента класса TSurge
        \param vbo_number номер связанного VBO
        \param fig посещаемый элемент
      */
-    //void visit( size_t vbo_number, TSparklets *fig ) override;
+    void visit( size_t vbo_number, TSurge *fig ) override;
 
 private:
     //! буфер загрузки данных в шейдер.

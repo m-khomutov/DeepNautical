@@ -54,21 +54,19 @@ light_position={0.0 0.0 1.0}
 fog_color={0.0, 0.0, 0.0 1.0}
 fog_density=0.0
 
-[Sparklets]
-shader="sparklets.glsl"
+[Surge]
+shader="surge.glsl"
 texture="reflection.jpg"
 alpha="alpha.jpg"
 air="air.jpg"
-surge={{0.004 2.0} {0.003 0.5}} # horizontal (amplitude, frequency) vertical (amplitude, frequency)
-viewport={{-1.3 0.6 -0.1} {1.3 0.6 -0.1} {1.0 -1.8 0.1} {-1.0 -1.8 0.1}} # {topleft topright bottomright bottomleft}
+surge={{0.004 2.0} {0.003 2.5}} # horizontal (amplitude, frequency) vertical (amplitude, frequency)
+viewport={{-2.0 -2.5 1.0} {2.0 -2.5 1.0} {4.5 0.6 -1.0} {-4.5 0.6 -1.0}} # {bottomleft bottomright topright topleft}
 speed={0.001 0.0 0.0}
 step=0.03
 
 [Sol]
 shader="sol.glsl"
 texture="air.jpg"
-#viewport={{-8.5 13.0 1.7} {13.5 13.0 1.7} {25.3 -4.0 -2.0} {-20.5 -4.0 -2.0}} # {topleft topright bottomright bottomleft}
-#viewport={{-5.0 3.5 1.7} {9.9 3.5 1.7} {9.9 -4.0 -2.0} {-5.0 -4.0 -2.0}} # {topleft topright bottomright bottomleft}
 viewport={{-8.5 13.0 1.7} {-20.5 -4.0 -2.0} {25.3 -4.0 -2.0} {13.5 13.0 1.7}} # {topleft bottomleft bottmright bottomright topright}
 
 # Naval Ship Cruiser USA

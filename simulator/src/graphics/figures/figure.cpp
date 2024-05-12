@@ -66,7 +66,7 @@ void TFigure::accept( size_t vbo_number, IVisitor &p, double currentTime )
     if( texture_ )
     {
         shader_program_.setUniformValue( "Texture", GLuint(0) );
-        texture_->bind();
+        texture_->bind(0);
     }
     // в объекте производного класса передать посетителю указатель на себя
     f_accept( vbo_number, p, currentTime );
