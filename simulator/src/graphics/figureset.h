@@ -73,52 +73,31 @@ public:
     void draw( double currentTime );
     
     /*!
-       \brief реализация метода посещения элемента класса TAntisubmarinefrigate
-       \param vbo_number номер связанного VBO
-       \param fig посещаемый элемент
-     */
-    //void visit( size_t vbo_number, TAntisubmarinefrigate *fig ) override;
-    /*!
        \brief реализация метода посещения элемента класса TSol
        \param vbo_number номер связанного VBO
        \param fig посещаемый элемент
      */
-    void visit( size_t vbo_number, TSol *fig ) override;
+    void visit( TSol *fig ) override;
     /*!
        \brief реализация метода посещения элемента класса TWater
        \param vbo_number номер связанного VBO
        \param fig посещаемый элемент
      */
-    void visit( size_t vbo_number, TWater *fig ) override;
-    /*!
-       \brief реализация метода посещения элемента класса THorizon
-       \param vbo_number номер связанного VBO
-       \param fig посещаемый элемент
-     */
-    //void visit( size_t vbo_number, THorizon *fig ) override;
+    void visit( TWater *fig ) override;
     /*!
        \brief реализация метода посещения элемента класса TVessel
        \param vbo_number номер связанного VBO
        \param fig посещаемый элемент
      */
-    //void visit( size_t vbo_number, TVessel *fig ) override;
+    void visit( TVessel *fig ) override;
     /*!
        \brief реализация метода посещения элемента класса TSurge
        \param vbo_number номер связанного VBO
        \param fig посещаемый элемент
      */
-    void visit( size_t vbo_number, TSurge *fig ) override;
+    void visit( TSurge *fig ) override;
 
 private:
-    //! буфер загрузки данных в шейдер.
-    std::vector< GLuint > vbo_;
-    //! буфер передачи атрибутов в шейдер
-    std::vector< GLuint > vao_;
-    //! буфер передачи в шейдер индеков последовательности отрисовки вершин
-    std::vector< GLuint > ebo_;
-    //! общее количество используемых буферов загрузки данных в шейдер
-    size_t vbo_count_ { 0 };
-
     //! набор фигур в объекте класса
     figure_t figures_;
     //! набор геометрических позиций объектов Vessel в объекте класса (для отрисовки кильватерного следа при необходимости)

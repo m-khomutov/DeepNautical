@@ -5,7 +5,6 @@
  * Created on 23 января 2023 г., 18:31
  */
 
-#include "baseservice.h"
 #include "jpegframe.h"
 #include "utils.h"
 

@@ -66,19 +66,17 @@ public:
 
     /*!
        \brief создает объект GL программы. Запускает процесс инициализации, специфичный для производного класса геометрической фигуры
-       \param vbo_number номер используемого VBO (Vertex Buffer Object)
      */
-    void initialize( size_t vbo_number );
+    void initialize();
     /*!
        \brief управляет взаимодействием с посетителем
-       \param vbo_number номер используемого VBO (Vertex Buffer Object)
        \param p посетитель. Объект, обобщающий поведение всех графических объектов на сцене
        \param currentTime текущая временная метка
 
        Устанавливает используемую GL программу,
        настраивает униформные переменные и передает выполнение производному классу, для передачи указателя на себя посетителю
      */
-    void accept( size_t vbo_number, IVisitor &p, double currentTime );
+    void accept( IVisitor &p, double currentTime );
 
     /*!
        \brief подтверждает выполнение настроек программы
@@ -88,14 +86,6 @@ public:
     {
         return valid_;
     }
-    /*!
-     * \brief возвращает количество используемых VBO (Vertex Buffer Object). По умолчанию 1
-     * \return количество используемых VBO
-     */
-    virtual size_t vbo_count() const
-    {
-        return 1;
-    }
 
 protected:
     //! спецификация геометрического объекта (набор параметров конфигурации)
@@ -103,7 +93,7 @@ protected:
     //! GL программа
     QGLShaderProgram shader_program_;
     //! умный указатель на текстуру объекта
-    std::shared_ptr< QOpenGLTexture > texture_;
+    std::unique_ptr< QOpenGLTexture > texture_;
     //! координаты объекта в его системе координат
     QMatrix4x4 model_;
     //! координаты для перевода объекта из его системы координат в систему координат камеры
@@ -136,14 +126,14 @@ private:
        \brief объявляет метод выделения памяти под данные и атрибуты
        \param vbo_number номер используемого VBO (Vertex Buffer Object)
      */
-    virtual void f_initialize( size_t vbo_number ) = 0;
+    virtual void f_initialize() = 0;
     /*!
        \brief объявляет метод передчи своего объекта посетителю, обобщающему поведение всех графических объектов на сцене
        \param vbo_number номер используемого VBO (Vertex Buffer Object)
        \param p посетитель. Объект обобщающий поведение всех графических объектов на сцене
        \param currentTime текущая временная метка
      */
-    virtual void f_accept( size_t vbo_number, IVisitor &p, double currentTime ) = 0;
+    virtual void f_accept( IVisitor &p, double currentTime ) = 0;
 };
 
 #endif /* FIGURE_H */

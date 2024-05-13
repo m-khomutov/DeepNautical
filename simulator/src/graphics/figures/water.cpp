@@ -119,7 +119,7 @@ TWater::~TWater()
     shader_program_.disableAttributeArray("Surface");
 }
 
-void TWater::draw( size_t )
+void TWater::draw()
 {
     shader_program_.setAttributeArray( "Surface", surface_, 4 );
     shader_program_.enableAttributeArray( "Surface" );
@@ -179,7 +179,7 @@ char const *TWater::f_shader_name() const
     return spec_.shader_name.c_str(); 
 }
 
-void TWater::f_initialize( size_t )
+void TWater::f_initialize()
 {
     // создать текстуры
     //std::string alpha = spec_.alpha.empty() ? "" : std::string(NUtils::TConfig()["textures"]) + "/" + spec_.alpha;
@@ -189,10 +189,10 @@ void TWater::f_initialize( size_t )
     foam_texture_.reset( new QOpenGLTexture( QImage(std::string(std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_foam).c_str() ) ) );
 }
 
-void TWater::f_accept( size_t vbo_number, IVisitor &p, double currentTime )
+void TWater::f_accept( IVisitor &p, double currentTime )
 {
     f_load_surface( currentTime );
-    p.visit( vbo_number, this );
+    p.visit( this );
 }
 
 void TWater::f_load_surface( double )

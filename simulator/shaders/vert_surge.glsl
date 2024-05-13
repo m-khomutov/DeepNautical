@@ -7,6 +7,7 @@ layout (location=3) in vec3 SparkleColor;
 
 out vec2 fTexCoord;
 out vec3 fSparkle;
+out vec4 fDistance;
 
 uniform mat4 Model;
 uniform mat4 View;
@@ -22,7 +23,8 @@ void main() {
     else
     {
         fSparkle = vec3(0.0);
-        fTexCoord = Texcoord;//vec2(Texcoord.x, 1.0 - Texcoord.y);
-        gl_Position = Projection * View * Model * WavePosition;
+        fTexCoord = Texcoord;
+        fDistance = View * Model * WavePosition;
+        gl_Position = Projection * fDistance;
     }
 }

@@ -10,7 +10,6 @@
 #define SURGE_H
 
 #include "figure.h"
-#include "../blender.h"
 
 /*!
    \class Surge
@@ -40,19 +39,9 @@ public:
     ~TSurge() = default;
 
     /*!
-     * \brief возвращает количество используемых Vertex Buffer Object (VBO)
-     * \return количество используемых Vertex Buffer Object (VBO)
+       \brief настраивает переменные GL и отправляет GL команду на отрисовку
      */
-    size_t vbo_count() const override
-    {
-        return 1;
-    }
-
-    /*!
-     * \brief настраивает переменные GL и отправляет GL команду на отрисовку
-     * \param vbo_number номер используемого VBO (Vertex Buffer Object). Может не использоваться при наличии одного VBO
-     */
-    void draw( size_t vbo_number );
+    void draw();
 
 private:
     //! Набор точек, представляющих блики
@@ -81,16 +70,14 @@ private:
     char const *f_shader_name() const override;
     /*!
        \brief в порядке инициализации создает текстуру, выделяет память под данные и атрибуты
-       \param vbo_number номер используемого VBO (Vertex Buffer Object)
      */
-    void f_initialize( size_t vbo_number ) override;
+    void f_initialize() override;
     /*!
        \brief передает свой объект посетителю, обобщающему поведение всех графических объектов на сцене
-       \param vbo_number номер используемого VBO (Vertex Buffer Object)
        \param p посетитель. Объект обобщающий поведение всех графических объектов на сцене
        \param currentTime текущая временная метка
      */
-    void f_accept( size_t vbo_number, IVisitor &p, double currentTime ) override;
+    void f_accept( IVisitor &p, double currentTime ) override;
 
     /*!
       \brief иницализирует подложку для бликовой поверхности.

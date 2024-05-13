@@ -40,7 +40,7 @@ vec3 FoamColor(sampler2D foam, vec2 surfaceUV ) {
 
 vec4 Ambient() {
     float Ia = 0.7;
-    vec4 ambient = mix(texture( Texture, fs_in.N.xy ), texture( AirTexture, vec2(fs_in.N.x, 1 - fs_in.N.y) ), 0.2) * Ia;
+    vec4 ambient = mix(texture( Texture, fs_in.N.xy ), texture( AirTexture, vec2(fs_in.N.x, 1 - fs_in.N.y) ), 0.1) * Ia;
     return ambient;
 }
 

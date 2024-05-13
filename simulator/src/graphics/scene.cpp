@@ -15,8 +15,8 @@
 #include "figures/sol.h"
 #include "figures/water.h"
 #include "figures/surge.h"
+#include "figures/vessel.h"
 //#include "figures/horizon.h"
-//#include "figures/vessel.h"
 
 #include <QDateTime>
 #include <QOpenGLDebugLogger>
@@ -209,11 +209,11 @@ void TScene::f_add_figure( const std::string &header, const std::vector< std::st
     {
         f_add_figure< THorizon >( settings, camera_pos );
     }
-    else if( header == "[Vessel]" )
+    else*/ if( header == "[Vessel]" )
     {
-        f_add_figure< TVessel >( settings, camera_pos );
+        f_add_figure< TVessel >( settings );
     }
-    else*/ if( header == "[Water]" )
+    else if( header == "[Water]" )
     {
         f_add_figure< TWater >( settings );
     }

@@ -1,0 +1,154 @@
+{
+  "root-dir": "/opt/agat-a",
+  "screen-layout": {
+    "scenes": {
+      "cruiser": {
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "size": {
+          "width": 800,
+          "height": 600
+        },
+        "environment": {
+          "camera_position": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 3.0
+          },
+          "light_color": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0
+	  },
+          "light_position": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 1.0
+          },
+          "fog_color": {
+            "r": 0.892,
+            "g": 0.892,
+            "b": 0.872,
+            "a": 1.0
+          },
+          "fog_density": 0.12
+        },
+	"figures": {
+          "surge": {
+            "shader": "surge.glsl",
+            "main-texture": "reflection.jpg",
+            "alpha-texture": "alpha.jpg",
+            "air-texture": "air.jpg",
+            "wave": {
+              "horizontal": {
+                "amplitude": 0.004,
+                "frequency": 2.0
+              },
+              "vertical": {
+                "amplitude": 0.003,
+                "frequency": 2.5
+              }
+            },
+            "viewport": {
+              "bottomleft": {
+                "x": -2.0,
+                "y": -2.5,
+                "z": 1.0
+              },
+              "bottomright": {
+                "x": 2.0,
+                "y": -2.5,
+                "z": 1.0
+              },
+              "topright": {
+                "x": 4.5,
+                "y": 0.6,
+                "z": -1.0
+              },
+              "topleft": {
+                "x": -4.5,
+                "y": 0.6,
+                "z": -1.0
+              }
+            },
+            "speed": {
+              "x": 0.002,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "step": 0.03
+          },
+          "sol": {
+            "shader": "sol.glsl",
+            "main-texture": "air.jpg",
+            "viewport": {
+              "bottomleft": {
+                "x": -20.5,
+                "y": -4.0,
+                "z": -2.0
+              },
+              "bottomright": {
+                "x": 25.3,
+                "y": -4.0,
+                "z": -2.0
+              },
+              "topright": {
+                "x": 13.5,
+                "y": 13.0,
+                "z": 1.7
+              },
+              "topleft": {
+                "x": -8.5,
+                "y": 13.0,
+                "z": 1.7
+              }
+            },
+            "speed": {
+              "x": 0.001,
+              "y": 0.0,
+              "z": 0.0
+            }
+          },
+          "vessel": {
+            "shader": "vessel.glsl",
+            "object": "boat.obj",
+            "speed": {
+              "x": -0.0005,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "start-position": {
+              "x": 1.5,
+              "y": 0.5,
+              "z": 0.02
+            },
+            "course": {
+              "x": -70.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "trajectory": 2.6,
+            "pitching-range": {
+              "x": 1.0,
+              "y": 2.2
+            },
+            "pitching": 0.005,
+            "angle-gain": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "start-factor": {
+              "x": 0.05,
+              "y": 0.05,
+              "z": 0.05
+            },
+            "factor-gain": 0.0
+          }
+        }
+      }
+    }
+  }
+}

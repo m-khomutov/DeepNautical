@@ -45,10 +45,9 @@ public:
     ~TSol();
 
     /*!
-     * \brief настраивает переменные GL и отправляет GL команду на отрисовку
-     * \param vbo_number номер используемого VBO (Vertex Buffer Object). Может не использоваться при наличии одного VBO
+       \brief настраивает переменные GL и отправляет GL команду на отрисовку
      */
-    void draw( size_t vbo_number );
+    void draw();
 
 private:
     //! координаты вершин
@@ -72,14 +71,14 @@ private:
        \brief в порядке инициализации создает текстуру, выделяет память под данные и атрибуты
        \param vbo_number номер используемого VBO (Vertex Buffer Object)
      */
-    void f_initialize( size_t vbo_number ) override;
+    void f_initialize() override;
     /*!
        \brief передает свой объект посетителю, обобщающему поведение всех графических объектов на сцене
        \param vbo_number номер используемого VBO (Vertex Buffer Object)
        \param p посетитель. Объект обобщающий поведение всех графических объектов на сцене
        \param currentTime текущая временная метка
      */
-    void f_accept( size_t vbo_number, IVisitor &p, double currentTime ) override;
+    void f_accept( IVisitor &p, double currentTime ) override;
 };
 
 #endif /* SOL_H */

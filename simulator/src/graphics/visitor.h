@@ -14,9 +14,7 @@
 class TSol;
 class TWater;
 class TSurge;
-/*class TAntisubmarinefrigate;
-class THorizon;
-class TVessel;*/
+class TVessel;
 
 /*!
    \interface IVisitor
@@ -32,41 +30,29 @@ public:
     virtual ~IVisitor() = default;
 
     /*!
-       \brief объявление метода посещения элемента класса TAntisubmarinefrigate
-       \param vbo_number номер связанного VBO
-       \param fig посещаемый элемент
-     */
-    //virtual void visit( size_t vbo_number, TAntisubmarinefrigate * ) = 0;
-    /*!
        \brief объявление метода посещения элемента класса TSol
        \param vbo_number номер связанного VBO
        \param fig посещаемый элемент
      */
-    virtual void visit( size_t vbo_number, TSol * ) = 0;
+    virtual void visit( TSol * ) = 0;
     /*!
        \brief объявление метода посещения элемента класса TWater
        \param vbo_number номер связанного VBO
        \param fig посещаемый элемент
      */
-    virtual void visit( size_t vbo_number, TWater * ) = 0;
-    /*!
-       \brief объявление метода посещения элемента класса THorizon
-       \param vbo_number номер связанного VBO
-       \param fig посещаемый элемент
-     */
-    //virtual void visit( size_t vbo_number, THorizon * ) = 0;
+    virtual void visit( TWater * ) = 0;
     /*!
        \brief объявление метода посещения элемента класса TVessel
        \param vbo_number номер связанного VBO
        \param fig посещаемый элемент
      */
-    //virtual void visit( size_t vbo_number, TVessel * ) = 0;
+    virtual void visit( TVessel * ) = 0;
     /*!
        \brief объявление метода посещения элемента класса TSparklets
        \param vbo_number номер связанного VBO
        \param fig посещаемый элемент
      */
-    virtual void visit( size_t vbo_number, TSurge * ) = 0;
+    virtual void visit( TSurge * ) = 0;
 };
 
 #endif /* VISITOR_H */

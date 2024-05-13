@@ -65,7 +65,7 @@
 camera_position={0.0 0.0 3.0}
 light_color={1.0 1.0 0.75}
 light_position={0.0 1.0 -3.0}
-fog_color={0.892, 0.892, 0.872 1.0}
+fog_color={0.892 0.892 0.872 1.0}
 fog_density=0.3
 
 #[Horizon]

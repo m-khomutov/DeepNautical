@@ -17,13 +17,12 @@ TVessel::TVessel( const std::vector< std::string > &settings )
     object_.reset( new NBlender::TObject( (std::string(NUtils::TConfig()["objs"]) + "/" + spec_.obj_name).c_str() ) );
     object_->load_position( &vertices_ );
 
-    // dscnfdbnm d yfxfkj ldb;tybz
     f_reset();
 }
 
-void TVessel::draw( size_t )
+void TVessel::draw()
 {
-    glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+    /*glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
     // настроить общие униформные переменные в шейдере
     set_uniform( "NormalMatrix", glm::transpose( glm::inverse( glm::mat3(view_ * model_) ) ) );
     set_uniform( "LightPosition", spec_.light_position );
@@ -71,7 +70,7 @@ void TVessel::draw( size_t )
         // нарисовать фигуру на сцене
         glDrawArrays( GL_TRIANGLES, first, mtl.faces.size() * 3 );
         first += mtl.faces.size() * 3;
-    }
+    }*/
 }
 
 const TFigure::TPosition &TVessel::position()
@@ -94,10 +93,10 @@ char const *TVessel::f_shader_name() const
     return spec_.shader_name.c_str(); 
 }
 
-void TVessel::f_initialize( size_t )
+void TVessel::f_initialize()
 {
     // пустая текстура. Если объект не будет иметь своей, будем пользовать эту
-    empty_texture_.reset( new TJpegTexture(1, 1, 255) );
+    /*empty_texture_.reset( new TJpegTexture(1, 1, 255) );
     glBufferData( GL_ARRAY_BUFFER, vertices_.size() * sizeof(GLfloat), vertices_.data(), GL_STATIC_DRAW );
     try
     {
@@ -108,19 +107,19 @@ void TVessel::f_initialize( size_t )
     catch( const std::runtime_error &e )
     {
         std::cerr << "vessel error: " << e.what() << std::endl;
-    }
+    }*/
 }
 
-void TVessel::f_accept( size_t vbo_number, IVisitor &p, double )
+void TVessel::f_accept( IVisitor &p, double )
 {
     f_set_model();
-    p.visit( vbo_number, this );
+    p.visit( this );
 }
 
 void TVessel::f_set_model()
 {
     // Качнуть фигуру
-    pitching_angle_ += spec_.pitching;
+    /*pitching_angle_ += spec_.pitching;
     if( pitching_angle_ < spec_.pitching_range[0] || pitching_angle_ > spec_.pitching_range[1] )
     {
         spec_.pitching *= -1;
@@ -154,29 +153,29 @@ void TVessel::f_set_model()
     }
     // изменить следующий угол крена
     angle_ += spec_.angle_gain;
-    angle_.x += spec_.pitching;
+    angle_.x += spec_.pitching;*/
 }
 
 bool TVessel::f_full_trajectory()
 {
-    if( spec_.speed.x < 0.0f )
+    if( spec_.speed.x() < 0.0f )
     {
-        return spec_.start_position.x - offset_.x >= spec_.trajectory;
+        return spec_.start_position.x() - offset_.x() >= spec_.trajectory;
     }
-    return offset_.x - spec_.start_position.x >= spec_.trajectory;
+    return offset_.x() - spec_.start_position.x() >= spec_.trajectory;
 }
 
 void TVessel::f_reset()
 {
     offset_ = spec_.start_position; 
     factor_ = spec_.start_factor;
-    angle_ = glm::vec3( 0.0f, 0.0f, 0.0f );
+    angle_ = QVector3D( 0.0f, 0.0f, 0.0f );
     pitching_angle_ = spec_.pitching_range[0];
-    angle_.x = pitching_angle_;
+    angle_.setX( pitching_angle_ );
     
     f_set_model();
 
-    position_.current = offset_;
+    position_.current = QVector3D(offset_.x(), offset_.y(), offset_.z());
     position_.course = spec_.course;
     position_.wake = spec_.wake_width;
 }

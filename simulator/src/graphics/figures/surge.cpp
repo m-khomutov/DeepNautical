@@ -27,7 +27,7 @@ TSurge::TSurge( const std::vector< std::string > &settings )
     }
 }
 
-void TSurge::draw( size_t vbo_number )
+void TSurge::draw()
 {
     shader_program_.setUniformValue( "Time", last_frame_time_ );
 
@@ -53,22 +53,21 @@ char const *TSurge::f_shader_name() const
     return spec_.shader_name.c_str(); 
 }
 
-void TSurge::f_initialize( size_t vbo_number )
+void TSurge::f_initialize()
 {
     f_initialize_layout();
 }
 
-void TSurge::f_accept( size_t vbo_number, IVisitor &p, double )
+void TSurge::f_accept( IVisitor &p, double )
 {
     last_frame_time_ += spec_.speed.x();
-    p.visit( vbo_number, this );
+    p.visit( this );
 }
 
 void TSurge::f_initialize_layout()
 {
     // создать текстуру
     //std::string alpha = std::string(NUtils::TConfig()["textures"]) + "/" + spec_.alpha;
-    //texture_.reset( new TJpegTexture( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str(), alpha.c_str() ) );
     texture_.reset( new QOpenGLTexture( QImage(std::string(std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str() ) ) );
     air_texture_.reset( new QOpenGLTexture( QImage(std::string(std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_air).c_str() ) ) );
 }
@@ -89,11 +88,12 @@ void TSurge::f_draw_layout()
     }
     // настроить переменную положения в шейдере
     shader_program_.setUniformValue( "DrawSparkles", 0.f );
+    shader_program_.setUniformValue( "FogParams.color", spec_.fog_color );
+    shader_program_.setUniformValue( "FogParams.density", spec_.fog_density );
     shader_program_.setUniformValue( "Amplitude", spec_.surge[0] );
     shader_program_.setUniformValue( "Frequency", spec_.surge[1] );
     if( air_texture_ )
     {
-        //texture_->release();
         shader_program_.setUniformValue( "AirTexture", GLuint(1) );
         air_texture_->bind(1);
     }

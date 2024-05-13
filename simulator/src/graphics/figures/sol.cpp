@@ -32,7 +32,7 @@ TSol::~TSol()
     shader_program_.disableAttributeArray("Position");
 }
 
-void TSol::draw( size_t )
+void TSol::draw()
 {
     shader_program_.setAttributeArray("Position", vertices_.constData());
     shader_program_.enableAttributeArray("Position");
@@ -66,15 +66,15 @@ char const *TSol::f_shader_name() const
     return spec_.shader_name.c_str(); 
 }
 
-void TSol::f_initialize( size_t )
+void TSol::f_initialize()
 {
     // создать текстуру
     texture_.reset( new QOpenGLTexture( QImage(std::string(std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str() ) ) );
 }
 
-void TSol::f_accept( size_t vbo_number, IVisitor &p, double )
+void TSol::f_accept( IVisitor &p, double )
 {
     last_frame_time_ += spec_.speed.x();
     // передать посетителю указатель на себя
-    p.visit( vbo_number, this );
+    p.visit( this );
 }

@@ -32,7 +32,7 @@ TFigure::~TFigure()
     texture_.reset();
 }
 
-void TFigure::initialize( size_t vbo_number )
+void TFigure::initialize()
 {
     std::string dir = NUtils::TConfig()["shaders"];
     NUtils::read_directory( dir, f_shader_name(), [&]( const std::string &name ){
@@ -49,13 +49,13 @@ void TFigure::initialize( size_t vbo_number )
 
     shader_program_.bind();
 
-    f_initialize( vbo_number );
+    f_initialize();
 
     shader_program_.release();
     valid_ = true;
 }
 
-void TFigure::accept( size_t vbo_number, IVisitor &p, double currentTime )
+void TFigure::accept( IVisitor &p, double currentTime )
 {
     shader_program_.bind();
 
@@ -69,7 +69,7 @@ void TFigure::accept( size_t vbo_number, IVisitor &p, double currentTime )
         texture_->bind(0);
     }
     // в объекте производного класса передать посетителю указатель на себя
-    f_accept( vbo_number, p, currentTime );
+    f_accept( p, currentTime );
 
     shader_program_.release();
 }

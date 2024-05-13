@@ -49,7 +49,7 @@ public:
        \brief настраивает переменные GL и отправляет GL команду на отрисовку
        \param vbo_number номер используемого VBO (Vertex Buffer Object). Может не использоваться при наличии одного VBO
      */
-    void draw( size_t vbo_number );
+    void draw();
     /*!
        \brief возвращает текущую геометрическую позиция на сцене
        \return текущая геометрическая позиция на сцене
@@ -62,11 +62,11 @@ private:
     //! вектор геометрических координат, копируемых в шейдер
     std::vector< GLfloat > vertices_;
     //! 3-х мерный коэффициент ускорения движения фигуры по сцене
-    glm::vec3 factor_;
+    QVector3D factor_;
     //! угол крена фигуры при раскачивании
     GLfloat pitching_angle_ = 0.0f;
     //! умный указатель на пустую текстуру. Используется как вспомогательная, если объект координат не представляет своей
-    std::shared_ptr< TJpegTexture > empty_texture_;
+    std::unique_ptr< QOpenGLTexture > empty_texture_;
     //! объект текуще позиции фигуры на сцене
     TFigure::TPosition position_;
 
@@ -84,14 +84,14 @@ private:
        \brief в порядке инициализации создает текстуру, выделяет память под данные и атрибуты
        \param vbo_number номер используемого VBO (Vertex Buffer Object)
      */
-    void f_initialize( size_t vbo_number ) override;
+    void f_initialize() override;
     /*!
        \brief передает свой объект посетителю, обобщающему поведение всех графических объектов на сцене
        \param vbo_number номер используемого VBO (Vertex Buffer Object)
        \param p посетитель. Объект обобщающий поведение всех графических объектов на сцене
        \param currentTime текущая временная метка
      */
-    void f_accept( size_t vbo_number, IVisitor &p, double currentTime ) override;
+    void f_accept( IVisitor &p, double currentTime ) override;
 
     /*!
        \brief настраивает матрицу геометрическую модели

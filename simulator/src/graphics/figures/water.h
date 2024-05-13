@@ -11,6 +11,10 @@
 
 #include "figure.h"
 
+/*!
+   \class Perlin
+   \brief Класс реализации шума Перлина
+ */
 class Perlin
 {
 public:
@@ -56,9 +60,8 @@ public:
 
     /*!
        \brief настраивает переменные GL и отправляет GL команду на отрисовку
-       \param vbo_number номер используемого VBO (Vertex Buffer Object). Может не использоваться при наличии одного VBO
      */
-    void draw( size_t vbo_number );
+    void draw();
     /*!
        \brief устанавливает позицию кольветерного следа на сцене
        \param pos устанавливаемая позиция
@@ -75,9 +78,9 @@ private:
     //! фаза отрисовки волны на поверхности
     float phase_ { 0.0f };
     //! умный указатель на объект текстуры отражения неба на водной поверхности
-    std::shared_ptr< QOpenGLTexture > air_texture_;
+    std::unique_ptr< QOpenGLTexture > air_texture_;
     //! умный указатель на объект текстуры кильватерного следа на водной поверхности
-    std::shared_ptr< QOpenGLTexture > foam_texture_;
+    std::unique_ptr< QOpenGLTexture > foam_texture_;
     //! вектор геометрических координат кильватерных следов на водной поверхности
     std::vector< TFigure::TPosition > wake_position_;
     //! объект генерации шума Перлина
@@ -95,16 +98,14 @@ private:
     char const *f_shader_name() const override;
     /*!
        \brief в порядке инициализации создает текстуру, выделяет память под данные и атрибуты
-       \param vbo_number номер используемого VBO (Vertex Buffer Object)
      */
-    void f_initialize( size_t vbo_number ) override;
+    void f_initialize() override;
     /*!
        \brief передает свой объект посетителю, обобщающему поведение всех графических объектов на сцене
-       \param vbo_number номер используемого VBO (Vertex Buffer Object)
        \param p посетитель. Объект обобщающий поведение всех графических объектов на сцене
        \param currentTime текущая временная метка
      */
-    void f_accept( size_t vbo_number, IVisitor &p, double currentTime ) override;
+    void f_accept( IVisitor &p, double currentTime ) override;
 
     /*!
        \brief загружает геметрические координаты сетки водной поверхности в шейдер
