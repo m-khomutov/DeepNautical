@@ -61,13 +61,14 @@ alpha="alpha.jpg"
 air="air.jpg"
 surge={{0.004 2.0} {0.003 2.5}} # horizontal (amplitude, frequency) vertical (amplitude, frequency)
 viewport={{-2.0 -2.5 1.0} {2.0 -2.5 1.0} {4.5 0.6 -1.0} {-4.5 0.6 -1.0}} # {bottomleft bottomright topright topleft}
-speed={0.001 0.0 0.0}
+speed={0.002 0.0 0.0}
 step=0.03
 
 [Sol]
 shader="sol.glsl"
 texture="air.jpg"
 viewport={{-8.5 13.0 1.7} {-20.5 -4.0 -2.0} {25.3 -4.0 -2.0} {13.5 13.0 1.7}} # {topleft bottomleft bottmright bottomright topright}
+speed={0.0005 0.0 0.0}
 
 # Naval Ship Cruiser USA
 [Vessel]

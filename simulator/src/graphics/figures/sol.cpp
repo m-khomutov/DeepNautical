@@ -43,6 +43,7 @@ void TSol::draw( size_t )
     shader_program_.setUniformValue( "Offset", offset_ );
     shader_program_.setUniformValue( "Fog.color", spec_.fog_color );
     shader_program_.setUniformValue( "Fog.density", spec_.fog_density );
+    shader_program_.setUniformValue( "Time", last_frame_time_ );
     // отрисовать объект
     glDrawArrays( GL_TRIANGLE_FAN, 0, vertices_.size() );
 
@@ -73,6 +74,7 @@ void TSol::f_initialize( size_t )
 
 void TSol::f_accept( size_t vbo_number, IVisitor &p, double )
 {
+    last_frame_time_ += spec_.speed.x();
     // передать посетителю указатель на себя
     p.visit( vbo_number, this );
 }

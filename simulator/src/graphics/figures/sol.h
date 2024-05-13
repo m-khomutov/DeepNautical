@@ -55,6 +55,8 @@ private:
     QVector<QVector4D> vertices_;
     //! текстурные координаты
     QVector<QVector2D> texels_;
+    //! временная метка последней отрисовки
+    GLfloat last_frame_time_ { 0.0f };
 
 private:
     /*!

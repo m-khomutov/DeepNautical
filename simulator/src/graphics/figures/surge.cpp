@@ -29,7 +29,7 @@ TSurge::TSurge( const std::vector< std::string > &settings )
 
 void TSurge::draw( size_t vbo_number )
 {
-    shader_program_.setUniformValue( "Time", GLfloat(last_frame_time_) );
+    shader_program_.setUniformValue( "Time", last_frame_time_ );
 
     f_draw_layout();    // подложка
     f_draw_sparklets(); // точки - блики
@@ -60,7 +60,7 @@ void TSurge::f_initialize( size_t vbo_number )
 
 void TSurge::f_accept( size_t vbo_number, IVisitor &p, double )
 {
-    last_frame_time_ += spec_.speed.x() * 2;
+    last_frame_time_ += spec_.speed.x();
     p.visit( vbo_number, this );
 }
 

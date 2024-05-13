@@ -65,7 +65,7 @@ private:
     //! текстурные координаты
     QVector<QVector2D> texels_;
     //! временная метка последней отрисовки
-    double last_frame_time_ { 0.0f };
+    GLfloat last_frame_time_ { 0.0f };
     //! умный указатель на объект текстуры воздушной среды
     std::unique_ptr< QOpenGLTexture > air_texture_;
     
