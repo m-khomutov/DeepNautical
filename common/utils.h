@@ -9,6 +9,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include "json.h"
+
 #include <cstddef>
 #include <cstdio>
 #include <cstdint>
@@ -29,6 +31,7 @@ extern "C"
 #include <map>
 #include <memory>
 #include <mutex>
+#include <set>
 #include <thread>
 #include <vector>
 
@@ -56,7 +59,7 @@ struct TGeometry
        \param w ширина объекта
        \param h высота объекта
      */
-    TGeometry( int w, int h)
+    TGeometry( int w, int h )
     : width( w )
     , height( h )
     {}
@@ -81,6 +84,50 @@ struct TGeometry
     }
 };
 
+
+/*!
+     \class TSceneConfig
+     \brief Структура настроек сцены.
+
+     Содержит название сцены, геометрию (ширина, высота) и местоположение на экране (x, y).
+ */
+struct TSceneConfig
+{
+    //! название сцены
+    std::string name;
+    //! геометрия сцены
+    TGeometry size;
+    //! местоположение по горизонтали
+    int x = 0;
+    //! местоположение по вертикали
+    int y = 0;
+
+    /*!
+       \brief Конструктор структуры по умолчанию. Необходим для хранения объекта геометрии в контейнерах стандартной библиотеки.
+     */
+    TSceneConfig() = default;
+    /*!
+       \brief Конструктор структуры, заполняющие её состояние из JSON-строки конфигурации
+       \param from строка корфигурации, содержащая размеры объекта в виде widthxheight
+     */
+    TSceneConfig( const std::string &n, const NJson::TObject &obj )
+    : name( n )
+    , size( obj["size"]["width"].toInt(), obj["size"]["height"].toInt() )
+    , x( obj["position"]["x"].toInt() )
+    , y( obj["position"]["y"].toInt() )
+    {}
+
+    bool operator <( const TSceneConfig &other ) const
+    {
+        if( x == other.x )
+        {
+            return y < other.y;
+        }
+        return x < other.x;
+    }
+};
+//! алиас множества конфигураций сцен
+using scene_config_t = std::set< TSceneConfig >;
 
 /*!
     \class TSafeguard
@@ -325,6 +372,11 @@ public:
            \param v переменная геометрии
          */
         TVariant( TGeometry const &v );
+         /*!
+           \brief Конструктор хранения переменной конфигурации сцен
+           \param v переменная конфигурация сцен
+         */
+        TVariant( scene_config_t const &v );
 
         /*!
            \brief оператор, возвращающий целочисленную переменную хранения
@@ -338,6 +390,10 @@ public:
            \brief оператор, возвращающий переменную хранения геометрии
          */
         operator TGeometry() const;
+        /*!
+          \brief оператор, возвращающий переменную конфигурации сцен
+         */
+        operator scene_config_t() const;
 
     private:
         //! целочисленная переменная
@@ -346,6 +402,8 @@ public:
         std::string svalue_;
         //! переменная геометрии
         TGeometry gvalue_;
+        //! переменная конфигурации сцен
+        scene_config_t scvalue_;
     };
     //! алиас соответствия объекта TVariant ключевому строковому значению
     using fields_t = std::map< std::string, TVariant >;
@@ -363,10 +421,15 @@ private:
 
 private:
     /*!
-       \brief читает файл конфигурации. Заполняет таблицу конфигутации
+       \brief читает файл конфигурации. Заполняет таблицу конфигурации
        \param name имя файла конфигурации
      */
     void f_read_file( char const *name );
+    /*!
+       \brief читает файл конфигурации формата JSON. Заполняет таблицу конфигурации
+       \param name имя файла конфигурации фориата JSON.
+     */
+    void f_read_json( char const *name );
 };
 
 /*!

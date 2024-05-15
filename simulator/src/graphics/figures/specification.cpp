@@ -37,6 +37,10 @@ TSpecification::TSpecification( const std::vector< std::string > &settings )
             {
                 texture_foam = p.second.substr( 1, p.second.size() - 2 );
             }
+            else if( p.first.find( "empty_texture" ) != std::string::npos )
+            {
+                empty_texture = p.second.substr( 1, p.second.size() - 2 );
+            }
             else if( p.first.find( "object" ) != std::string::npos )
             {
                 obj_name = p.second.substr( 1, p.second.size() - 2 );
@@ -71,7 +75,10 @@ TSpecification::TSpecification( const std::vector< std::string > &settings )
             }
             else if( p.first.find( "factor_gain" ) != std::string::npos )
             {
-                factor_gain = std::stof( p.second );
+                if( !NUtils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &factor_gain ) )
+                {
+                    std::cerr << "vessel error: invalid factor gain\n";
+                }
             }
             else if( p.first.find( "angle_gain" ) != std::string::npos )
             {

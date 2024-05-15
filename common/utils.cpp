@@ -6,6 +6,7 @@
  */
 
 #include "utils.h"
+
 #include <getopt.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -28,6 +29,10 @@ NUtils::TConfig::TVariant::TVariant( NUtils::TGeometry const &v )
 : gvalue_( v )
 {}
 
+NUtils::TConfig::TVariant::TVariant( NUtils::scene_config_t const &v )
+: scvalue_( v )
+{}
+
 NUtils::TConfig::TVariant::operator int() const
 {
     return ivalue_;
@@ -41,6 +46,11 @@ NUtils::TConfig::TVariant::operator std::string() const
 NUtils::TConfig::TVariant::operator NUtils::TGeometry() const
 {
     return gvalue_;
+}
+
+NUtils::TConfig::TVariant::operator NUtils::scene_config_t() const
+{
+    return scvalue_;
 }
 
 
@@ -92,10 +102,10 @@ NUtils::TConfig::TConfig( int argc, char * argv[] )
     // значения папметров по умолчанию, если не предлагаются другие значения
     TConfig::fields_["port"] = 2232;
     TConfig::fields_["window"] = NUtils::TGeometry();
-    TConfig::fields_["quality"] = 80;
-    TConfig::fields_["duration"] = 40;
+    TConfig::fields_["compress_quality"] = 80;
+    TConfig::fields_["frame_duration"] = 40;
     TConfig::fields_["verify"] = false;
-    TConfig::fields_["screen_layout"] = std::string();
+    TConfig::fields_["screen_layout"] = scene_config_t();
     TConfig::fields_["bide"] = 2000;
 
     // параметры командной строки
@@ -120,16 +130,16 @@ NUtils::TConfig::TConfig( int argc, char * argv[] )
               TConfig::fields_["window"] = str2conf< NUtils::TGeometry >( optarg );
               break;
         case 'q': // качество сжатия JPEG
-              TConfig::fields_["quality"] = str2conf< int >( optarg );
+              TConfig::fields_["compress_quality"] = str2conf< int >( optarg );
               break;
         case 'd': // длительность кадра
-              TConfig::fields_["duration"] = str2conf< int >( optarg );
+              TConfig::fields_["frame_duration"] = str2conf< int >( optarg );
               break;
         case 'u': // урл до сервиса выдачи видеокадров (абонентская настройка)
               TConfig::fields_["url"] = str2conf< std::string >( optarg );
               break;
         case 'l':
-              TConfig::fields_["screen_layout"] = str2conf< std::string >( optarg );
+              //TConfig::fields_["screen_layout"] = str2conf< std::string >( optarg );
               break;
         case 'v': // вывод информации о задержке доставки кадра (абонентская настройка)
               TConfig::fields_["verify"] = true;
@@ -159,6 +169,12 @@ NUtils::TConfig::TVariant &NUtils::TConfig::operator [](char const *key) const
 
 void NUtils::TConfig::f_read_file( char const *fname )
 {
+    if( ::strstr( fname, ".json" ) == fname + strlen(fname) - 5 )
+    {
+        f_read_json( fname );
+        return;
+    }
+
     read_config( fname, [this]( const std::string &line ){
         std::string::size_type pos;
         if( (pos = line.find( "shaders=" )) != std::string::npos )
@@ -177,13 +193,13 @@ void NUtils::TConfig::f_read_file( char const *fname )
         {
             TConfig::fields_["window"] = str2conf< NUtils::TGeometry >( line.substr( pos + 7 ).c_str() );
         }
-        else if( (pos = line.find( "quality=" )) != std::string::npos )
+        else if( (pos = line.find( "jpeg_compress_quality_percent=" )) != std::string::npos )
         {
-            TConfig::fields_["quality"] = str2conf< int >( line.substr( pos + 8 ).c_str() );
+            TConfig::fields_["compress_quality"] = str2conf< int >( line.substr( pos + 8 ).c_str() );
         }
-        else if( (pos = line.find( "duration=" )) != std::string::npos )
+        else if( (pos = line.find( "frame_duration_msec=" )) != std::string::npos )
         {
-            TConfig::fields_["duration"] = str2conf< int >( line.substr( pos + 9 ).c_str() );
+            TConfig::fields_["frame_duration"] = str2conf< int >( line.substr( pos + 9 ).c_str() );
         }
         else if( (pos = line.find( "url=" )) != std::string::npos )
         {
@@ -203,11 +219,36 @@ void NUtils::TConfig::f_read_file( char const *fname )
         }   
         else if( (pos = line.find( "screen_layout=" )) != std::string::npos )
         {
-            TConfig::fields_["screen_layout"] = str2conf< std::string >( line.c_str() );
+            //TConfig::fields_["screen_layout"] = str2conf< std::string >( line.c_str() );
         }
     });
 }
 
+void NUtils::TConfig::f_read_json( char const *fname )
+{
+    NJson::TParser p( fname );
+    const NJson::TObject &object = p.json();
+
+    // настройки filesystem
+    std::string root = std::string(object["/"]["filesystem"]["root"]) + "/";
+    TConfig::fields_["shaders"] = root + std::string(object["/"]["filesystem"]["shaders"]);
+    TConfig::fields_["textures"] = root + std::string(object["/"]["filesystem"]["textures"]);
+    TConfig::fields_["objects"] = root + std::string(object["/"]["filesystem"]["objects"]);
+    TConfig::fields_["scenes"] = root + std::string(object["/"]["filesystem"]["scenes"]);
+    // настройки service
+    TConfig::fields_["port"] = object["/"]["service"]["port"].toInt();
+    TConfig::fields_["compress_quality"] = object["/"]["service"]["jpeg_compress_quality_percent"].toInt();
+    TConfig::fields_["frame_duration"] = object["/"]["service"]["frame_duration_msec"].toInt();
+
+    scene_config_t cfg;
+
+    const NJson::TObject &scenes = object["/"]["screen"]["scenes"];
+    for( const auto &sc : scenes )
+    {
+         cfg.emplace( sc.first, sc.second );
+    }
+    TConfig::fields_["screen_layout"] = cfg;
+}
 
 NUtils::TJpegCodec::TError::TError( const std::string &what )
 : std::runtime_error( what )
@@ -273,7 +314,7 @@ bool NUtils::TJpegCodec::decode( uint8_t const *data, size_t in_size, TImage *im
     img->window.height = cinfo_.output_height;
     img->channels = cinfo_.output_components;
     int row_stride = img->window.width * img->channels;
-    
+
     size_t out_size = row_stride * img->window.height;
     if( img->pixels.size() != out_size )
     {
@@ -282,8 +323,8 @@ bool NUtils::TJpegCodec::decode( uint8_t const *data, size_t in_size, TImage *im
 
     while( cinfo_.output_scanline < cinfo_.output_height )
     {
-        uint8_t *b_array[1] = { img->pixels.data() + cinfo_.output_scanline * row_stride };
-        jpeg_read_scanlines( &cinfo_, b_array, 1 );
+        uint8_t *b_array = { img->pixels.data() + cinfo_.output_scanline * row_stride };
+        jpeg_read_scanlines( &cinfo_, &b_array, 1 );
     }
 
     jpeg_finish_decompress( &cinfo_ );   

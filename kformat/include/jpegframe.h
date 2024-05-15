@@ -69,17 +69,15 @@ public:
 
         Реализация функции предоставления доступа к буферу пикселей видеокадра. Объявлена в классе TBaseframe.
         При необходимости  выделяет память, определяемую размерами кадра для точки обзора.
-        \param view Номер точки обзора (сцена или камера в сцене)
         \param width Ожидаемая ширина кадра
         \param height Ожидаемая высота кадра
         \return указатель на буфер хранения пиксельной информации кадра
      */
-    uint8_t *buffer( size_t view, int width, int height ) override;
+    uint8_t *buffer( int width, int height ) override;
     /*!
         \brief Выполнить действия, подготовительные к передаче кадра абоненту - сжать кадр в формат JPEG.
-        \param view Номер точки обзора (сцена или камера в сцене)
      */
-    void prepare_buffer( size_t view ) override;
+    void prepare_buffer() override;
 
 private:
     /*!
@@ -88,9 +86,12 @@ private:
      */
     struct TImageBuffer
     {
-        TBaseframe::image frame;    /// буфер данных JPEG кадра
-        NUtils::TGeometry geometry; /// размеры JPEG кадра
-        size_t size_ { 0 };         /// длина данных JPEG кадра
+        //! буфер данных JPEG кадра
+        TBaseframe::image frame;
+        //! размеры JPEG кадра
+        NUtils::TGeometry geometry;
+        //! длина данных JPEG кадра
+        size_t size { 0 };
     };
 
     //! контекст сжатия кадра в формат JPEG
@@ -98,8 +99,8 @@ private:
     //! контекст ошибок сжатия кадра в формат JPEG
     jpeg_error_mgr jerr_;
 
-    //! буферы хранения байтов кадра
-    std::vector< TImageBuffer > jpeg_frames_;
+    //! буфер хранения байтов кадра
+    TImageBuffer jpeg_frame_;
     //! флаг поворота кадра на 180 градусов
     bool reverse_ { false };
 
@@ -114,9 +115,8 @@ private:
     bool f_send_buffer( TBaseprotocol * proto ) override;
     /*!
        \brief Сжимает буфер пикселей кадра, заполняя JPEG буфер для отправки абоненту
-       \param view Точка обзора, буфер которой сжимается
      */
-    void f_compress( size_t view );
+    void f_compress();
 };
 
 #endif /* JPEGFRAME_H */

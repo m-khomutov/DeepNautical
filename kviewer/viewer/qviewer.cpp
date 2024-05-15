@@ -105,10 +105,11 @@ void QViewer::paintEvent(QPaintEvent *)
     {
         if( decoder_->copy_frame( &frame_ ) ) // есть изображения
         {
-            img_ = QImage(frame_.pixels.data(),
-                          frame_.window.width,
-                          frame_.window.height,
-                          QImage::Format_RGB888);
+            img_ = QImage( frame_.pixels.data(),
+                           frame_.window.width,
+                           frame_.window.height,
+                           frame_.window.width * frame_.channels,
+                           QImage::Format_RGB888 );
             noimage_counter_ = 0;
         }
         else if( noimage_counter_ >= frame_wait_threshold_ ) // нет изображения

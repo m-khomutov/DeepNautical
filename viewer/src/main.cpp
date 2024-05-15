@@ -63,7 +63,7 @@ int main(int argc, char** argv)
     try
     {
         // параметры - период обновления окна и период, после которого начинает крутиться спиннер (мсек)
-        viewer.reset( new QViewer(NUtils::TConfig()["duration"], NUtils::TConfig()["bide"]) );
+        viewer.reset( new QViewer(NUtils::TConfig()["frame_duration"], NUtils::TConfig()["bide"]) );
         // если надо смотреть сетевую задержку, регистрируем колбэк просмотра
         if( NUtils::TConfig()["verify"] )
         {

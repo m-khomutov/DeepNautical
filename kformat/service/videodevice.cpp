@@ -110,9 +110,9 @@ void TVideodevice::send_frame( TBaseprotocol *proto )
     }
 }
 
-float TVideodevice::is_frame_duration_passed( TBaseframe::time_point_t *ts ) const
+float TVideodevice::is_frame_duration_passed() const
 {
-    return started_ ? frame_->is_duration_passed( ts ) : -1.f;
+    return started_ ? frame_->is_duration_passed() : -1.f;
 }
 
 void TVideodevice::f_on()
@@ -336,13 +336,13 @@ bool TVideodevice::f_get_frame()
         yuyv_.resize( v4l2_buffer_.bytesused );
         ::memcpy( yuyv_.data(), (uint8_t*)mmap_ptr_, yuyv_.size() );
 
-        yuyv_to_rgb( yuyv_.data(), frame_->buffer( 0, width_, height_ ), width_, height_ );
+        yuyv_to_rgb( yuyv_.data(), frame_->buffer( width_, height_ ), width_, height_ );
     }
     else if( pixelformat_ == V4L2_PIX_FMT_RGB24 )
     {
-        ::memcpy( frame_->buffer( 0, width_, height_ ), (uint8_t*)mmap_ptr_, v4l2_buffer_.bytesused );
+        ::memcpy( frame_->buffer( width_, height_ ), (uint8_t*)mmap_ptr_, v4l2_buffer_.bytesused );
     }
-    frame_->prepare_buffer( 0 );
+    frame_->prepare_buffer();
 
     return true;
 }

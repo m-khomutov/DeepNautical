@@ -15,7 +15,7 @@ TBaseviewerError::TBaseviewerError( const std::string &what )
 }
 
 TBaseviewer::TBaseviewer()
-: frame_(  NUtils::TConfig()["window"] )
+: frame_( NUtils::TConfig()["window"] )
 , decoder_( new TJpegdecoder )
 , receiver_( decoder_.get() )
 , rec_thread_( &receiver_ )

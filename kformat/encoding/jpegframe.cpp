@@ -75,44 +75,40 @@ TJpegframe::~TJpegframe()
     jpeg_destroy_compress( &cinfo_ );
 }
 
-uint8_t *TJpegframe::buffer( size_t view, int width, int height )
+uint8_t *TJpegframe::buffer( int width, int height )
 {
     std::vector< uint8_t >::size_type sz = NUtils::TImage::EColor::RGB * width * height;
 
-    if( view >= rgb_buffers_.size() ) // выделить место под буфер точки обзора
+    if( sz != rgb_buffer_.size() )  // выделить память в буфере данных точки обзора и сохранить размеры кадра
     {
-        rgb_buffers_.resize( view + 1 );
-        jpeg_frames_.resize( view + 1 );
+        rgb_buffer_.resize( sz );
+
+        jpeg_frame_.frame.resize( sz );
+        jpeg_frame_.geometry.width = width;
+        jpeg_frame_.geometry.height = height;
     }
 
-    if( sz != rgb_buffers_[view].size() )  // выделить память в буфере данных точки обзора и сохранить размеры кадра
-    {
-        rgb_buffers_[view].resize( sz );
-
-        jpeg_frames_[view].frame.resize( sz );
-        jpeg_frames_[view].geometry.width = width;
-        jpeg_frames_[view].geometry.height = height;
-    }
-
-    return rgb_buffers_[view].data();  // сюда скопируется RGB-буфер
+    return rgb_buffer_.data();  // сюда скопируется RGB-буфер
 }
 
-void TJpegframe::prepare_buffer( size_t view )
+void TJpegframe::prepare_buffer()
 {
     //сжать данные в формат JPEG
-    f_compress( view );
+    f_compress();
+
+    updated_ = true;
 }
 
-void TJpegframe::f_compress( size_t view )
+void TJpegframe::f_compress()
 {
     // сжать буфер точки обзора view
     mem_destination_ptr_t dest = mem_destination_ptr_t( cinfo_.dest );
-    dest->buf = jpeg_frames_[view].frame.data();   // сюда скопируются данные в формате JPEG
-    dest->bufsize  = jpeg_frames_[view].frame.size();
+    dest->buf = jpeg_frame_.frame.data();   // сюда скопируются данные в формате JPEG
+    dest->bufsize  = jpeg_frame_.frame.size();
     dest->jpegsize = 0;
 
-    cinfo_.image_width = jpeg_frames_[view].geometry.width;
-    cinfo_.image_height = jpeg_frames_[view].geometry.height;
+    cinfo_.image_width = jpeg_frame_.geometry.width;
+    cinfo_.image_height = jpeg_frame_.geometry.height;
     cinfo_.input_components = NUtils::TImage::EColor::RGB;
     cinfo_.dct_method = JDCT_FASTEST;
 
@@ -120,7 +116,7 @@ void TJpegframe::f_compress( size_t view )
 
     int stride = cinfo_.image_width * cinfo_.input_components;
     JSAMPROW row_ptr[1];
-    uint8_t * data = rgb_buffers_[view].data();
+    uint8_t * data = rgb_buffer_.data();
     {
         if( reverse_ )
         {
@@ -139,28 +135,19 @@ void TJpegframe::f_compress( size_t view )
             }
         }
         jpeg_finish_compress( &cinfo_ );
-        jpeg_frames_[view].size_ = dest->jpegsize; // размер JPEG буфера
+        jpeg_frame_.size = dest->jpegsize; // размер JPEG буфера
     }
 }
 
 bool TJpegframe::f_send_buffer( TBaseprotocol * proto )
 {
-    if( !proto || jpeg_frames_.empty() )
-    {
-        return false;
-    }
-
-    size_t view = proto->view();
-
-    if( view > rgb_buffers_.size() - 1 )
-    {
-        return false;
-    }
-
-    if( jpeg_frames_[view].size_ )
+    if( proto && jpeg_frame_.size )
     {
         // отправить абоненту
-        proto->send_frame( jpeg_frames_[view].frame.data(), jpeg_frames_[view].size_ );
+        proto->send_frame( jpeg_frame_.frame.data(), jpeg_frame_.size );
+        updated_ = false;
+
+        return true;
     }
-    return true;
+    return false;
 }

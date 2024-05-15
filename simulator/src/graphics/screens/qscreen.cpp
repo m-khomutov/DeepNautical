@@ -9,20 +9,19 @@
 #include "json.h"
 #include <QGridLayout>
 
-TQscreen::TQscreen( TBaseframe* frame )
-: TGLscreen( frame )
+TQscreen::TQscreen()
 {
     QGridLayout *mainLayout = new QGridLayout;
 
     // создать сцены (расположение в файле из конфигурации screen_layout), отображаемые экраном
-    auto layout = NJson::TParser(NUtils::TConfig()["screen_layout"]).json();
+    const auto &layout = NUtils::scene_config_t(NUtils::TConfig()["screen_layout"]);
     for( const auto &scene : layout )
     {
-        sc_.emplace_back( new TScene( scene.first,
-                                      std::string(NUtils::TConfig()["scenes"]) + "/" + scene.first + ".scn",
-                                      QSize(frame->width(), frame->height()),
-                                      QPoint(scene.second["x"].toInt(), scene.second["y"].toInt())) );
-        mainLayout->addWidget( sc_.back(), sc_.back()->position().y(),  sc_.back()->position().x() );
+        sc_.emplace_back( new TScene( scene.name,
+                                      std::string(NUtils::TConfig()["scenes"]) + "/" + scene.name + ".scn",
+                                      QSize(scene.size.width, scene.size.height),
+                                      QPoint(scene.x, scene.y) ) );
+        mainLayout->addWidget( sc_.back(), scene.y,  scene.x );
     }
 
     setLayout(mainLayout);
@@ -57,7 +56,7 @@ void TQscreen::f_stop_scene_display()
 }
 
 // Обработка события таймера
-void TQscreen::timerEvent(QTimerEvent *)
+void TQscreen::timerEvent( QTimerEvent * )
 {
     if( timer_id_ != -1 )
     {
@@ -67,12 +66,6 @@ void TQscreen::timerEvent(QTimerEvent *)
         for( size_t s(0); s < sc_.size(); ++s )
         {
             sc_[s]->update();
-        }
-
-        // сохранить кадр, если время подошло
-        if( is_frame_duration_passed( &store_ts_ ) > 0.f )
-        {
-            TBasescreen::store_scene_frame();
         }
     }
 }

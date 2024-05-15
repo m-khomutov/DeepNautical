@@ -106,12 +106,12 @@ public:
      */
     virtual void write_error() = 0;
     /*!
-     * \brief Выдает номер точки обзора, соответствующей протоколу
-     * \return номер точки обзора
+       \brief Выдает название сцены, для использования протоколом
+       \return номер точки обзора
      */
-    size_t view() const
+    const std::string& scene() const
     {
-        return view_;
+        return scene_;
     }
 
 protected:
@@ -124,8 +124,8 @@ protected:
     int fd_;
     //! флаги, выставляемые при выдаче видеокадров в сеть;
     int flags_;
-    //! номер точки обзора, данные с которой передаются абонент
-    size_t view_ {0};
+    //! сцена, данные с которой передаются абонент
+    std::string scene_;
 };
 
 /*!

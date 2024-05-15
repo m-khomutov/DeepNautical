@@ -40,9 +40,9 @@ public:
        \brief Конструктор класса сетевого протокола формата FLV (Flash Video) трансляции видеокадров.
        \param b_sock файловый дескриптор (сокет) сетевого соединения с абонентом
        \param flags флаги, выставляемые при выдаче данных в сеть
-       \param view номер точки обзора, соответствующей протоколу
+       \param scene название сцены, соответствующей протоколу
      */
-    explicit TFLVprotocol( int b_sock, int flags, size_t view );
+    explicit TFLVprotocol( int b_sock, int flags, const std::string &scene );
     /*!
        \brief Запрещенный конструктор копии.
        \param orig  Копируемый объект

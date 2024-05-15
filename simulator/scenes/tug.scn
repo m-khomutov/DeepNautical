@@ -92,6 +92,7 @@ wake={20.0 4.0}
 # буксир в более-менее центре экрана
 [Vessel]
 shader="vessel.glsl"
+empty_texture="alpha.jpg"
 object="tug_boat/boat.obj"
 speed={0.0 0.0 0.0}
 start_position={0.0 -0.1 -0.6}
@@ -101,4 +102,4 @@ pitching_range={1.0 3.2}
 pitching=0.03
 angle_gain={0.0, 0.0, 0.0}
 start_factor={0.1 0.1 0.1}
-factor_gain=0.0
+factor_gain={0.0 0.0 0.0}

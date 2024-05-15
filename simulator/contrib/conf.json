@@ -1,6 +1,17 @@
 {
-  "root-dir": "/opt/agat-a",
-  "screen-layout": {
+  "filesystem": {
+    "root": "/opt/agat-a",
+    "shaders": "shaders",
+    "textures": "textures",
+    "objects": "objs",
+    "scenes": "scenes"
+  },
+  "service": {
+    "port": 2232, 
+    "jpeg_compress_quality_percent": 95,
+    "frame_duration_msec": 40
+  },
+  "screen": {
     "scenes": {
       "cruiser": {
         "position": {
@@ -147,6 +158,16 @@
             },
             "factor-gain": 0.0
           }
+        }
+      },
+      "tug": {
+        "position": {
+          "x": 1,
+          "y": 0
+        },
+        "size": {
+          "width": 800,
+          "height": 600
         }
       }
     }

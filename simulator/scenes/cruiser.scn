@@ -73,6 +73,7 @@ speed={0.0005 0.0 0.0}
 # Naval Ship Cruiser USA
 [Vessel]
 shader="vessel.glsl"
+empty_texture="alpha.jpg"
 object="cruiser/boat.obj"
 speed={-0.0005 0.0 0.0}
 start_position={1.5 0.5 0.02}
@@ -82,4 +83,4 @@ pitching_range={1.0 2.2}
 pitching=0.005
 angle_gain={0.0, 0.0, 0.0}
 start_factor={0.05 0.05 0.05}
-factor_gain=0.0
+factor_gain={0.0 0.0 0.0}

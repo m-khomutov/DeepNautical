@@ -12,8 +12,7 @@ TGLscreenError::TGLscreenError( const std::string &what )
 : std::runtime_error( what )
 {}
 
-TGLscreen::TGLscreen( TBaseframe *frame )
-: TBasescreen( frame )
+TGLscreen::TGLscreen()
 {
     // получить список сцен
     NUtils::read_directory( NUtils::TConfig()["scenes"],
@@ -90,25 +89,18 @@ void TGLscreen::f_exec_command()
     }
 }
 
-// сохранить текущие кадры с текущих сцен
-void TGLscreen::f_store_scene_frame()
-{
-    int q;
-    glGetIntegerv( GL_READ_BUFFER, &q );
-    glPixelStorei( GL_PACK_ALIGNMENT, 1 );
-    for( size_t v(0); v < sc_.size(); ++v )
-    {
-        // получить указатель на буфер кадра. Явное нарушение инкапсуляции. На что не пойдешь ради оптимизации
-        uint8_t *buffer = frame_->buffer( v, frame_->width(), frame_->height() );
-        // прочесть в буфер текущий кадр
-        glReadPixels( v * frame_->width(), 0, frame_->width(), frame_->height(), GL_RGB, GL_UNSIGNED_BYTE, buffer );
-        // подготовить (сжать) буфер для последующей передачи
-        frame_->prepare_buffer( v );
-    }
-}
-
 // скомандовать объекту протокола передать кадр абонентам
-bool TGLscreen::f_send_stored_scene_frame( TBaseprotocol *proto )
+void TGLscreen::f_send_stored_scene_frame( TBaseprotocol *proto )
 {
-   return frame_->send_buffer( proto );
+    if( proto && proto->can_send_frame() )
+    {
+        for( auto& scene : sc_ )
+        {
+            if( scene->name() == proto->scene() )
+            {
+                scene->send_frame( proto );
+                return;
+            }
+        }
+    }
 }

@@ -93,6 +93,7 @@ wake_width={0.3 0.3}
 # катер, проходящий от правого в левый край экрана
 [Vessel]
 shader="vessel.glsl"
+empty_texture="alpha.jpg"
 object="wakeboard_boat/boat.obj"
 speed={0.0009 0.0 0.0}
 start_position={-1.0 -0.08 0.08}
@@ -102,5 +103,5 @@ pitching_range={0.0 6.2}
 pitching=0.07
 angle_gain={0.0, -0.005, 0.0}
 start_factor={0.07 0.07 0.07}
-factor_gain=0.0
+factor_gain={0.0 0.0 0.0}
 wake_width={0.2 0.1}

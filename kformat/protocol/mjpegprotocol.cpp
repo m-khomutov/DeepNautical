@@ -12,11 +12,11 @@ const char ok_status[] = "HTTP/1.1 200 OK\r\nAccess-Control-Allow-Origin: *\r\nC
 const char boundary[] = "--agat-a_mjpeg\r\nContent-Type: image/jpeg\r\nContent-Length: ";
 }
 
-TMjpegprotocol::TMjpegprotocol( int b_sock, int flags, size_t view )
+TMjpegprotocol::TMjpegprotocol( int b_sock, int flags, const std::string &scene )
 : TBaseprotocol( b_sock, flags )
 , boundary_size_( strlen(boundary) )
 {
-    view_ = view;
+    scene_ = scene;
 }
 
 void TMjpegprotocol::on_data( const uint8_t * data, int size )

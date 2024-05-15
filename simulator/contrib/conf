@@ -7,5 +7,5 @@ scenes="/opt/agat-a/scenes"                 # каталог сцен
 screen_layout="/opt/agat-a/etc/layout.json" # расположение воспроизводимых сцен
 port=2232                                   # порт приема запросов на трансляцию стрима
 window=800x600                              # размеры окна
-quality=80                                  # качество сжатия %
-duration=40                                 # длительность кадра мсек.
+jpeg_compress_quality_percent=80            # качество сжатия %
+frame_duration_msec=40                      # длительность кадра мсек.

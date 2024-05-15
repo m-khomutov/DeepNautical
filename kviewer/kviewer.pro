@@ -14,7 +14,8 @@ HEADERS = \
     include/jpegdecoder.h \
     include/baseviewer.h \
     include/qviewer.h \
-    ../common/utils.h
+    ../common/utils.h \
+    ../common/json.h
 
 
 SOURCES = \
@@ -24,7 +25,8 @@ SOURCES = \
     decoder/jpegdecoder.cpp \
     viewer/baseviewer.cpp \
     viewer/qviewer.cpp \
-    ../common/utils.cpp
+    ../common/utils.cpp \
+    ../common/json.cpp
 
 
 QMAKE_EXTRA_TARGETS += all buildpackage

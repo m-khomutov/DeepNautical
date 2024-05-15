@@ -8,15 +8,17 @@ NJson::TParser::TParser( const std::string &jfile )
         throw std::logic_error( jfile + " failed to be opened" );
     }
     std::string json, tp;
+    // прочесть файлик
     while ( std::getline( f, tp ) )
     {
         json += tp;
     }
     f.close();
 
+    // посимвольно разобрать
     auto end = json.cend();
     for( auto it = json.cbegin(); it != end; ++it ) {
-        if( std::isprint(*it) && !std::isspace(*it) )
+        if( std::isprint(*it) && !std::isspace(*it) ) // рассматриваем только печатные символы. Пробелы опускаем
         {
             switch( *it )
             {
@@ -24,7 +26,7 @@ NJson::TParser::TParser( const std::string &jfile )
             {
                 TObject subobject;
                 f_parse_object( ++it, end, subobject );
-                object_.emplace( "root", subobject );
+                object_.emplace( "/", subobject );
                 break;
              }
              case '}':

@@ -132,6 +132,10 @@ public:
         return subobjects_.end();
     }
 
+    const std::map< std::string, std::vector< TObject > > &array() const
+    {
+       return array_;
+    }
 
 private:
     std::map< std::string, TObject > subobjects_;
@@ -158,7 +162,7 @@ public:
      */
     const TObject &json() const
     {
-        return object_["root"];
+        return object_["/"];
     }
 
 private:
@@ -176,5 +180,35 @@ private:
 };
 
 
+/*!
+   \brief выводит объект JSON структуры в объект представления
+   \param out объект представления
+   \param indent текущий отступ для простоты восприятия структуры JSON
+ */
+template< typename STR >
+void reprObject( STR &out, const TObject &obj, std::string indent = "" )
+{
+    for( const auto &c : obj )
+    {
+        out << indent << c.first;
+        if( c.second.empty() )
+        {
+            out << ": " << std::string(c.second) << "\n";
+        }
+        else
+        {
+            out << ": {\n";
+            reprObject( out, c.second, indent + "   " );
+            out << indent << "}\n";
+        }
+        /*for( const auto &a : obj.array() ) {
+            out << a.first << "[ ";
+            reprObject( out, a.second, indent );
+            out << " ]\n";
+        }*/
+    }
+}
+
 }  // namespace NJson
+
 #endif // JSON_H

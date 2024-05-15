@@ -79,7 +79,7 @@ TReceiver::TReceiver( TBasedecoder *decoder )
     try
     {
         std::string url = NUtils::TConfig()["url"];
-        std::regex r("^([a-z]+)://([0-9\\.\\S]+):([0-9]{4,5})/([0-9])$"); // proto://host:port/context
+        std::regex r("^([a-z]+)://([0-9\\.\\S]+):([0-9]{4,5})/([A-z|0-9|_|-]+)$"); // proto://host:port/context(буквы|цифры|_|-)
         std::smatch cm;
 
         if( !(std::regex_match( url, cm, r )) || cm.size() != 5 )
@@ -88,7 +88,7 @@ TReceiver::TReceiver( TBasedecoder *decoder )
         }
         server_host_ = cm[2].str();
         server_port_ = std::stoi( cm[3].str() );
-        view_ = std::stoi( cm[4].str() );
+        scene_ = cm[4].str();
     }
     catch (const std::regex_error &e)
     {
@@ -177,7 +177,7 @@ void TReceiver::f_start_connection()
     }
 
     // запрос на выдачу контента
-    std::string request = "GET /stream?proto=flv&view=" + std::to_string(view_) + " HTTP/1.1\r\n"
+    std::string request = "GET /stream?proto=flv&scene=" + scene_ + " HTTP/1.1\r\n"
                           "User-Agent: Viewer/0.0.1 (agat-aquarius)\r\n"
                           "Accept: */*\r\n"
                           "Accept-Encoding: identity\r\n"

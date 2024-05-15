@@ -87,7 +87,7 @@ public:
        \brief GL класс экрана отображения сцен.
        \param frame указатель на объект представления видеокадра
      */
-    TGLscreen( TBaseframe *frame );
+    TGLscreen();
     /*!
        \brief Запрещенный конструктор копии.
        \param orig Копируемый объект
@@ -129,8 +129,7 @@ protected:
     std::set< std::string > scenes_;
     //! итератор по сценам, настроенный на текущую сцену
     std::set< std::string >::iterator scene_iter_;
-    //! вектор умных указателей на сцены, выполняемые на экране
-    //std::vector< std::shared_ptr< TScene > > sc_;
+    //! вектор указателей на сцены, выполняемые на экране
     std::vector< TScene* > sc_;
     //! Очередь команд, передаваемых экрану для выполнения
     NUtils::TSafeguard< std::list< TScreenCommand > > commands_;
@@ -143,15 +142,11 @@ protected:
 
 private:
     /*!
-      \brief Реализация функции сохранения текущего кадра сцены. Объявляется в базовом классе.
-     */
-    void f_store_scene_frame() override;
-    /*!
        \brief Реализация функции отправки сохраненного кадра сцены абоненту по определенному сетевому протоколу.
        \param proto сетевой протокол выдачи видеопотока абоненту
        \return результат отправки (удалось/не удалось)
      */
-    bool f_send_stored_scene_frame( TBaseprotocol *proto ) override;
+    void f_send_stored_scene_frame( TBaseprotocol *proto ) override;
 };
 
 #endif /* OPENGLSCREEN_H */

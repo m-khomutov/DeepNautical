@@ -10,6 +10,7 @@
 #define SCENE_H
 
 #include "figureset.h"
+#include <kformat.h>
 
 #include <QOpenGLDebugMessage>
 
@@ -89,8 +90,8 @@ public:
     QSize sizeHint() const override;
 
     /*!
-     * \brief position возвращает позицию сцены на экране
-     * \return позиция сцены на экране
+       \brief position возвращает позицию сцены на экране
+       \return позиция сцены на экране
      */
     const QPoint& position() const;
 
@@ -102,6 +103,13 @@ public:
     {
         return name_;
     }
+
+    /*!
+       \brief Отправить сохраненный кадр сцены абоненту по определенному сетевому протоколу.
+       \param proto сетевой протокол выдачи видеопотока абоненту
+       \return результат отправки (удалось/не удалось)
+     */
+    bool send_frame( TBaseprotocol *proto );
 
 public slots:
     /*!
@@ -121,7 +129,13 @@ private:
     GLint GL_major_, GL_minor_;
     //! контейнер геометрических фигур, отображаемых на сцен
     TFigureset figureset_;
-    
+    //! указатель на объект представления видеокадра;
+    std::unique_ptr< TBaseframe > frame_;
+    //! мьютекс обеспечения потокобезопасной работы с объектом представления видеокадра;
+    std::mutex frame_mutex_;
+    //! временная метка сохранения видеокадра в объекте представления видеокадра;
+    TBaseframe::time_point_t store_ts_;
+
 private:
    /*!
        \brief читает спецификацию и создает объекты, представленные в ней
@@ -149,6 +163,10 @@ private:
      */
     template< typename Figure >
     void f_add_figure( const std::vector< std::string > &settings );
+    /*!
+       \brief f_store_frame сохраняет текущий фрейм изображения
+     */
+    void f_store_frame();
 };
 
 #endif /* SCENE_H */

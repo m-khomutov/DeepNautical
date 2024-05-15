@@ -118,9 +118,8 @@ private:
     void f_add_socket( int sock, uint32_t events );
     /*!
      * \brief в случае превышения заданной длительности отправляет видеокадр сетевым абонентам
-     * \param last_ts временная метка последнего отправленного видеокадра
      */
-    void f_send_frame( TBaseframe::time_point_t *last_ts );
+    void f_send_frame();
 };
 
 #endif /* S_POLL_H */

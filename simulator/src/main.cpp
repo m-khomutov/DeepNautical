@@ -74,9 +74,7 @@ int main(int argc, char** argv)
 
         std::setlocale( LC_NUMERIC, "C" );
 
-        std::unique_ptr< TBasescreen > scr( new TQscreen( new TJpegframe( NUtils::TConfig()["window"],
-                                                                          NUtils::TConfig()["quality"],
-                                                                          NUtils::TConfig()["duration"] ) ) );
+        std::unique_ptr< TBasescreen > scr( new TQscreen );
         service.reset( new TQService( scr.get(), NUtils::TConfig()["port"] ) );
 
         service->start_screen();

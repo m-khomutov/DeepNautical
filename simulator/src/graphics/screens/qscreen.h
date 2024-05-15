@@ -22,9 +22,8 @@ class TQscreen: public TGLscreen, public QWidget {
 public:
     /*!
        \brief Qt класс экрана отображения сцен.
-       \param frame указатель на объект представления видеокадра
      */
-    TQscreen( TBaseframe *frame );
+    TQscreen();
     /*!
        \brief Запрещенный конструктор копии.
        \param orig Копируемый объект

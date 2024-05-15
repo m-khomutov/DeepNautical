@@ -10,6 +10,7 @@
 #define BASESCREEN_H
 
 #include "baseframe.h"
+
 #include <mutex>
 #include <set>
 #include <vector>
@@ -48,9 +49,8 @@ class TBasescreen
 public:
     /*!
        \brief Базовый класс экрана отображения сцен.
-       \param frame указатель на объект представления видеокадра
      */
-    TBasescreen( TBaseframe *frame );
+    TBasescreen();
     /*!
        \brief Запрещенный конструктор копии.
        \param orig Копируемый объект
@@ -82,16 +82,8 @@ public:
     /*!
        \brief отправляет сохраненный кадр сцены абоненту по определенному сетевому протоколу
        \param proto сетевой протокол выдачи видеопотока абоненту
-       \return результат отправки (удалось/не удалось)
      */
-    bool send_stored_scene_frame( TBaseprotocol *proto );
-    /*!
-       \brief проверяет кадр на превышение длительности
-       \param ts указатель на переменную, хранящую время начала кадра. При превышении длительности в переменную сохраняется начало нового кадра
-       \return Текущая длительность кадра, при превышении заданной, либо -1.0
-     */
-    float is_frame_duration_passed( TBaseframe::time_point_t *ts ) const;
-
+    void send_stored_scene_frame( TBaseprotocol *proto );
     /*!
        \brief возвращает список имеющихся сцен
        \return список сцен
@@ -109,14 +101,6 @@ public:
      */
     virtual void set_scene( const std::string &scene, size_t position ) = 0;
 
-protected:
-    //! указатель на объект представления видеокадра;
-    TBaseframe *frame_;
-    //! мьютекс обеспечения потокобезопасной работы с объектом представления видеокадра;
-    std::mutex frame_mutex_;
-    //! временная метка сохранения видеокадра в объекте представления видеокадра;
-    TBaseframe::time_point_t store_ts_;
-
 private:
     /*!
        \brief Объявление функции запуска отображения сцен. Реализуется в производных классах.
@@ -127,15 +111,11 @@ private:
      */
     virtual void f_stop_scene_display() = 0;
     /*!
-       \brief Объявление функции сохранения текущего кадра сцены. Реализуется в производных классах.
-     */
-    virtual void f_store_scene_frame() = 0;
-    /*!
        \brief Объявление функции отправки сохраненного кадра сцены абоненту по определенному сетевому протоколу. Реализуется в производных классах.
        \param proto сетевой протокол выдачи видеопотока абоненту
        \return результат отправки (удалось/не удалось)
      */
-    virtual bool f_send_stored_scene_frame( TBaseprotocol *proto ) = 0;
+    virtual void f_send_stored_scene_frame( TBaseprotocol *proto ) = 0;
 };
 
 #endif // BASESCREEN_H

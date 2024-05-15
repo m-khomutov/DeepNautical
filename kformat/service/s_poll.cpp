@@ -66,8 +66,6 @@ void TSpoll::start_listening_network()
     epoll_event events[maxevents];
     // сюда копирует данные из сетевого буфера
     uint8_t buffer[0xffff];
-    // метка времени, следящая за превышением длительности видеокадра
-    TBaseframe::time_point_t last_ts = std::chrono::high_resolution_clock::now();
     
     while( running_.load() )
     {
@@ -128,7 +126,7 @@ void TSpoll::start_listening_network()
             }
         }
         // отправить кадр желающим
-        f_send_frame( &last_ts );
+        f_send_frame();
     }
 }
 
@@ -149,29 +147,20 @@ void TSpoll::f_add_socket( int sock, uint32_t events )
 }
 
 // отправить кадр абонентам, в случае превышения заданной длительности кадра
-void TSpoll::f_send_frame( TBaseframe::time_point_t * last_ts )
+void TSpoll::f_send_frame()
 {
-    // длтельность кадра хранится в объекте экрана сцен или в объекте работы с платой видеозахвата
-    float duration = screen_ ? screen_->is_frame_duration_passed( last_ts ) : (videodev_ ? videodev_->is_frame_duration_passed( last_ts ) : -1.f);
-
-    if( duration > 0.f ) // длительность предыдущего кадра превышена
+    for( auto p : connections_ )
     {
-        for( auto p : connections_ )
+        if( p.second->protocol() && p.second->protocol()->can_send_frame() ) // кадр отправляется
         {
-            if( p.second->protocol() && p.second->protocol()->can_send_frame() ) // кадр отправляется
+            // длительность кадра хранится в объекте экрана сцен или в объекте работы с платой видеозахвата
+            if( screen_ )
             {
-                if( screen_ )
-                {
-                    if( !screen_->send_stored_scene_frame( p.second->protocol() ) && p.second->protocol() )
-                    {
-                        // не отправился. Возвращаем ошибку
-                        p.second->protocol()->write_error();
-                    }
-                }
-                if( videodev_ )
-                {
-                    videodev_->send_frame( p.second->protocol() );
-                }
+                screen_->send_stored_scene_frame( p.second->protocol() );
+            }
+            if( videodev_ && videodev_->is_frame_duration_passed() > 0.f )
+            {
+                videodev_->send_frame( p.second->protocol() );
             }
         }
     }

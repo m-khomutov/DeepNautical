@@ -27,27 +27,27 @@ TBaseprotocol *TBaseprotocol::create( TBasescreen *screen, const std::string &re
         {
             // в параметрах должно быть имя протокола и номер точки обзора
             const std::string *proto = nullptr;
-            size_t view = 0;
+            const std::string *scene = nullptr;
             for( const auto &p : params )
             {
                 if( p.field == "proto" )
                 {
                     proto = &p.value;  // имя протокола
                 }
-                else if( p.field == "view" && std::isdigit( p.value[0] ) )
+                else if( p.field == "scene" )
                 {
-                    view = p.value[0] - '0'; // номер точки обзора
+                    scene = &p.value;  // название сцены
                 }
             }
-            if( proto )
+            if( proto && scene )
             {
                 if( *proto == "flv" )
                 {
-                    return new TFLVprotocol( sock, flags, view );
+                    return new TFLVprotocol( sock, flags, *scene );
                 }
                 else if( *proto == "mjpeg" )
                 {
-                    return new TMjpegprotocol( sock, flags, view );
+                    return new TMjpegprotocol( sock, flags, *scene );
                 }
             }
         }

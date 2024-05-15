@@ -33,11 +33,11 @@ void copy3bytes( uint32_t from, uint8_t *to )
 }
 }  // namespace
 
-TFLVprotocol::TFLVprotocol( int b_sock, int flags, size_t view )
+TFLVprotocol::TFLVprotocol( int b_sock, int flags, const std::string &scene )
 : TBaseprotocol( b_sock, flags )
 , http_flv_header_( strlen(http_ok_status) + 13 )
 {
-    view_ = view;
+    scene_ = scene;
 
     ::memcpy( http_flv_header_.data(), http_ok_status, strlen(http_ok_status) );
     ::memcpy( http_flv_header_.data() + http_flv_header_.size() - 13, flv_header, sizeof(flv_header) );

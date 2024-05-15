@@ -9,10 +9,14 @@
 #ifndef BLENDER_H
 #define BLENDER_H
 
-//#include "texture/jpeg.h"
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
+
+#include <QVector3D>
+#include <QVector2D>
+#include <QOpenGLTexture>
+
 #include <map>
 #include <memory>
 #include <string>
@@ -43,13 +47,13 @@ public:
         //! коэффициент фокусировки блика (1000 - максимально сфокусированный блик)
         float Ns;
         //! коэффициент фонового освещения
-        glm::vec3 Ka;
+        QVector3D Ka;
         //! коэффициент рассеянного освещения
-        glm::vec3 Kd;
+        QVector3D Kd;
         //! коэффициент бликового освещения
-        glm::vec3 Ks;
+        QVector3D Ks;
         //! коэффициент зеркального блика
-        glm::vec3 Ke;
+        QVector3D Ke;
         //! коэффициент преломления (1.0 - преломление отсутствует)
         float Ni;
         //! коэффициент прозрачности (1.0 - полностью непрозрачен)
@@ -57,7 +61,7 @@ public:
         //! номер модели освещенности (0, 1, 2)
         int illum;
         //! текстура объекта
-        //std::shared_ptr< TJpegTexture > map_Kd;
+        std::shared_ptr< QOpenGLTexture > map_Kd;
 
         //! набор точек, определяющих сетку объекта
         std::vector< face_t > faces;
@@ -152,11 +156,11 @@ public:
     
 private:
     //! набор геометрических вершин сетки объекта
-    std::vector< glm::vec3 > vertices_;
+    QVector< QVector3D > vertices_;
     //! набор текстурных вершин сетки объекта
-    std::vector< glm::vec2 > texels_;
+    QVector< QVector2D > texels_;
     //! набор нормалей к геометрическим вершинам сетки объекта
-    std::vector< glm::vec3 > normals_;
+    QVector< QVector3D > normals_;
     //! набор объектов материалов объекта
     std::vector< TMTLfile::TMaterial > materials_;
     //! количество поверхностей сетки объекта

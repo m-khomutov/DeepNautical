@@ -35,6 +35,7 @@ TScene::TScene( const std::string &name, const std::string &specification, QSize
 , name_( name )
 , size_( size )
 , position_( pos )
+, store_ts_( std::chrono::high_resolution_clock::now() )
 {
     f_initialize( specification );
 }
@@ -69,6 +70,10 @@ void TScene::initializeGL()
     glClearColor( 0.392f, 0.706f, 0.983f, 1.0f );
     glClearDepth(1.0f);
 
+    frame_.reset( new TJpegframe( NUtils::TGeometry(width(), height()),
+                                  NUtils::TConfig()["compress_quality"],
+                                  NUtils::TConfig()["frame_duration"] ) );
+
     f_debug_info();
     // инициализируем фигуры в контейнере
     figureset_.initialize();
@@ -85,6 +90,12 @@ void TScene::paintGL()
     catch( const std::runtime_error &err )
     {
         std::cerr << __PRETTY_FUNCTION__ << " error: " << err.what() <<std::endl;
+    }
+
+    // сохранить кадр, если время подошло
+    if( frame_->is_duration_passed() > 0.f )
+    {
+        f_store_frame();
     }
 }
 
@@ -107,6 +118,34 @@ void TScene::clear()
     figureset_.clear();
 
     doneCurrent();
+}
+
+void TScene::f_store_frame()
+{
+    std::lock_guard< std::mutex > lk(frame_mutex_);
+
+    // получить указатель на буфер кадра. Явное нарушение инкапсуляции. На что не пойдешь ради оптимизации
+    uint8_t *buffer = frame_->buffer( frame_->width(), frame_->height() );
+
+    // прочесть в буфер текущий кадр
+    int q;
+    glGetIntegerv( GL_READ_BUFFER, &q );
+    glPixelStorei( GL_PACK_ALIGNMENT, 1 );
+    glReadPixels( 0, 0, frame_->width(), frame_->height(), GL_RGB, GL_UNSIGNED_BYTE, buffer );
+
+    // подготовить (сжать) буфер для последующей передачи
+    frame_->prepare_buffer();
+}
+
+bool TScene::send_frame( TBaseprotocol *proto )
+{
+    std::lock_guard< std::mutex > lk(frame_mutex_);
+
+    if( frame_->is_updated() )
+    {
+        return frame_->send_buffer( proto );
+    }
+    return false;
 }
 
 void TScene::onMessageLogged( QOpenGLDebugMessage message )
