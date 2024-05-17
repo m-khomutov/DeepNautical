@@ -30,7 +30,7 @@ SOURCES += \
     src/graphics/figures/surge.cpp \
     src/graphics/figures/vessel.cpp \
     src/graphics/figures/figure.cpp \
-    src/graphics/figures/specification.cpp \
+    src/graphics/specification.cpp \
     src/graphics/visitor.cpp \
     src/graphics/figureset.cpp \
     src/graphics/scene.cpp \
@@ -46,7 +46,7 @@ HEADERS += \
     src/graphics/figures/surge.h \
     src/graphics/figures/vessel.h \
     src/graphics/figures/figure.h \
-    src/graphics/figures/specification.h \
+    src/graphics/specification.h \
     src/graphics/visitor.h \
     src/graphics/figureset.h \
     src/graphics/scene.h \
