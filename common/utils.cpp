@@ -235,6 +235,7 @@ void NUtils::TConfig::f_read_json( char const *fname )
     TConfig::fields_["textures"] = root + std::string(object["/"]["filesystem"]["textures"]);
     TConfig::fields_["objects"] = root + std::string(object["/"]["filesystem"]["objects"]);
     TConfig::fields_["scenes"] = root + std::string(object["/"]["filesystem"]["scenes"]);
+    TConfig::fields_["objs"] = root + std::string(object["/"]["filesystem"]["blender_objects"]);
     // настройки service
     TConfig::fields_["port"] = object["/"]["service"]["port"].toInt();
     TConfig::fields_["compress_quality"] = object["/"]["service"]["jpeg_compress_quality_percent"].toInt();

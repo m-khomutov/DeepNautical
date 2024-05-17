@@ -5,9 +5,9 @@
  * Created on 1 февраля 2023 г., 10:12
  */
 
-#include "sol.h"
+#include "sky.h"
 
-TSol::TSol( const std::vector< std::string > &settings )
+TSky::TSky( const std::vector< std::string > &settings )
 : TFigure( settings )
 {
     // настраиваем местоположение и геометрическую модель объекта
@@ -26,13 +26,13 @@ TSol::TSol( const std::vector< std::string > &settings )
     }
 }
 
-TSol::~TSol()
+TSky::~TSky()
 {
     shader_program_.disableAttributeArray("Texcoord");
     shader_program_.disableAttributeArray("Position");
 }
 
-void TSol::draw()
+void TSky::draw()
 {
     shader_program_.setAttributeArray("Position", vertices_.constData());
     shader_program_.enableAttributeArray("Position");
@@ -51,7 +51,7 @@ void TSol::draw()
     shader_program_.disableAttributeArray("Position");
 }
 
-void TSol::f_check_environment() const
+void TSky::f_check_environment() const
 {
     if( ! (NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
            NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
@@ -61,18 +61,18 @@ void TSol::f_check_environment() const
     }
 }
 
-char const *TSol::f_shader_name() const
+char const *TSky::f_shader_name() const
 {
     return spec_.shader_name.c_str(); 
 }
 
-void TSol::f_initialize()
+void TSky::f_initialize()
 {
     // создать текстуру
     texture_.reset( new QOpenGLTexture( QImage(std::string(std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str() ) ) );
 }
 
-void TSol::f_accept( IVisitor &p, double )
+void TSky::f_accept( IVisitor &p, double )
 {
     last_frame_time_ += spec_.speed.x();
     // передать посетителю указатель на себя

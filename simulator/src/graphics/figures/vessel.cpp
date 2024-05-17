@@ -12,11 +12,6 @@ TVessel::TVessel( const std::vector< std::string > &settings )
 {
     // проверить настройки
     f_check_environment();
-
-    // создать объект геометрической фигуры (координаты сетки фигуры)
-    object_.reset( new NBlender::TObject( (std::string(NUtils::TConfig()["objs"]) + "/" + spec_.obj_name).c_str() ) );
-    object_->load_position( &vertices_ );
-
     f_reset();
 }
 
@@ -49,22 +44,21 @@ void TVessel::draw()
     GLuint first = 0; // счетчик поверхностей фигуры. За один проход рисуется одна поверхность
     for( auto mtl : object_->materials() )
     {
-        /*try
+        try
         {
             // униформные переменные мателиала фигуры
-            program_->uniform_block("Material" )["Ka"].set( mtl.Ka );
-            program_->uniform_block("Material" )["Kd"].set( mtl.Kd );
-            program_->uniform_block("Material" )["Ks"].set( mtl.Ks );
-            program_->uniform_block("Material" )["Ns"].set( mtl.Ns );
-            program_->uniform_block("Material" )["Ni"].set( mtl.Ni );
-            program_->uniform_block("Material" )["d"].set( mtl.d );
-            program_->uniform_block("Material" )["illum"].set( mtl.illum );
-            program_->uniform_block("Material").copy();
+            shader_program_.setUniformValue("mtl.Ka", mtl.Ka );
+            shader_program_.setUniformValue("mtl.Kd", mtl.Kd );
+            shader_program_.setUniformValue("mtl.Ks", mtl.Ks );
+            shader_program_.setUniformValue("mtl.Ns", mtl.Ns );
+            shader_program_.setUniformValue("mtl.Ni", mtl.Ni );
+            shader_program_.setUniformValue("mtl.d", mtl.d );
+            shader_program_.setUniformValue("mtl.illum", mtl.illum );
         }
         catch( const std::runtime_error &e )
         {
-            std::cerr << "Material error: " << e.what() << std::endl;
-        }*/
+            qDebug() << "Material error: " << e.what();
+        }
         try
         {
             // текстура фигуры
@@ -74,7 +68,7 @@ void TVessel::draw()
             }
             else
             {
-                empty_texture_->bind();
+                texture_->bind();
             }
             shader_program_.setUniformValue( "Texture", GLuint(0) );
         }
@@ -101,7 +95,8 @@ void TVessel::f_check_environment() const
 {
     if( ! (NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
            NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
-           NUtils::file_exists( (std::string(NUtils::TConfig()["objs"]) + "/" + spec_.obj_name).c_str() )) )
+           NUtils::file_exists( (std::string(NUtils::TConfig()["objs"]) + "/" + spec_.obj_name).c_str() )            &&
+           NUtils::file_exists( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str() )) )
     {
         throw  std::runtime_error( std::string("invalid environment in {") + spec_.shader_name + " " + spec_.obj_name + "}"  );
     }
@@ -115,7 +110,11 @@ char const *TVessel::f_shader_name() const
 void TVessel::f_initialize()
 {
     // пустая текстура. Если объект не будет иметь своей, будем пользовать эту
-    empty_texture_.reset( new QOpenGLTexture( QImage(std::string(std::string(NUtils::TConfig()["textures"]) + "/" + spec_.empty_texture).c_str() ) ) );
+    texture_.reset( new QOpenGLTexture( QImage(std::string(std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str() ) ) );
+    // создать объект геометрической фигуры (координаты сетки фигуры)
+    object_.reset( new NBlender::TObject( (std::string(NUtils::TConfig()["objs"]) + "/" + spec_.obj_name).c_str() ) );
+    object_->load_position( &vertices_ );
+
 }
 
 void TVessel::f_accept( IVisitor &p, double )

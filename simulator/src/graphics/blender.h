@@ -9,10 +9,6 @@
 #ifndef BLENDER_H
 #define BLENDER_H
 
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
-
 #include <QVector3D>
 #include <QVector2D>
 #include <QOpenGLTexture>
@@ -35,7 +31,7 @@ namespace NBlender
 class TMTLfile {
 public:
     //! Алиас представления плоскости объекта (матрица 3х3)
-    using face_t = glm::vec< 3, glm::ivec3 >;
+    using face_t = std::array< QVector3D, 3 >;
     /*!
        \struct TMaterial
        \brief Структура, содержащая занчения полей объекта Blender

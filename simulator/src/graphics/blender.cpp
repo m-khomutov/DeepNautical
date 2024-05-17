@@ -16,12 +16,23 @@
 namespace
 {
     // читает строку файла .obj, представляющую поверхность (матрица 3х3)
-    bool str2face( const std::string &s, NBlender::TMTLfile::face_t *rc )
+    bool str2face( const std::string &s, NBlender::TMTLfile::face_t &rc )
     {
-        return sscanf( s.c_str(), "f %u/%u/%u %u/%u/%u %u/%u/%u",
-                       &((*rc)[0][0]), &((*rc)[0][1]), &((*rc)[0][2]),
-                       &((*rc)[1][0]), &((*rc)[1][1]), &((*rc)[1][2]),
-                       &((*rc)[2][0]), &((*rc)[2][1]), &((*rc)[2][2]) ) == 9;
+        uint32_t x[3], y[3], z[3];
+        if( sscanf( s.c_str(), "f %u/%u/%u %u/%u/%u %u/%u/%u",
+                                  &(x[0]), &(y[0]), &(z[0]),
+                                  &(x[1]), &(y[1]), &(z[1]),
+                                  &(x[2]), &(y[2]), &(z[2]) ) == 9 )
+        {
+            for( size_t i(0); i < 3; ++i )
+            {
+                rc[i].setX( x[i] );
+                rc[i].setY( y[i] );
+                rc[i].setZ( z[i] );
+            }
+            return true;
+        }
+        return false;
     }
 }  //namespace
 
@@ -145,7 +156,7 @@ NBlender::TObject::TObject( char const *fname )
         else if( line[ 0 ] == 'f' ) // поверхности
         {
             TMTLfile::face_t face;
-            if( str2face( line, &face ) && !materials_.empty() )
+            if( str2face( line, face ) && !materials_.empty() )
             {
                 materials_.back().faces.push_back( face );
                 ++facecount_;
@@ -203,14 +214,14 @@ void NBlender::TObject::load_position( std::vector< float > *pos )
         {
             for( int i(0); i < 3; ++i )
             {
-                pos->push_back( vertices_[f[i].x - 1][0] );
-                pos->push_back( vertices_[f[i].x - 1][1] );
-                pos->push_back( vertices_[f[i].x - 1][2] );
-                pos->push_back( texels_[f[i].y - 1][0] );
-                pos->push_back( texels_[f[i].y - 1][1] );
-                pos->push_back( normals_[f[i].z - 1][0] );
-                pos->push_back( normals_[f[i].z - 1][1] );
-                pos->push_back( normals_[f[i].z - 1][2] );
+                pos->push_back( vertices_[f[i].x() - 1][0] );
+                pos->push_back( vertices_[f[i].x() - 1][1] );
+                pos->push_back( vertices_[f[i].x() - 1][2] );
+                pos->push_back( texels_[f[i].y() - 1][0] );
+                pos->push_back( texels_[f[i].y() - 1][1] );
+                pos->push_back( normals_[f[i].z() - 1][0] );
+                pos->push_back( normals_[f[i].z() - 1][1] );
+                pos->push_back( normals_[f[i].z() - 1][2] );
             }
         }
     }

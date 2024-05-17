@@ -5,44 +5,44 @@
  * Created on 1 февраля 2023 г., 10:12
  */
 /*!
-     \file sol.h
+     \file sky.h
      \author mkh
      \date 1 февраля 2023 г.
-     \brief Заголовочный файл класса солнечного диска.
+     \brief Заголовочный файл класса изображения неба.
 
-     Данный файл содержит в себе состояние класса солнечного диск, реализацию его интерфейсов.
+     Данный файл содержит в себе состояние класса изображения неба, реализацию его интерфейсов.
  */
-#ifndef SOL_H
-#define SOL_H
+#ifndef SKY_H
+#define SKY_H
 
 #include "figure.h"
 
 /*!
-   \class TSol
-   \brief Класс солнечного диска
+   \class TSky
+   \brief Класс изображения неба
  */
-class TSol: public TFigure {
+class TSky: public TFigure {
 public:
     /*!
        \brief Конструктор класса. Настраивает геометрическую модель отображения
        \param settings конфигурация класса
      */
-    explicit TSol( const std::vector< std::string > &settings );
+    explicit TSky( const std::vector< std::string > &settings );
     /*!
        \brief Запрещенный конструктор копии.
        \param orig Копируемый объект
      */
-    TSol( TSol const& orig ) = delete;
+    TSky( TSky const& orig ) = delete;
     /*!
        \brief Запрещенный оператор присваивания.
        \param orig Копируемый объект
        \return Собственный объект
      */
-    TSol &operator =( TSol const& orig ) = delete;
+    TSky &operator =( TSky const& orig ) = delete;
     /*!
        \brief Деструктор класса
      */
-    ~TSol();
+    ~TSky();
 
     /*!
        \brief настраивает переменные GL и отправляет GL команду на отрисовку
@@ -81,4 +81,4 @@ private:
     void f_accept( IVisitor &p, double currentTime ) override;
 };
 
-#endif /* SOL_H */
+#endif /* SKY_H */

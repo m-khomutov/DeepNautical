@@ -16,7 +16,7 @@ in VS_OUT {
 
 layout (location = 0) out vec4 Color;
 
-uniform Material
+struct Material
 {
     vec3 Ka;
     vec3 Kd;
@@ -25,10 +25,11 @@ uniform Material
     float Ni;  // optical density
     float d;   // dissolve (transparency)
     int illum;
-} mtl;
+};
 
 uniform vec3 LightColor;
 uniform Fog fog;
+uniform Material mtl;
 uniform sampler2D Texture;
 
 float FogFactor(in float density) {

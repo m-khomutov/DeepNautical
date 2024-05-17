@@ -25,8 +25,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
-    src/graphics/figures/sol.cpp \
-    src/graphics/figures/water.cpp \
+    src/graphics/figures/sky.cpp \
+    src/graphics/figures/waves.cpp \
     src/graphics/figures/surge.cpp \
     src/graphics/figures/vessel.cpp \
     src/graphics/figures/figure.cpp \
@@ -39,11 +39,10 @@ SOURCES += \
     src/graphics/screens/qscreen.cpp \
     src/service/qservice.cpp \
     src/main.cpp
-#    src/graphics/uniformblock.cpp \
 
 HEADERS += \
-    src/graphics/figures/sol.h \
-    src/graphics/figures/water.h \
+    src/graphics/figures/sky.h \
+    src/graphics/figures/waves.h \
     src/graphics/figures/surge.h \
     src/graphics/figures/vessel.h \
     src/graphics/figures/figure.h \
@@ -55,7 +54,6 @@ HEADERS += \
     src/graphics/screens/glscreen.h \
     src/graphics/screens/qscreen.h \
     src/service/qservice.h
-#    src/graphics/uniformblock.h \
 
 INCLUDEPATH += ../simulator/src ../common ../kformat/include
 LIBS += ../build/kformat/lib/libkformat.a -ljpeg

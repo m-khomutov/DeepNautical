@@ -64,8 +64,8 @@ viewport={{-2.0 -2.5 1.0} {2.0 -2.5 1.0} {4.5 0.6 -1.0} {-4.5 0.6 -1.0}} # {bott
 speed={0.002 0.0 0.0}
 step=0.03
 
-[Sol]
-shader="sol.glsl"
+[Sky]
+shader="sky.glsl"
 texture="air.jpg"
 viewport={{-8.5 13.0 1.7} {-20.5 -4.0 -2.0} {25.3 -4.0 -2.0} {13.5 13.0 1.7}} # {topleft bottomleft bottmright bottomright topright}
 speed={0.0005 0.0 0.0}
@@ -73,7 +73,7 @@ speed={0.0005 0.0 0.0}
 # Naval Ship Cruiser USA
 [Vessel]
 shader="vessel.glsl"
-empty_texture="alpha.jpg"
+texture="alpha.jpg"
 object="cruiser/boat.obj"
 speed={-0.0005 0.0 0.0}
 start_position={1.5 0.5 0.02}
@@ -84,3 +84,4 @@ pitching=0.005
 angle_gain={0.0, 0.0, 0.0}
 start_factor={0.05 0.05 0.05}
 factor_gain={0.0 0.0 0.0}
+

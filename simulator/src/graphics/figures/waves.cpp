@@ -5,7 +5,7 @@
  * Created on 1 февраля 2023 г., 14:18
  */
 
-#include "water.h"
+#include "waves.h"
 
 #include <cmath>
 #include <random>
@@ -100,7 +100,7 @@ double Perlin::noise(double x, double y, double z)
 }
 
 
-TWater::TWater( const std::vector< std::string > &settings )
+TWaves::TWaves( const std::vector< std::string > &settings )
 : TFigure( settings )
 {
     // проверить настройки
@@ -113,13 +113,13 @@ TWater::TWater( const std::vector< std::string > &settings )
     model_.scale( QVector3D(2.7f, 0.9f, 1.4f) );
 }
 
-TWater::~TWater()
+TWaves::~TWaves()
 {
     shader_program_.disableAttributeArray("Normals");
     shader_program_.disableAttributeArray("Surface");
 }
 
-void TWater::draw()
+void TWaves::draw()
 {
     shader_program_.setAttributeArray( "Surface", surface_, 4 );
     shader_program_.enableAttributeArray( "Surface" );
@@ -157,12 +157,12 @@ void TWater::draw()
     shader_program_.disableAttributeArray("Surface");
 }
 
-void TWater::set_wake_position( const std::vector< TFigure::TPosition > &pos )
+void TWaves::set_wake_position( const std::vector< TFigure::TPosition > &pos )
 {
     wake_position_ = pos;   
 }
 
-void TWater::f_check_environment() const
+void TWaves::f_check_environment() const
 {
     if( ! (NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
            NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
@@ -174,12 +174,12 @@ void TWater::f_check_environment() const
     }
 }
 
-char const *TWater::f_shader_name() const
+char const *TWaves::f_shader_name() const
 {
     return spec_.shader_name.c_str(); 
 }
 
-void TWater::f_initialize()
+void TWaves::f_initialize()
 {
     // создать текстуры
     //std::string alpha = spec_.alpha.empty() ? "" : std::string(NUtils::TConfig()["textures"]) + "/" + spec_.alpha;
@@ -188,16 +188,19 @@ void TWater::f_initialize()
     foam_texture_.reset( new QOpenGLTexture( QImage(std::string(std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_foam).c_str() ) ) );
 }
 
-void TWater::f_accept( IVisitor &p, double currentTime )
+void TWaves::f_accept( IVisitor &p, double currentTime )
 {
     f_load_surface( currentTime );
     p.visit( this );
 }
 
-void TWater::f_load_surface( double )
+void TWaves::f_load_surface( double )
 {
     phase_ += 0.01f;
-    if( phase_ >= 360.0f )/*2 * glm::pi< GLfloat >() )*/ phase_ = 0.0f;
+    if( phase_ >= 360.0f )
+    {
+        phase_ = 0.0f;
+    }
 
     // сгенерить координаты точек поверхности
     const float delta = 2.7f / resolution;
@@ -267,7 +270,7 @@ void TWater::f_load_surface( double )
     }
 }
 
-GLfloat TWater::f_generate_surface(GLfloat x, GLfloat z, GLfloat *in_wake)
+GLfloat TWaves::f_generate_surface(GLfloat x, GLfloat z, GLfloat *in_wake)
 {
     if( in_wake )
     {

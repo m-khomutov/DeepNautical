@@ -6,8 +6,8 @@
 
      Данный файл содержит в себе состояние класса водной поверхности, реализацию его интерфейсов.
  */
-#ifndef WATER_H
-#define WATER_H
+#ifndef WAVES_H
+#define WAVES_H
 
 #include "figure.h"
 
@@ -35,28 +35,28 @@ private:
   \class TWater
   \brief Класс водной поверхности
  */
-class TWater: public TFigure {
+class TWaves: public TFigure {
 public:
     /*!
        \brief Конструктор класса. Настраивает геометрическую модель отображения
        \param settings конфигурация класса
      */
-    explicit TWater( const std::vector< std::string > &settings );
+    explicit TWaves( const std::vector< std::string > &settings );
     /*!
        \brief Запрещенный конструктор копии.
        \param orig Копируемый объект
      */
-    TWater( TWater const &orig ) = delete;
+    TWaves( TWaves const &orig ) = delete;
     /*!
        \brief Запрещенный оператор присваивания.
        \param orig Копируемый объект
        \return Собственный объект
      */
-    TWater &operator =( TWater const &orig ) = delete;
+    TWaves &operator =( TWaves const &orig ) = delete;
     /*!
        \brief Деструктор класса
      */
-    ~TWater();
+    ~TWaves();
 
     /*!
        \brief настраивает переменные GL и отправляет GL команду на отрисовку
@@ -122,5 +122,5 @@ private:
     GLfloat f_generate_surface( GLfloat x, GLfloat z, GLfloat *in_wake = nullptr );
 };
 
-#endif /* WATER_H */
+#endif /* WAVES_H */
 

@@ -12,11 +12,10 @@
 #define GL_GLEXT_PROTOTYPES
 #endif
 
-#include "figures/sol.h"
-#include "figures/water.h"
+#include "figures/sky.h"
+#include "figures/waves.h"
 #include "figures/surge.h"
 #include "figures/vessel.h"
-//#include "figures/horizon.h"
 
 #include <QDateTime>
 #include <QOpenGLDebugLogger>
@@ -89,7 +88,7 @@ void TScene::paintGL()
     }
     catch( const std::runtime_error &err )
     {
-        std::cerr << __PRETTY_FUNCTION__ << " error: " << err.what() <<std::endl;
+        qDebug() << __PRETTY_FUNCTION__ << " error: " << err.what();
     }
 
     // сохранить кадр, если время подошло
@@ -244,21 +243,17 @@ void TScene::f_initialize_debugging()
 void TScene::f_add_figure( const std::string &header, const std::vector< std::string > &settings )
 {
     // строка хедера определяет тип фигуры
-/*    if( header == "[Horizon]" )
-    {
-        f_add_figure< THorizon >( settings, camera_pos );
-    }
-    else*/ if( header == "[Vessel]" )
+    if( header == "[Vessel]" )
     {
         f_add_figure< TVessel >( settings );
     }
-    else if( header == "[Water]" )
+    else if( header == "[Waves]" )
     {
-        f_add_figure< TWater >( settings );
+        f_add_figure< TWaves >( settings );
     }
-    else if( header == "[Sol]" )
+    else if( header == "[Sky]" )
     {
-        f_add_figure< TSol >( settings );
+        f_add_figure< TSky >( settings );
     }
     else if( header == "[Surge]" )
     {
@@ -275,6 +270,6 @@ void TScene::f_add_figure( const std::vector< std::string > &settings )
     }
     catch( const std::runtime_error &err )
     {
-        std::cerr << __PRETTY_FUNCTION__ << " error: " << err.what() <<std::endl;
+        qDebug() << __PRETTY_FUNCTION__ << " error: " << err.what();
     }
 }

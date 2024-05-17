@@ -37,10 +37,6 @@ TSpecification::TSpecification( const std::vector< std::string > &settings )
             {
                 texture_foam = p.second.substr( 1, p.second.size() - 2 );
             }
-            else if( p.first.find( "empty_texture" ) != std::string::npos )
-            {
-                empty_texture = p.second.substr( 1, p.second.size() - 2 );
-            }
             else if( p.first.find( "object" ) != std::string::npos )
             {
                 obj_name = p.second.substr( 1, p.second.size() - 2 );

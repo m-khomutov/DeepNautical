@@ -11,8 +11,8 @@
 
 #include <cstddef>
 
-class TSol;
-class TWater;
+class TSky;
+class TWaves;
 class TSurge;
 class TVessel;
 
@@ -34,13 +34,13 @@ public:
        \param vbo_number номер связанного VBO
        \param fig посещаемый элемент
      */
-    virtual void visit( TSol * ) = 0;
+    virtual void visit( TSky * ) = 0;
     /*!
        \brief объявление метода посещения элемента класса TWater
        \param vbo_number номер связанного VBO
        \param fig посещаемый элемент
      */
-    virtual void visit( TWater * ) = 0;
+    virtual void visit( TWaves * ) = 0;
     /*!
        \brief объявление метода посещения элемента класса TVessel
        \param vbo_number номер связанного VBO

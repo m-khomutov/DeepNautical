@@ -6,8 +6,8 @@
  */
 
 #include "figureset.h"
-#include "figures/sol.h"
-#include "figures/water.h"
+#include "figures/sky.h"
+#include "figures/waves.h"
 #include "figures/surge.h"
 #include "figures/vessel.h"
 
@@ -57,15 +57,15 @@ void TFigureset::draw( double currentTime )
     }
 }
 
-void TFigureset::visit( TSol *_sol )
+void TFigureset::visit( TSky *_sky )
 {
-    _sol->draw();
+    _sky->draw();
 }
 
-void TFigureset::visit( TWater *_water )
+void TFigureset::visit( TWaves *_waves )
 {
-    _water->set_wake_position( vessel_positions_ );
-    _water->draw();
+    _waves->set_wake_position( vessel_positions_ );
+    _waves->draw();
 
     vessel_positions_.clear();
 }

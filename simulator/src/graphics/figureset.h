@@ -77,13 +77,13 @@ public:
        \param vbo_number номер связанного VBO
        \param fig посещаемый элемент
      */
-    void visit( TSol *fig ) override;
+    void visit( TSky *fig ) override;
     /*!
        \brief реализация метода посещения элемента класса TWater
        \param vbo_number номер связанного VBO
        \param fig посещаемый элемент
      */
-    void visit( TWater *fig ) override;
+    void visit( TWaves *fig ) override;
     /*!
        \brief реализация метода посещения элемента класса TVessel
        \param vbo_number номер связанного VBO

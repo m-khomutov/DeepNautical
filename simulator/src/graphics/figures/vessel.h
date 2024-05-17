@@ -65,9 +65,7 @@ private:
     QVector3D factor_;
     //! угол крена фигуры при раскачивании
     GLfloat pitching_angle_ = 0.0f;
-    //! умный указатель на пустую текстуру. Используется как вспомогательная, если объект координат не представляет своей
-    std::unique_ptr< QOpenGLTexture > empty_texture_;
-    //! объект текуще позиции фигуры на сцене
+    //! объект текущей позиции фигуры на сцене
     TFigure::TPosition position_;
 
 private:

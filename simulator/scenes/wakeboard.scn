@@ -61,8 +61,8 @@ fog_density=0.01
 #texture="56118_Peaceful_ocean_background_HD_BG.avi"
 #viewport={{-1.5 1.0 -1.0} {1.5 1.0 -1.0} {1.5 -1.0 0.66} {-1.5 -1.0 0.66}} # {topleft topright bottomright bottomleft}
 
-[Water]
-shader="water.glsl"
+[Waves]
+shader="waves.glsl"
 texture="reflection.jpg"
 alpha="alpha.jpg"
 air="air.jpg"
@@ -70,14 +70,15 @@ foam="water_foam.jpg"
 wave={10.0 2.6}
 wake={20.0 5.0}
 
-[Sol]
-shader="sol.glsl"
+[Sky]
+shader="sky.glsl"
 texture="air.jpg"
 viewport={{-5.0 3.5 1.7} {9.9 3.5 1.7} {9.9 -4.0 -2.0} {-5.0 -4.0 -2.0}} # {topleft topright bottomright bottomleft}
 
 # катер, дрейфующий из левого верхнего в правый нижний угол экрана
 [Vessel]
 shader="vessel.glsl"
+texture="alpha.jpg"
 object="wakeboard_boat/boat.obj"
 speed={0.0015 0.0 -0.00015}
 start_position={-1.2 -0.5 0.4}

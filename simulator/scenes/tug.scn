@@ -73,15 +73,15 @@ fog_density=0.3
 #texture="56118_Peaceful_ocean_background_HD_BG.avi"
 #viewport={{-1.5 1.0 -1.0} {1.5 1.0 -1.0} {1.5 -1.0 1.55} {-1.5 -1.0 1.55}} # {topleft topright bottomright bottomleft}
 
-[Sol]
-shader="sol.glsl"
+[Sky]
+shader="sky.glsl"
 texture="air.jpg"
 #viewport={{-8.5 13.0 1.7} {13.5 13.0 1.7} {25.3 -4.0 -2.0} {-20.5 -4.0 -2.0}} # {topleft topright bottomright bottomleft}
 viewport={{-8.5 13.0 1.7} {-20.5 -4.0 -2.0} {25.3 -4.0 -2.0} {13.5 13.0 1.7}} # {topleft bottomleft bottmright bottomright topright}
 speed={0.0005 0.0 0.0}
 
-[Water]
-shader="water.glsl"
+[Waves]
+shader="waves.glsl"
 texture="reflection.jpg"
 alpha="alpha.jpg"
 air="air.jpg"
@@ -92,7 +92,7 @@ wake={20.0 4.0}
 # буксир в более-менее центре экрана
 [Vessel]
 shader="vessel.glsl"
-empty_texture="alpha.jpg"
+texture="alpha.jpg"
 object="tug_boat/boat.obj"
 speed={0.0 0.0 0.0}
 start_position={0.0 -0.1 -0.6}
