@@ -9,6 +9,7 @@
 #ifndef JSON_H
 #define JSON_H
 
+#include <stdexcept>
 #include <map>
 #include <string>
 #include <vector>
@@ -24,7 +25,9 @@ public:
     /*!
        \brief Конструктор по умолчанию
      */
-    TObject() = default;
+    TObject()
+    {}
+
     /*!
        \brief Конструктор преобразования из строки. Сохраняет строку как значение
        \param v строка преобразования
@@ -41,7 +44,11 @@ public:
     const TObject& operator[]( const std::string &key ) const
     {
         const auto it = subobjects_.find( key );
-        return it != subobjects_.end() ? it->second : *this;
+        if( it == subobjects_.end() )
+        {
+            throw std::logic_error( key + " not found");
+        }
+        return it->second;
     }
 
     /*!
@@ -79,6 +86,15 @@ public:
     int toInt() const
     {
         return strtol( value_.c_str(), nullptr, 10 );
+    }
+
+    /*!
+       \brief метод приведения значения к типу float. Возвращает значение, приведенное к float
+       \return значение как float
+     */
+    float toFloat() const
+    {
+        return strtof( value_.c_str(), nullptr );
     }
 
     /*!

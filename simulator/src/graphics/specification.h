@@ -9,6 +9,8 @@
 #ifndef SPECIFICATION_H
 #define SPECIFICATION_H
 
+#include "utils.h"
+
 #include <QVector2D>
 #include <QVector3D>
 #include <QVector4D>
@@ -28,10 +30,10 @@ public:
     TSpecification() = default;
     /*!
        \brief Конструктор класса. Настраивает геометрическую модель отображения
-       \param settings конфигурация класса
-       \param camera_pos позиция камеры на сцене
+       \param environment набор общих конфигурационных параметров сцены
+       \param settings набор конфигурационных параметров фигуры
      */
-    explicit TSpecification( const std::vector< std::string > &settings );
+    explicit TSpecification( const NJson::TObject &environment,const NJson::TObject &settings );
     /*!
        \brief Запрещенный конструктор копии.
        \param orig Копируемый объект
@@ -57,9 +59,9 @@ public:
     //! путь к файлу изображения текстуры кильватерной струи фигуры
     std::string texture_foam;
     //! путь к файлу геометрических координат сетки фигуры
-    std::string obj_name;
+    std::string blenderobj_name;
     //! путь к файлу изображения текстуры альфа-канала(прозрачности) подложки
-    std::string alpha;
+    std::string texture_alpha;
 
     //! координаты скорости перемещения фигуры по сцене
     QVector3D speed { 0.001f, 0.0f, 0.0f };
@@ -105,21 +107,9 @@ public:
     //! координаты ширины кильватерной струи
     QVector2D wake_width {0.3f, 0.3f};
     //! координаты изменения кильватерной струи
-    QVector2D surge[2] = { QVector2D(0.0f, 0.0f), QVector2D(0.0f, 0.0f) };
+    QVector2D ripple[2] = { QVector2D(0.0f, 0.0f), QVector2D(0.0f, 0.0f) };
     //! скорость движения фигуры по сцене
     float step = 0.01;
-
-private:
-    /*!
-       \brief читает координаты размера сцены для фигуры
-       \param config строка конфигурации, представляющая координаты сцены
-     */
-    void f_read_viewport( const std::string& config );
-    /*!
-       \brief читает координаты изменения кильватерной струи
-       \param config строка конфигурации, представляющая координаты
-     */
-    void f_read_surge( const std::string& config );
 };
 
 #endif /* SPECIFICATION_H */

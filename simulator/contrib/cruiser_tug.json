@@ -3,7 +3,6 @@
     "root": "/opt/agat-a",
     "shaders": "shaders",
     "textures": "textures",
-    "objects": "objs",
     "scenes": "scenes",
     "blender_objects": "objs"
   },
@@ -24,28 +23,28 @@
           "height": 600
         },
         "environment": {
-          "camera_position": {
+          "camera-position": {
             "x": 0.0,
             "y": 0.0,
             "z": 3.0
           },
-          "light_color": {
+          "light-color": {
             "r": 1.0,
             "g": 1.0,
             "b": 1.0
 	  },
-          "light_position": {
+          "light-position": {
             "x": 0.0,
             "y": 0.0,
             "z": 1.0
           },
-          "fog_color": {
+          "fog-color": {
             "r": 0.892,
             "g": 0.892,
             "b": 0.872,
             "a": 1.0
           },
-          "fog_density": 0.12
+          "fog-density": 0.12
         },
 	"figures": {
           "surge": {
@@ -53,14 +52,14 @@
             "main-texture": "reflection.jpg",
             "alpha-texture": "alpha.jpg",
             "air-texture": "air.jpg",
-            "wave": {
-              "horizontal": {
-                "amplitude": 0.004,
-                "frequency": 2.0
+            "ripple": {
+              "amplitude": {
+                "x": 0.004,
+                "y": 2.0
               },
-              "vertical": {
-                "amplitude": 0.003,
-                "frequency": 2.5
+              "frequency": {
+                "x": 0.003,
+                "y": 2.5
               }
             },
             "viewport": {
@@ -92,8 +91,8 @@
             },
             "step": 0.03
           },
-          "sol": {
-            "shader": "sol.glsl",
+          "sky": {
+            "shader": "sky.glsl",
             "main-texture": "air.jpg",
             "viewport": {
               "bottomleft": {
@@ -125,7 +124,8 @@
           },
           "vessel": {
             "shader": "vessel.glsl",
-            "object": "boat.obj",
+            "blenderobj-name": "cruiser/boat.obj",
+	    "main-texture": "alpha.jpg",
             "speed": {
               "x": -0.0005,
               "y": 0.0,
@@ -157,7 +157,11 @@
               "y": 0.05,
               "z": 0.05
             },
-            "factor-gain": 0.0
+            "factor-gain": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            }
           }
         }
       },
@@ -169,8 +173,122 @@
         "size": {
           "width": 800,
           "height": 600
+        },
+        "environment": {
+          "camera-position": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 3.0
+          },
+          "light-color": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 0.75
+          },
+          "light-position": {
+            "x": 0.0,
+            "y": 1.0,
+            "z": -3.0
+          },
+          "fog-color": {
+            "r": 0.892,
+            "g": 0.892,
+            "b": 0.872,
+	    "a": 1.0
+          },
+          "fog-density": 0.3
+        },
+	"figures": {
+          "sky": {
+            "shader": "sky.glsl",
+            "main-texture": "air.jpg",
+            "viewport": {
+              "topleft": {
+                "x": -8.5,
+                "y": 13.0,
+                "z": 1.7
+              },
+              "bottomleft": {
+                "x": -20.5,
+                "y": -4.0,
+                "z": -2.0
+              },
+              "bottomright": {
+                "x": 25.3,
+                "y": -4.0,
+                "z": -2.0
+              },
+              "topright": {
+                "x": 13.5,
+                "y": 13.0,
+                "z": 1.7
+              }
+            },
+	    "speed": {
+              "x": 0.0005,
+              "y": 0.0,
+              "z": 0.0
+            }
+          },
+          "waves": {
+            "shader": "waves.glsl",
+            "main-texture": "reflection.jpg",
+            "alpha-texture": "alpha.jpg",
+            "air-texture": "air.jpg",
+            "foam-texture": "foam.jpg",
+            "wave": {
+              "x": 10.0,
+              "y": 2.0
+            },
+            "wake": {
+              "x": 20.0,
+              "y": 4.0
+            }
+          },
+          "vessel": {
+            "shader": "vessel.glsl",
+            "main-texture": "alpha.jpg",
+            "blenderobj-name": "tug_boat/boat.obj",
+            "speed": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "start-position": {
+              "x": 0.0,
+              "y": -0.1,
+              "z": -0.6
+            },
+            "course": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": -3.0
+            },
+            "trajectory": 2.6,
+            "pitching-range": {
+              "X": 1.0,
+              "y": 3.2
+            },
+            "pitching": 0.03,
+            "angle-gain": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "start-factor": {
+              "x": 0.1,
+              "y": 0.1,
+              "z": 0.1
+            },
+            "factor-gain": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            }
+          }
         }
       }
     }
   }
 }
+

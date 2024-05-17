@@ -100,8 +100,8 @@ double Perlin::noise(double x, double y, double z)
 }
 
 
-TWaves::TWaves( const std::vector< std::string > &settings )
-: TFigure( settings )
+TWaves::TWaves( const NJson::TObject &environment,const NJson::TObject &settings )
+: TFigure( environment, settings )
 {
     // проверить настройки
     f_check_environment();

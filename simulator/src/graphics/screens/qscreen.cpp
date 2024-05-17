@@ -13,15 +13,25 @@ TQscreen::TQscreen()
 {
     QGridLayout *mainLayout = new QGridLayout;
 
-    // создать сцены (расположение в файле из конфигурации screen_layout), отображаемые экраном
-    const auto &layout = NUtils::scene_config_t(NUtils::TConfig()["screen_layout"]);
-    for( const auto &scene : layout )
+    try
     {
-        sc_.emplace_back( new TScene( scene.name,
-                                      std::string(NUtils::TConfig()["scenes"]) + "/" + scene.name + ".scn",
-                                      QSize(scene.size.width, scene.size.height),
-                                      QPoint(scene.x, scene.y) ) );
-        mainLayout->addWidget( sc_.back(), scene.y,  scene.x );
+        // создать сцены (расположение в файле из конфигурации screen_layout), отображаемые экраном
+        const auto &layout = NUtils::scene_config_t(NUtils::TConfig()["screen_layout"]);
+        for( const auto &cfg : layout )
+        {
+            try
+            {
+                sc_.emplace_back( new TScene( cfg ) );
+                mainLayout->addWidget( sc_.back(), cfg.y,  cfg.x );
+            }
+            catch( const std::exception &scene_err ) {
+                qDebug() << scene_err.what();
+            }
+        }
+    }
+    catch( const std::exception &e )
+    {
+        qDebug() << e.what();
     }
 
     setLayout(mainLayout);

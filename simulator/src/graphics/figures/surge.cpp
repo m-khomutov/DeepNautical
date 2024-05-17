@@ -7,8 +7,8 @@
 
 #include "surge.h"
 
-TSurge::TSurge( const std::vector< std::string > &settings )
-: TFigure( settings )
+TSurge::TSurge( const NJson::TObject &environment,const NJson::TObject &settings )
+: TFigure( environment, settings )
 {
     // проверить настройки
     f_check_environment();
@@ -42,7 +42,7 @@ void TSurge::f_check_environment() const
            NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
            NUtils::file_exists( (std::string(NUtils::TConfig()["textures"]) + "/"     + spec_.texture_name).c_str()) &&
            NUtils::file_exists( (std::string(NUtils::TConfig()["textures"]) + "/"     + spec_.texture_air).c_str() ) &&
-           NUtils::file_exists( (std::string(NUtils::TConfig()["textures"]) + "/"     + spec_.alpha).c_str() )) )
+           NUtils::file_exists( (std::string(NUtils::TConfig()["textures"]) + "/"     + spec_.texture_alpha).c_str() )) )
     {
         throw  std::runtime_error( std::string("invalid environment in {") + spec_.shader_name + " " + spec_.texture_name + "}"  );
     }
@@ -90,8 +90,8 @@ void TSurge::f_draw_layout()
     shader_program_.setUniformValue( "DrawSparkles", 0.f );
     shader_program_.setUniformValue( "FogParams.color", spec_.fog_color );
     shader_program_.setUniformValue( "FogParams.density", spec_.fog_density );
-    shader_program_.setUniformValue( "Amplitude", spec_.surge[0] );
-    shader_program_.setUniformValue( "Frequency", spec_.surge[1] );
+    shader_program_.setUniformValue( "Amplitude", spec_.ripple[0] );
+    shader_program_.setUniformValue( "Frequency", spec_.ripple[1] );
     if( air_texture_ )
     {
         shader_program_.setUniformValue( "AirTexture", GLuint(1) );

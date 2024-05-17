@@ -226,29 +226,35 @@ void NUtils::TConfig::f_read_file( char const *fname )
 
 void NUtils::TConfig::f_read_json( char const *fname )
 {
-    NJson::TParser p( fname );
-    const NJson::TObject &object = p.json();
-
-    // настройки filesystem
-    std::string root = std::string(object["/"]["filesystem"]["root"]) + "/";
-    TConfig::fields_["shaders"] = root + std::string(object["/"]["filesystem"]["shaders"]);
-    TConfig::fields_["textures"] = root + std::string(object["/"]["filesystem"]["textures"]);
-    TConfig::fields_["objects"] = root + std::string(object["/"]["filesystem"]["objects"]);
-    TConfig::fields_["scenes"] = root + std::string(object["/"]["filesystem"]["scenes"]);
-    TConfig::fields_["objs"] = root + std::string(object["/"]["filesystem"]["blender_objects"]);
-    // настройки service
-    TConfig::fields_["port"] = object["/"]["service"]["port"].toInt();
-    TConfig::fields_["compress_quality"] = object["/"]["service"]["jpeg_compress_quality_percent"].toInt();
-    TConfig::fields_["frame_duration"] = object["/"]["service"]["frame_duration_msec"].toInt();
-
-    scene_config_t cfg;
-
-    const NJson::TObject &scenes = object["/"]["screen"]["scenes"];
-    for( const auto &sc : scenes )
+    try
     {
-         cfg.emplace( sc.first, sc.second );
+        NJson::TParser p( fname );
+        const NJson::TObject &object = p.json();
+
+        // настройки filesystem
+        std::string root = std::string(object["filesystem"]["root"]) + "/";
+        TConfig::fields_["shaders"] = root + std::string(object["filesystem"]["shaders"]);
+        TConfig::fields_["textures"] = root + std::string(object["filesystem"]["textures"]);
+        TConfig::fields_["scenes"] = root + std::string(object["filesystem"]["scenes"]);
+        TConfig::fields_["objs"] = root + std::string(object["filesystem"]["blender_objects"]);
+        // настройки service
+        TConfig::fields_["port"] = object["service"]["port"].toInt();
+        TConfig::fields_["compress_quality"] = object["service"]["jpeg_compress_quality_percent"].toInt();
+        TConfig::fields_["frame_duration"] = object["service"]["frame_duration_msec"].toInt();
+
+        scene_config_t cfg;
+
+        const NJson::TObject &scenes = object["screen"]["scenes"];
+        for( const auto &sc : scenes )
+        {
+            cfg.emplace( sc.first, sc.second );
+        }
+        TConfig::fields_["screen_layout"] = cfg;
     }
-    TConfig::fields_["screen_layout"] = cfg;
+    catch( const std::exception &err )
+    {
+        std::cerr << err.what() << std::endl;
+    }
 }
 
 NUtils::TJpegCodec::TError::TError( const std::string &what )

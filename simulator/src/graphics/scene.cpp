@@ -29,14 +29,14 @@ TSceneError::TSceneError( const std::string &what )
 : std::runtime_error( what )
 {}
 
-TScene::TScene( const std::string &name, const std::string &specification, QSize size, QPoint pos, QWidget *parent )
+TScene::TScene( const NUtils::TSceneConfig &config, QWidget *parent )
 : QGLWidget( QGLFormat(), parent )
-, name_( name )
-, size_( size )
-, position_( pos )
+, name_( config.name )
+, size_( config.size.width, config.size.height )
+, position_( config.x, config.y )
 , store_ts_( std::chrono::high_resolution_clock::now() )
 {
-    f_initialize( specification );
+    f_initialize( config.specification );
 }
 
 TScene::~TScene()
@@ -155,16 +155,23 @@ void TScene::onMessageLogged( QOpenGLDebugMessage message )
     }
 }
 
-void TScene::f_initialize( const std::string &specification )
+void TScene::f_initialize( const NJson::TObject &specification )
 {
-    using param_t = std::vector< std::string >;
-
-    // фигура - тип (хедер) + набор параметров
-    std::map< std::string/*header*/, std::list< param_t > > figures;
-    param_t settings;
-    std::string header;
+    NJson::TObject environment;
+    try {
+        environment = specification["environment"];
+    }
+    catch( std::exception &e )
+    {
+        qDebug() << e.what();
+    }
     // читаем спецификацию
-    NUtils::read_config( specification.c_str(), [&]( const std::string &line ) {
+    const NJson::TObject &figures = specification["figures"];
+    for( const auto &fig : figures )
+    {
+        f_add_figure( fig.first, environment, fig.second );
+    }
+/*    NUtils::read_config( specification.c_str(), [&]( const std::string &line ) {
         if( line[ 0 ] == '[' ) // новый блок
         {
             if( !header.empty() ) // уже не первый - есть прочитанная фигура
@@ -200,7 +207,7 @@ void TScene::f_initialize( const std::string &specification )
             // следующая фигура в контейнер
             f_add_figure( figure.first, param );
         }
-    }
+    }*/
 }
 
 void TScene::f_debug_info()
@@ -240,33 +247,33 @@ void TScene::f_initialize_debugging()
     logger->startLogging();
 }
 
-void TScene::f_add_figure( const std::string &header, const std::vector< std::string > &settings )
+void TScene::f_add_figure( const std::string &header, const NJson::TObject &environment, const NJson::TObject &settings )
 {
     // строка хедера определяет тип фигуры
-    if( header == "[Vessel]" )
+    if( header == "vessel" )
     {
-        f_add_figure< TVessel >( settings );
+        f_add_figure< TVessel >( environment, settings );
     }
-    else if( header == "[Waves]" )
+    else if( header == "waves" )
     {
-        f_add_figure< TWaves >( settings );
+        f_add_figure< TWaves >( environment, settings );
     }
-    else if( header == "[Sky]" )
+    else if( header == "sky" )
     {
-        f_add_figure< TSky >( settings );
+        f_add_figure< TSky >( environment, settings );
     }
-    else if( header == "[Surge]" )
+    else if( header == "surge" )
     {
-        f_add_figure< TSurge >( settings );
+        f_add_figure< TSurge >( environment, settings );
     }
 }
 
 template< typename Figure >
-void TScene::f_add_figure( const std::vector< std::string > &settings )
+void TScene::f_add_figure( const NJson::TObject &environment,const NJson::TObject &settings )
 {
     try
     {
-        figureset_.emplace( new Figure( settings ) );
+        figureset_.emplace( new Figure( environment, settings ) );
     }
     catch( const std::runtime_error &err )
     {

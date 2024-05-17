@@ -7,8 +7,8 @@
 
 #include "vessel.h"
 
-TVessel::TVessel( const std::vector< std::string > &settings )
-: TFigure( settings )
+TVessel::TVessel( const NJson::TObject &environment,const NJson::TObject &settings )
+: TFigure( environment, settings )
 {
     // проверить настройки
     f_check_environment();
@@ -93,12 +93,15 @@ const TFigure::TPosition &TVessel::position()
 
 void TVessel::f_check_environment() const
 {
+    std::cerr << std::string(std::string(NUtils::TConfig()["shaders"]) + "/vert_" + spec_.shader_name) << std::endl;
+    std::cerr << std::string(std::string(NUtils::TConfig()["objs"]) + "/" + spec_.blenderobj_name) << std::endl;
+    std::cerr << std::string(std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name) << std::endl;
     if( ! (NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
            NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
-           NUtils::file_exists( (std::string(NUtils::TConfig()["objs"]) + "/" + spec_.obj_name).c_str() )            &&
+           NUtils::file_exists( (std::string(NUtils::TConfig()["objs"]) + "/" + spec_.blenderobj_name).c_str() )     &&
            NUtils::file_exists( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str() )) )
     {
-        throw  std::runtime_error( std::string("invalid environment in {") + spec_.shader_name + " " + spec_.obj_name + "}"  );
+        throw  std::runtime_error( std::string("invalid environment in {") + spec_.shader_name + " " + spec_.blenderobj_name + "}"  );
     }
 }
 
@@ -112,9 +115,8 @@ void TVessel::f_initialize()
     // пустая текстура. Если объект не будет иметь своей, будем пользовать эту
     texture_.reset( new QOpenGLTexture( QImage(std::string(std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str() ) ) );
     // создать объект геометрической фигуры (координаты сетки фигуры)
-    object_.reset( new NBlender::TObject( (std::string(NUtils::TConfig()["objs"]) + "/" + spec_.obj_name).c_str() ) );
+    object_.reset( new NBlender::TObject( (std::string(NUtils::TConfig()["objs"]) + "/" + spec_.blenderobj_name).c_str() ) );
     object_->load_position( &vertices_ );
-
 }
 
 void TVessel::f_accept( IVisitor &p, double )

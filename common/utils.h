@@ -101,6 +101,8 @@ struct TSceneConfig
     int x = 0;
     //! местоположение по вертикали
     int y = 0;
+    //! спецификация сцены
+    NJson::TObject specification;
 
     /*!
        \brief Конструктор структуры по умолчанию. Необходим для хранения объекта геометрии в контейнерах стандартной библиотеки.
@@ -115,6 +117,7 @@ struct TSceneConfig
     , size( obj["size"]["width"].toInt(), obj["size"]["height"].toInt() )
     , x( obj["position"]["x"].toInt() )
     , y( obj["position"]["y"].toInt() )
+    , specification( obj )
     {}
 
     bool operator <( const TSceneConfig &other ) const

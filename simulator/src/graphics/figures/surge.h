@@ -19,9 +19,10 @@ class TSurge: public TFigure {
 public:
     /*!
        \brief Конструктор класса. Настраивает геометрическую модель отображения
-       \param settings конфигурация класса
+       \param environment набор общих конфигурационных параметров сцены
+       \param settings набор конфигурационных параметров фигуры
      */
-    explicit TSurge( const std::vector< std::string > &settings );
+    explicit TSurge( const NJson::TObject &environment,const NJson::TObject &settings );
     /*!
        \brief Запрещенный конструктор копии.
        \param orig Копируемый объект

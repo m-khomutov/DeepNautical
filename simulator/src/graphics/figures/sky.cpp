@@ -7,8 +7,8 @@
 
 #include "sky.h"
 
-TSky::TSky( const std::vector< std::string > &settings )
-: TFigure( settings )
+TSky::TSky( const NJson::TObject &environment,const NJson::TObject &settings )
+: TFigure( environment, settings )
 {
     // настраиваем местоположение и геометрическую модель объекта
     offset_ = QVector4D( -2.5f, 2.0f, 0.0f, 1.f );

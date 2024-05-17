@@ -44,10 +44,12 @@ public:
     };
 
     /*!
-       \brief Конструктор класса. Настраивает матрицу обзора и матрицу перспективы
-       \param setting конфигурация объекта
+       \brief Конструктор класса. Настраивает геометрическую модель отображения
+       \param environment набор общих конфигурационных параметров сцены
+       \param settings набор конфигурационных параметров фигуры
      */
-    explicit TFigure( const std::vector< std::string > &setting );
+    explicit TFigure( const NJson::TObject &environment,const NJson::TObject &settings );
+
     /*!
        \brief Запрещенный конструктор копии.
        \param orig Копируемый объект

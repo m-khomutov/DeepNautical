@@ -9,8 +9,8 @@
 
 #include <QOpenGLContext>
 
-TFigure::TFigure( const std::vector< std::string > &settings )
-: spec_( settings )
+TFigure::TFigure( const NJson::TObject &environment,const NJson::TObject &settings )
+: spec_( environment, settings )
 {
     // настроить обзор и перспективу
     NUtils::TGeometry win { NUtils::TConfig()["window"] };

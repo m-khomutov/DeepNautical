@@ -35,16 +35,13 @@ class TScene: public QGLWidget {
 public:
     /*!
        \brief Конструктор класса. Производит общую инициализацию
-       \param name название сцены (по имени файла хранения сцены)
-       \param specification спецификация сцены (содержит набор объектов, отрисовываемых на сцене)
-       \param size размеры окна сцены
-       \param position позиция сцены на экране
+       \param config конфигурация сцены (содержит набор объектов, отрисовываемых на сцене)
        \param parent указатель на объект-владелец создаваемого объекта
 
        Производит общую инициализацию. Настраивает GL переменные, вывод отладочных сообщений.
        Создает набор объектов для отрисовки в соответствии с переданной спецификацией
      */
-    explicit TScene( const std::string &name, const std::string &specification, QSize size, QPoint position, QWidget *parent = 0 );
+    explicit TScene( const NUtils::TSceneConfig &config, QWidget *parent = nullptr );
     /*!
        \brief Запрещенный конструктор копии.
        \param orig Копируемый объект
@@ -141,7 +138,7 @@ private:
        \brief читает спецификацию и создает объекты, представленные в ней
        \param specification текст спецификации
      */
-    void f_initialize( const std::string &specification );
+    void f_initialize( const NJson::TObject &specification );
     /*!
        \brief выводит отладочную информацию о GL системе
      */
@@ -153,16 +150,18 @@ private:
     /*!
        \brief добавляет в контейнер фигур следующую фигуру из спецификации
        \param header заголовок блока данных, в котором пердставлена фигура. Соответствует типу фигуры
+       \param environment набор общих конфигурационных параметров сцены
        \param settings набор конфигурационных параметров фигуры
      */
-    void f_add_figure( const std::string &header, const std::vector< std::string > &settings );
+    void f_add_figure( const std::string &header, const NJson::TObject &environment, const NJson::TObject &settings );
 
     /*!
        \brief добавляет в контейнер фигур следующую фигуру из спецификации. Параметр шаблона соответствует типу фигуры
+       \param environment набор общих конфигурационных параметров сцены
        \param settings набор конфигурационных параметров фигуры
      */
     template< typename Figure >
-    void f_add_figure( const std::vector< std::string > &settings );
+    void f_add_figure( const NJson::TObject &environment,const NJson::TObject &settings );
     /*!
        \brief f_store_frame сохраняет текущий фрейм изображения
      */
