@@ -149,11 +149,10 @@ private:
     void f_initialize_debugging();
     /*!
        \brief добавляет в контейнер фигур следующую фигуру из спецификации
-       \param header заголовок блока данных, в котором пердставлена фигура. Соответствует типу фигуры
        \param environment набор общих конфигурационных параметров сцены
        \param settings набор конфигурационных параметров фигуры
      */
-    void f_add_figure( const std::string &header, const NJson::TObject &environment, const NJson::TObject &settings );
+    void f_add_figure( const NJson::TObject &environment, const NJson::TObject &settings );
 
     /*!
        \brief добавляет в контейнер фигур следующую фигуру из спецификации. Параметр шаблона соответствует типу фигуры

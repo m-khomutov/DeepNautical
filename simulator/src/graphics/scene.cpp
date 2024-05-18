@@ -157,6 +157,7 @@ void TScene::onMessageLogged( QOpenGLDebugMessage message )
 
 void TScene::f_initialize( const NJson::TObject &specification )
 {
+    // данные из блока environment расшариваются по всем фигурам
     NJson::TObject environment;
     try {
         environment = specification["environment"];
@@ -169,45 +170,8 @@ void TScene::f_initialize( const NJson::TObject &specification )
     const NJson::TObject &figures = specification["figures"];
     for( const auto &fig : figures )
     {
-        f_add_figure( fig.first, environment, fig.second );
+        f_add_figure( environment, fig.second );
     }
-/*    NUtils::read_config( specification.c_str(), [&]( const std::string &line ) {
-        if( line[ 0 ] == '[' ) // новый блок
-        {
-            if( !header.empty() ) // уже не первый - есть прочитанная фигура
-            {
-                figures[header].push_back( settings );
-                settings.clear();
-            }
-            header = line;
-        }
-        else
-        {
-            settings.push_back( line );
-        }
-    });
-    if( !header.empty() )
-    {
-        figures[header].push_back( settings );
-    }
-
-    // данные из блока Environment расшариваются по всем фигурам
-    const std::list< param_t > &environment_params = figures["[Environment]"];
-
-    // создаем сами фигуры
-    for( auto figure : figures )
-    {
-        for( param_t &param : figure.second )
-        {
-            if( !(environment_params.empty() || figure.first == "[Environment]") )
-            {
-                // добавить параметры Environment, которые для всех фигур
-                param.insert( param.end(), environment_params.back().begin(), environment_params.back().end() );
-            }
-            // следующая фигура в контейнер
-            f_add_figure( figure.first, param );
-        }
-    }*/
 }
 
 void TScene::f_debug_info()
@@ -247,22 +211,22 @@ void TScene::f_initialize_debugging()
     logger->startLogging();
 }
 
-void TScene::f_add_figure( const std::string &header, const NJson::TObject &environment, const NJson::TObject &settings )
+void TScene::f_add_figure( const NJson::TObject &environment, const NJson::TObject &settings )
 {
     // строка хедера определяет тип фигуры
-    if( header == "vessel" )
+    if( std::string(settings["type"]) == "vessel" )
     {
         f_add_figure< TVessel >( environment, settings );
     }
-    else if( header == "waves" )
+    else if( std::string(settings["type"]) == "waves" )
     {
         f_add_figure< TWaves >( environment, settings );
     }
-    else if( header == "sky" )
+    else if( std::string(settings["type"]) == "sky" )
     {
         f_add_figure< TSky >( environment, settings );
     }
-    else if( header == "surge" )
+    else if( std::string(settings["type"]) == "surge" )
     {
         f_add_figure< TSurge >( environment, settings );
     }
