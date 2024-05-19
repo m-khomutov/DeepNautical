@@ -44,7 +44,7 @@ TScene::~TScene()
     clear();
 }
 
-QSize TScene::sizeHint() const
+QSize TScene::minimumSizeHint() const
 {
     return size_;
 }

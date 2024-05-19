@@ -84,7 +84,7 @@ public:
        \brief sizeHint возвращает размер окна
        \return размер окна
      */
-    QSize sizeHint() const override;
+    QSize minimumSizeHint() const override;
 
     /*!
        \brief position возвращает позицию сцены на экране
