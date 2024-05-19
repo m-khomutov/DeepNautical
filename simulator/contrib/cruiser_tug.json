@@ -91,9 +91,9 @@
             },
             "step": 0.03
           },
-          "clouds": {
-            "type": "sky",
-            "shader": "sky.glsl",
+          "air": {
+            "type": "air",
+            "shader": "air.glsl",
             "main-texture": "air.jpg",
             "viewport": {
               "bottomleft": {
@@ -201,9 +201,9 @@
           "fog-density": 0.3
         },
 	"figures": {
-          "clouds": {
-            "type" :"sky",
-            "shader": "sky.glsl",
+          "air": {
+            "type" :"air",
+            "shader": "air.glsl",
             "main-texture": "air.jpg",
             "viewport": {
               "topleft": {

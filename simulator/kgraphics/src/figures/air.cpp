@@ -5,9 +5,9 @@
  * Created on 1 февраля 2023 г., 10:12
  */
 
-#include "figures/sky.h"
+#include "figures/air.h"
 
-TSky::TSky( const NJson::TObject &environment,const NJson::TObject &settings )
+TAir::TAir( const NJson::TObject &environment,const NJson::TObject &settings )
 : TFigure( environment, settings )
 {
     // настраиваем местоположение и геометрическую модель объекта
@@ -26,13 +26,13 @@ TSky::TSky( const NJson::TObject &environment,const NJson::TObject &settings )
     }
 }
 
-TSky::~TSky()
+TAir::~TAir()
 {
     shader_program_.disableAttributeArray("Texcoord");
     shader_program_.disableAttributeArray("Position");
 }
 
-void TSky::draw()
+void TAir::draw()
 {
     shader_program_.setAttributeArray("Position", vertices_.constData());
     shader_program_.enableAttributeArray("Position");
@@ -51,7 +51,7 @@ void TSky::draw()
     shader_program_.disableAttributeArray("Position");
 }
 
-void TSky::f_check_environment() const
+void TAir::f_check_environment() const
 {
     if( ! (NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
            NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
@@ -61,18 +61,18 @@ void TSky::f_check_environment() const
     }
 }
 
-char const *TSky::f_shader_name() const
+char const *TAir::f_shader_name() const
 {
     return spec_.shader_name.c_str(); 
 }
 
-void TSky::f_initialize()
+void TAir::f_initialize()
 {
     // создать текстуру
     texture_.reset( new QOpenGLTexture( QImage(std::string(std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str() ) ) );
 }
 
-void TSky::f_accept( IVisitor &p, double )
+void TAir::f_accept( IVisitor &p, double )
 {
     last_frame_time_ += spec_.speed.x();
     // передать посетителю указатель на себя

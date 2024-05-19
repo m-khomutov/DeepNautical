@@ -12,7 +12,7 @@
 #define GL_GLEXT_PROTOTYPES
 #endif
 
-#include "figures/sky.h"
+#include "figures/air.h"
 #include "figures/waves.h"
 #include "figures/surge.h"
 #include "figures/vessel.h"
@@ -222,9 +222,9 @@ void TScene::f_add_figure( const NJson::TObject &environment, const NJson::TObje
     {
         f_add_figure< TWaves >( environment, settings );
     }
-    else if( std::string(settings["type"]) == "sky" )
+    else if( std::string(settings["type"]) == "air" )
     {
-        f_add_figure< TSky >( environment, settings );
+        f_add_figure< TAir >( environment, settings );
     }
     else if( std::string(settings["type"]) == "surge" )
     {

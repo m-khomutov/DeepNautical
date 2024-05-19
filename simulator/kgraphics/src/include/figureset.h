@@ -73,11 +73,11 @@ public:
     void draw( double currentTime );
     
     /*!
-       \brief реализация метода посещения элемента класса TSol
+       \brief реализация метода посещения элемента класса TAir
        \param vbo_number номер связанного VBO
        \param fig посещаемый элемент
      */
-    void visit( TSky *fig ) override;
+    void visit( TAir *fig ) override;
     /*!
        \brief реализация метода посещения элемента класса TWater
        \param vbo_number номер связанного VBO

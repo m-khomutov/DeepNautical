@@ -8,7 +8,7 @@ DESTDIR += $$OBJECTS_DIR/lib
 CONFIG += 14
 
 SOURCES += \
-    src/figures/sky.cpp \
+    src/figures/air.cpp \
     src/figures/waves.cpp \
     src/figures/surge.cpp \
     src/figures/vessel.cpp \
@@ -22,7 +22,7 @@ SOURCES += \
     src/qservice.cpp
 
 HEADERS += \
-    src/include/figures/sky.h \
+    src/include/figures/air.h \
     src/include/figures/waves.h \
     src/include/figures/surge.h \
     src/include/figures/vessel.h \

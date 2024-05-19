@@ -11,7 +11,7 @@
 
 #include <cstddef>
 
-class TSky;
+class TAir;
 class TWaves;
 class TSurge;
 class TVessel;
@@ -30,11 +30,11 @@ public:
     virtual ~IVisitor() = default;
 
     /*!
-       \brief объявление метода посещения элемента класса TSol
+       \brief объявление метода посещения элемента класса TAir
        \param vbo_number номер связанного VBO
        \param fig посещаемый элемент
      */
-    virtual void visit( TSky * ) = 0;
+    virtual void visit( TAir * ) = 0;
     /*!
        \brief объявление метода посещения элемента класса TWater
        \param vbo_number номер связанного VBO

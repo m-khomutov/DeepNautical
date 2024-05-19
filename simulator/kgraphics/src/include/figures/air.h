@@ -5,45 +5,45 @@
  * Created on 1 февраля 2023 г., 10:12
  */
 /*!
-     \file sky.h
+     \file air.h
      \author mkh
      \date 1 февраля 2023 г.
      \brief Заголовочный файл класса изображения неба.
 
      Данный файл содержит в себе состояние класса изображения неба, реализацию его интерфейсов.
  */
-#ifndef SKY_H
-#define SKY_H
+#ifndef AIR_H
+#define AIR_H
 
 #include "figure.h"
 
 /*!
-   \class TSky
+   \class TAir
    \brief Класс изображения неба
  */
-class TSky: public TFigure {
+class TAir: public TFigure {
 public:
     /*!
        \brief Конструктор класса. Настраивает геометрическую модель отображения
        \param environment набор общих конфигурационных параметров сцены
        \param settings набор конфигурационных параметров фигуры
      */
-    explicit TSky( const NJson::TObject &environment,const NJson::TObject &settings );
+    explicit TAir( const NJson::TObject &environment,const NJson::TObject &settings );
     /*!
        \brief Запрещенный конструктор копии.
        \param orig Копируемый объект
      */
-    TSky( TSky const& orig ) = delete;
+    TAir( TAir const& orig ) = delete;
     /*!
        \brief Запрещенный оператор присваивания.
        \param orig Копируемый объект
        \return Собственный объект
      */
-    TSky &operator =( TSky const& orig ) = delete;
+    TAir &operator =( TAir const& orig ) = delete;
     /*!
        \brief Деструктор класса
      */
-    ~TSky();
+    ~TAir();
 
     /*!
        \brief настраивает переменные GL и отправляет GL команду на отрисовку
@@ -82,4 +82,4 @@ private:
     void f_accept( IVisitor &p, double currentTime ) override;
 };
 
-#endif /* SKY_H */
+#endif /* AIR_H */

@@ -6,7 +6,7 @@
  */
 
 #include "figureset.h"
-#include "figures/sky.h"
+#include "figures/air.h"
 #include "figures/waves.h"
 #include "figures/surge.h"
 #include "figures/vessel.h"
@@ -57,9 +57,9 @@ void TFigureset::draw( double currentTime )
     }
 }
 
-void TFigureset::visit( TSky *_sky )
+void TFigureset::visit( TAir *_air )
 {
-    _sky->draw();
+    _air->draw();
 }
 
 void TFigureset::visit( TWaves *_waves )
