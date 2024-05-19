@@ -9,7 +9,7 @@
 #include "utils.h"
 
 #include <QApplication>
-#include "service/qservice.h"
+#include "qservice.h"
 #include "qscreen.h"
 
 #include <stdlib.h>
