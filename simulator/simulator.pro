@@ -35,23 +35,23 @@ SOURCES += \
     src/graphics/figureset.cpp \
     src/graphics/scene.cpp \
     src/graphics/blender.cpp \
-    src/graphics/screens/qscreen.cpp \
+    src/graphics/qscreen.cpp \
     src/service/qservice.cpp \
     src/main.cpp
 
 HEADERS += \
-    src/graphics/figures/sky.h \
-    src/graphics/figures/waves.h \
-    src/graphics/figures/surge.h \
-    src/graphics/figures/vessel.h \
-    src/graphics/figures/figure.h \
-    src/graphics/specification.h \
-    src/graphics/visitor.h \
-    src/graphics/figureset.h \
-    src/graphics/scene.h \
-    src/graphics/blender.h \
-    src/graphics/screens/qscreen.h \
+    src/graphics/include/figures/sky.h \
+    src/graphics/include/figures/waves.h \
+    src/graphics/include/figures/surge.h \
+    src/graphics/include/figures/vessel.h \
+    src/graphics/include/figures/figure.h \
+    src/graphics/include/specification.h \
+    src/graphics/include/visitor.h \
+    src/graphics/include/figureset.h \
+    src/graphics/include/scene.h \
+    src/graphics/include/blender.h \
+    src/graphics/include/qscreen.h \
     src/service/qservice.h
 
-INCLUDEPATH += ../simulator/src ../common ../kformat/include
+INCLUDEPATH += ../simulator/src/graphics/include ../common ../kformat/include
 LIBS += ../build/kformat/lib/libkformat.a -ljpeg

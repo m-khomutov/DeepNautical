@@ -10,7 +10,7 @@
 
 #include <QApplication>
 #include "service/qservice.h"
-#include "graphics/screens/qscreen.h"
+#include "qscreen.h"
 
 #include <stdlib.h>
 #include <signal.h>

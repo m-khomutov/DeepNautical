@@ -5,7 +5,7 @@
  * Created on 16 февраля 2023 г., 13:11
  */
 
-#include "vessel.h"
+#include "figures/vessel.h"
 
 TVessel::TVessel( const NJson::TObject &environment,const NJson::TObject &settings )
 : TFigure( environment, settings )

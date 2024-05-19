@@ -5,7 +5,7 @@
  * Created on 31 января 2023 г., 14:35
  */
 
-#include "figure.h"
+#include "figures/figure.h"
 
 #include <QOpenGLContext>
 

@@ -5,7 +5,7 @@
  * Created on 1 февраля 2023 г., 10:12
  */
 
-#include "sky.h"
+#include "figures/sky.h"
 
 TSky::TSky( const NJson::TObject &environment,const NJson::TObject &settings )
 : TFigure( environment, settings )

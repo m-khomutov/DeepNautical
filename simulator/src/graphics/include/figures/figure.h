@@ -9,8 +9,8 @@
 #ifndef FIGURE_H
 #define FIGURE_H
 
-#include "../visitor.h"
-#include "../specification.h"
+#include "visitor.h"
+#include "specification.h"
 #include "utils.h"
 
 #include <QGLShaderProgram>

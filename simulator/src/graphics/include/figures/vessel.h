@@ -16,7 +16,7 @@
 #define VESSEL_H
 
 #include "figure.h"
-#include "../blender.h"
+#include "blender.h"
 
 /*!
    \class TVessel

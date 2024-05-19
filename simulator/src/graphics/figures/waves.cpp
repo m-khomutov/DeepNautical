@@ -5,7 +5,7 @@
  * Created on 1 февраля 2023 г., 14:18
  */
 
-#include "waves.h"
+#include "figures/waves.h"
 
 #include <cmath>
 #include <random>

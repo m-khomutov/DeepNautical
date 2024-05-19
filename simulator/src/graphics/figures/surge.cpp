@@ -5,7 +5,7 @@
  * Created on 21 августа 2023 г., 14:49
  */
 
-#include "surge.h"
+#include "figures/surge.h"
 
 TSurge::TSurge( const NJson::TObject &environment,const NJson::TObject &settings )
 : TFigure( environment, settings )

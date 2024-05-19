@@ -11,7 +11,7 @@
 
 #include <kformat.h>
 
-#include "../scene.h"
+#include "scene.h"
 
 
 #include <QWidget>
