@@ -38,9 +38,10 @@ HEADERS += \
 QMAKE_EXTRA_TARGETS += all buildpackage
 buildpackage.commands = @mkdir -p $$OBJECTS_DIR/libkgraphics-dev/DEBIAN; \
                          mkdir -p $$OBJECTS_DIR/libkgraphics-dev/usr/local/lib; \
-                         mkdir -p $$OBJECTS_DIR/libkgraphics-dev/usr/local/include/kgraphics; \
+                         mkdir -p $$OBJECTS_DIR/libkgraphics-dev/usr/local/include/kgraphics/figures; \
                          cp $$OBJECTS_DIR/lib/*.a $$OBJECTS_DIR/libkgraphics-dev/usr/local/lib; \
                          cp -r $$PWD/src/include/*.h $$OBJECTS_DIR/libkgraphics-dev/usr/local/include/kgraphics; \
+                         cp -r $$PWD/src/include/figures/*.h $$OBJECTS_DIR/libkgraphics-dev/usr/local/include/kgraphics/figures; \
                          echo "Package: libkgraphics-dev" >> $$OBJECTS_DIR/libkgraphics-dev/DEBIAN/control; \
                          echo "Version: 0.1" >> $$OBJECTS_DIR/libkgraphics-dev/DEBIAN/control; \
                          echo "Maintainer: mkh" >> $$OBJECTS_DIR/libkgraphics-dev/DEBIAN/control; \

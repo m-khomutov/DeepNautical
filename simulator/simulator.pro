@@ -21,3 +21,16 @@ SOURCES += main.cpp
 
 INCLUDEPATH += ../common ../kformat/include kgraphics/src/include
 LIBS += ../build/kformat/lib/libkformat.a ../build/kgraphics/lib/libkgraphics.a -ljpeg
+
+QMAKE_EXTRA_TARGETS += all buildpackage
+buildpackage.commands = @mkdir -p $$OBJECTS_DIR/ksimulator/DEBIAN; \
+                         mkdir -p $$OBJECTS_DIR/ksimulator/usr/local/bin; \
+                         cp $$OBJECTS_DIR/app/simulator $$OBJECTS_DIR/ksimulator/usr/local/bin/ksimulator; \
+                         echo "Package: ksimulator" >> $$OBJECTS_DIR/ksimulator/DEBIAN/control; \
+                         echo "Version: 0.1" >> $$OBJECTS_DIR/ksimulator/DEBIAN/control; \
+                         echo "Maintainer: mkh" >> $$OBJECTS_DIR/ksimulator/DEBIAN/control; \
+                         echo "Architecture: all" >> $$OBJECTS_DIR/ksimulator/DEBIAN/control; \
+                         echo "Description: графический эмулятор" >> $$OBJECTS_DIR/ksimulator/DEBIAN/control;\
+                         dpkg-deb --build $$OBJECTS_DIR/ksimulator; \
+                         rm -Rf $$OBJECTS_DIR/ksimulator;
+all.depends = buildpackage
