@@ -37,6 +37,35 @@ TQscreen::TQscreen()
     setLayout(mainLayout);
 }
 
+// сделать список текущих сцен
+std::vector< std::string > TQscreen::get_scenes() const
+{
+    std::vector< std::string > ret( sc_.size() );
+    for( size_t i(0); i < sc_.size();++i )
+    {
+        ret[i] = sc_[i]->name();
+    }
+    return ret;
+}
+
+// периодическая проверка наличия команд в очереди
+void TQscreen::f_exec_command()
+{
+    auto g = commands_.value_guard();
+    if( !g->empty() )
+    {
+        // есть команда, ваыполняем
+        TQScreenCommand cmd = g->front();
+        g->pop_front();
+        switch( cmd.type() )
+        {
+        case TQScreenCommand::kSetScene:
+            break;
+        }
+    }
+}
+
+
 void TQscreen::closeEvent( QCloseEvent *event )
 {
     for( auto & scene : sc_ )
@@ -76,6 +105,22 @@ void TQscreen::timerEvent( QTimerEvent * )
         for( size_t s(0); s < sc_.size(); ++s )
         {
             sc_[s]->update();
+        }
+    }
+}
+
+// скомандовать объекту протокола передать кадр абонентам
+void TQscreen::f_send_stored_scene_frame( TBaseprotocol *proto )
+{
+    if( proto && proto->can_send_frame() )
+    {
+        for( auto& scene : sc_ )
+        {
+            if( scene->name() == proto->scene() )
+            {
+                scene->send_frame( proto );
+                return;
+            }
         }
     }
 }

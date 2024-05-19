@@ -34,8 +34,6 @@
 
       Виртуальный публичный интерфейс объявляет методы:
       - получения списка сцен;
-      - получения названия текущей сцены;
-      - запуска заданной сцены.
 
       Виртуальный защищенный интерфейс объявляет методы:
       - запуска отображения сцен;
@@ -88,18 +86,7 @@ public:
        \brief возвращает список имеющихся сцен
        \return список сцен
      */
-    virtual const std::set< std::string > &get_scenes() const = 0;
-    /*!
-       \brief возвращает имена отображаемых сцен
-       \return вектор имен сцен
-     */
-    virtual std::vector< std::string > current_scenes() = 0;
-    /*!
-       \brief запускает задаваемую названием сцены
-       \param scene название сцены
-       \param position место позиционирования сцены
-     */
-    virtual void set_scene( const std::string &scene, size_t position ) = 0;
+    virtual std::vector< std::string > get_scenes() const = 0;
 
 private:
     /*!

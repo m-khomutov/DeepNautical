@@ -35,7 +35,6 @@ SOURCES += \
     src/graphics/figureset.cpp \
     src/graphics/scene.cpp \
     src/graphics/blender.cpp \
-    src/graphics/screens/glscreen.cpp \
     src/graphics/screens/qscreen.cpp \
     src/service/qservice.cpp \
     src/main.cpp
@@ -51,7 +50,6 @@ HEADERS += \
     src/graphics/figureset.h \
     src/graphics/scene.h \
     src/graphics/blender.h \
-    src/graphics/screens/glscreen.h \
     src/graphics/screens/qscreen.h \
     src/service/qservice.h
 

@@ -83,7 +83,7 @@ void TSurge::f_draw_layout()
     }
     catch( const std::runtime_error &e )
     {
-        std::cerr << "sparklets error: " << e.what() << std::endl;
+        qDebug() << "sparklets error: " << e.what();
         return;
     }
     // настроить переменную положения в шейдере

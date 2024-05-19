@@ -32,18 +32,18 @@ void signal_handler( int s )
 
 void show_options_and_exit( const char *prog, int rc )
 {
-    std::cerr << "Запуск: " << prog <<  "[-h] [-s] [-t] [-p] [-q] [-d] [-w] [-o] [-c]\n\nэмулятор устройства\n\n";
-    std::cerr << "обязательные аргументы:\n";
-    std::cerr << "\t-s\tкаталог с шейдерами\n"; 
-    std::cerr << "\t-t\tкаталог с текстурами\n"; 
-    std::cerr << "Опциональные аргументы:\n";
-    std::cerr << "\t-p\tпорт прослушки (def. 2232)\n"; 
-    std::cerr << "\t-w\tразмеры окна (def. 800x600)\n";
-    std::cerr << "\t-q\tкачество сжатия % (def. 80)\n";
-    std::cerr << "\t-d\tдлительность кадра мс (def. 40)\n";
-    std::cerr << "\t-c\tфайл конфигурации\n";
-    std::cerr << "\t-o\tкаталог с объектами blender\n"; 
-    std::cerr << "\t-h\tвывод параметров запуска\n";
+    qDebug() << "Запуск: " << prog <<  "[-h] [-s] [-t] [-p] [-q] [-d] [-w] [-o] [-c]\n\nэмулятор устройства\n";
+    qDebug() << "обязательные аргументы:";
+    qDebug() << "\t-s\tкаталог с шейдерами";
+    qDebug() << "\t-t\tкаталог с текстурами";
+    qDebug() << "Опциональные аргументы:";
+    qDebug() << "\t-p\tпорт прослушки (def. 2232)";
+    qDebug() << "\t-w\tразмеры окна (def. 800x600)";
+    qDebug() << "\t-q\tкачество сжатия % (def. 80)";
+    qDebug() << "\t-d\tдлительность кадра мс (def. 40)";
+    qDebug() << "\t-c\tфайл конфигурации";
+    qDebug() << "\t-o\tкаталог с объектами blender";
+    qDebug() << "\t-h\tвывод параметров запуска";
     ::exit( rc );   
 }
 }
@@ -58,7 +58,7 @@ int main(int argc, char** argv)
     }
     catch( const std::runtime_error &e )
     {
-        std::cerr << e.what() <<std::endl;
+        qDebug() << e.what();
         show_options_and_exit( argv[0], EXIT_FAILURE );
     }
 
@@ -87,7 +87,7 @@ int main(int argc, char** argv)
     }
     catch( const std::runtime_error &err )
     {
-        std::cerr << "error: " << err.what() << "\n";
+        qDebug() << "error: " << err.what();
     }
     catch( ...)
     {

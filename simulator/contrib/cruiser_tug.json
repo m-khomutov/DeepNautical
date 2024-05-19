@@ -3,7 +3,6 @@
     "root": "/opt/agat-a",
     "shaders": "shaders",
     "textures": "textures",
-    "scenes": "scenes",
     "blender_objects": "objs"
   },
   "service": {

@@ -93,9 +93,6 @@ const TFigure::TPosition &TVessel::position()
 
 void TVessel::f_check_environment() const
 {
-    std::cerr << std::string(std::string(NUtils::TConfig()["shaders"]) + "/vert_" + spec_.shader_name) << std::endl;
-    std::cerr << std::string(std::string(NUtils::TConfig()["objs"]) + "/" + spec_.blenderobj_name) << std::endl;
-    std::cerr << std::string(std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name) << std::endl;
     if( ! (NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
            NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
            NUtils::file_exists( (std::string(NUtils::TConfig()["objs"]) + "/" + spec_.blenderobj_name).c_str() )     &&
