@@ -12,6 +12,7 @@
 #include <kformat.h>
 
 #include "scene.h"
+#include "screencommand.h"
 
 
 #include <QWidget>
@@ -20,49 +21,6 @@
 #include <set>
 #include <string>
 #include <stdexcept>
-
-/*!
-   \class TScreenCommand
-   \brief Класс команды, передаваемой экрану от сетевого абонента
- */
-class TQScreenCommand {
-public:
-    //! Типы передаваемых команд
-    enum EQScreenCommandType { kSetScene };
-
-    /*!
-       \brief Конструктор класса. Настраивает тип создаваемой команды
-       \param t тип создаваемой команды
-       \param pos позиция
-     */
-    TQScreenCommand( EQScreenCommandType t, size_t pos )
-    : t_( t )
-    , position_( pos )
-    {}
-
-    /*!
-       \brief Возвращает тип команды
-       \return тип команды
-     */
-    EQScreenCommandType type() const
-    {
-        return t_;
-    }
-    /*!
-     * \brief Возвращает позицию
-     * \return позиция
-     */
-    size_t position() const
-    {
-        return position_;
-    }
-
-private:
-    //! тип команды
-    EQScreenCommandType t_;
-    //! позиция
-    size_t position_;
-};
 
 /*!
    \class TQScreenError
@@ -122,7 +80,7 @@ protected:
     //! вектор указателей на сцены, выполняемые на экране
     std::vector< TScene* > sc_;
     //! Очередь команд, передаваемых экрану для выполнения
-    NUtils::TSafeguard< std::list< TQScreenCommand > > commands_;
+    NUtils::TSafeguard< std::list< TScreenCommand > > commands_;
 
 protected:
     /*!

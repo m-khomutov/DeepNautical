@@ -9,14 +9,59 @@
 #ifndef FIGURE_H
 #define FIGURE_H
 
+#include "camera.h"
 #include "visitor.h"
 #include "specification.h"
 #include "utils.h"
 
+#include <QOpenGLVertexArrayObject>
+#include <QOpenGLBuffer>
 #include <QGLShaderProgram>
 #include <QOpenGLTexture>
 
 #include <memory>
+
+struct CU
+{
+    double bearing_deg;
+    double elevation_deg;
+    double radius;
+
+    CU() = default;
+    CU( double x, double y, double z )
+    : bearing_deg( ::atan2( z, x ) * TCamera::DEG - 90. )
+    , elevation_deg( ::atan2(::sqrt( x * x + z * z), y ) * TCamera::DEG - 90. )
+    , radius( ::sqrt( x * x + y * y + z * z ) )
+    {}
+    CU( const QVector4D& cartesian )
+    : CU( cartesian.x(), cartesian.y(), cartesian.z() )
+    {}
+
+    CU& normalize()
+    {
+        bearing_deg = TCamera::clip(bearing_deg);
+        elevation_deg = TCamera::clip(elevation_deg);
+        return *this;
+    }
+
+    QVector3D toCartesian() const
+    {
+        return QVector3D( radius * ::sinf( TCamera::RAD * elevation_deg ) * ::cosf( TCamera::RAD * bearing_deg ),
+                          radius * ::sinf( TCamera::RAD * elevation_deg ) * ::sinf( TCamera::RAD * bearing_deg ),
+                          radius * ::cosf( TCamera::RAD * elevation_deg ) );
+    }
+
+    bool neighbour( const CU& other, double dist ) const
+    {
+        return (toCartesian() - other.toCartesian()).length() < dist;
+    }
+
+    double distance( float x, float y, float z ) const
+    {
+        return (toCartesian() - QVector3D(x, y, z)).length();
+    }
+
+};
 
 /*!
    \class TFigure
@@ -78,8 +123,16 @@ public:
        Устанавливает используемую GL программу,
        настраивает униформные переменные и передает выполнение производному классу, для передачи указателя на себя посетителю
      */
-    void accept( IVisitor &p, double currentTime );
+    void accept( IVisitor &p, double currentTime, const TCamera &camera );
 
+    /*!
+       \brief coordinates возвращает текущие координаты объекта на сцене
+       \return текущие координаты объекта на сцене
+     */
+    const QVector4D &coordinates() const
+    {
+        return offset_;
+    }
     /*!
        \brief подтверждает выполнение настроек программы
        \return подтверждение
@@ -88,6 +141,18 @@ public:
     {
         return valid_;
     }
+    /*!
+       \brief подтверждает наличие движения у валидной фигуры
+       \return флаг движения валидной фигуры
+     */
+    bool moving() const;
+
+    /*!
+       \brief distance посчитать расстояние до точки
+       \param point точка целеположения
+       \return расстояние
+     */
+    double distance( const CU &point );
 
 protected:
     //! спецификация геометрического объекта (набор параметров конфигурации)
@@ -99,9 +164,7 @@ protected:
     //! координаты объекта в его системе координат
     QMatrix4x4 model_;
     //! координаты для перевода объекта из его системы координат в систему координат камеры
-    QMatrix4x4 view_;
-    //! координаты для перевода объекта в проекционную систему координат
-    QMatrix4x4 projection_;
+    QMatrix4x4 camera_view_;
     //! угол движения объекта относительно оси абсцисс
     QVector3D angle_ { 0.0f, 0.0f, 0.0f };
     //! позиция объекта на сцене
@@ -110,6 +173,9 @@ protected:
     float direction_ { -1.0f };
     //! смещение координат объекта от центра сцены
     QVector4D offset_ { 0.f, 0.f, 0.f, 1.f };
+
+    QOpenGLVertexArrayObject vertex_array_object_;
+    QOpenGLBuffer vertex_buffer_object_;
 
     //! флаг готовности объекта к функционированию
     bool valid_ { false };
@@ -136,6 +202,12 @@ private:
        \param currentTime текущая временная метка
      */
     virtual void f_accept( IVisitor &p, double currentTime ) = 0;
+    /*!
+       \brief определяет фигуру как движущуюся или нет
+       \return флаг движения фигуры
+     */
+    virtual bool f_moving() const = 0;
+
 };
 
 #endif /* FIGURE_H */

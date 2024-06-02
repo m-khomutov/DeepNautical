@@ -80,6 +80,15 @@ public:
     }
 
     /*!
+       \brief метод приведения значения к типу boolean. Возвращает значение, приведенное к boolean
+       \return значение как boolean
+     */
+    float toBool() const
+    {
+        return value_ == "true";
+    }
+
+    /*!
        \brief метод приведения значения к типу int. Возвращает значение, приведенное к int
        \return значение как int
      */

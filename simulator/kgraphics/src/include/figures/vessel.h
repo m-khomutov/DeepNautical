@@ -91,6 +91,14 @@ private:
        \param currentTime текущая временная метка
      */
     void f_accept( IVisitor &p, double currentTime ) override;
+    /*!
+       \brief определяет фигуру как движущуюся
+       \return флаг наличия движения у фигуры
+     */
+    bool f_moving() const override
+    {
+        return true;
+    }
 
     /*!
        \brief настраивает матрицу геометрическую модели

@@ -10,8 +10,11 @@
 #define SCENE_H
 
 #include "figureset.h"
+#include "camera.h"
 #include <kformat.h>
 
+#include <QOpenGLWidget>
+#include <QOpenGLFunctions>
 #include <QOpenGLDebugMessage>
 
 #include <string>
@@ -31,7 +34,9 @@ public:
    \class TScene
    \brief Класс сцены отрисовки объектов
  */
-class TScene: public QGLWidget {
+class TScene: public QOpenGLWidget, protected QOpenGLFunctions {
+    Q_OBJECT
+
 public:
     /*!
        \brief Конструктор класса. Производит общую инициализацию
@@ -76,11 +81,6 @@ public:
     void resizeGL(int w, int h) override;
 
     /*!
-       \brief удаляет все фигуры со сцены
-     */
-    void clear();
-
-    /*!
        \brief sizeHint возвращает размер окна
        \return размер окна
      */
@@ -102,11 +102,36 @@ public:
     }
 
     /*!
+       \brief camera возвращает положение камеры на сцене
+       \return положение камеры на сцене
+     */
+    const TCamera & camera() const
+    {
+        return camera_;
+    }
+
+    /*!
+       \brief удаляет все фигуры со сцены
+     */
+    void clear();
+
+    void zoomCamera( float factor );
+
+    void rotateCamera( float x, float y );
+
+    void setColorMode( int cl_mode );
+
+    void setPanorama( int factor );
+
+    /*!
        \brief Отправить сохраненный кадр сцены абоненту по определенному сетевому протоколу.
        \param proto сетевой протокол выдачи видеопотока абоненту
        \return результат отправки (удалось/не удалось)
      */
     bool send_frame( TBaseprotocol *proto );
+
+signals:
+    void clicked();
 
 public slots:
     /*!
@@ -114,6 +139,13 @@ public slots:
        \param message сообщение с отдалочной информацией
      */
     void onMessageLogged(QOpenGLDebugMessage message);
+
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void wheelEvent(QWheelEvent* e) override;
+    void keyPressEvent(QKeyEvent* e);
 
 private:
     //! название сцены
@@ -132,6 +164,18 @@ private:
     std::mutex frame_mutex_;
     //! временная метка сохранения видеокадра в объекте представления видеокадра;
     TBaseframe::time_point_t store_ts_;
+    //! объект камеры с проекцией
+    TCamera camera_;
+    //! текущие координаты мыши на сцене
+    QPoint mouse_pos_;
+    int panorama_ {0};
+    int cl_mode_ {0};
+    int capture_mode_ {0};
+
+    QVector< CU > designationCoords_ {8};
+
+    const TFigure *captured_target_ {nullptr};
+    qint64 capture_time_ {0};
 
 private:
    /*!
@@ -147,6 +191,9 @@ private:
        \brief f_initialize_debugging инициализирует вывод сообщений от GL в режиме реального времени
      */
     void f_initialize_debugging();
+
+    void f_capture_target();
+
     /*!
        \brief добавляет в контейнер фигур следующую фигуру из спецификации
        \param environment набор общих конфигурационных параметров сцены

@@ -51,10 +51,6 @@ public:
     void draw();
 
 private:
-    //! координаты вершин
-    QVector<QVector4D> vertices_;
-    //! текстурные координаты
-    QVector<QVector2D> texels_;
     //! временная метка последней отрисовки
     GLfloat last_frame_time_ { 0.0f };
 
@@ -70,16 +66,22 @@ private:
     char const *f_shader_name() const override;
     /*!
        \brief в порядке инициализации создает текстуру, выделяет память под данные и атрибуты
-       \param vbo_number номер используемого VBO (Vertex Buffer Object)
      */
     void f_initialize() override;
     /*!
        \brief передает свой объект посетителю, обобщающему поведение всех графических объектов на сцене
-       \param vbo_number номер используемого VBO (Vertex Buffer Object)
        \param p посетитель. Объект обобщающий поведение всех графических объектов на сцене
        \param currentTime текущая временная метка
      */
     void f_accept( IVisitor &p, double currentTime ) override;
+    /*!
+       \brief определяет фигуру как неподвижную
+       \return флаг неподвижности фигуры
+     */
+    bool f_moving() const override
+    {
+        return false;
+    }
 };
 
 #endif /* AIR_H */

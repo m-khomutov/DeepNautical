@@ -17,13 +17,6 @@ TAir::TAir( const NJson::TObject &environment,const NJson::TObject &settings )
     model_.translate( QVector3D(0.0f, 0.0f, -1.0f) );
     model_.rotate( 50.f, QVector3D(1.0f, 0.0f, 0.0) );
     model_.scale( QVector3D(0.3f, 0.3f, 0.3f) );
-
-    float *ptr = spec_.viewport.data();
-    for( size_t i(0); i < spec_.viewport.size(); i += 5 )
-    {
-        vertices_ << QVector4D(ptr[i], ptr[i+1], ptr[i+2], 1.f);
-        texels_ << QVector2D(ptr[i+3], ptr[i+4]);
-    }
 }
 
 TAir::~TAir()
@@ -34,21 +27,13 @@ TAir::~TAir()
 
 void TAir::draw()
 {
-    shader_program_.setAttributeArray("Position", vertices_.constData());
-    shader_program_.enableAttributeArray("Position");
-    shader_program_.setAttributeArray("Texcoord", texels_.constData());
-    shader_program_.enableAttributeArray("Texcoord");
-
     // настроить переменную положения в шейдере
     shader_program_.setUniformValue( "Offset", offset_ );
     shader_program_.setUniformValue( "Fog.color", spec_.fog_color );
     shader_program_.setUniformValue( "Fog.density", spec_.fog_density );
     shader_program_.setUniformValue( "Time", last_frame_time_ );
     // отрисовать объект
-    glDrawArrays( GL_TRIANGLE_FAN, 0, vertices_.size() );
-
-    shader_program_.disableAttributeArray("Texcoord");
-    shader_program_.disableAttributeArray("Position");
+    glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
 }
 
 void TAir::f_check_environment() const
@@ -68,6 +53,14 @@ char const *TAir::f_shader_name() const
 
 void TAir::f_initialize()
 {
+    vertex_buffer_object_.allocate( spec_.viewport.data(), spec_.viewport.size() * sizeof(GLfloat) );
+
+    shader_program_.enableAttributeArray( "Position" );
+    shader_program_.setAttributeBuffer( "Position", GL_FLOAT, 0, 3, 5 * sizeof(GLfloat) );
+
+    shader_program_.enableAttributeArray( "Texcoord" );
+    shader_program_.setAttributeBuffer( "Texcoord", GL_FLOAT, 3 * sizeof(GLfloat), 2, 5 * sizeof(GLfloat));
+
     // создать текстуру
     texture_.reset( new QOpenGLTexture( QImage(std::string(std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str() ) ) );
 }

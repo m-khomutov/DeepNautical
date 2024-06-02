@@ -10,6 +10,9 @@
 #include "figures/waves.h"
 #include "figures/surge.h"
 #include "figures/vessel.h"
+#include "figures/skybox.h"
+
+#include <limits>
 
 TFigureset::~TFigureset()
 {}
@@ -23,6 +26,25 @@ void TFigureset::emplace( TFigure *fig )
 void TFigureset::clear()
 {
     figures_.clear();
+}
+
+const TFigure* TFigureset::closest_on_distance( const CU& point, double distance )
+{
+    const TFigure *rc = nullptr;
+    double min_distance = std::numeric_limits< double >::max();
+    for( auto & fig : figures_ )
+    {
+        if( fig->moving() )
+        {
+            double d = fig->distance( point );
+            if( d < min_distance )
+            {
+                rc = fig.get();
+                min_distance = d;
+            }
+        }
+    }
+    return min_distance <= distance ? rc : nullptr;
 }
 
 void TFigureset::initialize()
@@ -45,14 +67,14 @@ void TFigureset::initialize()
     }
 }
 
-void TFigureset::draw( double currentTime )
+void TFigureset::draw( double currentTime, const TCamera &camera )
 {
     for( figure_t::size_type i(0); i < figures_.size(); ++i )
     {
         if( figures_[i]->valid() )
         {
             // запустить метод принятия посетителя (себя)
-            figures_[i]->accept( *this, currentTime );
+            figures_[i]->accept( *this, currentTime, camera );
         }
     }
 }
@@ -80,3 +102,9 @@ void TFigureset::visit( TVessel *_vessel )
     _vessel->draw();
     vessel_positions_.push_back( _vessel->position() );
 }
+
+void TFigureset::visit( TSkybox *_skybox )
+{
+    _skybox->draw();
+}
+

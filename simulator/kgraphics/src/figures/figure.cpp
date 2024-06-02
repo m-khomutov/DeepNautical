@@ -11,17 +11,12 @@
 
 TFigure::TFigure( const NJson::TObject &environment,const NJson::TObject &settings )
 : spec_( environment, settings )
+, vertex_buffer_object_( QOpenGLBuffer(QOpenGLBuffer::VertexBuffer) )
 {
-    // настроить обзор и перспективу
-    NUtils::TGeometry win { NUtils::TConfig()["window"] };
-
-    projection_.setToIdentity();
-    projection_.perspective( 60.0, (float) win.width / (float) win.height, 0.001, 1000 );
-
-    view_.setToIdentity();
-    view_.lookAt( spec_.camera_position,
-                  QVector3D(0.0f, 0.0f, 0.0f),
-                  QVector3D(0.0f, 1.0f, 0.0f) );
+    camera_view_.setToIdentity();
+    camera_view_.lookAt( spec_.camera_position,
+                         QVector3D(0.0f, 0.0f, 0.0f),
+                         QVector3D(0.0f, 1.0f, 0.0f) );
 
     model_.setToIdentity();
     model_.rotate( 0.0f, QVector3D(1.0f, 0.0f, 0.0f) );
@@ -30,6 +25,9 @@ TFigure::TFigure( const NJson::TObject &environment,const NJson::TObject &settin
 TFigure::~TFigure()
 {
     texture_.reset();
+
+    vertex_buffer_object_.destroy();
+    vertex_array_object_.destroy();
 }
 
 void TFigure::initialize()
@@ -46,30 +44,61 @@ void TFigure::initialize()
         }
     } );
     shader_program_.link();
-
     shader_program_.bind();
+
+    vertex_array_object_.create();
+    vertex_array_object_.bind();
+
+    vertex_buffer_object_.create();
+    vertex_buffer_object_.bind();
 
     f_initialize();
 
+    vertex_buffer_object_.release();
+    vertex_array_object_.release();
+
     shader_program_.release();
+
     valid_ = true;
 }
 
-void TFigure::accept( IVisitor &p, double currentTime )
+void TFigure::accept( IVisitor &p, double currentTime, const TCamera &camera )
 {
+    camera_view_ = camera.view();
+
     shader_program_.bind();
+    vertex_array_object_.bind();
 
     // настроить униформные переменные
     shader_program_.setUniformValue( "Model", model_ );
-    shader_program_.setUniformValue( "View", view_ );
-    shader_program_.setUniformValue( "Projection", projection_ );
+    shader_program_.setUniformValue( "View", camera_view_ );
+    shader_program_.setUniformValue( "Projection", camera.projection() );
     if( texture_ )
     {
         shader_program_.setUniformValue( "Texture", GLuint(0) );
-        texture_->bind(0);
+        texture_->bind();
     }
     // в объекте производного класса передать посетителю указатель на себя
     f_accept( p, currentTime );
 
+    if( texture_ )
+    {
+        texture_->release();
+    }
+    vertex_array_object_.release();
     shader_program_.release();
+}
+
+bool TFigure::moving() const
+{
+   if( valid_ )
+   {
+       return f_moving();
+   }
+   return false;
+}
+
+double TFigure::distance( const CU &point )
+{
+    return point.distance( offset_.x(), offset_.y(), offset_.z() );
 }

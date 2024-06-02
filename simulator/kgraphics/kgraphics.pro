@@ -9,6 +9,7 @@ CONFIG += 14
 
 SOURCES += \
     src/figures/air.cpp \
+    src/figures/skybox.cpp \
     src/figures/waves.cpp \
     src/figures/surge.cpp \
     src/figures/vessel.cpp \
@@ -16,6 +17,7 @@ SOURCES += \
     src/specification.cpp \
     src/visitor.cpp \
     src/figureset.cpp \
+    src/camera.cpp \
     src/scene.cpp \
     src/blender.cpp \
     src/qscreen.cpp \
@@ -23,6 +25,7 @@ SOURCES += \
 
 HEADERS += \
     src/include/figures/air.h \
+    src/include/figures/skybox.h \
     src/include/figures/waves.h \
     src/include/figures/surge.h \
     src/include/figures/vessel.h \
@@ -30,8 +33,10 @@ HEADERS += \
     src/include/specification.h \
     src/include/visitor.h \
     src/include/figureset.h \
+    src/include/camera.h \
     src/include/scene.h \
     src/include/blender.h \
+    src/include/screencommand.h \
     src/include/qscreen.h \
     src/include/qservice.h
 

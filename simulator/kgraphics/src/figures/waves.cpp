@@ -153,6 +153,14 @@ void TWaves::draw()
         glDrawArrays( GL_TRIANGLE_STRIP, i * len, len );
     }
 
+    if( air_texture_ )
+    {
+        air_texture_->release();
+    }
+    if( foam_texture_ )
+    {
+        foam_texture_->release();
+    }
     shader_program_.disableAttributeArray("Normals");
     shader_program_.disableAttributeArray("Surface");
 }
@@ -274,7 +282,7 @@ GLfloat TWaves::f_generate_surface(GLfloat x, GLfloat z, GLfloat *in_wake)
 {
     if( in_wake )
     {
-        *in_wake = 0.0;
+        *in_wake = 0.f;
     }
     GLfloat rc = waveGen( x, z, phase_, perlin_, spec_.wave );
     for( auto pos : wake_position_ )

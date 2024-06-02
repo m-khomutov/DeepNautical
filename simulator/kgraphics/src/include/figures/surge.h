@@ -37,7 +37,7 @@ public:
     /*!
        \brief Деструктор класса
      */
-    ~TSurge() = default;
+    ~TSurge();
 
     /*!
        \brief настраивает переменные GL и отправляет GL команду на отрисовку
@@ -47,18 +47,13 @@ public:
 private:
     //! Набор точек, представляющих блики
     std::vector< GLfloat > points_;
-    //! Набор цветов, соответствующих бликам
-    std::vector< GLfloat > colors_;
-
-    //! координаты вершин
-    QVector<QVector4D> layout_;
-    //! текстурные координаты
-    QVector<QVector2D> texels_;
     //! временная метка последней отрисовки
     GLfloat last_frame_time_ { 0.0f };
     //! умный указатель на объект текстуры воздушной среды
     std::unique_ptr< QOpenGLTexture > air_texture_;
-    
+
+    QOpenGLBuffer sparkles_vertex_buffer_object_;
+
 private:
     /*!
        \brief проверяет валидность конфигурирования
@@ -79,6 +74,14 @@ private:
        \param currentTime текущая временная метка
      */
     void f_accept( IVisitor &p, double currentTime ) override;
+    /*!
+       \brief определяет фигуру как неподвижную
+       \return флаг неподвижности фигуры
+     */
+    bool f_moving() const override
+    {
+        return false;
+    }
 
     /*!
       \brief иницализирует подложку для бликовой поверхности.
@@ -86,6 +89,13 @@ private:
        Создает объект текстуры воздушной среды, выделяет память под атрибуты в шейдере, настраивает арибуты
      */
     void f_initialize_layout();
+
+    /*!
+      \brief иницализирует блики поверхности.
+
+       Выделяет память под атрибуты в шейдере, настраивает арибуты
+     */
+    void f_initialize_sparklets();
 
     /*!
        \brief Настраивает униформные переменные, отдает команду на отрисовку подложки

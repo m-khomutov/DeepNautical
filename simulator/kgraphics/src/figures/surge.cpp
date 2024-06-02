@@ -9,6 +9,7 @@
 
 TSurge::TSurge( const NJson::TObject &environment,const NJson::TObject &settings )
 : TFigure( environment, settings )
+, sparkles_vertex_buffer_object_( QOpenGLBuffer(QOpenGLBuffer::VertexBuffer) )
 {
     // проверить настройки
     f_check_environment();
@@ -17,14 +18,12 @@ TSurge::TSurge( const NJson::TObject &environment,const NJson::TObject &settings
     // настроить модель
     model_.setToIdentity();
     model_.translate( QVector3D(0.f, 0.f, -1.0f) );
-    model_.rotate( -25.f, QVector3D(1.0f, 0.0f, 0.0) );
+    model_.rotate( -60.f, QVector3D(1.0f, 0.0f, 0.0) );
+}
 
-    float *ptr = spec_.viewport.data();
-    for( size_t i(0); i < spec_.viewport.size(); i += 5 )
-    {
-        layout_ << QVector4D(ptr[i], ptr[i+1], ptr[i+2], 1.f);
-        texels_ << QVector2D(ptr[i+3], ptr[i+4]);
-    }
+TSurge::~TSurge()
+{
+    sparkles_vertex_buffer_object_.destroy();
 }
 
 void TSurge::draw()
@@ -33,6 +32,11 @@ void TSurge::draw()
 
     f_draw_layout();    // подложка
     f_draw_sparklets(); // точки - блики
+
+    if( air_texture_ )
+    {
+        air_texture_->release();
+    }
 }
 
 void TSurge::f_check_environment() const
@@ -56,6 +60,7 @@ char const *TSurge::f_shader_name() const
 void TSurge::f_initialize()
 {
     f_initialize_layout();
+    f_initialize_sparklets();
 }
 
 void TSurge::f_accept( IVisitor &p, double )
@@ -66,26 +71,40 @@ void TSurge::f_accept( IVisitor &p, double )
 
 void TSurge::f_initialize_layout()
 {
+    vertex_buffer_object_.allocate( spec_.viewport.data(), spec_.viewport.size() * sizeof(GLfloat) );
+
+    shader_program_.enableAttributeArray( "WavePosition" );
+    shader_program_.setAttributeBuffer( "WavePosition", GL_FLOAT, 0, 3, 5 * sizeof(GLfloat) );
+
+    shader_program_.enableAttributeArray( "Texcoord" );
+    shader_program_.setAttributeBuffer( "Texcoord", GL_FLOAT, 3 * sizeof(GLfloat), 2, 5 * sizeof(GLfloat));
+
     // создать текстуру
     //std::string alpha = std::string(NUtils::TConfig()["textures"]) + "/" + spec_.alpha;
     texture_.reset( new QOpenGLTexture( QImage(std::string(std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str() ) ) );
     air_texture_.reset( new QOpenGLTexture( QImage(std::string(std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_air).c_str() ) ) );
 }
 
+void TSurge::f_initialize_sparklets()
+{
+
+    sparkles_vertex_buffer_object_.setUsagePattern( QOpenGLBuffer::DynamicDraw );
+    sparkles_vertex_buffer_object_.create();
+    sparkles_vertex_buffer_object_.bind();
+
+    sparkles_vertex_buffer_object_.allocate( points_.data(), points_.size() * sizeof(GLfloat) );
+
+    shader_program_.enableAttributeArray( "SparklePosition" );
+    shader_program_.setAttributeBuffer( "SparklePosition", GL_FLOAT, 0, 3, 6 * sizeof(GLfloat) );
+
+    shader_program_.enableAttributeArray( "SparkleColor" );
+    shader_program_.setAttributeBuffer( "SparkleColor", GL_FLOAT, 3 * sizeof(GLfloat), 3, 6 * sizeof(GLfloat));
+
+    sparkles_vertex_buffer_object_.release();
+}
+
 void TSurge::f_draw_layout()
 {
-    try
-    {
-        shader_program_.setAttributeArray( "WavePosition", layout_.constData() );
-        shader_program_.enableAttributeArray( "WavePosition" );
-        shader_program_.setAttributeArray( "Texcoord", texels_.constData() );
-        shader_program_.enableAttributeArray( "Texcoord" );
-    }
-    catch( const std::runtime_error &e )
-    {
-        qDebug() << "sparklets error: " << e.what();
-        return;
-    }
     // настроить переменную положения в шейдере
     shader_program_.setUniformValue( "DrawSparkles", 0.f );
     shader_program_.setUniformValue( "FogParams.color", spec_.fog_color );
@@ -98,25 +117,16 @@ void TSurge::f_draw_layout()
         air_texture_->bind(1);
     }
     // отрисовать объект
-    glDrawArrays( GL_TRIANGLE_FAN, 0, layout_.size() );
-
-    shader_program_.disableAttributeArray("Texcoord");
-    shader_program_.disableAttributeArray("WavePosition");
+    glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
 }
 
 void TSurge::f_draw_sparklets()
 {
-    shader_program_.setAttributeArray( "SparklePosition", points_.data(), 3 );
-    shader_program_.enableAttributeArray( "SparklePosition" );
-    shader_program_.setAttributeArray( "SparkleColor", colors_.data(), 3 );
-    shader_program_.enableAttributeArray( "SparkleColor" );
+    sparkles_vertex_buffer_object_.bind();
 
     shader_program_.setUniformValue( "DrawSparkles", 1.f );
 
-    glDrawArrays( GL_POINTS, 0, points_.size() / 3 );
-
-    shader_program_.disableAttributeArray("SparklePosition");
-    shader_program_.disableAttributeArray("SparkleColor");
+    glDrawArrays( GL_POINTS, 0, points_.size() / 6 );
 
     f_reset_points();
 }
@@ -125,33 +135,37 @@ void TSurge::f_set_points()
 {
     // случайные геометрические положения точек-бликов и их цветов
     for ( float x = spec_.viewport[0]; x < spec_.viewport[5]; x += spec_.step ) {
-        float z { spec_.viewport[2] };
-        for ( float y = spec_.viewport[11]; y < spec_.viewport[1]; y += spec_.step, z += spec_.step ) {;
+        //for ( float y = spec_.viewport[11]; y < spec_.viewport[1]; y += spec_.step, z += spec_.step ) {
+        for ( float y = -1.5f; y < -0.1f; y += 0.2f ) {
             points_.push_back(((float)rand() / RAND_MAX) * 0.1 + x);
             points_.push_back(((float)rand() / RAND_MAX) * 0.1 + y);
-            points_.push_back(z);
+            points_.push_back(((float)rand() / RAND_MAX) * 0.1);
 
-            colors_.push_back(((float)rand() / RAND_MAX) + 0.5);
-            colors_.push_back(((float)rand() / RAND_MAX) + 0.5);
-            colors_.push_back(((float)rand() / RAND_MAX) + 0.5);
+            points_.push_back((float(rand()) / RAND_MAX) + 0.5);
+            points_.push_back((float(rand()) / RAND_MAX) + 0.5);
+            points_.push_back((float(rand()) / RAND_MAX) + 0.5);
         }
     }
+
+    sparkles_vertex_buffer_object_.write( 0, points_.data(), points_.size() * sizeof(GLfloat) );
 }
 
 void TSurge::f_reset_points()
 {
-    float *pptr = points_.data();
-    float *cptr = colors_.data();
+    float *ptr = points_.data();
     // случайные геометрические положения точек-бликов и их цветов
     for ( float x = spec_.viewport[0]; x < spec_.viewport[5]; x += spec_.step ) {
-        for ( float y = spec_.viewport[11]; y < spec_.viewport[1]; y += spec_.step ) {
-            *pptr++ = ((float)rand() / RAND_MAX) * 0.1 + x;
-            *pptr++ = ((float)rand() / RAND_MAX) * 0.1 + y;
-             pptr++;
+        //for ( float y = spec_.viewport[11]; y < spec_.viewport[1]; y += spec_.step, z += spec_.step ) {
+        for ( float y = -1.5f; y < -0.1f; y += 0.2f ) {
+            *ptr++ = ((float)rand() / RAND_MAX) * 0.1 + x;
+            *ptr++ = ((float)rand() / RAND_MAX) * 0.1 + y;
+            *ptr++ = ((float)rand() / RAND_MAX) * 0.1;
             
-            *cptr++ = ((float)rand() / RAND_MAX) + 0.5;
-            *cptr++ = ((float)rand() / RAND_MAX) + 0.5;
-            *cptr++ = ((float)rand() / RAND_MAX) + 0.5;
+            *ptr++ = float(rand()) / RAND_MAX + 0.5;
+            *ptr++ = float(rand()) / RAND_MAX + 0.5;
+            *ptr++ = float(rand()) / RAND_MAX + 0.5;
         }
     }
+
+    sparkles_vertex_buffer_object_.write( 0, points_.data(), points_.size() * sizeof(GLfloat) );
 }

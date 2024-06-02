@@ -6,7 +6,6 @@
  */
 
 #include "qscreen.h"
-#include "json.h"
 #include <QGridLayout>
 
 TQscreen::TQscreen()
@@ -55,16 +54,15 @@ void TQscreen::f_exec_command()
     if( !g->empty() )
     {
         // есть команда, ваыполняем
-        TQScreenCommand cmd = g->front();
+        TScreenCommand cmd = g->front();
         g->pop_front();
         switch( cmd.type() )
         {
-        case TQScreenCommand::kSetScene:
+        default:
             break;
         }
     }
 }
-
 
 void TQscreen::closeEvent( QCloseEvent *event )
 {

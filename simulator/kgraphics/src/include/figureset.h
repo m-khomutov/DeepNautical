@@ -10,6 +10,7 @@
 #define FIGURESET_H
 
 #include "figures/figure.h"
+#include "camera.h"
 #include "visitor.h"
 
 #include <QGLWidget>
@@ -60,17 +61,25 @@ public:
     void clear();
 
     /*!
+     * \brief closest вернуть ближайшую к точке фигуру
+     * \param point точка
+     * \return ближайшая фигура изи nullptr
+     */
+    const TFigure *closest_on_distance( const CU& point, double distance );
+
+    /*!
        \brief выделяет ресурсы буферам взаимодействия с шейдерам. нициализирует объекты фигур в наборе фигур
      */
     void initialize();
     /*!
        \brief инициализирует процесс отрисовки фигур сцены.
        \param currentTime текущее время
+       \param camera текущее положение камеры на сцене
 
        Последовательно для каждой фигуры в наборе привязывает соответствующие буферы взаимодействия в шейдером и
        вызывает метод принятия посетителя (себя).
      */
-    void draw( double currentTime );
+    void draw( double currentTime, const TCamera &camera );
     
     /*!
        \brief реализация метода посещения элемента класса TAir
@@ -96,6 +105,8 @@ public:
        \param fig посещаемый элемент
      */
     void visit( TSurge *fig ) override;
+
+    void visit( TSkybox *fig ) override;
 
 private:
     //! набор фигур в объекте класса

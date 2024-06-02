@@ -23,7 +23,7 @@ builddocpackage.commands = @doxygen; \
                             echo "Description: документация графического эмулятора, сгенерированная doxygen" >> doc/libksimulator-doc/DEBIAN/control;\
                             dpkg-deb --build doc/libksimulator-doc; \
                             rm -Rf doc/libksimulator-doc; \
-                            mkdir deb; \
+                            rm -Rf deb; mkdir deb; \
                             mv build/kformat/libkformat-dev.deb deb; \
                             mv build/kgraphics/libkgraphics-dev.deb deb; \
                             mv build/kvideocapture/kvideocapture.deb deb; \

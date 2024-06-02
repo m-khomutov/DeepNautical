@@ -90,6 +90,18 @@ TSpecification::TSpecification( const NJson::TObject &environment,const NJson::T
     {}
     try
     {
+        cube_faces[LEFT] = std::string(settings["faces"]["left"]);
+        cube_faces[RIGHT] = std::string(settings["faces"]["right"]);
+        cube_faces[TOP] = std::string(settings["faces"]["top"]);
+        cube_faces[BOTTOM] = std::string(settings["faces"]["bottom"]);
+        cube_faces[FRONT] = std::string(settings["faces"]["front"]);
+        cube_faces[BACK] = std::string(settings["faces"]["back"]);
+    }
+    catch( const std::exception &e )
+    {}
+
+    try
+    {
         speed.setX( settings["speed"]["x"].toFloat() );
         speed.setY( settings["speed"]["y"].toFloat() );
         speed.setZ( settings["speed"]["z"].toFloat() );
@@ -218,6 +230,27 @@ TSpecification::TSpecification( const NJson::TObject &environment,const NJson::T
     {
         wake.setX( settings["wake-width"]["x"].toFloat() );
         wake.setY( settings["wake-width"]["y"].toFloat() );
+    }
+    catch( const std::exception &e )
+    {}
+    try
+    {
+        rain_enabled = settings["rain"]["enabled"].toBool();
+    }
+    catch( const std::exception &e )
+    {}
+    try
+    {
+        rain_severity.setX( settings["rain"]["severity"]["x"].toFloat() );
+        rain_severity.setY( settings["rain"]["severity"]["y"].toFloat() );
+        rain_severity.setZ( settings["rain"]["severity"]["z"].toFloat() );
+    }
+    catch( const std::exception &e )
+    {}
+    try
+    {
+        sweat_enabled = settings["rain"]["sweat"]["enabled"].toBool();
+        texture_sweat = std::string(settings["rain"]["sweat"]["texture"]);
     }
     catch( const std::exception &e )
     {}

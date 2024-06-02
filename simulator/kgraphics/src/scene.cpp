@@ -8,6 +8,8 @@
 #include "scene.h"
 #include "utils.h"
 
+#include <QMouseEvent>
+
 #ifndef GL_GLEXT_PROTOTYPES
 #define GL_GLEXT_PROTOTYPES
 #endif
@@ -16,6 +18,7 @@
 #include "figures/waves.h"
 #include "figures/surge.h"
 #include "figures/vessel.h"
+#include "figures/skybox.h"
 
 #include <QDateTime>
 #include <QOpenGLDebugLogger>
@@ -30,12 +33,20 @@ TSceneError::TSceneError( const std::string &what )
 {}
 
 TScene::TScene( const NUtils::TSceneConfig &config, QWidget *parent )
-: QGLWidget( QGLFormat(), parent )
+: QOpenGLWidget( parent )
 , name_( config.name )
 , size_( config.size.width, config.size.height )
 , position_( config.x, config.y )
 , store_ts_( std::chrono::high_resolution_clock::now() )
+, camera_( QVector3D(config.specification["environment"]["camera-position"]["x"].toFloat(),
+                     config.specification["environment"]["camera-position"]["y"].toFloat(),
+                     config.specification["environment"]["camera-position"]["z"].toFloat()),
+           width(),
+           height() )
 {
+    designationCoords_[0] = { (350. - 180.), .0, 4000. };
+    designationCoords_[0].normalize();
+
     f_initialize( config.specification );
 }
 
@@ -56,6 +67,8 @@ const QPoint& TScene::position() const
 
 void TScene::initializeGL()
 {
+    initializeOpenGLFunctions();
+
     glEnable( GL_DEBUG_OUTPUT );
     glEnable( GL_DEPTH_TEST );
     glEnable( GL_CULL_FACE );
@@ -75,21 +88,29 @@ void TScene::initializeGL()
 
     f_debug_info();
     // инициализируем фигуры в контейнере
+    makeCurrent();
+
     figureset_.initialize();
+
+    doneCurrent();
 }
 
 void TScene::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    camera_.move( width(), height() );
+
     try
     {
-        figureset_.draw( QDateTime::currentMSecsSinceEpoch() );
+        figureset_.draw( QDateTime::currentMSecsSinceEpoch(), camera_ );
     }
     catch( const std::runtime_error &err )
     {
         qDebug() << __PRETTY_FUNCTION__ << " error: " << err.what();
     }
+
+    f_capture_target();
 
     // сохранить кадр, если время подошло
     if( frame_->is_duration_passed() > 0.f )
@@ -100,11 +121,127 @@ void TScene::paintGL()
 
 void TScene::resizeGL(int w, int h)
 {
-    if (h == 0)
+    if( h == 0 )
     {
         h = 1;
     }
     glViewport(0, 0, w, h);
+}
+
+void TScene::f_capture_target()
+{
+    qint64 currentTime = QDateTime::currentMSecsSinceEpoch();
+
+    if( panorama_ == 1 )
+    {
+        camera_.rotate( 0.f, -0.09 * (currentTime - capture_time_) );
+    }
+    else if( panorama_ == 2 )
+    {
+        camera_.rotate( 0.f, -0.045 * (currentTime - capture_time_) );
+    }
+
+    if( capture_mode_ == 1 )
+    {
+        QVector3D rotation( designationCoords_[0].elevation_deg, designationCoords_[0].bearing_deg, 0.f );
+
+        captured_target_ = figureset_.closest_on_distance( designationCoords_[0], 10. );
+        CU target_coords = captured_target_ ? CU(captured_target_->coordinates()) : designationCoords_[0];
+
+        camera_.setRotation( rotation.x() - target_coords.elevation_deg,
+                             rotation.y() - target_coords.bearing_deg,
+                             0.f );
+    }
+    else if( capture_mode_ == 2 )
+    {
+        CU operateCoords { camera_.rotation().y() - 180., camera_.rotation().x() + 180., 0. };
+
+        operateCoords.normalize();
+
+        if( !captured_target_ )
+        {
+            captured_target_ = figureset_.closest_on_distance( operateCoords, 10. );
+        }
+
+        if( captured_target_ )
+        {
+            CU target_coords = captured_target_->coordinates();
+
+            camera_.setRotation( camera_.rotation().x() - target_coords.elevation_deg,
+                                 camera_.rotation().y() - target_coords.bearing_deg,
+                                 0.f );
+
+            qDebug() << "Print  1 " << target_coords.elevation_deg;
+        }
+    }
+
+    camera_.normalize();
+
+    QString mess = "FPS: " + QString::number(1000.0/(currentTime - capture_time_)) +
+            "\nOne frame:" + QString::number(currentTime - capture_time_) + "msec";
+
+    // Render text
+    QPainter painter(this);
+    painter.beginNativePainting();
+    painter.drawText( QRect(10,10,100,100), mess );
+    painter.endNativePainting();
+    painter.end();
+
+    capture_time_ = currentTime;
+}
+
+void TScene::mousePressEvent( QMouseEvent *event )
+{
+    if( event->buttons() == Qt::LeftButton )
+    {
+        mouse_pos_ = event->pos();
+    }
+}
+
+void TScene::mouseMoveEvent( QMouseEvent *event )
+{
+    camera_.rotate( TCamera::DEG * (event->pos().y() - mouse_pos_.y()) / height(),
+                    TCamera::DEG * (event->pos().x() - mouse_pos_.x()) / width() );
+    mouse_pos_ = event->pos();
+}
+
+void TScene::mouseReleaseEvent( QMouseEvent *event )
+{
+    if( event->buttons() == Qt::RightButton )
+    {
+        emit clicked();
+    }
+}
+
+void TScene::wheelEvent( QWheelEvent *e )
+{
+    camera_.zoom( camera_.fieldOfView() - e->delta() / 60 );
+}
+
+void TScene::keyPressEvent( QKeyEvent *e )
+{
+    if( e->key() == Qt::Key_M )
+    {
+        //figureset_.setColorMode( cl_mode_ );
+        cl_mode_ = (cl_mode_ + 1) % 3;
+    }
+    else if( e->key() == Qt::Key_N )
+    {
+        panorama_ = (panorama_ + 1) % 3;
+    }
+    else if( e->key() == Qt::Key_X )
+    {
+        capture_mode_ = 0;
+        captured_target_ = nullptr;
+    }
+    else if( e->key() == Qt::Key_C )
+    {
+        capture_mode_ = 1;
+    }
+    else if( e->key() == Qt::Key_V )
+    {
+        capture_mode_ = 2;
+    }
 }
 
 void TScene::clear()
@@ -117,6 +254,21 @@ void TScene::clear()
     figureset_.clear();
 
     doneCurrent();
+}
+
+void TScene::zoomCamera( float factor )
+{
+    camera_.zoom( factor );
+}
+
+void TScene::rotateCamera( float x, float y )
+{
+    camera_.rotate( x, y );
+}
+
+void TScene::setPanorama( int factor )
+{
+    panorama_ = factor;
 }
 
 void TScene::f_store_frame()
@@ -161,6 +313,10 @@ void TScene::f_initialize( const NJson::TObject &specification )
     NJson::TObject environment;
     try {
         environment = specification["environment"];
+
+        camera_.setPosition( environment["camera-position"]["x"].toInt(),
+                             environment["camera-position"]["y"].toInt(),
+                             environment["camera-position"]["z"].toInt() );
     }
     catch( std::exception &e )
     {
@@ -229,6 +385,10 @@ void TScene::f_add_figure( const NJson::TObject &environment, const NJson::TObje
     else if( std::string(settings["type"]) == "surge" )
     {
         f_add_figure< TSurge >( environment, settings );
+    }
+    else if( std::string(settings["type"]) == "skybox" )
+    {
+        f_add_figure< TSkybox >( environment, settings );
     }
 }
 

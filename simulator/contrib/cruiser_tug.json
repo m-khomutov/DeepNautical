@@ -10,6 +10,7 @@
     "jpeg_compress_quality_percent": 95,
     "frame_duration_msec": 40
   },
+  "channel_command_server": "stub",
   "screen": {
     "scenes": {
       "cruiser": {
@@ -127,7 +128,6 @@
             "type": "vessel",
             "shader": "vessel.glsl",
             "blenderobj-name": "cruiser/boat.obj",
-	    "main-texture": "alpha.jpg",
             "speed": {
               "x": -0.002,
               "y": 0.0,
@@ -241,8 +241,8 @@
             "air-texture": "air.jpg",
             "foam-texture": "foam.jpg",
             "wave": {
-              "x": 10.0,
-              "y": 2.0
+              "x": 15.0,
+              "y": 3.0
             },
             "wake": {
               "x": 20.0,
@@ -252,7 +252,6 @@
           "tug1": {
             "type": "vessel",
             "shader": "vessel.glsl",
-            "main-texture": "alpha.jpg",
             "blenderobj-name": "tug_boat/boat.obj",
             "speed": {
               "x": 0.0,

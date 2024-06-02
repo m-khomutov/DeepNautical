@@ -107,6 +107,7 @@ NUtils::TConfig::TConfig( int argc, char * argv[] )
     TConfig::fields_["verify"] = false;
     TConfig::fields_["screen_layout"] = scene_config_t();
     TConfig::fields_["bide"] = 2000;
+    TConfig::fields_["channel_command_server"] = std::string();
 
     // параметры командной строки
     int c;
@@ -241,6 +242,7 @@ void NUtils::TConfig::f_read_json( char const *fname )
         TConfig::fields_["compress_quality"] = object["service"]["jpeg_compress_quality_percent"].toInt();
         TConfig::fields_["frame_duration"] = object["service"]["frame_duration_msec"].toInt();
 
+        // настройки сцен
         scene_config_t cfg;
 
         const NJson::TObject &scenes = object["screen"]["scenes"];
@@ -249,6 +251,9 @@ void NUtils::TConfig::f_read_json( char const *fname )
             cfg.emplace( sc.first, sc.second );
         }
         TConfig::fields_["screen_layout"] = cfg;
+
+        // настройки канала комманд
+        TConfig::fields_["channel_command_server"] = std::string(object["channel_command_server"]);
     }
     catch( const std::exception &err )
     {

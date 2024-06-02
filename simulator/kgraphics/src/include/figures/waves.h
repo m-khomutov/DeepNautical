@@ -107,6 +107,14 @@ private:
        \param currentTime текущая временная метка
      */
     void f_accept( IVisitor &p, double currentTime ) override;
+    /*!
+       \brief определяет фигуру как неподвижную
+       \return флаг неподвижности фигуры
+     */
+    bool f_moving() const override
+    {
+        return false;
+    }
 
     /*!
        \brief загружает геметрические координаты сетки водной поверхности в шейдер

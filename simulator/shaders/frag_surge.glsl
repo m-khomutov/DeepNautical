@@ -55,9 +55,9 @@ void main() {
     else
     {
         vec2 off = vec2(perturb(Amplitude), perturb(Frequency));
-        Color = mix(texture(Texture, off + fTexCoord), texture(AirTexture, off + vec2(fTexCoord.y, fTexCoord.x)), 0.7);
+        Color = mix(texture(Texture, off + fTexCoord), texture(AirTexture, off + vec2(fTexCoord.y, fTexCoord.x)), 0.22);
     }
 
     float factor = FogFactor(FogParams);
-    Color = mix(FogParams.color, Color, factor);
+    //Color = mix(FogParams.color, Color, factor);
 }

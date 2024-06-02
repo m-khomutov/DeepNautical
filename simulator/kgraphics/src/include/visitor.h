@@ -15,6 +15,7 @@ class TAir;
 class TWaves;
 class TSurge;
 class TVessel;
+class TSkybox;
 
 /*!
    \interface IVisitor
@@ -53,6 +54,8 @@ public:
        \param fig посещаемый элемент
      */
     virtual void visit( TSurge * ) = 0;
+
+    virtual void visit( TSkybox * ) = 0;
 };
 
 #endif /* VISITOR_H */

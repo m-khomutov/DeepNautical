@@ -91,6 +91,7 @@ public:
     void stop_vdev_capture();
 
 protected:
+    //! возвращаемое программой число при остановке программы
     int result_ { EXIT_SUCCESS };
 
 private:
