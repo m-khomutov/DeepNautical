@@ -121,6 +121,9 @@ TWaves::~TWaves()
 
 void TWaves::draw()
 {
+    vertex_buffer_object_.release();
+    vertex_array_object_.release();
+
     shader_program_.setAttributeArray( "Surface", surface_, 4 );
     shader_program_.enableAttributeArray( "Surface" );
     shader_program_.setAttributeArray( "Normals", normals_, 3 );

@@ -68,6 +68,7 @@ void TFigure::accept( IVisitor &p, double currentTime, const TCamera &camera )
 
     shader_program_.bind();
     vertex_array_object_.bind();
+    vertex_buffer_object_.bind();
 
     // настроить униформные переменные
     shader_program_.setUniformValue( "Model", model_ );
@@ -85,6 +86,7 @@ void TFigure::accept( IVisitor &p, double currentTime, const TCamera &camera )
     {
         texture_->release();
     }
+    vertex_buffer_object_.release();
     vertex_array_object_.release();
     shader_program_.release();
 }

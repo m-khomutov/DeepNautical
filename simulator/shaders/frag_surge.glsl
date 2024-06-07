@@ -59,5 +59,5 @@ void main() {
     }
 
     float factor = FogFactor(FogParams);
-    //Color = mix(FogParams.color, Color, factor);
+    Color = mix(FogParams.color, Color, factor);
 }

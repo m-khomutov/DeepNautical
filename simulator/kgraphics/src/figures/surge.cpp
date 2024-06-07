@@ -18,7 +18,7 @@ TSurge::TSurge( const NJson::TObject &environment,const NJson::TObject &settings
     // настроить модель
     model_.setToIdentity();
     model_.translate( QVector3D(0.f, 0.f, -1.0f) );
-    model_.rotate( -60.f, QVector3D(1.0f, 0.0f, 0.0) );
+    model_.rotate( -40.f, QVector3D(1.0f, 0.0f, 0.0) );
 }
 
 TSurge::~TSurge()
@@ -129,6 +129,8 @@ void TSurge::f_draw_sparklets()
     glDrawArrays( GL_POINTS, 0, points_.size() / 6 );
 
     f_reset_points();
+
+    sparkles_vertex_buffer_object_.release();
 }
 
 void TSurge::f_set_points()
