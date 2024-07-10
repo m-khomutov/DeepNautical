@@ -33,7 +33,7 @@ void signal_handler( int s )
 
 void show_options_and_exit( const char *prog, int rc )
 {
-    std::cerr << "Запуск: " << prog <<  "[-h] [-s] [-t] [-p] [-q] [-d] [-w] [-o] [-c]\n\nэмулятор устройства\n\n";
+    std::cerr << "Запуск: " << prog <<  "[-h] [-s] [-t] [-p] [-q] [-d] [-w] [-o] [-c]\n\noean 3d\n\n";
     std::cerr << "обязательные аргументы:\n";
     std::cerr << "\t-s\tкаталог с шейдерами\n"; 
     std::cerr << "\t-t\tкаталог с текстурами\n"; 

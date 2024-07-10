@@ -61,7 +61,7 @@ QViewer::QViewer( int update_ms, int frame_wait_ms )
 , frame_wait_threshold_( frame_wait_ms / update_ms )
 {
     NUtils::TGeometry window = NUtils::TConfig()["window"];
-    setWindowTitle("ПО управления");
+    setWindowTitle("Ocean 3D");
     setMaximumSize(window.width, window.height);
     setMinimumSize(window.width, window.height);
     img_ = QImage(size(), QImage::Format_RGB888);

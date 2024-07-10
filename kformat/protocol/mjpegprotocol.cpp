@@ -8,8 +8,8 @@
 
 namespace
 {
-const char ok_status[] = "HTTP/1.1 200 OK\r\nAccess-Control-Allow-Origin: *\r\nContent-Type: multipart/x-mixed-replace;boundary=agat-a_mjpeg\r\n\r\n";
-const char boundary[] = "--agat-a_mjpeg\r\nContent-Type: image/jpeg\r\nContent-Length: ";
+const char ok_status[] = "HTTP/1.1 200 OK\r\nAccess-Control-Allow-Origin: *\r\nContent-Type: multipart/x-mixed-replace;boundary=ocean-3d_mjpeg\r\n\r\n";
+const char boundary[] = "--ocean-3d_mjpeg\r\nContent-Type: image/jpeg\r\nContent-Length: ";
 }
 
 TMjpegprotocol::TMjpegprotocol( int b_sock, int flags, size_t view )

@@ -178,7 +178,7 @@ void TReceiver::f_start_connection()
 
     // запрос на выдачу контента
     std::string request = "GET /stream?proto=flv&view=" + std::to_string(view_) + " HTTP/1.1\r\n"
-                          "User-Agent: Viewer/0.0.1 (agat-aquarius)\r\n"
+                          "User-Agent: Viewer/0.0.1 (mkh)\r\n"
                           "Accept: */*\r\n"
                           "Accept-Encoding: identity\r\n"
                           "Host: " + server_host_ + ":" + std::to_string(server_port_) + "\r\n"
