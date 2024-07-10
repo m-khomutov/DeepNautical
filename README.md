@@ -1,9 +1,9 @@
-# Эмулятор вида из окна на море и программа просмотра
+# Визуализация картинки 3D с передачей с сеть
 
 **Сборка**
 
-`git clone https://github.com/m-khomutov/kometa.git`  
-`cd kometa/`  
+`git clone https://github.com/m-khomutov/ocean3d.git`  
+`cd ocean3d/`  
 `mkdir build`  
   
 Возможные варианты сборки:  
@@ -18,36 +18,36 @@
 
 **Установка с использованием toolkit-a Qt**  
   
-* Файл запуска эмулятора  
-  >build/simulator/app/simulator  
-* Файл запуска программы просмотра  
-  >build/viewer/app/viewer  
+* Файл запуска visual  
+  >build/visual/app/visual  
+* Файл запуска программы отображения  
+  >build/kvlc/app/kvlc  
   
 **Установка с использованием cmake**  
 * Файл запуска эмулятора  
-  >build/simulator/simulator  
-* Файл запуска программы просмотра  
-  >build/viewer/viewer  
+  >build/visual/visual  
+* Файл запуска программы отображения  
+  >build/kvlc/kvlc  
 
 **Запуск (пример)**
   
-* Эмулятор с парамертами  
- `simulator -s ../../../simulator/shaders/ -d 40 -w 800x600 -t ../../../simulator/textures`  
+* Visual с парамертами  
+ `visual -s ../../../visual/shaders/ -d 40 -w 800x600 -t ../../../visual/textures`  
   
-* Эмулятор с файлом конфигурации  
- `simulator -c /opt/agat-a/etc/conf`  
+* Visual с файлом конфигурации  
+ `visual -c /opt/mkh/etc/conf`  
   
-* Программа просмотрa  
- `viewer -u http://127.0.0.1:2232/0`  
+* Программа отображения  
+ `kvlc -u http://127.0.0.1:2232/0`  
 
 **Параметры запуска (выводятся опцией -h)**  
 
-* Эмулятор  
+* visual  
   
 ```
-$ simulator -h  
+$ visual -h  
 Вывод опций программы  
-Запуск: ./simulator[-h] [-s] [-t] [-p] [-q] [-d] [-w] [-o] [-c] 
+Запуск: ./visual[-h] [-s] [-t] [-p] [-q] [-d] [-w] [-o] [-c] 
   
 Эмулятор устройства  
    
@@ -63,17 +63,17 @@ $ simulator -h
  	  -o	каталог с объектами blender  
  	  -h	вывод параметров запуска  
   ```
-* Программа просмотрa  
+* Программа отображения  
   
 ```
-$ viewer -h  
+$ kvlc -h  
 Вывод опций программы  
-Запуск: ./viewer[-h] [-u] [-w] [-v]  
+Запуск: ./kvlc[-h] [-u] [-w] [-v]  
    
-программа просмотра  
+программа отображения  
   
 обязательные аргументы:  
-          -u	url эмулятора (протокол//:хост:порт/номер_стрима) 
+          -u	url visual (протокол//:хост:порт/номер_стрима) 
 Опциональные аргументы:  
  	  -w	размеры окна (def. 800x600)  
  	  -v	вывод оценки задержки (def. false)  
@@ -88,17 +88,17 @@ $ viewer -h
   
 Пример файла:  
 ```
-# Файл конфигурации эмулятора вида на море
+# Файл конфигурации visual
 
-shaders="/opt/agat-a/shaders"   # каталог шейдеров
-textures="/opt/agat-a/textures" # каталог текстур 
-objs="/opt/agat-a/objs"         # каталог объектов, выгруженных из blender-a в формате OBJ
-scenes="/opt/agat-a/scenes"     # каталог сцен
-scene_count=2                   # количество воспроизводимых сцен
-port=2232                       # порт приема запросов на трансляцию стрима
-window=800x600                  # размеры окна
-quality=80                      # качество сжатия %
-duration=40                     # длительность кадра мсек.
+shaders="/opt/mkh/shaders"   # каталог шейдеров
+textures="/opt/mkh/textures" # каталог текстур 
+objs="/opt/mkh/objs"         # каталог объектов, выгруженных из blender-a в формате OBJ
+scenes="/opt/mkh/scenes"     # каталог сцен
+scene_count=2                # количество воспроизводимых сцен
+port=2232                    # порт приема запросов на трансляцию стрима
+window=800x600               # размеры окна
+quality=80                   # качество сжатия %
+duration=40                  # длительность кадра мсек.
 ```
   
 **Каталог сцен**  
@@ -234,7 +234,7 @@ wake_width={0.3 0.3}
 * textures  
   Каталог текстур. Поддерживаются текстуры статических изображений (PNG, JPEG) и текстуры видео (AVI/MJPEG).  
   
-**REST api эмулятора**  
+**REST api visual**  
   
 Поддерживаются следующие команды REST api:  
 * scene?list  
