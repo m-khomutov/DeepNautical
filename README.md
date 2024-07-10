@@ -1,9 +1,9 @@
-# Эмулятор вида из окна на море и программа просмотра
+# Визуализация картинки 3D с передачей с сеть
 
 **Сборка**
 
-`git clone https://github.com/m-khomutov/kometa.git`  
-`cd kometa/`  
+`git clone https://github.com/m-khomutov/ocean3d.git`  
+`cd ocean3d/`  
 `mkdir build`  
   
 Возможные варианты сборки:  
