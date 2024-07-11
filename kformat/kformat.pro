@@ -6,8 +6,8 @@ DESTDIR += $$OBJECTS_DIR/lib
 CONFIG += 14
 
 HEADERS = kformat.h \
-    ../common/utils.h \
-    ../common/json.h \
+    ../utils/utils.h \
+    ../utils/json.h \
     include/basescreen.h \
     include/s_socket.h \
     include/videodevice.h \
@@ -23,8 +23,8 @@ HEADERS = kformat.h \
 
 
 SOURCES = \
-        ../common/utils.cpp \
-        ../common/json.cpp \
+        ../utils/utils.cpp \
+        ../utils/json.cpp \
         screen/basescreen.cpp \
         service/s_socket.cpp \
         service/videodevice.cpp \
@@ -54,5 +54,5 @@ buildpackage.commands = @mkdir -p $$OBJECTS_DIR/libkformat-dev/DEBIAN; \
                          rm -Rf $$OBJECTS_DIR/libkformat-dev;
 all.depends = buildpackage
 
-INCLUDEPATH += $$PWD/include $$PWD/../common
+INCLUDEPATH += $$PWD/include $$PWD/../utils
 LIBS = -ljpeg

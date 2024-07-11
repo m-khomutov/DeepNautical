@@ -1,7 +1,7 @@
 #include "json.h"
 #include <fstream>
 
-NJson::TParser::TParser( const std::string &jfile )
+js::parser::parser( const std::string &jfile )
 {
     std::ifstream f(jfile);
     if( !f.is_open() ) {
@@ -24,9 +24,9 @@ NJson::TParser::TParser( const std::string &jfile )
             {
             case '{':
             {
-                TObject subobject;
+                object subobject;
                 f_parse_object( ++it, end, subobject );
-                object_.emplace( "/", subobject );
+                root_.emplace( "/", subobject );
                 break;
              }
              case '}':
@@ -36,7 +36,7 @@ NJson::TParser::TParser( const std::string &jfile )
      }
 }
 
-void NJson::TParser::f_parse_object( std::string::const_iterator & it, const std::string::const_iterator &end, TObject &object )
+void js::parser::f_parse_object( std::string::const_iterator & it, const std::string::const_iterator &end, object &object )
 {
     std::string name, value, *ptr = &name;
 
@@ -47,7 +47,7 @@ void NJson::TParser::f_parse_object( std::string::const_iterator & it, const std
             {
             case '{':
             {
-                TObject subobject;
+                js::object subobject;
                 f_parse_object( ++it, end, subobject );
                 object.emplace( name, subobject );
 
@@ -58,13 +58,13 @@ void NJson::TParser::f_parse_object( std::string::const_iterator & it, const std
             case '}':
                 if( !value.empty() )
                 {
-                    object.emplace( name, TObject( value ) );
+                    object.emplace( name, js::object( value ) );
                 }
                 return;
             case ',':
                 if( !value.empty() )
                 {
-                    object.emplace( name, TObject( value ) );
+                    object.emplace( name, js::object( value ) );
                 }
                 name.clear();
                 value.clear();
@@ -73,10 +73,11 @@ void NJson::TParser::f_parse_object( std::string::const_iterator & it, const std
             case ':':
                 ptr = &value;
                 break;
-            case '[':
+            case '[': /*TODO not supported*/
             {
-                //TObject subobject;
-                //parse_array( ++it, end, subobject );
+                js::object subobject;
+                f_parse_object( ++it, end, subobject );
+                object.emplace( name, subobject );
                 name.clear();
                 break;
             }
