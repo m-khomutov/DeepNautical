@@ -5,11 +5,11 @@
  * Created on 24 января 2023 г., 16:40
  */
 
-#include "jpegframe.h"
-#include "baseprotocol.h"
+#include "jpeg.h"
+#include "proto.h"
 #include <unistd.h>
 
-namespace  // Содержит стафф, связанный с определение контекста сжатия кадра в JPEG
+namespace
 {
 typedef struct
 {
@@ -46,9 +46,9 @@ METHODDEF(void) term_destination(j_compress_ptr cinfo)
 
 }  // namespace
 
-TJpegframe::TJpegframe( const NUtils::TGeometry &geometry, int quality, int duration, bool reverse )
-: TBaseframe( geometry, duration )
-, reverse_( reverse )
+frame::jpeg::jpeg( const utils::winsize &sz, int quality, int duration, bool reverse )
+    : frame::base( sz, duration )
+    , reverse_( reverse )
 {
     // сам контекст сжатия
     cinfo_.err = jpeg_std_error( &jerr_ );  // errors get written to stderr 
@@ -70,22 +70,22 @@ TJpegframe::TJpegframe( const NUtils::TGeometry &geometry, int quality, int dura
     dest->pub.term_destination = term_destination;
 }
 
-TJpegframe::~TJpegframe()
+frame::jpeg::~jpeg()
 {
     jpeg_destroy_compress( &cinfo_ );
 }
 
-uint8_t *TJpegframe::buffer( size_t view, int width, int height )
+uint8_t *frame::jpeg::buffer( size_t view, int width, int height )
 {
     std::vector< uint8_t >::size_type sz = NUtils::TImage::EColor::RGB * width * height;
 
-    if( view >= rgb_buffers_.size() ) // выделить место под буфер точки обзора
+    if( view >= rgb_buffers_.size() )
     {
         rgb_buffers_.resize( view + 1 );
         jpeg_frames_.resize( view + 1 );
     }
 
-    if( sz != rgb_buffers_[view].size() )  // выделить память в буфере данных точки обзора и сохранить размеры кадра
+    if( sz != rgb_buffers_[view].size() )
     {
         rgb_buffers_[view].resize( sz );
 
@@ -94,18 +94,16 @@ uint8_t *TJpegframe::buffer( size_t view, int width, int height )
         jpeg_frames_[view].geometry.height = height;
     }
 
-    return rgb_buffers_[view].data();  // сюда скопируется RGB-буфер
+    return rgb_buffers_[view].data();
 }
 
-void TJpegframe::prepare_buffer( size_t view )
+void frame::jpeg::prepare_buffer( size_t view )
 {
-    //сжать данные в формат JPEG
     f_compress( view );
 }
 
-void TJpegframe::f_compress( size_t view )
+void frame::jpeg::f_compress( size_t view )
 {
-    // сжать буфер точки обзора view
     mem_destination_ptr_t dest = mem_destination_ptr_t( cinfo_.dest );
     dest->buf = jpeg_frames_[view].frame.data();   // сюда скопируются данные в формате JPEG
     dest->bufsize  = jpeg_frames_[view].frame.size();
@@ -143,14 +141,14 @@ void TJpegframe::f_compress( size_t view )
     }
 }
 
-bool TJpegframe::f_send_buffer( TBaseprotocol * proto )
+bool frame::jpeg::f_send_buffer( proto::base * pr )
 {
-    if( !proto || jpeg_frames_.empty() )
+    if( !pr || jpeg_frames_.empty() )
     {
         return false;
     }
 
-    size_t view = proto->view();
+    size_t view = pr->view();
 
     if( view > rgb_buffers_.size() - 1 )
     {
@@ -159,8 +157,7 @@ bool TJpegframe::f_send_buffer( TBaseprotocol * proto )
 
     if( jpeg_frames_[view].size_ )
     {
-        // отправить абоненту
-        proto->send_frame( jpeg_frames_[view].frame.data(), jpeg_frames_[view].size_ );
+        pr->send_frame( jpeg_frames_[view].frame.data(), jpeg_frames_[view].size_ );
     }
     return true;
 }
