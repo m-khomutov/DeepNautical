@@ -1,6 +1,6 @@
 #include "screen.h"
 
-base::screen::creen( base::frame *fr )
+base::screen::screen( base::frame *fr )
     : frame_( fr )
     , store_ts_( std::chrono::high_resolution_clock::now() )
 {}
@@ -22,11 +22,11 @@ void base::screen::update_frame()
     f_update_frame();
 }
 
-bool base::screen::send_frame( base::proto *p )
+bool base::screen::send_frame( base::protocol *p )
 {
     std::lock_guard< std::mutex > lk(mutex_);
 
-    return f_send_frame( proto );
+    return f_send_frame( p );
 }
 
 float base::screen::frame_expired( base::frame::time_point_t *ts ) const

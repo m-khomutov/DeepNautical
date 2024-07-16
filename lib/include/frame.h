@@ -13,124 +13,49 @@
 #include "utils.h"
 #include <chrono>
 
-class TBaseprotocol;
+namespace base
+{
 
-/*!
-     \class TBaseframe
-     \brief Базовый класс представления видеокадра.
+class protocol;
 
-      Состояние класса хранит:
-      - размеры кадра (ширина, высота);
-      - длительность кадра (определяет частоту выдачи кадра);
-      - буферы хранения пикселов кадра. Количество буферов соответствует количеству задействованных точек обзора (сцен и камер в них).
-
-      Реальный публичный интерфейс определяет методы:
-      - выдачи ширины кадра;
-      - выдачи высоты кадра;
-      - выгрузки буфера хранения пикселов кадра;
-      - проверки кадра на превышение длительности.
-
-      Виртуальный публичный интерфейс объявляет метод предоставления указателя на буфер хранения пикселов кадра для заполнения.
-
-      Виртуальный защищенный интерфейс объявляет метод выгрузки буфера хранения пикселов кадра в соответствии с протоколом передачи видео.
- */
-class TBaseframe {
+class frame
+{
 public:
-    /// алиас типа данных временной метки
     using time_point_t = std::chrono::time_point< std::chrono::high_resolution_clock >;
 
-    /*!
-        \brief Конструктор базового класса представления видеокадра.
+    frame( const utils::winsize &sz, int duration );
+    frame( const frame& other ) = delete;
+    virtual ~frame();
 
-        Настраивает состояние кадра, а именно, размеры и длительность.
-        \param geometry Размеры кадра
-        \param duration Длительность кадра
-    */
-    TBaseframe( const NUtils::TGeometry &geometry, int duration );
-    /*!
-       \brief Запрещенный конструктор копии.
-       \param orig Копируемый объект
-     */
-    TBaseframe( const TBaseframe& orig ) = delete;
-    /*!
-       \brief Запрещенный оператор присваивания.
-       \param orig Копируемый объект
-       \return Собственный объект
-     */
-    TBaseframe &operator =( const TBaseframe& orig ) = delete;
-    /*!
-       \brief Виртуальный деструктор базового класса представления видеокадра.
-     */
-    virtual ~TBaseframe();
+    frame &operator =( const frame& other ) = delete;
 
-    /*!
-        \brief Возвращает указатель на буфер хранения пиксельной информации кадра. Реализуется в производных классах.
-
-        Объявление функции предоставления доступа к буферу пикселей видеокадра.
-        При необходимости  выделяет память, определяемую размерами кадра для точки обзора.
-        \param view Номер точки обзора (сцена или камера в сцене)
-        \param width Ожидаемая ширина кадра
-        \param height Ожидаемая высота кадра
-        \return указатель на буфер хранения пиксельной информации кадра
-     */
     virtual uint8_t *buffer( size_t view, int width, int height ) = 0;
-    /*!
-        \brief Выполнить действия, подготовительные к передаче кадра абоненту, специфичные к формату кадра.
-        \param view Номер точки обзора (сцена или камера в сцене)
-     */
     virtual void prepare_buffer( size_t view ) = 0;
-    /*!
-       \brief Выгружает в сеть буфер пикселей видеокадра.
 
-       Использует специфический протокол передачи видео для выгрузки буфера пикселей видеокадра абонентам
-       \param proto Протокол передачи видео, испольуемый для выгрузки буфера
-       \return Результат выгрузки буфера
-     */
-    bool send_buffer( TBaseprotocol * );
-    /*!
-       \brief Возвращает ширину кадра
-       \return Ширина кадра
-     */
+    bool send_buffer( protocol * );
+
     int width() const
     {
-        return geometry_.width;
+        return size_.width;
     }
-    /*!
-       \brief Возвращает высоту кадра
-       \return Высота кадра
-     */
     int height() const
     {
-        return geometry_.height;
+        return size_.height;
     }
-    /*!
-       \brief Определяет, вышло ли время кадра.
-
-       Если время кадра вышло, то записывает в переменную параметр текущее время
-       \param ts указатель на переменную, хранящую  текущее время
-       \return Текущая длительность кадра, если она равна или превышает заданную в конструкторе, либо -1.0
-     */
-    float is_duration_passed( time_point_t *ts ) const;
+    float expired( time_point_t *ts ) const;
     
 protected:
-    /// алиас, представляющий память хранения буфера пиксельной информации.
-    using image = std::vector< uint8_t >;
+    using pixels = std::vector< uint8_t >;
 
-    NUtils::TGeometry geometry_;           ///< размеры кадра (ширина, высота)
-    std::chrono::milliseconds duration_;   ///< длительность кадра (в миллисекундах)
-    std::vector< image > rgb_buffers_;     ///< буферы хранения пиксельной информации кадра (по количеству задействованных точек обзора)
+    utils::winsize size_;
+    std::chrono::milliseconds duration_;
+    std::vector< pixels > rgb_;
 
 private:
-    /*!
-       \brief Объявление функции выгрузки буфера пикселей видеокадра абонентам. Реализуется в производных классах.
-
-       Использует специфический протокол передачи видео для выгрузки буфера пикселей видеокадра абонентам
-       \param proto Протокол передачи видео, испольуемый для выгрузки буфера
-       \return Результат выгрузки буфера
-     */
-    virtual bool f_send_buffer( TBaseprotocol * proto ) = 0;
+    virtual bool f_send_buffer( protocol * p ) = 0;
 
 };
 
+}  // namespace base
 #endif /* BASEFRAME_H */
 

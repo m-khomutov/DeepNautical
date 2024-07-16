@@ -9,98 +9,47 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
-#include "baseprotocol.h"
+#include "proto.h"
 
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <arpa/inet.h>
 #include <memory>
 
-class TBasescreen;
+namespace base
+{
 
-/*!
-     \class TConnection
-     \brief Класс сетевого соединения с абонентом.
+class screen;
 
-      Состояние класса хранит:
-      - размер структуры хранения информации сетевого соединения
-      - файловый дескриптор (сокет) сетевого соединения с абонентом
-      - флаги, выставляемые при сетевой отправке сообщения абоненту
-      - структуру хранения информации сетевого соединения
-      - сетевой протокол выдачи контента, используемый в соединении
-      - строку запроса абонента
+}
 
-      Реальный публичный интерфейс определяет методы:
-      - предоставления файлового дескриптора (сокета) сетевого соединения с абонентом;
-      - предоставления сетевого протокола выдачи контента, используемого в соединении;
-      - обработки принятых из сети данных;
-      - реакции на готовность сети к передаче данных
- */
-class TConnection {
+class connection {
 public:
-    /*!
-       \brief Конструктор класса сетевого соединения с абонентом
-       \param b_sock файловый дескриптор (сокет) сетевого соединения с абонентом
-     */
-    explicit TConnection( int b_sock );
-    /*!
-       \brief Запрещенный конструктор копии.
-       \param orig Копируемый объект
-     */
-    TConnection( const TConnection& orig ) = delete;
-    /*!
-       \brief Запрещенный оператор присваивания.
-       \param orig Копируемый объект
-       \return Собственный объект
-     */
-    TConnection &operator =( const TConnection& orig ) = delete;
-    /*!
-       \brief Деструктор класса сетевого соединения с абонентом.
-     */
-    ~TConnection();
+    explicit connection( int b_sock );
+    connection( const connection& other ) = delete;
+    ~connection();
 
-    /*!
-       \brief предоставляет файловый дескриптор (сокет) сетевого соединения с абонентом
-       \return файловый дескриптор (сокет) сетевого соединения с абонентом
-     */
+    connection &operator =( const connection& other ) = delete;
+
     operator int() const
     {
         return fd_;
     }
 
-    /*!
-       \brief предоставляет указатель на объект сетевого протокола выдачи контента, используемый в соединении
-       \return указатель на объект сетевого протокола
-     */
-    TBaseprotocol * protocol()
+    base::protocol * protocol()
     {
         return proto_.get();
     }
 
-    /*!
-     * \brief обрабатывает принятые из сети данные
-     * \param screen указатель на объект экрана отображения сцен
-     * \param data принятые из сети данные
-     * \param size размер принятых из сети данных
-     */
-    void on_data( TBasescreen *screen, const uint8_t * data, int size );
-    /*!
-     * \brief вызывается на готовность сети к передаче данных
-     */
+    void on_data( base::screen *screen, const uint8_t * data, int size );
     void on_ready_to_write();
 
 private:
-    //! размер структуры хранения информации сетевого соединения
     socklen_t socklen_ { sizeof(sockaddr_in) };
-    //! файловый дескриптор (сокет) сетевого соединения с абонентом
     int fd_;
-    //! флаги, выставляемые при сетевой отправке сообщения абоненту
     int send_flags_ = MSG_ZEROCOPY;
-    //! структура хранения информации сетевого соединения
     sockaddr_in address_;
-    //! Сетевой протокол выдачи контента, используемый в соединении
-    std::unique_ptr< TBaseprotocol > proto_;
-    //! Строка запроса абонента
+    std::unique_ptr< base::protocol > proto_;
     std::string request_;
 };
 

@@ -1,5 +1,5 @@
-#include "videodevice.h"
-#include "jpegframe.h"
+#include "vdev.h"
+#include "jpeg.h"
 #include "utils.h"
 
 #include <sys/mman.h>
@@ -47,87 +47,86 @@ void yuyv_to_rgb( uint8_t *yuyv, uint8_t *rgb, int width, int height )
 }  // namespace
 
 
-TVideodeviceError::TVideodeviceError( const std::string &what )
-: std::runtime_error( what + std::string(": ") + std::string(strerror( errno )) )
+vdeverror::vdeverror( const std::string &what )
+    : std::runtime_error( what + std::string(": ") + std::string(strerror( errno )) )
 {}
 
 
 
-TVideodevice::TVideodevice( char const *path )
-: filename_( path )
-, fd_( open( path, O_RDWR ) )
+vdev::vdev( char const *path )
+    : filename_( path )
+    , fd_( open( path, O_RDWR ) )
 {
-    if( fd_ < 0 ) {
-        throw TVideodeviceError( strerror(errno) );
+    if( fd_ < 0 )
+    {
+        throw vdeverror( strerror(errno) );
     }
-
-    // далее настройка драйвера устройства видеозахвата
 
     int rc = ::ioctl( fd_, VIDIOC_QUERYCAP, &capabilities_ );
     if( rc < 0 ) {
         ::close( fd_ );
-        throw TVideodeviceError( strerror(errno) );
+        throw vdeverror( strerror(errno) );
     }
 
     f_show_capabilities();
     try {
         f_set_pixel_format();
         f_allocate_buffers();
-        f_on();
+        f_enable();
     }
-    catch ( ... ) {
+    catch ( ... )
+    {
         ::close( fd_ );
         throw;
     }
 }
 
-TVideodevice::~TVideodevice()
+vdev::~vdev()
 {
     try {
-        f_off();
+        f_disable();
     }
-    catch ( ... ) {
-
-    }
+    catch ( ... )
+    {}
     ::close( fd_ );
 }
 
-void TVideodevice::start_capture()
+void vdev::start()
 {
     started_ = true;
 }
 
-void TVideodevice::stop_capture()
+void vdev::stop()
 {
     started_ = false;
 }
 
-void TVideodevice::send_frame( TBaseprotocol *proto )
+void vdev::send_frame( base::protocol *p )
 {
     if( started_ && f_get_frame() )
     {
-        frame_->send_buffer( proto );
+        frame_->send_buffer( p );
     }
 }
 
-float TVideodevice::is_frame_duration_passed( TBaseframe::time_point_t *ts ) const
+float vdev::frame_expired( base::frame::time_point_t *ts ) const
 {
-    return started_ ? frame_->is_duration_passed( ts ) : -1.f;
+    return started_ ? frame_->expired( ts ) : -1.f;
 }
 
-void TVideodevice::f_on()
+void vdev::f_enable()
 {
   if( ioctl( fd_, VIDIOC_STREAMON, &v4l2_format_.type ) < 0 )
-      throw TVideodeviceError( std::string("VIDIOC_STREAMON error: ") + strerror(errno) );
+      throw vdeverror( std::string("VIDIOC_STREAMON error: ") + strerror(errno) );
 }
 
-void TVideodevice::f_off()
+void vdev::f_disable()
 {
     if( ioctl( fd_, VIDIOC_STREAMOFF, &v4l2_format_.type ) < 0 )
-        throw TVideodeviceError( std::string("VIDIOC_STREAMOFF error: ") + strerror(errno) );
+        throw vdeverror( std::string("VIDIOC_STREAMOFF error: ") + strerror(errno) );
 }
 
-void TVideodevice::f_show_capabilities()
+void vdev::f_show_capabilities()
 {
     fprintf( stderr, "\t%s:\n\n", filename_.c_str() );
     fprintf( stderr, "Driver: %s\n", capabilities_.driver );
@@ -252,7 +251,7 @@ void TVideodevice::f_show_capabilities()
     }
 }
 
-void TVideodevice::f_set_pixel_format()
+void vdev::f_set_pixel_format()
 {
     int width = 720;
     int height = 576;
@@ -268,7 +267,7 @@ void TVideodevice::f_set_pixel_format()
 
     if( ioctl( fd_, VIDIOC_S_FMT, &v4l2_format_ ) < 0 )
     {
-        throw TVideodeviceError( std::string("ioctl(VIDIOC_S_FMT) returned ") + strerror(errno) );
+        throw vdeverror( std::string("ioctl(VIDIOC_S_FMT) returned ") + strerror(errno) );
     }
 
     pixelformat_ = v4l2_format_.fmt.pix.pixelformat;
@@ -287,7 +286,7 @@ void TVideodevice::f_set_pixel_format()
     fprintf( stderr, "Captured format: %s, %d x %d\n", (char *) &text, width_, height_ );
 }
 
-void TVideodevice::f_allocate_buffers()
+void vdev::f_allocate_buffers()
 {
     struct v4l2_requestbuffers request {};
 
@@ -295,7 +294,7 @@ void TVideodevice::f_allocate_buffers()
     request.memory = V4L2_MEMORY_MMAP;
     request.count = 1;
     if( ioctl( fd_, VIDIOC_REQBUFS, &request ) < 0 ) {
-        throw TVideodeviceError( std::string("ioctl(VIDIOC_REQBUFS): ") + strerror(errno) );
+        throw vdeverror( std::string("ioctl(VIDIOC_REQBUFS): ") + strerror(errno) );
     }
 
     memset( &v4l2_buffer_, 0, sizeof(v4l2_buffer_) );
@@ -304,23 +303,23 @@ void TVideodevice::f_allocate_buffers()
     v4l2_buffer_.index = 0;
 
     if( ioctl( fd_, VIDIOC_QUERYBUF, &v4l2_buffer_ ) < 0 )
-        throw TVideodeviceError( std::string("ioctl(VIDIOC_QUERYBUF): ") + strerror(errno) );
+        throw vdeverror( std::string("ioctl(VIDIOC_QUERYBUF): ") + strerror(errno) );
 
     long offset = v4l2_buffer_.m.offset;
     mmap_ptr_ = mmap( NULL, v4l2_buffer_.length, PROT_READ | PROT_WRITE, MAP_SHARED, fd_, offset );
 
     if( mmap_ptr_ == MAP_FAILED )
     {
-        throw TVideodeviceError( std::string("mmap: ") + strerror(errno) );
+        throw vdeverror( std::string("mmap: ") + strerror(errno) );
     }
 
     printf("allocated buffer at %p of size %d from offset 0x%08lx\n", mmap_ptr_,
                                                                       v4l2_buffer_.length,
                                                                       offset );
-    frame_.reset( new TJpegframe( NUtils::TGeometry( width_, height_ ), 100, 10, false ) );
+    frame_.reset( new jpeg::frame( utils::winsize( width_, height_ ), 100, 10, false ) );
 }
 
-bool TVideodevice::f_get_frame()
+bool vdev::f_get_frame()
 {
     if( ioctl( fd_, VIDIOC_QBUF, &v4l2_buffer_ ) < 0 ) {
         perror("Could not queue buffer, VIDIOC_QBUF");

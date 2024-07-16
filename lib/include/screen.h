@@ -31,7 +31,7 @@ public:
     void stop();
 
     void update_frame();
-    bool send_frame( proto *pr );
+    bool send_frame( protocol *pr );
     float frame_expired( frame::time_point_t *ts ) const;
 
     virtual const std::set< std::string > &get_scenes() const = 0;
@@ -48,7 +48,7 @@ private:
     virtual void f_run() = 0;
     virtual void f_stop() = 0;
     virtual void f_update_frame() = 0;
-    virtual bool f_send_frame( proto *pr ) = 0;
+    virtual bool f_send_frame( protocol *pr ) = 0;
 };
 
 }  // namespace base

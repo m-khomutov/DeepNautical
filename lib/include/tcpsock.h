@@ -16,63 +16,26 @@
 
 #include <stdexcept>
 
-/*!
-   \class TSsocketError
-   \brief Класс ошибки сокета, принимающего tcp запросы на создание сетевого соединения
-
-   Производный от std::runtime_error. Собственного состояния и методов не содержит
- */
-class TSsocketError: public std::runtime_error
+class tcpsockerror: public std::runtime_error
 {
 public:
-    /*!
-       \brief Конструктор класса ошибки сокета, принимающего tcp запросы на создание сетевого соединения
-       \param what строковое описание ошибки
-     */
-    TSsocketError( const std::string & what );
+    tcpsockerror( const std::string & what );
 };
 
-/*!
-     \class TSsocket
-     \brief Класс сокета, принимающего tcp запросы на создание сетевого соединения с абонентом.
-
-      Состояние класса хранит файловый дескриптор (сокет), принимающий запросы на создание соединения с абонентом
-
-      Реальный публичный интерфейс определяет метод предоставления файлового дескриптора (сокета).
- */
-class TSsocket {
+class tcpsock
+{
 public:
-    /*!
-     * \brief Конструктор класса сокета приема запросов на создание сетевых соединений с абонентом
-     * \param b_port сетевой порт ожидания запросов от абонентов
-     */
-    explicit TSsocket( uint16_t b_port );
-    /*!
-       \brief Запрещенный конструктор копии.
-       \param orig Копируемый объект
-     */
-    TSsocket( const TSsocket& orig ) = delete;
-    /*!
-       \brief Запрещенный оператор присваивания.
-       \param orig Копируемый объект
-       \return Собственный объект
-     */
-    TSsocket &operator =( const TSsocket& orig ) = delete;
-    /*!
-       \brief Деструктор класса сокета приема запросов на создание сетевых соединений с абонентом.
-     */
-    ~TSsocket();
+    explicit tcpsock( uint16_t b_port );
+    tcpsock( const tcpsock& other ) = delete;
+    ~tcpsock();
 
-    /*!
-       \brief предоставляет файловый дескриптор (сокет) приема запросов на создание сетевых соединений
-       \return файловый дескриптор (сокет) приема запросов на создание сетевых соединений
-     */
-    operator int() const {
+    tcpsock &operator =( const tcpsock& other ) = delete;
+    operator int() const
+    {
         return fd_;
     }
     
 private:
-    //! файловый дескриптор (сокет), принимающий запросы на создание соединения с абонентом
     int fd_;
 
 };
