@@ -1,8 +1,8 @@
-TARGET = nautical
+TARGET = nautical-dev
 TEMPLATE = lib
 CONFIG += staticlib
 
-OBJECTS_DIR = ../build/$$TARGET-dev
+OBJECTS_DIR = ../build/$$TARGET
 DESTDIR += $$OBJECTS_DIR/lib
 CONFIG += 14
 
