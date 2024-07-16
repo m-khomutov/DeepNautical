@@ -10,114 +10,50 @@
 #ifndef FLVPROTOCOL_H
 #define FLVPROTOCOL_H
 
-#include "baseprotocol.h"
+#include "protocol.h"
 #include <vector>
 
-/*!
-     \class TFLVprotocol
-     \brief Класс сетевого протокола формата FLV (Flash Video) трансляции видеокадров.
+namespace flv
+{
 
-      Состояние класса хранит:
-      - буфер, содержащий заголовочные данные формата FLV;
-      - буфер, одержащий фрейм видеоданных в формате FLV;
-      - текущий размер переданных заголовочных данных;
-      - текущий размер переданных данных фрейма;
-      - заголовок тега формата FLV;
-      - текущее время в качестве временной метки тега FLV;
-      - номер точки обзора, данные с которой передаются абоненту.
-
-      Публичный интерфейс, объявленный в базовом классе TBaseprotocol и реализованный в этом классе, включает методы:
-      - обработки принятых из сети данных (запрос на выдачу видеопотока);
-      - доотправки абоненту не полностью отправленного кадра;
-      - отправки видеокадра абоненту;
-      - подтверждения возможности отправлять видеокадры;
-      - отправки абоненту ошибки (невозможность трансляции при неверном запросе).
-      - выдачи номера точки обзора, соответствующей протоколу
- */
-class TFLVprotocol: public TBaseprotocol {
+class protocol: public base::protocol
+{
 public:
-    /*!
-       \brief Конструктор класса сетевого протокола формата FLV (Flash Video) трансляции видеокадров.
-       \param b_sock файловый дескриптор (сокет) сетевого соединения с абонентом
-       \param flags флаги, выставляемые при выдаче данных в сеть
-       \param view номер точки обзора, соответствующей протоколу
-     */
-    explicit TFLVprotocol( int b_sock, int flags, size_t view );
-    /*!
-       \brief Запрещенный конструктор копии.
-       \param orig  Копируемый объект
-     */
-    TFLVprotocol(const TFLVprotocol& orig) = delete;
-    /*!
-       \brief Запрещенный оператор присваивания.
-       \param orig Копируемый объект
-     */
-    TFLVprotocol & operator =(const TFLVprotocol& orig) = delete;
-    /*!
-       \brief Деструктор базового класса сетевого протокола трансляции видеокадров.
-     */
-    ~TFLVprotocol() = default;
+    explicit protocol( int b_sock, int flags, size_t view );
+    protocol( const protocol& other ) = delete;
+    ~protocol() = default;
 
+    protocol & operator =( const protocol& other ) = delete;
 
-    /*!
-       \brief Вызывается при получении данных из сети.
-       \param data Указатель на буфер данных, принятые из сети
-       \param size Размер данных, принятых из сети
-     */
     void on_data( const uint8_t * data, int size ) override;
-    /*!
-       \brief Позволяет доотправить данные, не ушедшие сразу, вследствие перегрузки сетевых буферов
-     */
     void do_write() override;
-    /*!
-       \brief Отправляет видеокадр абоненту
-       \param data Указатель на отправляемый буфер данных
-       \param size Размер отправляемых данных
-     */
     void send_frame( const uint8_t * data, int size ) override;
-    /*!
-       \brief Подтверждает возможность отправлять видеокадры
-       \return подтверждение
-     */
     bool can_send_frame() const override;
-    /*!
-       \brief Отправляет абоненту ошибку (невозможность трансляции при неверном запросе)
-     */
     void write_error() override;
 
 private:
-    //! буфер, содержащий заголовочные данные формата FLV
     std::vector< uint8_t > http_flv_header_;
-    //! буфер, cодержащий фрейм видеоданных в формате FLV
     std::vector< uint8_t > flv_frame_;
-    //! текущий размер переданных заголовочных данных
     size_t sent_from_header_ { 0 };
-    //! текущий размер переданных данных фрейма
     size_t sent_from_frame_ { 0 };
     /*!
         \brief заголовок тега формата FLV:
-
-        Поле      | Размер
-        --------- | ---------
-        TagType   | UI8 = 9
-        DataSize  | UI24
-        Timestamp | UI64
-        FrameType | UB[4] = 1
-        CodecID   | UB[4] = 1
+        Поле              | Размер
+        ----------------- | ------------
+        TagType           | UI8 = 9
+        DataSize          | UI24
+        Timestamp         | UI24
+        TimestampExtended | UI8
+        FrameType         | UB[4] = 1
+        CodecID           | UB[4] = 1
      */
-    uint8_t tag_header_[13] { 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x11 };
-    //! текущее время в качестве временной метки тега FLV;
-    uint64_t timestamp_ { 0ul };
+    uint8_t tag_header_[9] { 9, 0, 0, 0, 0, 0, 0, 0, 0x11 };
+    uint32_t timestamp_ { 0ul };
 
 private:
-    /*!
-       \brief Отправляет абоненту заголовочные данные формата FLV
-     */
     void f_send_header();
-    /*!
-       \brief Отправляет абоненту фрейм формата FLV
-     */
     void f_send_frame();
 };
 
+}  // namespace flv
 #endif /* FLVPROTOCOL_H */

@@ -55,6 +55,11 @@ protected:
     size_t view_ {0};
 };
 
+}  // namespace base
+
+namespace http
+{
+
 struct parameter
 {
     std::string field;
@@ -64,6 +69,6 @@ struct parameter
     static std::vector< parameter > parse( const std::string &query );
 };
 
-}  // namespace base
+}  // namespace http
 #endif /* BASEPROTOCOL_H */
 

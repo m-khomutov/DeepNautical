@@ -9,7 +9,7 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
-#include "proto.h"
+#include "protocol.h"
 
 #include <sys/socket.h>
 #include <sys/types.h>

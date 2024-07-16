@@ -5,9 +5,10 @@
  * Created on 2 марта 2023 г., 14:19
  */
 
-#include "httpapi.h"
-#include <unistd.h>
+#include "api.h"
+#include "screen.h"
 
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 
@@ -18,30 +19,32 @@
 
 namespace
 {
+
 const char status_200[] = "HTTP/1.1 200 OK\r\nAccess-Control-Allow-Origin: *\r\nContent-Type: application/json\r\n";
 const char status_404[] = "HTTP/1.1 404 Not Found\r\nAccess-Control-Allow-Origin: *\r\n\r\n";
+
 } // namespace
 
-THTTPapi::TRequest::TRequest( const std::string &data )
-: origin( data )
+api::protocol::request::request( const std::string &data )
+    : origin( data )
 {
     std::istringstream iss( origin );
     std::string s;
-    while( std::getline( iss, s, '\n') ) // построчный разбор
+    while( std::getline( iss, s, '\n') )
     {
-        if( method.empty() ) // метод не определен - это стартовая строка
+        if( method.empty() )
         {
             std::istringstream is( s );
             std::vector<std::string> rc( std::istream_iterator<std::string>({ is }),
                                          std::istream_iterator<std::string>());
-            if( rc.size() == 3 ) // формат стартовой строки: 'метод ури версия'
+            if( rc.size() == 3 )
             {
                 method = rc[0];
                 uri = rc[1];
                 version = rc[2];
             }
         }
-        else // последующие строки - заголовочные формата: 'имя: значение'
+        else
         {
             size_t p = s.find( ":" );
             if( p != std::string::npos )
@@ -53,68 +56,63 @@ THTTPapi::TRequest::TRequest( const std::string &data )
 }
 
 
-THTTPapi::THTTPapi( int b_sock, int flags, TBasescreen *screen )
-: TBaseprotocol( b_sock, flags )
-, screen_( screen )
+api::protocol::protocol( int b_sock, int flags, base::screen *screen )
+    : base::protocol( b_sock, flags )
+    , screen_( screen )
 {}
 
-THTTPapi::~THTTPapi()
-{}
-
-void THTTPapi::on_data( const uint8_t * data, int size )
+void api::protocol::on_data( const uint8_t * data, int size )
 {
-    TRequest request( std::string((const char*)data, size) );
-    std::cerr << request.origin << std::endl;
+    request req( std::string((const char*)data, size) );
+    std::cerr << req.origin << std::endl;
 
-    if( !screen_ ) // нет объекта хранения сцен - нет возможности ответить
+    if( !screen_ )
     {
         f_set_reply( (uint8_t const *)status_404, strlen( status_404 ) );
         f_reply();
     }
-    // обработать контрольный запрос
-    if( request.uri == "/scene?list" )
+    if( req.uri == "/scene?list" )
     {
         f_send_scene_list();
     }
-    else if( request.uri == "/scene?get" )
+    else if( req.uri == "/scene?get" )
     {
         f_send_current_scenes();
     }
-    else if( request.uri.find( "/scene?set=" ) == 0 )
+    else if( req.uri.find( "/scene?set=" ) == 0 )
     {
-        f_set_current_scene( request.uri.substr( 6 ) );
+        f_set_current_scene( req.uri.substr( 6 ) );
     }
-    else // неизвестный запрос
+    else
     {
         f_set_reply( (uint8_t const *)status_404, strlen( status_404 ) );
         f_reply();
     }
 }
 
-void THTTPapi::do_write()
+void api::protocol::do_write()
 {
-    // если что не доотправилось - доотправить
     if( sent_ < reply_.size() )
     {
         f_reply();
     }
 }
 
-void THTTPapi::send_frame( const uint8_t *, int )
+void api::protocol::send_frame( const uint8_t *, int )
 {}
 
-bool THTTPapi::can_send_frame() const
+bool api::protocol::can_send_frame() const
 {
     return false;
 }
 
-void THTTPapi::write_error()
+void api::protocol::write_error()
 {
     f_set_reply( (uint8_t const *)status_404, strlen( status_404 ) );
     f_reply();
 }
 
-void THTTPapi::f_send_scene_list()
+void api::protocol::f_send_scene_list()
 {
     std::string body = "{\"success\":true,\"scenes\":[";
     for( auto sc : screen_->get_scenes() )
@@ -130,7 +128,7 @@ void THTTPapi::f_send_scene_list()
     f_reply();
 }
 
-void THTTPapi::f_send_current_scenes()
+void api::protocol::f_send_current_scenes()
 {
     std::vector< std::string > scenes = screen_->current_scenes();
     std::string body = "{\"success\":true,\"scenes\":[";
@@ -138,7 +136,7 @@ void THTTPapi::f_send_current_scenes()
     {
         body += std::string("\"") + sc + "\",";
     }
-    body.pop_back(); // убрать последнюю запятую
+    body.pop_back();
     body += "]}";
     std::string reply = std::string(status_200) + "Content-Length: " + std::to_string( body.size() ) + "\r\n\r\n" + body;
 
@@ -146,10 +144,9 @@ void THTTPapi::f_send_current_scenes()
     f_reply();
 }
 
-void THTTPapi::f_set_current_scene( const std::string &query )
+void api::protocol::f_set_current_scene( const std::string &query )
 {
-    // разобрать параметры (set и view)
-    std::vector< THttpParameter > params = THttpParameter::parse( query );
+    std::vector< http::parameter > params = http::parameter::parse( query );
     size_t view = 0;
     const std::string *scene = nullptr;
 
@@ -157,22 +154,20 @@ void THTTPapi::f_set_current_scene( const std::string &query )
     {
         if( p.field == "set" )
         {
-            scene = &p.value;  // имя сцены
+            scene = &p.value;
         }
         else if( p.field == "view" && std::isdigit( p.value[0] ) )
         {
-            view = p.value[0] - '0'; // номер точки обзора
+            view = p.value[0] - '0';
         }
     }
 
     try
     {
-        // поменять сцену
         if( scene )
         {
             screen_->set_scene( *scene, view );
         }
-        // вернуть подтверждение
         std::string body = "{\"success\":true}";
         std::string reply = std::string(status_200) + "Content-Length: " + std::to_string( body.size() ) + "\r\n\r\n" + body;
 
@@ -182,22 +177,19 @@ void THTTPapi::f_set_current_scene( const std::string &query )
     catch( const std::runtime_error &err )
     {
         std::cerr << "set scene " << scene << " error: " << err.what() << std::endl;
-
         f_set_reply( (uint8_t const *)status_404, strlen( status_404 ) );
         f_reply();
     }
 }
 
-void THTTPapi::f_set_reply( uint8_t const * data, size_t size )
+void api::protocol::f_set_reply( uint8_t const * data, size_t size )
 {
-    // собрать ответ
     reply_.resize( size );
     ::memcpy( reply_.data(), data, size );
-    // пометить начало передачи
     sent_ = 0;
 }
 
-void THTTPapi::f_reply()
+void api::protocol::f_reply()
 {
     int rc = ::send( fd_, reply_.data() + sent_, reply_.size() - sent_, flags_ );
     if( rc > 0 )

@@ -284,12 +284,12 @@ bool str2array( const std::string &s, T *rc )
     return false;
 }
 
-inline uint64_t timenow()
+inline uint32_t usec()
 {
-    timespec ts;
-    clock_gettime( CLOCK_REALTIME, &ts );
+    timeval tv;
+    gettimeofday( &tv, nullptr );
 
-    return ts.tv_sec * 1000000000 + ts.tv_nsec;
+    return tv.tv_sec * 1000000 + tv.tv_usec;
 }
 
 }  // namespace utils

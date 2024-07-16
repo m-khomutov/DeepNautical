@@ -6,7 +6,7 @@
  */
 
 #include "jpeg.h"
-#include "proto.h"
+#include "protocol.h"
 #include <unistd.h>
 
 namespace
@@ -46,17 +46,16 @@ METHODDEF(void) term_destination(j_compress_ptr cinfo)
 
 }  // namespace
 
-frame::jpeg::jpeg( const utils::winsize &sz, int quality, int duration, bool reverse )
-    : frame::base( sz, duration )
-    , reverse_( reverse )
+jpeg::frame::frame( const utils::winsize &sz, int quality, int duration, bool mirrored )
+    : base::frame( sz, duration )
+    , mirrored_( mirrored )
 {
-    // сам контекст сжатия
-    cinfo_.err = jpeg_std_error( &jerr_ );  // errors get written to stderr 
+    cinfo_.err = jpeg_std_error( &jerr_ );
     jpeg_create_compress( &cinfo_ );
 
-    cinfo_.image_width = geometry_.width;
-    cinfo_.image_height = geometry_.height;
-    cinfo_.input_components = NUtils::TImage::EColor::RGB;
+    cinfo_.image_width = size_.width;
+    cinfo_.image_height = size_.height;
+    cinfo_.input_components = utils::frame::colormode::RGB;
     cinfo_.in_color_space = JCS_RGB;
     jpeg_set_defaults( &cinfo_ );
     jpeg_set_quality( &cinfo_, quality, TRUE );
@@ -70,57 +69,57 @@ frame::jpeg::jpeg( const utils::winsize &sz, int quality, int duration, bool rev
     dest->pub.term_destination = term_destination;
 }
 
-frame::jpeg::~jpeg()
+jpeg::frame::~frame()
 {
     jpeg_destroy_compress( &cinfo_ );
 }
 
-uint8_t *frame::jpeg::buffer( size_t view, int width, int height )
+uint8_t *jpeg::frame::buffer( size_t view, int width, int height )
 {
-    std::vector< uint8_t >::size_type sz = NUtils::TImage::EColor::RGB * width * height;
+    std::vector< uint8_t >::size_type sz = utils::frame::colormode::RGB * width * height;
 
-    if( view >= rgb_buffers_.size() )
+    if( view >= rgb_.size() )
     {
-        rgb_buffers_.resize( view + 1 );
-        jpeg_frames_.resize( view + 1 );
+        rgb_.resize( view + 1 );
+        jpeg_images_.resize( view + 1 );
     }
 
-    if( sz != rgb_buffers_[view].size() )
+    if( sz != rgb_[view].size() )
     {
-        rgb_buffers_[view].resize( sz );
+        rgb_[view].resize( sz );
 
-        jpeg_frames_[view].frame.resize( sz );
-        jpeg_frames_[view].geometry.width = width;
-        jpeg_frames_[view].geometry.height = height;
+        jpeg_images_[view].frame.resize( sz );
+        jpeg_images_[view].size.width = width;
+        jpeg_images_[view].size.height = height;
     }
 
-    return rgb_buffers_[view].data();
+    return rgb_[view].data();
 }
 
-void frame::jpeg::prepare_buffer( size_t view )
+void jpeg::frame::prepare_buffer( size_t view )
 {
     f_compress( view );
 }
 
-void frame::jpeg::f_compress( size_t view )
+void jpeg::frame::f_compress( size_t view )
 {
     mem_destination_ptr_t dest = mem_destination_ptr_t( cinfo_.dest );
-    dest->buf = jpeg_frames_[view].frame.data();   // сюда скопируются данные в формате JPEG
-    dest->bufsize  = jpeg_frames_[view].frame.size();
+    dest->buf = jpeg_images_[view].frame.data();
+    dest->bufsize  = jpeg_images_[view].frame.size();
     dest->jpegsize = 0;
 
-    cinfo_.image_width = jpeg_frames_[view].geometry.width;
-    cinfo_.image_height = jpeg_frames_[view].geometry.height;
-    cinfo_.input_components = NUtils::TImage::EColor::RGB;
+    cinfo_.image_width = jpeg_images_[view].size.width;
+    cinfo_.image_height = jpeg_images_[view].size.height;
+    cinfo_.input_components = utils::frame::colormode::RGB;
     cinfo_.dct_method = JDCT_FASTEST;
 
     jpeg_start_compress( &cinfo_, TRUE );
 
     int stride = cinfo_.image_width * cinfo_.input_components;
     JSAMPROW row_ptr[1];
-    uint8_t * data = rgb_buffers_[view].data();
+    uint8_t * data = rgb_[view].data();
     {
-        if( reverse_ )
+        if( mirrored_ )
         {
             for( int y(cinfo_.image_height - 1); y >= 0; --y )
             {
@@ -137,27 +136,27 @@ void frame::jpeg::f_compress( size_t view )
             }
         }
         jpeg_finish_compress( &cinfo_ );
-        jpeg_frames_[view].size_ = dest->jpegsize; // размер JPEG буфера
+        jpeg_images_[view].framesize = dest->jpegsize;
     }
 }
 
-bool frame::jpeg::f_send_buffer( proto::base * pr )
+bool jpeg::frame::f_send_buffer( base::protocol * pr )
 {
-    if( !pr || jpeg_frames_.empty() )
+    if( !pr || jpeg_images_.empty() )
     {
         return false;
     }
 
     size_t view = pr->view();
 
-    if( view > rgb_buffers_.size() - 1 )
+    if( view > rgb_.size() - 1 )
     {
         return false;
     }
 
-    if( jpeg_frames_[view].size_ )
+    if( jpeg_images_[view].framesize )
     {
-        pr->send_frame( jpeg_frames_[view].frame.data(), jpeg_frames_[view].size_ );
+        pr->send_frame( jpeg_images_[view].frame.data(), jpeg_images_[view].framesize );
     }
     return true;
 }

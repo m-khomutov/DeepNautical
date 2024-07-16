@@ -1,7 +1,8 @@
+TARGET = nautical
 TEMPLATE = lib
 CONFIG += staticlib
 
-OBJECTS_DIR = ../build/lib
+OBJECTS_DIR = ../build/$$TARGET-dev
 DESTDIR += $$OBJECTS_DIR/lib
 CONFIG += 14
 
@@ -24,33 +25,17 @@ HEADERS = \
 SOURCES = \
         ../utils/utils.cpp \
         base/screen.cpp \
+        base/service.cpp \
+        base/frame.cpp \
+        base/protocol.cpp \
         service/tcpsock.cpp \
         service/vdev.cpp \
         service/connection.cpp \
         service/loop.cpp \
-        service/service.cpp \
-#        encoding/baseframe.cpp \
-#        encoding/jpegframe.cpp \
-#        protocol/baseprotocol.cpp \
-#        protocol/flvprotocol.cpp \
-#        protocol/mjpegprotocol.cpp \
-#        protocol/httpapi.cpp
-
-QMAKE_EXTRA_TARGETS += all buildpackage
-buildpackage.commands = @mkdir -p $$OBJECTS_DIR/libkformat-dev/DEBIAN; \
-                         mkdir -p $$OBJECTS_DIR/libkformat-dev/usr/local/lib; \
-                         mkdir -p $$OBJECTS_DIR/libkformat-dev/usr/local/include/kformat; \
-                         cp $$OBJECTS_DIR/lib/*.a $$OBJECTS_DIR/libkformat-dev/usr/local/lib; \
-                         cp -r $$PWD/include/*.h $$OBJECTS_DIR/libkformat-dev/usr/local/include/kformat; \
-                         cp -r $$PWD/../utils/utils.h $$OBJECTS_DIR/libkformat-dev/usr/local/include/kformat; \
-                         echo "Package: libkformat-dev" >> $$OBJECTS_DIR/libkformat-dev/DEBIAN/control; \
-                         echo "Version: 0.1" >> $$OBJECTS_DIR/libkformat-dev/DEBIAN/control; \
-                         echo "Maintainer: mkh" >> $$OBJECTS_DIR/libkformat-dev/DEBIAN/control; \
-                         echo "Architecture: all" >> $$OBJECTS_DIR/libkformat-dev/DEBIAN/control; \
-                         echo "Description: статическая библиотека функционала формирования и выдачи видеопотока" >> $$OBJECTS_DIR/libkformat-dev/DEBIAN/control;\
-                         dpkg-deb --build $$OBJECTS_DIR/libkformat-dev; \
-                         rm -Rf $$OBJECTS_DIR/libkformat-dev;
-all.depends = buildpackage
+        frame/jpeg.cpp \
+        protocol/flv.cpp \
+        protocol/mjpeg.cpp \
+        protocol/api.cpp
 
 INCLUDEPATH += $$PWD/include $$PWD/../utils
 LIBS = -ljpeg

@@ -28,7 +28,7 @@ namespace jpeg {
 class frame: public base::frame
 {
 public:
-    frame( const utils::winsize &sz, int quality, int duration, bool reverse = true );
+    frame( const utils::winsize &sz, int quality, int duration, bool mirrored = true );
     frame( const frame& other ) = delete;
     ~frame();
 

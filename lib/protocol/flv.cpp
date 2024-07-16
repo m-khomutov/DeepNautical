@@ -5,7 +5,7 @@
  * Created on 25 января 2023 г., 10:34
  */
 
-#include "flvprotocol.h"
+#include "flv.h"
 #include "utils.h"
 
 #include <sys/types.h>
@@ -20,8 +20,8 @@ namespace
 const char http_ok_status[] = "HTTP/1.1 200 OK\r\nAccess-Control-Allow-Origin: *\r\nContent-Type: video/x-flv\r\n\r\n";
 const uint8_t flv_header[13] = { 'F', 'L', 'V', 0x01, 0x01, 0x00, 0x00, 0x00, 0x09, 0x00, 0x00, 0x0, 0x00 };
 
-// копирует 3 байта в порядке big-endian
-void copy3bytes( uint32_t from, uint8_t *to )
+template< size_t N = 3 >
+void copyNbytes( uint32_t from, uint8_t *to )
 {
     union
     {
@@ -30,28 +30,33 @@ void copy3bytes( uint32_t from, uint8_t *to )
     } u;
     u.value = htobe32( from );   
     memcpy( to, u.buf + 1, 3 );
+
+    if( N == 4 )
+    {
+        to[3] = u.buf[0];
+    }
 }
 }  // namespace
 
-TFLVprotocol::TFLVprotocol( int b_sock, int flags, size_t view )
-: TBaseprotocol( b_sock, flags )
-, http_flv_header_( strlen(http_ok_status) + 13 )
+flv::protocol::protocol( int b_sock, int flags, size_t view )
+    : base::protocol( b_sock, flags )
+    , http_flv_header_( strlen(http_ok_status) + sizeof(flv_header) )
 {
     view_ = view;
 
-    ::memcpy( http_flv_header_.data(), http_ok_status, strlen(http_ok_status) );
-    ::memcpy( http_flv_header_.data() + http_flv_header_.size() - 13, flv_header, sizeof(flv_header) );
+    size_t http_status_size = http_flv_header_.size() - sizeof(flv_header);
+    ::memcpy( http_flv_header_.data(), http_ok_status, http_status_size );
+    ::memcpy( http_flv_header_.data() + http_status_size, flv_header, sizeof(flv_header) );
 }
 
-void TFLVprotocol::on_data( const uint8_t * data, int size )
+void flv::protocol::on_data( const uint8_t * data, int size )
 {
     for( int i(0); i < size; ++i ) fprintf(stderr, "%c", char(data[i]));
     f_send_header();
 }
 
-void TFLVprotocol::do_write()
+void flv::protocol::do_write()
 {
-    // что не отослано полностью - дослать
     if( sent_from_header_ != http_flv_header_.size() )
     {
         f_send_header();
@@ -62,9 +67,8 @@ void TFLVprotocol::do_write()
     }
 }
 
-void TFLVprotocol::send_frame( const uint8_t * data, int size )
+void flv::protocol::send_frame( const uint8_t * data, int size )
 {
-    // если заголовок не ушел полностью, отправить его (или что не ушло)
     if( sent_from_header_ != http_flv_header_.size() )
     {
         f_send_header();
@@ -75,28 +79,17 @@ void TFLVprotocol::send_frame( const uint8_t * data, int size )
         {
             f_send_frame();
         }
-        // если прошлый фрейм ушел полностью, делаем новый
         if( sent_from_frame_ == flv_frame_.size() )
         {
-            /* формат
-               TagType   | UI8 = 9
-               DataSize  | UI24
-               Timestamp | UI64
-               FrameType | UB[4] = 1
-               CodecID   | UB[4] = 1
-            */
-            copy3bytes( size + 1, tag_header_ + 1 ); // DataSize
-            /* Здесь отход от спецификации. Надо так (таймстамп в 3-х байтах как смещение от нуля)
-               copy3bytes( timestamp_, tag_header_ + 4 );
-               timestamp_ += duration;
-             */
-            timestamp_ = htobe64(NUtils::now());
-            memcpy( tag_header_ + 4, &timestamp_, sizeof(timestamp_) );  // Timestamp
+            if( !timestamp_ )
+            {
+                timestamp_ = utils::usec();
+            }
+            copyNbytes( size + 1, tag_header_ + 1 );
+            copyNbytes< 4 >( utils::usec() - timestamp_, tag_header_ + 4 );
 
-            // после фрейма идет его размер
             uint32_t tagsize = htobe32( size + sizeof(tag_header_) );
 
-            // окончательно уходит: заголовок + кадр данных + размер(заголовок + данные)
             flv_frame_.resize( sizeof(tag_header_) + size + sizeof(tagsize) );
             ::memcpy( flv_frame_.data(), tag_header_, sizeof(tag_header_) );
             ::memcpy( flv_frame_.data() + sizeof(tag_header_), data, size );
@@ -108,17 +101,17 @@ void TFLVprotocol::send_frame( const uint8_t * data, int size )
     }
 }
 
-bool TFLVprotocol::can_send_frame() const
+bool flv::protocol::can_send_frame() const
 {
     return true;
 }
 
-void TFLVprotocol::write_error()
+void flv::protocol::write_error()
 {
-    ::send( fd_, TBaseprotocol::status_404, strlen(TBaseprotocol::status_404), flags_ );
+    ::send( fd_, base::protocol::status_404, strlen(base::protocol::status_404), flags_ );
 }
 
-void TFLVprotocol::f_send_header()
+void flv::protocol::f_send_header()
 {
     int rc = ::send( fd_, http_flv_header_.data() + sent_from_header_, http_flv_header_.size() - sent_from_header_, flags_ );
     if( rc > 0 )
@@ -127,7 +120,7 @@ void TFLVprotocol::f_send_header()
     }
 }
 
-void TFLVprotocol::f_send_frame()
+void flv::protocol::f_send_frame()
 {
     int rc = ::send( fd_, flv_frame_.data() + sent_from_frame_, flv_frame_.size() - sent_from_frame_, flags_ );
     if( rc > 0 )
