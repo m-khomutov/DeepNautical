@@ -306,7 +306,7 @@ public:
      * \brief  возвращает следующий кадр из файла формата AVI
      * \return следующий кадр из файла формата AVI
      */
-    NUtils::TImage &next_image();
+    utils::frame &next_image();
 
     /*!
      * \brief возвращает длительность кадра, считанную из файла формата AVI
@@ -342,9 +342,9 @@ private:
     //! буфер под кадр в формате JPEG
     std::vector< uint8_t > jpeg;
     //! декодер кадра в формате JPEG
-    NUtils::TJpegCodec codec_;
+    utils::jcodec codec_;
     //! объект кадра, представляемого как текстура
-    NUtils::TImage image_;
+    utils::frame image_;
     //! длительность кадра
     double frame_duration_ {0.0f };
 };

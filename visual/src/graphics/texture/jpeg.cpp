@@ -16,8 +16,8 @@ TJpegTexture::TJpegTexture( char const *filename, char const *alpha )
 {
     GLenum format { GL_RGB };
 
-    NUtils::TImage img;
-    NUtils::TJpegCodec codec;
+    utils::frame img;
+    utils::jcodec codec;
     // получить данные из файла в декодорованном виде
     if( !codec.decode( filename, &img ) )
     {
@@ -27,7 +27,7 @@ TJpegTexture::TJpegTexture( char const *filename, char const *alpha )
     if( alpha )
     {
         // получить данные alpha-канала из файла в декодорованном виде
-        NUtils::TImage a_img;
+        utils::frame a_img;
         if( !codec.decode( alpha, &a_img ) || a_img.pixels.size() * 3 != img.pixels.size() )
         {
             throw TJpegTextureError( std::string("invalid alpha file: ") + std::string(alpha) );
@@ -50,18 +50,18 @@ TJpegTexture::TJpegTexture( char const *filename, char const *alpha )
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-    glTexImage2D( GL_TEXTURE_2D, 0, format, img.window.width, img.window.height, 0, format, GL_UNSIGNED_BYTE, img.pixels.data() );
+    glTexImage2D( GL_TEXTURE_2D, 0, format, img.wsize.width, img.wsize.height, 0, format, GL_UNSIGNED_BYTE, img.pixels.data() );
     glGenerateMipmap( GL_TEXTURE_2D );   
     glBindTexture( GL_TEXTURE_2D, 0 );
 }
 
-TJpegTexture::TJpegTexture( NUtils::TImage &img )
+TJpegTexture::TJpegTexture( utils::frame &img )
 {
     glGenTextures( 1, &id_ );
     glBindTexture( GL_TEXTURE_2D, id_ );
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
-    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, img.window.width, img.window.height, 0, GL_RGB, GL_UNSIGNED_BYTE, img.pixels.data() );
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, img.wsize.width, img.wsize.height, 0, GL_RGB, GL_UNSIGNED_BYTE, img.pixels.data() );
     glBindTexture( GL_TEXTURE_2D, 0 );
 }
 
@@ -82,10 +82,10 @@ TJpegTexture::~TJpegTexture()
     glDeleteTextures( 1, &id_ );
 }
 
-TJpegTexture &TJpegTexture::operator =( NUtils::TImage &img )
+TJpegTexture &TJpegTexture::operator =( utils::frame &img )
 {
     glBindTexture( GL_TEXTURE_2D, id_ );
-    glTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, img.window.width, img.window.height, GL_RGB, GL_UNSIGNED_BYTE, img.pixels.data() );
+    glTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, img.wsize.width, img.wsize.height, GL_RGB, GL_UNSIGNED_BYTE, img.pixels.data() );
     return *this;   
 }
 

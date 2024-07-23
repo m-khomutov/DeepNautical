@@ -9,7 +9,7 @@
 #include <QDateTime>
 #include <GL/glew.h>
 
-TQscreen::TQscreen( TBaseframe* frame )
+TQscreen::TQscreen( base::frame* frame )
 : TGLscreen( frame )
 , QOpenGLWidget(nullptr)
 {
@@ -17,7 +17,7 @@ TQscreen::TQscreen( TBaseframe* frame )
     resize( frame_->width(), frame_->height() );
 }
 
-void TQscreen::f_run_scene_display()
+void TQscreen::f_run()
 {
     // отобразить окно на дисплее
     show();
@@ -25,7 +25,7 @@ void TQscreen::f_run_scene_display()
     timer_id_ = startTimer(0);
 }
 
-void TQscreen::f_stop_scene_display()
+void TQscreen::f_stop()
 {
     // остановить таймер
     if( timer_id_ != -1 )
@@ -53,7 +53,7 @@ void TQscreen::initializeGL()
         throw TGLscreenError("initialize GL init error");
     }
     // создать сцены (количество = scene_count из конфигурации), отображаемые экраном
-    for( int i(0); i < NUtils::TConfig()["scene_count"]; ++i )
+    for( int i(0); i < utils::settings()["scene_count"]; ++i )
     {
         // контролировать наличие запрошенного количества
         if( scene_iter_ == scenes_.end() )
@@ -61,7 +61,7 @@ void TQscreen::initializeGL()
             throw TGLscreenError("not enough scenes to start");
         }
         // добавить сцену
-        sc_.emplace_back( new TScene( *scene_iter_, std::string(NUtils::TConfig()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
+        sc_.emplace_back( new TScene( *scene_iter_, std::string(utils::settings()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
         ++scene_iter_;
     }
 
@@ -93,9 +93,9 @@ void TQscreen::paintGL()
         }
     }
     // сохранить кадр, если время подошло
-    if( is_frame_duration_passed( &store_ts_ ) > 0.f )
+    if( frame_expired( &store_ts_ ) > 0.f )
     {
-        TBasescreen::store_scene_frame();
+        base::screen::update_frame();
     }
 }
 

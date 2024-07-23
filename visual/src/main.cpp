@@ -5,8 +5,8 @@
  * Created on 23 января 2023 г., 18:31
  */
 
-#include "baseservice.h"
-#include "jpegframe.h"
+#include "service.h"
+#include "jpeg.h"
 #include "utils.h"
 
 #include <QApplication>
@@ -22,7 +22,7 @@
 namespace
 {
 
-static std::unique_ptr< TBaseservice > service;
+static std::unique_ptr< base::service > service;
 void signal_handler( int s )
 {
     if( service)
@@ -53,9 +53,9 @@ int main(int argc, char** argv)
 {
     try
     {
-        NUtils::TConfig( argc, argv );
-        NUtils::TConfig()["shaders"];
-        NUtils::TConfig()["textures"];
+        utils::settings( argc, argv );
+        utils::settings()["shaders"];
+        utils::settings()["textures"];
     }
     catch( const std::runtime_error &e )
     {
@@ -72,10 +72,10 @@ int main(int argc, char** argv)
     {
         QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL, true);
         QApplication a(argc, argv);
-        std::unique_ptr< TBasescreen > scr( new TQscreen( new TJpegframe( NUtils::TConfig()["window"],
-                                                                          NUtils::TConfig()["quality"],
-                                                                          NUtils::TConfig()["duration"] ) ) );
-        service.reset( new TQService( scr.get(), NUtils::TConfig()["port"] ) );
+        std::unique_ptr< base::screen > scr( new TQscreen( new jpeg::frame( utils::settings()["window"],
+                                                                            utils::settings()["quality"],
+                                                                            utils::settings()["duration"] ) ) );
+        service.reset( new TQService( scr.get(), utils::settings()["port"] ) );
 
         std::setlocale( LC_NUMERIC,"C" );
 

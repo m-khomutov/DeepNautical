@@ -31,9 +31,9 @@ void TSol::draw( size_t )
 
 void TSol::f_check_environment() const
 {
-    if( ! (NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
-           NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
-           NUtils::file_exists( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str() )) )
+    if( ! (utils::exists( (std::string(utils::settings()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
+           utils::exists( (std::string(utils::settings()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
+           utils::exists( (std::string(utils::settings()["textures"]) + "/" + spec_.texture_name).c_str() )) )
     {
         throw  std::runtime_error( std::string("invalid environment in {") + spec_.shader_name + "}"  );
     }
@@ -47,7 +47,7 @@ char const *TSol::f_shader_name() const
 void TSol::f_initialize( size_t )
 {
     // создать текстуру
-    texture_.reset( new TJpegTexture( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str() ) );
+    texture_.reset( new TJpegTexture( (std::string(utils::settings()["textures"]) + "/" + spec_.texture_name).c_str() ) );
 
     // выделить память под атрибуты в шейдере
     glBufferData( GL_ARRAY_BUFFER, spec_.viewport.size() * sizeof(float), spec_.viewport.data(), GL_STATIC_DRAW );

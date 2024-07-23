@@ -10,9 +10,9 @@
 #ifndef KFORMAT_H
 #define KFORMAT_H
 
-#include "basescreen.h"
-#include "baseservice.h"
-#include "jpegframe.h"
-#include "flvprotocol.h"
+#include "screen.h"
+#include "service.h"
+#include "jpeg.h"
+#include "flv.h"
 
 #endif // KFORMAT_H

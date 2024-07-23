@@ -37,9 +37,9 @@ void TAntisubmarinefrigate::draw( size_t )
 void TAntisubmarinefrigate::f_check_environment() const
 {
     // проверяем наличие файлов, указанных в конфигурации
-    if( ! (NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
-           NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
-           NUtils::file_exists( (std::string(NUtils::TConfig()["textures"]) + "/" + spec_.texture_name).c_str() )) )
+    if( ! (utils::exists( (std::string(utils::settings()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
+           utils::exists( (std::string(utils::settings()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
+           utils::exists( (std::string(utils::settings()["textures"]) + "/" + spec_.texture_name).c_str() )) )
     {
         throw  std::runtime_error( std::string("invalid environment in {") + spec_.shader_name + " " + spec_.texture_name + "}"  );
     }
@@ -53,7 +53,7 @@ char const *TAntisubmarinefrigate::f_shader_name() const
 void TAntisubmarinefrigate::f_initialize( size_t )
 {
     // создаем текстуру
-    texture_.reset( new TJpegTexture( (std::string(NUtils::TConfig()["textures"]) + spec_.texture_name).c_str() ) );
+    texture_.reset( new TJpegTexture( (std::string(utils::settings()["textures"]) + spec_.texture_name).c_str() ) );
 
     // ыделяем память под данные
     glBufferData( GL_ARRAY_BUFFER, sizeof(position_), position_, GL_STATIC_DRAW );

@@ -284,6 +284,18 @@ bool str2array( const std::string &s, T *rc )
     return false;
 }
 
+inline bool str2key( const std::string &s, std::pair< std::string, std::string > *rc )
+{
+    size_t pos;
+    if( (pos = s.find( "=" )) != std::string::npos )
+    {
+        rc->first = s.substr(0, pos );
+        rc->second = s.substr( pos + 1 );
+        return true;
+    }
+    return false;
+}
+
 inline uint32_t usec()
 {
     timeval tv;

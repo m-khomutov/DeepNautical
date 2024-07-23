@@ -16,7 +16,7 @@ TSpecification::TSpecification( const std::vector< std::string > &settings, cons
     for( auto s : settings )
     {
         std::pair< std::string, std::string > p;
-        if( NUtils::str2key( s, &p ) )
+        if( utils::str2key( s, &p ) )
         {
             if( p.first.find( "shader" ) != std::string::npos )
             {
@@ -44,28 +44,28 @@ TSpecification::TSpecification( const std::vector< std::string > &settings, cons
             }
             else if( p.first.find( "speed" ) != std::string::npos )
             {
-                if( !NUtils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &speed ) )
+                if( !utils::str2array( p.second.substr( 1, p.second.size() - 2 ), &speed ) )
                 {
                     std::cerr << "vessel error: invalid speed\n";
                 }
             }
             else if( p.first.find( "pitching_range" ) != std::string::npos )
             {
-                if( !NUtils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &pitching_range ) )
+                if( !utils::str2array( p.second.substr( 1, p.second.size() - 2 ), &pitching_range ) )
                 {
                     std::cerr << "vessel error: invalid pitching\n";
                 }
             }
             else if( p.first.find( "start_position" ) != std::string::npos )
             {
-                if( !NUtils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &start_position ) )
+                if( !utils::str2array( p.second.substr( 1, p.second.size() - 2 ), &start_position ) )
                 {
                     std::cerr << "vessel error: invalid start position\n";
                 }
             }
             else if( p.first.find( "start_factor" ) != std::string::npos )
             {
-                if( !NUtils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &start_factor ) )
+                if( !utils::str2array( p.second.substr( 1, p.second.size() - 2 ), &start_factor ) )
                 {
                     std::cerr << "vessel error: invalid start factor\n";
                 }
@@ -76,7 +76,7 @@ TSpecification::TSpecification( const std::vector< std::string > &settings, cons
             }
             else if( p.first.find( "angle_gain" ) != std::string::npos )
             {
-                if( !NUtils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &angle_gain ) )
+                if( !utils::str2array( p.second.substr( 1, p.second.size() - 2 ), &angle_gain ) )
                 {
                     std::cerr << "vessel error: invalid angle gain\n";
                 }
@@ -87,7 +87,7 @@ TSpecification::TSpecification( const std::vector< std::string > &settings, cons
             }
             else if( p.first.find( "course" ) != std::string::npos )
             {
-                if( !NUtils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &course ) )
+                if( !utils::str2array( p.second.substr( 1, p.second.size() - 2 ), &course ) )
                 {
                     std::cerr << "vessel error: invalid course\n";
                 }
@@ -102,21 +102,21 @@ TSpecification::TSpecification( const std::vector< std::string > &settings, cons
             }
             else if( p.first.find( "light_color" ) != std::string::npos )
             {
-                if( !NUtils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &light_color ) )
+                if( !utils::str2array( p.second.substr( 1, p.second.size() - 2 ), &light_color ) )
                 {
                     std::cerr << "light error: invalid light color\n";
                 }
             }
             else if( p.first.find( "light_position" ) != std::string::npos )
             {
-                if( !NUtils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &light_position ) )
+                if( !utils::str2array( p.second.substr( 1, p.second.size() - 2 ), &light_position ) )
                 {
                     std::cerr << "light error: invalid light position\n";
                 }
             }
             else if( p.first.find( "wave" ) != std::string::npos )
             {
-                if( !NUtils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &wave ) )
+                if( !utils::str2array( p.second.substr( 1, p.second.size() - 2 ), &wave ) )
                 {
                     std::cerr << "wave error\n";
                 }
@@ -125,19 +125,19 @@ TSpecification::TSpecification( const std::vector< std::string > &settings, cons
             {
                 if( p.first.find( "wake_width" ) != std::string::npos )
                 {
-                    if( !NUtils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &wake_width ) )
+                    if( !utils::str2array( p.second.substr( 1, p.second.size() - 2 ), &wake_width ) )
                     {
                         std::cerr << "vessel error: invalid wake parameters\n";
                     }
                 }
-                else if( !NUtils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &wake ) )
+                else if( !utils::str2array( p.second.substr( 1, p.second.size() - 2 ), &wake ) )
                 {
                     std::cerr << "wake error\n";
                 }
             }
             else if( p.first.find( "fog_color" ) != std::string::npos )
             {
-                if( !NUtils::str2vec( p.second.substr( 1, p.second.size() - 2 ), &fog_color ) )
+                if( !utils::str2array( p.second.substr( 1, p.second.size() - 2 ), &fog_color ) )
                 {
                     std::cerr << "fog color error\n";
                 }
@@ -172,7 +172,7 @@ void TSpecification::f_read_viewport( const std::string& config )
     size_t p1 = 2, p2 = config.find("} {");
     while( p2 != std::string::npos )
     {
-        if( !NUtils::str2vec( config.substr( p1, p2 - p1 ), &point ) )
+        if( !utils::str2array( config.substr( p1, p2 - p1 ), &point ) )
         {
             std::cerr << "invalid viewport: " << config << "\n";
             return;
@@ -185,7 +185,7 @@ void TSpecification::f_read_viewport( const std::string& config )
     p2 = config.find("}}", p1 );
     if( p2 != std::string::npos )
     {
-        if( !NUtils::str2vec( config.substr( p1, p2 - p1 ), &point ) )
+        if( !utils::str2array( config.substr( p1, p2 - p1 ), &point ) )
         {
             std::cerr << "invalid viewport: " << config << "\n";
             return;
@@ -201,7 +201,7 @@ void TSpecification::f_read_surge( const std::string& config )
     size_t p1 = 2, p2 = config.find("} {");
     while( p2 != std::string::npos )
     {
-        if( !NUtils::str2vec( config.substr( p1, p2 - p1 ), &surge[off] ) )
+        if( !utils::str2array( config.substr( p1, p2 - p1 ), &surge[off] ) )
         {
             std::cerr << "invalid surge: " << config << "\n";
             return;
@@ -220,7 +220,7 @@ void TSpecification::f_read_surge( const std::string& config )
     p2 = config.find("}}", p1 );
     if( p2 != std::string::npos )
     {
-        if( !NUtils::str2vec( config.substr( p1, p2 - p1 ), &surge[off] ) )
+        if( !utils::str2array( config.substr( p1, p2 - p1 ), &surge[off] ) )
         {
             std::cerr << "invalid surge: " << config << "\n";
             return;

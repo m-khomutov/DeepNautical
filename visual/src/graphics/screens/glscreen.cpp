@@ -12,11 +12,11 @@ TGLscreenError::TGLscreenError( const std::string &what )
 : std::runtime_error( what )
 {}
 
-TGLscreen::TGLscreen( TBaseframe *frame )
-: TBasescreen( frame )
+TGLscreen::TGLscreen( base::frame *frame )
+    : base::screen( frame )
 {
     // получить список сцен
-    NUtils::read_directory( NUtils::TConfig()["scenes"],
+    utils::read_dir( utils::settings()["scenes"],
                            ".scn",
                            [this]( const std::string &name )
                            {
@@ -65,14 +65,14 @@ void TGLscreen::set_scene( const std::string &scene_name, size_t position )
     scene_iter_ = it;
 
     // передать команду экрану на исполнение через очередь команд
-    auto g = commands_.value_guard();
+    auto g = commands_.guarded();
     g->emplace_back( TScreenCommand( TScreenCommand::kSetScene, position ) );
 }
 
  // периодическая проверка наличия команд в очереди
 void TGLscreen::f_exec_command()
 {
-    auto g = commands_.value_guard();
+    auto g = commands_.guarded();
     if( !g->empty() )
     {
         // есть команда, ваыполняем
@@ -83,7 +83,7 @@ void TGLscreen::f_exec_command()
         case TScreenCommand::kSetScene:
             if( cmd.position() < sc_.size() )
             {
-                sc_[cmd.position()].reset( new TScene( *scene_iter_, std::string(NUtils::TConfig()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
+                sc_[cmd.position()].reset( new TScene( *scene_iter_, std::string(utils::settings()["scenes"]) + "/" + *scene_iter_ + ".scn" ) );
             }
             break;
         }
@@ -91,7 +91,7 @@ void TGLscreen::f_exec_command()
 }
 
 // сохранить текущие кадры с текущих сцен
-void TGLscreen::f_store_scene_frame()
+void TGLscreen::f_update_frame()
 {
     int q;
     glGetIntegerv( GL_READ_BUFFER, &q );
@@ -108,7 +108,7 @@ void TGLscreen::f_store_scene_frame()
 }
 
 // скомандовать объекту протокола передать кадр абонентам
-bool TGLscreen::f_send_stored_scene_frame( TBaseprotocol *proto )
+bool TGLscreen::f_send_frame( base::protocol *proto )
 {
    return frame_->send_buffer( proto );
 }

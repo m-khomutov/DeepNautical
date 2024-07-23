@@ -9,20 +9,20 @@
 #ifndef QSERVICE_H
 #define QSERVICE_H
 
-#include "baseservice.h"
+#include "service.h"
 
 /*!
    \class TQService
    \brief Класс сервиса отображения сцен, видеозахвата и обработки запросов абонентов
  */
-class TQService: public TBaseservice {
+class TQService: public base::service {
 public:
     /*!
      * \brief Конструктор класса. Инициализирует формат Qt
      * \param screen объект экрана отображения сцен
      * \param port сетевой порт ожидания запросов от абонентов
      */
-    TQService( TBasescreen *screen, uint16_t port );
+    TQService( base::screen *screen, uint16_t port );
 
     /*!
        \brief Запрещенный конструктор копии.

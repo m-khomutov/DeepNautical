@@ -259,7 +259,7 @@ TAviTexture::TAviTexture( char const *filename )
     frame_iter_ = frames_.begin();
 }
 
-NUtils::TImage &TAviTexture::next_image()
+utils::frame &TAviTexture::next_image()
 {
     // закольцевать
     if( frame_iter_ == frames_.end() )

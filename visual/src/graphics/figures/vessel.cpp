@@ -14,7 +14,7 @@ TVessel::TVessel( const std::vector< std::string > &settings, const glm::vec3 &c
     f_check_environment();
 
     // создать объект геометрической фигуры (координаты сетки фигуры)
-    object_.reset( new NBlender::TObject( (std::string(NUtils::TConfig()["objs"]) + "/" + spec_.obj_name).c_str() ) );
+    object_.reset( new NBlender::TObject( (std::string(utils::settings()["objs"]) + "/" + spec_.obj_name).c_str() ) );
     object_->load_position( &vertices_ );
 
     // dscnfdbnm d yfxfkj ldb;tybz
@@ -81,9 +81,9 @@ const TFigure::TPosition &TVessel::position()
 
 void TVessel::f_check_environment() const
 {
-    if( ! (NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
-           NUtils::file_exists( (std::string(NUtils::TConfig()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
-           NUtils::file_exists( (std::string(NUtils::TConfig()["objs"]) + "/" + spec_.obj_name).c_str() )) )
+    if( ! (utils::exists( (std::string(utils::settings()["shaders"]) + "/vert_" + spec_.shader_name).c_str() ) &&
+           utils::exists( (std::string(utils::settings()["shaders"]) + "/frag_" + spec_.shader_name).c_str() ) &&
+           utils::exists( (std::string(utils::settings()["objs"]) + "/" + spec_.obj_name).c_str() )) )
     {
         throw  std::runtime_error( std::string("invalid environment in {") + spec_.shader_name + " " + spec_.obj_name + "}"  );
     }

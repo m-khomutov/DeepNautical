@@ -9,7 +9,7 @@
 #ifndef OPENGLSCREEN_H
 #define OPENGLSCREEN_H
 
-#include <kformat.h>
+#include <lib.h>
 
 #include "../scene.h"
 #include <list>
@@ -81,13 +81,13 @@ private:
 
    Создает список имен сцен, связанных с экраном. Настраивает итератор по именам сцен на начало списка сцен
  */
-class TGLscreen: public TBasescreen {
+class TGLscreen: public base::screen {
 public:
     /*!
        \brief GL класс экрана отображения сцен.
        \param frame указатель на объект представления видеокадра
      */
-    TGLscreen( TBaseframe *frame );
+    TGLscreen( base::frame *frame );
     /*!
        \brief Запрещенный конструктор копии.
        \param orig Копируемый объект
@@ -132,7 +132,7 @@ protected:
     //! вектор умных указателей на сцены, выполняемые на экране
     std::vector< std::shared_ptr< TScene > > sc_;
     //! Очередь команд, передаваемых экрану для выполнения
-    NUtils::TSafeguard< std::list< TScreenCommand > > commands_;
+    utils::threadsafe< std::list< TScreenCommand > > commands_;
 
 protected:
     /*!
@@ -144,13 +144,13 @@ private:
     /*!
       \brief Реализация функции сохранения текущего кадра сцены. Объявляется в базовом классе.
      */
-    void f_store_scene_frame() override;
+    void f_update_frame() override;
     /*!
        \brief Реализация функции отправки сохраненного кадра сцены абоненту по определенному сетевому протоколу.
        \param proto сетевой протокол выдачи видеопотока абоненту
        \return результат отправки (удалось/не удалось)
      */
-    bool f_send_stored_scene_frame( TBaseprotocol *proto ) override;
+    bool f_send_frame( base::protocol *proto ) override;
 };
 
 #endif /* OPENGLSCREEN_H */

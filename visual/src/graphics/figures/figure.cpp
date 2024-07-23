@@ -13,7 +13,7 @@ TFigure::TFigure( const std::vector< std::string > &settings, const glm::vec3 &c
 : spec_( settings, camera_pos )
 {
     // настроить обзор и перспективу
-    NUtils::TGeometry win { NUtils::TConfig()["window"] };
+    utils::winsize win { utils::settings()["window"] };
     projection_ = glm::perspective( glm::radians( 26.5f ), (GLfloat)win.width / (GLfloat)win.height, 0.1f, 100.0f );
     view_ = glm::lookAt( spec_.camera_position,
                          glm::vec3(0.0f, 0.0f, 0.0f),

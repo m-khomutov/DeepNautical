@@ -24,7 +24,7 @@ public:
        \brief Qt класс экрана отображения сцен.
        \param frame указатель на объект представления видеокадра
      */
-    TQscreen( TBaseframe *frame );
+    TQscreen( base::frame *frame );
     /*!
        \brief Запрещенный конструктор копии.
        \param orig Копируемый объект
@@ -73,13 +73,13 @@ private:
 
        Выводит окно экрана на дистлей. Запускает таймер обновления картинки
      */
-    void f_run_scene_display() override;
+    void f_run() override;
     /*!
        \brief Реализация функции остановки отображения сцен.
 
        Останавливает таймер обновления картинки
      */
-    void f_stop_scene_display() override;
+    void f_stop() override;
 };
 
 #endif /* QSCREEN_H */

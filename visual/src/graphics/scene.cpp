@@ -92,7 +92,7 @@ void TScene::f_initialize( const std::string &specification )
     param_t settings;
     std::string header;
     // читаем спецификацию
-    NUtils::read_config( specification.c_str(), [&]( const std::string &line ) {
+    utils::read_settings( specification.c_str(), [&]( const std::string &line ) {
         if( line[ 0 ] == '[' ) // новый блок
         {
             if( !header.empty() ) // уже не первый - есть прочитанная фигура
@@ -214,7 +214,7 @@ std::vector< glm::vec3 > TScene::f_get_camera_positions( const std::vector< std:
     for( auto s : settings )
     {
         std::pair< std::string, std::string > p;
-        if( NUtils::str2key( s, &p ) )
+        if( utils::str2key( s, &p ) )
         {
             if( p.first.find( "camera_position" ) != std::string::npos )
             {
@@ -222,7 +222,7 @@ std::vector< glm::vec3 > TScene::f_get_camera_positions( const std::vector< std:
                 size_t p1 = 2, p2 = p.second.find("} {");
                 while( p2 != std::string::npos )
                 {
-                    if( !NUtils::str2vec( p.second.substr( p1, p2 - p1 ), &next_position ) )
+                    if( !utils::str2array( p.second.substr( p1, p2 - p1 ), &next_position ) )
                     {
                         std::cerr << "invalid camera position: " << p.second << "\n";
                         break;
@@ -234,7 +234,7 @@ std::vector< glm::vec3 > TScene::f_get_camera_positions( const std::vector< std:
                 p2 = p.second.find("}}", p1 );
                 if( p2 != std::string::npos )
                 {
-                    if( NUtils::str2vec( p.second.substr( p1, p2 - p1 ), &next_position ) )
+                    if( utils::str2array( p.second.substr( p1, p2 - p1 ), &next_position ) )
                     {
                         positions.push_back( next_position );
                     }

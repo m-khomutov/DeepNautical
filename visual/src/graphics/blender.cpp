@@ -56,16 +56,16 @@ NBlender::TMTLfile::TMTLfile( const char* filename )
             switch( line[1] )
             {
             case 'a':
-                NUtils::str2vec( line.substr( 3 ), &mtls.back().Ka ); // коэффициент фонового освещения
+                utils::str2array( line.substr( 3 ), &mtls.back().Ka ); // коэффициент фонового освещения
                 break;
             case 'd':
-                NUtils::str2vec( line.substr( 3 ), &mtls.back().Kd ); // коэффициент рассеянного освещения
+                utils::str2array( line.substr( 3 ), &mtls.back().Kd ); // коэффициент рассеянного освещения
                 break;
             case 's':
-                NUtils::str2vec( line.substr( 3 ), &mtls.back().Ks ); // коэффициент бликового освещения
+                utils::str2array( line.substr( 3 ), &mtls.back().Ks ); // коэффициент бликового освещения
                 break;
             case 'e':
-                NUtils::str2vec( line.substr( 3 ), &mtls.back().Ke ); // коэффициент зеркального блика
+                utils::str2array( line.substr( 3 ), &mtls.back().Ke ); // коэффициент зеркального блика
                 break;
             }
         }
@@ -79,7 +79,7 @@ NBlender::TMTLfile::TMTLfile( const char* filename )
         }
         else if( line.find( "map_Kd " ) == 0 ) // текстура объекта
         {
-            mtls.back().map_Kd.reset( new TJpegTexture( (std::string(NUtils::TConfig()["objs"]) + "/" + line.substr( 7 )).c_str() ) );
+            mtls.back().map_Kd.reset( new TJpegTexture( (std::string(utils::settings()["objs"]) + "/" + line.substr( 7 )).c_str() ) );
         }
     }
     for( auto mtl : mtls )
@@ -120,19 +120,19 @@ NBlender::TObject::TObject( char const *fname )
             switch( line[1] )
             {
             case ' ': // геометрические вершины
-                if( NUtils::str2vec( line.substr( 2 ), &v3 ) )
+                if( utils::str2array( line.substr( 2 ), &v3 ) )
                 {
                     vertices_.push_back( v3 );
                 }
                 break;
             case 't': // текстурные вершины
-                if( NUtils::str2vec( line.substr( 3 ), &v2 ) )
+                if( utils::str2array( line.substr( 3 ), &v2 ) )
                 {
                     texels_.push_back( v2 );
                 }
                 break;
             case 'n': // нормали к геометрическим вершинам
-                if( NUtils::str2vec( line.substr( 3 ), &v3 ) )
+                if( utils::str2array( line.substr( 3 ), &v3 ) )
                 {
                     normals_.push_back( v3 );
                 }
@@ -157,7 +157,7 @@ NBlender::TObject::TObject( char const *fname )
         {
             try
             {
-                mltr.reset( new TMTLfile( (std::string(NUtils::TConfig()["objs"]) + "/" + line.substr( 7 )).c_str() ) );
+                mltr.reset( new TMTLfile( (std::string(utils::settings()["objs"]) + "/" + line.substr( 7 )).c_str() ) );
             }
             catch( const std::runtime_error &e )
             {

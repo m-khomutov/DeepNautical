@@ -8,7 +8,7 @@ QT       += core gui widgets
 
 TARGET = simulator
 TEMPLATE = app
-OBJECTS_DIR = ../build/simulator
+OBJECTS_DIR = ../build/visual
 DESTDIR += $$OBJECTS_DIR/app
 CONFIG += 14
 
@@ -69,5 +69,5 @@ HEADERS += \
     src/graphics/uniformblock.h \
     src/service/qservice.h
 
-INCLUDEPATH += ../simulator/src ../common ../kformat/include
-LIBS += ../build/kformat/lib/libkformat.a -lGLEW -lGLU -ljpeg
+INCLUDEPATH += ../visual/src ../utils ../lib/include
+LIBS += ../build/nautical-dev/lib/libnautical-dev.a -lGLEW -lGLU -ljpeg
